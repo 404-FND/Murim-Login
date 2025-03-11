@@ -1,8 +1,30 @@
-# Murim Login Novel Reader
+# Murim Login Novel Reader 📚⚔️
 
-A clean, aesthetic web-based reader for the Murim Login novel. This application allows readers to browse and read chapters with a comfortable reading experience.
+<div align="center">
+  
+![Murim Login Banner](https://img.shields.io/badge/Murim%20Login-Novel%20Reader-8A2BE2?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-1.0-blue?style=for-the-badge)
+![License](https://img.shields.io/badge/license-open--source-green?style=for-the-badge)
 
-## Features
+**[📖 Read Now: murim-login.surge.sh](https://murim-login.surge.sh/)**
+
+</div>
+
+## 📖 Background
+
+After reaching the end of the Murim Login manhwa and being completely captivated by the story, I found myself craving more. The natural next step was to dive into the light novel to continue the journey. However, this led to an unexpected challenge.
+
+## 🤔 The Problem
+
+The official Murim Login translations left much to be desired, making it difficult to fully enjoy the rich world and characters. Meanwhile, high-quality fan translations exist but are scattered across Reddit and various forums, creating a fragmented and frustrating reading experience.
+
+## 💡 The Solution
+
+This project creates a simple, clean, and ad-free website that consolidates all the fan-translated chapters of Murim Login in one place. No distractions, no tracking, no monetization—just a seamless reading experience for fellow fans.
+
+**🌐 [Visit the live site here](https://murim-login.surge.sh/)**
+
+## ✨ Features
 
 - **Home Page**: Grid view of all available chapters
 - **Individual Chapter Pages**: Clean reading experience for each chapter
@@ -12,75 +34,49 @@ A clean, aesthetic web-based reader for the Murim Login novel. This application 
 - **Responsive Design**: Works on desktop and mobile devices
 - **Persistent Settings**: User preferences for theme and font size are saved between visits
 
-## Installation
+## 🚀 How to Use
 
-1. Clone this repository to your local machine
-2. Make sure your directory structure has the novel chapters in the following format:
-   ```
-   data/
-   ├── chapter-XXX/
-   │   ├── chapter-XXX.txt (content)
-   │   └── README.md (metadata)
-   ```
-3. Install Node.js dependencies:
-   ```
-   npm install
-   ```
+### Read Online (Recommended)
 
-## Usage
+The easiest way to enjoy Murim Login is to visit our live site:
 
-### Running the Server (Recommended)
+**[https://murim-login.surge.sh/](https://murim-login.surge.sh/)**
 
-Start the Node.js server to properly load chapter content and metadata:
+That's it! No installation needed, no setup required. Just click and start reading!
 
-```bash
-npm start
-```
+## 👥 About the Creators
+Hi, im brook and apart of **[404 FND (404 Found)](https://github.com/404-fnd)**, a creative collective that builds and open-sources interesting projects. We create whatever we want, with no limitations—just pure creativity and a desire to solve problems
 
-Then open your browser and navigate to `http://localhost:3000`.
+## 🤝 Contributing
 
-### Alternative Methods
+We welcome contributions to make the Murim Login reader even better! Here's how you can help:
 
-You can also use:
+### Issues
+- Found a bug? Report it by [creating an issue](https://github.com/404-fnd/murim-login/issues/new)
+- Have a suggestion for improvement? We'd love to hear it!
 
-**Python HTTP Server:**
-```bash
-# Python 3
-python -m http.server
+### Pull Requests
+- Want to add a feature or fix a bug? Fork the repository and submit a pull request
+- Looking to improve translations? Also just make a Pull Request
 
-# Python 2
-python -m SimpleHTTPServer
-```
 
-**Node.js HTTP Server:**
-```bash
-# Install http-server if you haven't already
-npm install -g http-server
+## 🙏 Credits
 
-# Run the server
-http-server
-```
+- **Original Novel**: Murim Login by Road Warrior (로드워리어)
+- **Fan Translators**: Special thanks to the dedicated translators including:
+  - Coldbutteredtoast
+  - No_End_9483
+  - kenUdigitt
+  - And many others credited within each chapter
+- **Special Thanks**: [phynor](https://github.com/phynor) on GitHub for their contributions
+- **Community**: The amazing Murim Login community who kept the translations alive
 
-## How It Works
+## ⚖️ License
 
-- **index.html**: The home page that displays a grid of all available chapters
-- **chapter.html**: Template for individual chapter pages, loaded with content dynamically
-- **home.js**: Handles loading and displaying the chapter list
-- **chapter.js**: Handles loading and displaying chapter content
-- **styles.css**: Styling with dark/light mode support
-- **server.js**: Simple Node.js server for local development
+This project is open-source and available for personal and educational use. All content belongs to their respective owners.
 
-## Customization
+---
 
-- Modify `styles.css` to change the appearance and colors
-- Adjust the theme variables in `:root` to change the color scheme
-
-## License
-
-This project is open-source and available for personal and educational use.
-
-## Credits
-
-- Original novel: Murim Login
-- Translations: Various translators (credited in each chapter)
-- Updated and maintained with ❤️ 
+<div align="center">
+  <i>Created with ❤️ by <a href="https://github.com/404-fnd">404 FND</a> for Murim Login fans</i>
+</div> 
