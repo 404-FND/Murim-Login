@@ -44,9 +44,6 @@ The easiest way to enjoy Murim Login is to visit our live site:
 
 That's it! No installation needed, no setup required. Just click and start reading!
 
-## 👥 About the Creators
-Hi, im brook and apart of **[404 FND (404 Found)](https://github.com/404-fnd)**, a creative collective that builds and open-sources interesting projects. We create whatever we want, with no limitations—just pure creativity and a desire to solve problems
-
 ## 🤝 Contributing
 
 We welcome contributions to make the Murim Login reader even better! Here's how you can help:
