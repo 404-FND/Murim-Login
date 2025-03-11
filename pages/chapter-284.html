@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 284 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 284</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 284</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: November 17, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>"I think that's enough."<br><br>The proclamation caught me off guard.<br><br>A voice, clear and chilling, pierced the tension from behind. A cold shiver raced up my spine.<br><br>'When did he...?'<br><br>Despite my heightened alertness mid-battle, I hadn't sensed anyone.<br><br>Such stealth seemed impossible, but there was one explanation.<br><br>'A Transcendent Master.'<br><br>With deliberate slowness, I turned. Amid the rubble of a shattered wall, a formidable presence fixed an intense gaze upon me.<br><br>"Nice to meet you."<br><br>He looked to be in his early 40s. A chiseled face as if it had been sculpted by an artist, and a muscular physique that couldn't be concealed by his clothes. \[Note: I yearn for the day when I, too, have a physique such that my muscles cannot be concealed by my clothes.\]<br><br>And...<br><br>'He's strong.'<br><br>The overwhelming aura he radiated made me question my own strength. My intuition, honed over years of training, screamed a singular truth:<br><br>The Transcendent Master before me was on a different level.<br><br>"You have good intuition, young one. Better than I expected."<br><br>The man, who had been sizing me up with interest, suddenly tilted his head.<br><br>"Or maybe you just recognize my face?"<br><br>"...Both."<br><br>The appearance of this man was quite the shock.<br><br>I tried to keep a neutral expression, but I couldn't hide the crack in my voice and my shifting eyes.<br><br>"Well, my face has made the rounds once or twice."<br><br>With a casual nod, the man approached me.<br><br>Crossing the trashed office with a confident stride, he extended his hand for a handshake.<br><br>"Pleased to meet you. My name is Lee Jeong-Ryong."<br><br>A short and simple introduction.<br><br>Yet, the weight of the name 'Lee Jeong-Ryong' was neither short nor simple.<br><br>He wasn't just anyone. Revered globally, his reputation was legendary.<br><br>'The Ares Guild's second-in-command. One of South Korea's two prized S-rank Hunters.'<br><br>This was Lee Jeong-Ryong.<br><br>This was the man who held the reins of the Ares Guild, second only to another S-rank Hunter, the Ares Guild Master.<br><br>The Ares Guild stands among the globe's elite, ranking within the top five. Its dominion over politics, finance, and especially Hunters, is tremendous.<br><br>There's even a saying that South Korea has two Blue Houses because of the Ares Guild. \[Note: the Blue House in Korea is similar to the White House in the United States. It is the executive office and official residence of the South Korean head of state. Basically, the MC is implying that the Ares Guild is as important as the government itself.\]<br><br>Why would such a titan show up here and now?<br><br>'Damn, it's obvious.'<br><br>Flashes of my discussion with Park Tae-Seop played in my mind.<br><br>'Who is it? That guy only referred to as 'that person'.'<br><br>'I can't say. Even if I told you, you'd only end up resenting me later.'<br><br>'Why all the secrecy? Is this person like Asmodeus or something?'<br><br>'If you were to make them your enemy, the Devil might be preferable. At least the whole world would fight with you.'<br><br>It clicked.<br><br>If the 'him' that Park Ji-Hwang mentioned was Lee Jeong-Ryong and the Ares Guild was behind all of this, the picture was perfectly clear.<br><br>'This is spiraling out of control.'<br><br>A chill coursed through me, grasping the enormity of the situation.<br><br>Yet, in stark contrast to my mounting unease, Lee Jeong-Ryong’s voice, imbued with warmth, broke through,<br><br>"I've heard of you. You look much better in person than on TV."<br><br>"...Thank you."<br><br>"You don't look pleased to see me."<br><br>"Why wouldn't I be? You're a world-renowned, S-rank Hunter."<br><br>"It's just a title. I'm still far behind our Guild Master. Now..."<br><br>Lee Jeong-Ryong's smile persisted as he opened and closed an expectant palm.<br><br>"How long will you keep me waiting for that handshake? It's becoming somewhat uncomfortable."<br><br>Hearing his pleasant laugh and casual words, I thought to myself that this man must have at least a hundred snakes in his belly. \[Note: This phrase is an idiom prevalent across various Asian cultures. It generally signifies a discrepancy between one's expressed intentions and their true motives.\]<br><br>And I hate snakes.<br><br>"I'm sorry, but my hands are busy right now."<br><br>"Is there a problem? Just let go of what you're holding. Surely you can spare one hand?"<br><br>"Given the circumstances, I'm afraid a handshake is out of the question."<br><br>I tightened my grip on both of my weapons.<br><br>Almost immediately, a thin line of blood appeared on the throats of Park Tae-Seop and Park Ji-Hwang.<br><br>Upon Lee Jeong-Ryong's arrival, the two men, with their eyes closed and lips sealed, seemed to sense that some sort of resolution was near.<br><br>"I'm aware that you are pretty close with these two. Why don't you shake their hands instead?"<br><br>"Close? Me?"<br><br>Lee Jeong-Ryong's laughter rippled through the tension.<br><br>"I've known Guild Master Park since the days of the Great Cataclysm, so we're somewhat familiar with each other. Isn't that right?"<br><br>Guild Master Park Tae-Seop, tightening his jaw, replied,<br><br>"It's been a while, Vice Guild Master Lee Jeong-Ryong.”<br><br>"Yes, it has been a while. What's going on here?"<br><br>"I'm sorry for showing you this unsightly situation. We encountered an unforseen circumstance."<br><br>"Whatever the misunderstanding, surely we can resolve it civilly? Who's the young fellow beside you?"<br><br>"He's a member of my guild. He has been with us since he graduated from the training center."<br><br>With a trembling voice, Park Ji-Hwang introduced himself.<br><br>"Nice to meet you. I'm Park Ji-Hwang from Myeongdong Guild's Team One."<br><br>"......!"<br><br>My surprise wasn't rooted in Lee Jeong-Ryong's patronizing tone, despite looking markedly younger than Park Tae-Seop.<br><br>It was their blatant audacity.<br><br>Every soul in the room was well-aware of Lee Jeong-Ryong's hand in the directive given to Park Ji-Hwang.<br><br>Their interplay, however, hinted at an underlying stratagy.<br><br>'A lizard tail.'<br><br>The old lizard, who had already prepared to shed its tail, smiled gently and turned to me. \[Note: when some species of lizards feel threatened, or are grabbed by their tails, they can drop their tails in order to get away and regrow those tails later. Here, it is implied that Park Ji-Hwang, and possibly the entire Myeongdong Guild, is Lee Jeong-Ryong's tail that he is ready to leave behind to save himself.\]<br><br>"See? I've never met that young man before. But Guild Master Park and I do occasionally exchange greetings."<br><br>I chuckled sarcastically and asked,<br><br>"Do those greetings, by any chance, involve secretly sending Black Hunters to harm innocent people?"<br><br>"Black Hunters? Don't be delusional. Speaking of matters regarding Guild Master Park..."<br><br>He leaned closer, voice dripping with insinuation.<br><br>"I might be able to offer a bit of help with this predicament."<br><br>"... Help, you say?"<br><br>"Yes, help. We need to untangle this mess, don't we?"<br><br>My previous assumption was only half correct. The lizard wasn’t yet eager to forsake its tail; it was gearing up for a defensive stand.<br><br>Our eyes locked in a silent standoff. A bead of cold sweat trickled down my neck.<br><br>His words were both an offer and a warning. A clear ultimatum to release them.<br><br>However...<br><br>"This is a personal matter, so it might be difficult for me to back down."<br><br>It's up to me to decide whether to stop or keep going.<br><br>I've already made up my mind.<br><br>"Is that so? Ha ha."<br><br>Lee Jeong-Ryong's laugh echoed, carrying a mix of intrigue and delight, as he fixed his eyes upon me.<br><br>"This young one has quite the resolve. And spirit too."<br><br>"I've heard that a lot recently."<br><br>"And do people also tell you that you're arrogant?"<br><br>"I hear that even more."<br><br>"Young people with too much spirit are often misunderstood."<br><br>"I believe so too."<br><br>"Good. Glad to hear that..."<br><br>There was a glint in Lee Jeong-Ryong's eyes.<br><br>"Isn't it about time you changed?"<br><br>"What do you mean?"<br><br>"You're a well-known figure, and you're getting further into adulthood. It might be better to avoid such misunderstandings."<br><br>"I appreciate your advice, but I have no such intentions yet."<br><br>"Why is that?"<br><br>"The people who tend to give me this advice are often idiots who think too highly of themselves. Just because a few stray dogs block my path doesn't mean I should run away."<br><br>"You might not fare well against a ferocious dog."<br><br>"No matter how fierce a dog is, it's still just a dog. Pardon my arrogance, but I consider myself more of a wolf."<br><br>"A wolf... What if it's not a dog, but a tiger blocking your path?"<br><br>A playful yet menacing smirk danced on Lee Jeong-Ryong's lips.<br><br>He is that tiger.<br><br>The looming presence in my journey. A beast armed with lethal prowess far surpassing a mere wolf.<br><br>"I'd have to run. A wolf can't beat a tiger."<br><br>"True."<br><br>"But, you know, given the right circumstances, I might be able to tackle it."<br><br>"The right circumstances?"<br><br>“Yes. To give you an example...”<br><br>Holding Lee Jeong-Ryong's penetrating stare, I declared,<br><br>“Imagine that this tiger grievously harmed someone dear to the wolf.”<br><br>A shadow passed over his face.<br><br>“So, this wolf has lost someone close?"<br><br>"Both of his arms were cut off. And he has small children, too."<br><br>“That's quite a detailed story.”<br><br>“It came to me as I was thinking of something plausible. It's just a story, so don't overthink it."<br><br>"I see."<br><br>Lee Jeong-Ryong responded with a muted gesture of resignation.<br><br>"Yet, a wolf confronting a tiger for a comrade's sake… That speaks of profound loyalty."<br><br>"If you've seen a wolf documentary, you'd understand. Their sense of loyalty is no joke."<br><br>"But it's reckless."<br><br>"Why do you think so?"<br><br>"If you charge at a tiger, you're likely to get killed."<br><br>A rueful smirk formed on my lips.<br><br>“You never know. A young, strong wolf might defeat an old tiger."<br><br>"…A tiger losing to a wolf? That sounds more like fiction than a documentary."<br><br>"I found it entertaining. Especially the scene where the wolf wins, and all the animals in the forest come to feast on the tiger's carcass."<br><br>"……."<br><br>For the first time, the amusement vanished from Lee Jeong-Ryong's face.<br><br>It was an expected reaction, considering the hidden implications in my words.<br><br>Seeing his hardened expression felt as satisfying as gulping down milk as a baby.<br><br>“You're more annoying than I thought."<br><br>After a brief silence, he uttered those words.<br><br>Retracting his extended hand, Lee Jeong-Ryong inquired,<br><br>“What do you want?"<br><br>Steadfast, I countered,<br><br>“An apology and compensation. And one man's life."<br><br>"A life?"<br><br>“Yes. I want one man's life.” Flinch.<br><br>I felt the tremor through the dagger pressed to Park Ji-Hwang's neck. The man, who hadn't moved an inch since the arrival of Lee Jeong-Ryong now trembled with the fear of death.<br><br>“That's not possible. I can't allow that.”<br><br>“It doesn't matter if you'll allow it. I will take it."<br><br>“Learn to differentiate courage from recklessness. While I am a patient man, I am also quite fickle.”<br><br>“I need to return at least what I've received to be satisfied."<br><br>“Your demand is excessive. Haven’t you already been compensated?”<br><br>“Who just takes the principal? One should also take compound interest.”<br><br>“And if I refuse?"<br><br>“Remember that documentary I mentioned earlier?"<br><br>"......!"<br><br>“Do you believe a wolf's fangs cannot puncture the hide of a tiger?”<br><br>Intensity surged in Lee Jeong-Ryong's eyes as they met mine.<br><br>Piercing the palpable tension, he finally voiced,<br><br>“You underestimate the might of a tiger.”<br><br>Whoosh!<br><br>Before his words fully left his lips, a hand bathed in a crimson aura lunged for my heart.<br><br>Merely five paces separated us. Decisions were made in split seconds.<br><br>'White Flames. Desummon.'<br><br>As I stowed away the White Flames into my inventory, I stretched out my now-freed right hand.<br><br>Disperse, compress, unleash. A dragon, eagerly awaiting to awaken, manifested as a blue flame on my palm.<br><br>Summoning the full might of the Divine Palm of Fire, a collision between palms ensued.<br><br>Boom!<br><br>The entire building shook as if hit by an earthquake, accompanied by a deafening roar.<br><br>I bore the brunt of the impact.<br><br>Thrown off balance, I could taste the metallic tang of my own blood. I stumbled backwards three paces.<br><br>"Cough!"<br><br>Through settling particles, Lee Jeong-Ryong's unyielding silhouette crystallized.<br><br>“You are………”<br><br>His expression was that of disbelief. However, my confusion was just as great.<br><br>In the real world, I felt a manipulation of Qi I could never have expected.<br><br>'He's definitely not an ordinary Hunter.’<br><br>From just that one exchange, I could tell.<br><br>That strike from Lee Jeong-Ryong was akin to a palm technique of a Transcendent Master. His Qi was not only masterfully wielded but surpassed the typical boundaries.<br><br>'This is an S-rank Hunter.'<br><br>The raw power radiating from him paralleled the formidable Demon Lords I encountered at Shaolin, the Yin-Yang Twin Demons.<br><br>'What kind of monster...’<br><br>I hadn't anticipated confronting such an adversary in the real world.<br><br>Grasping Park Ji-Hwang firmly, blade poised, I could still taste the metallic tang of my blood. I locked eyes with Lee Jeong-Ryong's bewildered stare.<br><br>“How does a young one like you know that technique...”<br><br>That technique?<br><br>He must be referring to my Qi cultivation technique.<br><br>Before responding, I flashed a blood-tinted grin.<br><br>“I will take what I asked for."<br><br>With swift precision, I drove the blade into Park Ji-Hwang's abdomen.<br><br>Thud. Thud thud!<br><br>Crimson surged, and an anguished howl resonated.<br><br>"Arghh! Master!"<br><br>I wondered how he knew martial arts, but now I see they were in a master-disciple relationship.<br><br>"Stop!"<br><br>But Lee Jeong-Ryong's command faltered. His momentum was checked.<br><br>Any step he took forward was countered by my blade's menacing dance at Park Ji-Hwang's throat.<br><br>"If you want to save your adorable disciple, you better stay still."<br><br>"...!"<br><br>Thud, thump!<br><br>Without flinching, my dagger danced. It grazed across his upper torso, deliberately avoiding vital organs, then shredded through the muscles of his thighs.<br><br>Swoosh!<br><br>I carved through his calves, clipping the tendons of his ankles, and with surgical precision, made a diagonal incision across his shoulder.<br><br>Swipe, Slash!<br><br>"Aaaargh!"<br><br>A cry of raw torment.<br><br>Perhaps Mr. Rough Guy felt the same. He must have slipped in and out of consciousness, awakening each time to fresh, unbearable agony.<br><br>Yet the pain wasn't his alone. The soul of his wife, seeing her husband return mutilated, was irrevocably damaged.<br><br>“Save your screams. There's still one more to go."<br><br>“...…!”<br><br>Swipe! Thud!<br><br>The lithe silhouette of Park Ji-Hwang, now bereft of both arms, quivered.<br><br>“Kuk, khuk."<br><br>His cries had been so relentless that now only raspy, ghostly whimpers emerged.<br><br>Seizing his blood-stained hair, I drew his face close.<br><br>“Please... let me go…"<br><br>Though rage surged within me, the voice that emerged was chilling, emotionless.<br><br>"Ji-Hwang."<br><br>“I'm sorry… Please."<br><br>“I couldn't say this at the time because everything happened so fast."<br><br>I met his gaze, now marred with burst blood vessels, and delivered a sentiment I had held onto for over a decade.<br><br>"Congratulations on your graduation, you motherfucker."<br><br>With all my strength, I flung him away.<br><br>Thud! As the heavy sound echoed, Lee Jeong-Ryong's eyes blazed with rage.<br><br>"You!"<br><br>“I spared his life. As for his life as a Hunter, well, I can't guarantee that.”<br><br>"Do you really want to die?"<br><br>“How about it? Would you like to try? I wouldn't mind bringing down this entire building and having half of the South Korean citizens find out about this incident.”<br><br>Lee Jeong-Ryong’s face twisted in anguish.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-283.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-285.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

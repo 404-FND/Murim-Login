@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 270 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 270</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 270</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: October 20, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>Ding.<br><br>\- \[Logout\] completed.<br><br>I opened my eyes to the sound of the system alert.<br><br>As my senses returned, I wasn't met by the ceiling, as I expected, but rather two sets of eyes studying me intently.<br><br>“Eek!”<br><br>“Mom!”<br><br>Startled, both figures recoiled, their expressions a mix of shock and relief.<br><br>Stretching, as though emerging from a deep slumber, I examined my mother and Hayeon.<br><br>"Why are you so surprised?”<br><br>"Gasp, wheeze.”<br><br>"Heavens..."<br><br>Their faces looked as if they had seen a ghost. Regaining their composure somewhat, they simultaneously exclaimed.<br><br>"I thought my heart was going to drop!"<br><br>"You little rascal!”<br><br>Smack! Smack!<br><br>In her worry, Hayeon tugged at her own hair, while my mother, without a moment's hesitation, delivered a firm smack to my back.<br><br>For some reason, the palm of a woman in her 50s carried more weight than any seasoned punch I'd felt.<br><br>'Am I in trouble?'<br><br>The strength of a mother that lingers in one's very soul.<br><br>Only after a few more well-placed smacks did the barrage cease.<br><br>But the storm wasn’t over.<br><br>“Son.”<br><br>I swallowed hard at the heavy voice of my mother. As expected, the atmosphere was tense.<br><br>“Yes, Mom?”<br><br>“Do you know you've been sleeping for two whole days?”<br><br>Hayeon, ever the precise one, chimed in.<br><br>“Precisely forty-two hours.”<br><br>“That's right. We almost called an ambulance because you wouldn’t wake up.”<br><br>Forty-two hours.<br><br>I had been asleep for a long time. Since I stayed in Murim for over a year, that seemed about right.<br><br>Before leaving, I didn’t know it would take this long.<br><br>“Do you have narcolepsy or something? How can you sleep for so long? Even shaking you didn’t wake you up."<br><br>Hayeon’s worry was evident. I deflected with a lie.<br><br>“What are you talking about? I woke up once or twice in between.”<br><br>“No way. Every time mom and I checked, you were always sleeping..."<br><br>“I woke up at dawn every day, how would you know?”<br><br>“Really?”<br><br>“Every time I opened my eyes, it was dawn. I was tired, so I just kept sleeping.”<br><br>“No. How is that even possible?”<br><br>Of course, it wasn't.<br><br>Yet, over the years, I had perfected the craft of navigating the skepticism of my younger sister.<br><br>“Hey, Jin Hayeon.”<br><br>When I addressed her with such gravity, Hayeon hesitated.<br><br>“Uh, yes?”<br><br>“Do you know what I used to do in high school?”<br><br>“No, I don’t.”<br><br>“I slept straight from the first to the seventh period without eating, then slept again during study hours... And wait... you think that's it?”<br><br>“There's more?”<br><br>“Of course. What do you think I did at home after sleeping in school?”<br><br>“Maybe..."<br><br>“After school, I came home and slept again. That’s what I do.”<br><br>“Incredible.”<br><br>Hayeon nodded solemnly. Our mother, who had been listening quietly, spoke with a defeated tone.<br><br>“Son, that's not something to brag about..."<br><br>Sorry, mom.<br><br>Given the likelihood of similar incidents in the future, establishing this precedent might be prudent.<br><br>Even if it inflicts another wound upon my mother’s heart.<br><br>‘Another tally mark against filial duty.’<br><br>I subtly averted my eyes from my mother's earnest gaze. After all, neglecting studies for a day or two wasn't catastrophic. Fortunately, the narcolepsy tangent seemed forgotten.<br><br>Wishing to further divert from the topic, I interjected.<br><br>“Oh, right. The massage chair. Weren't we supposed to buy a massage chair?”<br><br>Hayeon shot me a slightly mocking glance.<br><br>“We already bought it, dear brother.”<br><br>“Oh, really?”<br><br>“Yep. I picked the most expensive one, and it's worth every penny. I almost went straight to heaven after lying on it for a bit.”<br><br>“You’d have taken an express train to hell if you had died. But with whose money?”<br><br>“What money? Yours. Here, I used your card.”<br><br>“...Okay, good job.”<br><br>When did she take my card again?<br><br>But then again I did sleep for two days, so I can't really complain.<br><br>If it's the most expensive product, I wonder how much it costs. Should I have saved some of the funds from the last raid?<br><br>Lost in thought, as I inspected the card, an unexpected chime interrupted my reverie.<br><br>Ding-dong.<br><br>At the sound of the doorbell, both mom and Hayeon perked up their ears.<br><br>“Could it be them?”<br><br>“They're here!”<br><br>Who's here?<br><br>I asked with a puzzled look:<br><br>“Do we have a visitor?”<br><br>“Yes, the delivery person.”<br><br>Hayeon’s words were laden with anticipation as she hurriedly left the room.<br><br>However, the voice that drifted in after the soft creak of the front door wasn’t of any anticipated delivery person.<br><br>“Excuse me. Is Mr. Jin Tae-Kyung here?”<br><br>“Who… are you a journalist by any chance?”<br><br>“No.”<br><br>A voice, gentle yet firm, clarified further.<br><br>“I am the team leader. The team leader of the Peace Guild.”<br><br>I only know one team leader from the Peace Guild.<br><br>Stepping into the living space, past Hayeon’s frame, I discerned a man cloaked in a sleek black coat.<br><br>“Team Leader.”<br><br>Team Leader Choi nodded in greeting.<br><br>“Did you have a good rest?”<br><br>“Well, so-so.”<br><br>In reality, after struggling in the martial world for over a year, the toll on my psyche was significant.<br><br>Reuniting with him after such a gap should have been pleasant, yet trepidation overshadowed any joy.<br><br>If this man came all the way to my house, it must be for something important.<br><br>“I'm glad to hear you had a good rest.”<br><br>“I didn't say I had a good rest, but why are you here? As far as I know, I don't have any media or broadcasting schedules for a while.”<br><br>“Of course. You're not a celebrity, Mr. Jin Tae-Kyung.”<br><br>“Then why?”<br><br>“The workshop for our new guild members is today.”<br><br>“A workshop?”<br><br>“Yes.”<br><br>That should be fine. I was curious about the new guild recruits, and a brief attendance should still allow me sufficient rest afterward.<br><br>“When does the workshop end?”<br><br>“It's scheduled for about 6 nights and 7 days.”<br><br>“What? A week-long workshop... Are we heading to Pyeongchang or Gapyeong?”<br><br>“Think bigger.”<br><br>“Could it be... a resort in Southeast Asia?”<br><br>“Hmm.”<br><br>“Phuket? It has to be Phuket!”<br><br>Team Leader Choi's face broke into an approving grin.<br><br>“We've secured an A-rank gate.”<br><br>“Ah.”<br><br>“The objective is to build teamwork while fighting monsters.”<br><br>"..."<br><br>A workshop with monsters. That will be interesting.<br><br>\*\*\*<br><br>Grrr... Thud!<br><br>With each resounding footfall, the earth trembled. The colossal figure, towering at nearly five meters, commanded attention.<br><br>Its entire rocky physique, punctuated with patches of moss, shimmered with moisture, giving it a time-worn appearance.<br><br>Vines draped down like tendrils of hair, with two eerie, reddish glows emanating from within.<br><br>The creature's eyes. The chilling gaze of the magical entity, devoid of any spark of life, evoked a whispered exclamation from a recruit.<br><br>“A Golem..."<br><br>A monster worthy of its A-rank designation.<br><br>The fledgling B-rank hunters, fresh from their training, could barely mask their trepidation at the golem's sight.<br><br>“How do we defeat that...”<br><br>“Feels like one hit would kill us.”<br><br>Amidst the hushed murmurs and apprehensive glances of the two dozen new guild members, a confident voice sliced through the tension.<br><br>“There's no need to be afraid. The Stone Golem may have strong destructive power and durability, but it's incredibly slow.”<br><br>Hanging onto every word of the young team leader, whose appearance rivaled that of a glossy magazine model, some of the female hunters responded almost dreamily.<br><br>“He says it's slow.”<br><br>“If Team Leader Choi Min-Woo proclaims that it is slow, then so it is.”<br><br>However, that reassurance was short-lived. The Stone Golem's craggy head pivoted in their direction.<br><br>And after a brief, chilling pause, its stony legs propelled it forward at an unexpectedly rapid pace. Its strides, each spanning nearly three meters, blurred into a rhythmic drumming.<br><br>Thud-thud-thud-thud!<br><br>“...It’s incredibly fast?”<br><br>“Damn, I should've been a damage dealer instead of a tanker.”<br><br>“Do you think a damage dealer just idles around?”<br><br>“By all means, then, wield the shield and stand in the vanguard for me.”<br><br>“Well, that's…”<br><br>The shadow of apprehension that had cloaked the new guild members began to retreat at the emergence of a crystalline voice.<br><br>“Let the breezes quicken. Haste!”<br><br>“Summon the might to fracture stone. Strength!”<br><br>“Renew the flagging spirit. Healing!”<br><br>Ahhh!<br><br>A chorus of exclamations resounded.<br><br>As gentle zephyrs danced and radiant beams of light anointed each guild member, a tangible surge of power coursed through them.<br><br>Their expressions mirrored astonishment.<br><br>'What's this? I feel completely different.'<br><br>'We have a B-rank healer, but the effect is this good?'<br><br>'Wow, she is from the Ares Guild after all.'<br><br>Facing their gaze, she, Song Song, furrowed her impeccable brow.<br><br>“What are you all doing? If you keep spacing out, do you want to hold your workshop in heaven?”<br><br>Their spirits snapped to attention after being doubly stunned — first by the outstanding buff magic that could be mistaken for A-rank, and then by her beauty.<br><br>Thud-thud-thud-thud!<br><br>Roar!<br><br>The Stone Golem, now ominously close at a mere twenty meters, brandished its massive limb.<br><br>Whoosh!<br><br>Trees, deeply rooted just moments prior, were now airborne missiles, propelled by the golem’s formidable force.<br><br>“Erect... shields!”<br><br>Clang-clang!<br><br>Frantic cries heralded the manifestation of mana-fortified tower shields, forming a protective barrier.<br><br>But could they really stop the huge tree trunk, shot with tremendous force, with just these?<br><br>Everyone braced for a severe impact when at that moment:<br><br>“Fire Wall.”<br><br>Whoosh!<br><br>A massive wall of fire erupted.<br><br>The searing intensity consumed the desiccated foliage, and the tree, despite its moisture-laden core, crumbled upon clashing with the tower shields.<br><br>“Incredible…”<br><br>“Did you witness that?”<br><br>Hovering above the marveling guild members, a voice, rich and velvety, like a narration from a luxury coffee advertisement, reverberated.<br><br>“I’ve saved you once, but there won't be a second time.”<br><br>It was strange. Beneath the veneer of the butler's cordial words and demeanor lurked a steely, unforgiving intensity reminiscent of a drill instructor from the training center.<br><br>No, it felt even more intense than that.<br><br>“Fire Wall.”<br><br>With a second chant, a new blaze surged to life.<br><br>Only this time, the fire stood behind them instead.<br><br>“Ouch, it's hot!”<br><br>“What's this?”<br><br>“Guild Master! Guild Master?”<br><br>Butler Kim, having sealed off the guild members’ retreat with a blazing barricade, wore a sly smirk.<br><br>“True growth isn't achieved by merely depending on external aid within the gates. Engage with every fiber of your being. Mages, use detection magic to find the core; tankers, protect the healers while luring aggro. Damage dealers? ... I believe there's no need for further explanation.”<br><br>Whooosh.<br><br>With a mere flick of Butler Kim's fingers, both Team Leader Choi and Song Song found themselves airborne. Suddenly left leaderless, the novice guild members teetered on the brink of chaos.<br><br>“Tanker, forward!”<br><br>Boom!<br><br>An armored titan, with a resonating war cry, anchored his massive shield firmly to the ground.<br><br>A few guild members cast wary glances at the newcomer.<br><br>Leading the charge was a D-rank middle-aged hunter, whose two-decade experience belied his seemingly novice status.<br><br>“What are you doing? Get your head in the game!”<br><br>Yet, their fear was justified. The palpable sense of mortal peril spurred them into formation, almost reflexively.<br><br>“Hold formation!”<br><br>“Secure the line!”<br><br>Clatter-clatter!<br><br>A formidable phalanx of tower shields rose, their gleaming surfaces forming a near-impenetrable barrier.<br><br>Mages and healers channeled their mana, their fingers dancing with arcane energy, while damage dealers readied their most potent onslaughts.<br><br>From behind the shield barricade, Im Hyuk-Jung shouted, his face set in fierce determination.  \[Note: The direct translation of the name here is either Lim Geok-Jeong or Lim Keok-Jeong. MethodScans, however, translated this name originally to Im Hyuk-Jun. I am keeping it consistent here.\]<br><br>“Hold on!”<br><br>Roar!<br><br>The Stone Golem, now at arm's length, lunged at the shield wall.<br><br>Kaboom!<br><br>“Huff... huff…”<br><br>“Ugh…”<br><br>Panting and groans echoed from all directions.<br><br>Amongst the aftermath, a tanker cradled a fractured arm; spent mages and healers, their mana reservoirs depleted, slumped in exhaustion; damage dealers sprawled amidst the Stone Golem’s ruins.<br><br>“Ugh, I'm gonna die.”<br><br>“Did we really defeat this Stone Golem?”<br><br>It took a whopping five hours for the raid. Considering the number of members - a party of over twenty - the process was grueling and time-consuming. But the hearts of these fledgling hunters, who just recently graduated from the training center, swelled with pride.<br><br>“I defeated an A-rank monster..."<br><br>“Later, let's all take a commemorative photo. I'm going to frame it and hang it in my living room.”<br><br>“Who in the world takes down a Stone Golem on their first raid?”<br><br>“Everyone did a great job.”<br><br>Just as everyone was reflecting on their achievement with emotion-filled eyes, a nightmare began.<br><br>Roarrrrrr!<br><br>Grrrrrrrr!<br><br>From a distance, the foreboding roars heralded the advance of more Golems. The expressions of the novice guild members rapidly transformed from exaltation to alarm.<br><br>'What are they?'<br><br>At first glance, there seemed to be more than ten of them, appearing larger and sturdier than the Stone Golems. With every turbulent movement of their massive bodies, there was a flash of light.<br><br>A panicked voice rang out.<br><br>“It's Iron! Iron Golems!”<br><br>“Ahhhhh!”<br><br>Among all of the possible golems, the appearance of the Iron Golem, which is the highest ranked of the golem species, was enough to trigger sheer terror.<br><br>“Why are they appearing here?”<br><br>“They're usually solitary. This isn't the established pattern!”<br><br>No one had ever heard or seen Golems leading a tribal life.<br><br>Yet, the relentless march of these behemoths, coupled with the ground’s tremors, underscored the grim reality before them.<br><br>Desperation set in. The new recruits called out for their last lifeline.<br><br>“Please help us! We'll all die at this rate!”<br><br>Their pleas were directed skywards, where Team Leader Choi, an earlier observer of the unfolding chaos, wore a smirk.<br><br>“We have no obligation to help.”<br><br>“...What did you say?”<br><br>Had he gone mad?<br><br>Disbelief clouded their senses, until...<br><br>Swish, slash!<br><br>A radiant crimson arc sliced through the air, cleaving an advancing Iron Golem from crown to base.<br><br>Boom!<br><br>Emerging between the tumbling halves, a silhouette stood tall.<br><br>“Taking on herds is awesome!”<br><br>The young man, Jin Tae-Kyung, grinned.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-269.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-271.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

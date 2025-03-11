@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 400 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 400</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 400</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: April 27, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>From the moment he first crossed swords with Jin Tae-Kyung, the Black Knight instinctively knew.</p><p>'He's strong.'</p><p>The adversary before him was undoubtedly formidable. Even with every ounce of his strength, victory remained uncertain; he was facing someone of equal or superior might.</p><p>As they matched each blow for blow, his realization deepened.</p><p>'This is going to be a tough fight.'</p><p>Yet, neither fear nor retreat took hold within the Black Knight.</p><p>He served his Monarch with unwavering loyalty, driven by a mission to execute his sovereign's will.</p><p>They were titans clashing, where even a minor edge could pivot the outcome of battle.</p><p>'If I don't give up, an opportunity will come.'</p><p>The Black Knight clung to this belief.</p><p>It was an adage he’d recited since childhood, one that had carried him through countless conflicts and forged his strength.</p><p>'...I did?'</p><p>Confusion clouded his thoughts; his movements became erratic.</p><p>His adversary was too skilled to overlook such a lapse.</p><p>Swoosh, scrape!</p><p>The spear's blade tore through decaying flesh.</p><p>Bang!</p><p>A burst of blue flame engulfed his chest.</p><p>Amidst the scorching blaze, the Black Knight registered a feeling: pain.</p><p>'What is this...?'</p><p>It wasn’t the pain that baffled him, but the odd familiarity of this alien sensation.</p><p>'These memories... what on earth are they?'</p><p>His chest pulsed with pain, his head throbbed.</p><p>With each relentless strike that forced him back, flashes of an unknown person’s life raced before him.</p><p>'This can't be!'</p><p>'The Mana Adaptability score is incredibly high. It's the highest ever recorded!'</p><p>'We need to enroll him in the Chinese Training Program immediately!'</p><p>Figures clad in pristine white clothes buzzed with enthusiasm, while a middle-aged man in a stern, dark uniform observed.</p><p>'Chinese Training Program? Are you suggesting we raise this child to be a Hunter?'</p><p>'Of course, it must be so. This child is only thirteen years old and already has a Mana Adaptability score comparable to Fei Chen. He has enough potential to become an S-rank Hunter, or even the best in our nation!'</p><p>'I refuse.'</p><p>'W-what?'</p><p>'No, Lieutenant General Wei. What do you mean? This child is...'</p><p>'Enough.'</p><p>The middle-aged man’s voice was measured and quiet.</p><p>'He's my only nephew. What I promised my sister was to make him happy, not to turn him into a Hunter and put him in danger.'</p><p>'Awakened Hunter is a noble profession. If this child becomes an S-rank Hunter, it will be a blessing for everyone!'</p><p>'I know how noble their work is. But that's also how my brother-in-law...'</p><p>He paused, shaking his head.</p><p>'Whatever you say, my decision won't change. If there weren't orders from above, he wouldn't have even been tested. We'll leave now, so please handle things on your own.'</p><p>'Lieutenant General Wei, Lieutenant General Wei!'</p><p>Ignoring the shouts behind him, the middle-aged man walked over with a strained smile and reached out his hand.</p><p>'You've waited a long time, right? Let's go now.'</p><p>The Black Knight, or rather, the owner of the memories, took the middle-aged man’s hand.</p><p>A tiny, pale hand.</p><p>Soon, a youthful voice broke the silence.</p><p>'Uncle.'</p><p>'Hmm?'</p><p>'I want to become a Hunter.'</p><p>In that moment, a tumult of emotions played across the middle-aged man’s face.</p><p>He bit his lip, watching silently for a long moment before exhaling a worried sigh as faces alight with optimism approached from behind.</p><p>'The Chinese Training Program is a project crafted with great care. It is thoroughly safe and highly effective. Wu Hei-Xing of the same age is also doing well.'</p><p>'If the child changes his mind, we will stop at any time.'</p><p>The most senior among them laid a hand on the middle-aged man’s shoulder and said,</p><p>'Please trust us and leave him in our care, Lieutenant General Wei Feng-Hu.'</p><p>Wei Feng-Hu, Wei Feng-Hu...</p><p>The name resounded endlessly within the Black Knight’s mind, a name deeply cherished and profoundly missed.</p><p>Bang!</p><p>Was the pain in his chest from the blow he had received, or was it from something more profound?</p><p>As the Black Knight staggered, another memory surfaced before his eyes.</p><p>'Do you think you're the best because the adults praise you?'</p><p>A boy clad in a black suit, bow tie, and polished shoes stared at him with piercing eyes.</p><p>'Don't be mistaken. I'm the best. You're next in line!'</p><p>The Black Knight's vision tilted, and then a naive voice flowed out.</p><p>'Alright. Let's go with that.'</p><p>'What?'</p><p>'I'm fine with being second. Third is okay too, and I don't mind even being last.'</p><p>The boy with the sharp expression gaped.</p><p>'Are you stupid? Do you want to be worse than Jang Wei, who's currently the worst in the training camp?' \[Note: this was one of the Hunters we met in Chapter 391.\]</p><p>'But Jang Wei is kind and helps others too, right? He'll make a great Hunter.'</p><p>'Y-you're mocking me, aren't you?'</p><p>'No, not really. I just do whatever you like... Ouch!'</p><p>Thud!</p><p>Within moments, he had overpowered the boy who had lunged at him unexpectedly. The boy squirmed under his hold, yelling,</p><p>'I'm the best! Wu Hei-Xing is the best at everything!'</p><p>As one memory faded, another rose. It was as if someone was calmly throwing stones into a tranquil pond.</p><p>The Black Knight's mind was continually disturbed by these unknown recollections.</p><p>'Top trainee, ..., step forward.'</p><p>A handful of individuals occupied the expansive area.</p><p>Somehow, he found himself moving automatically at the call, which he barely registered.</p><p>Step. Step.</p><p>His stride was steady and purposeful, his field-of-view more elevated than before.</p><p>Now a young man, he approached an elder in uniform who affixed a medal to his chest.</p><p>A familiar face from his earliest memories whispered,</p><p>'Will you not regret this?'</p><p>'I have no regrets. I haven't before, and I won't in the future.'</p><p>'Most people will never know of your existence. Perhaps you might have to live like a shadow all your life.'</p><p>'I learned that another name for a Hunter is a guardian. Just because I'm not seen doesn't mean my honor disappears.'</p><p>'There is something I've never said to you before.'</p><p>Strength infused the middle-aged man's grip as he clasped his shoulder.</p><p>'I am proud of you. Thank you for growing up so well.'</p><p>'Thank you. Uncle. No... Father.'</p><p>His smile was radiant, and moisture welled in the corners of his eyes.</p><p>As a single tear trailed down his lined cheek to the podium, another memory emerged.</p><p>'Is anybody there?'</p><p>On a balmy spring day, he found himself at a quaint flower shop. Peering inside, surrounded by a riot of colors, she came toward him.</p><p>'Welcome!'</p><p>Her step was light, her eyes keen as a cat's.</p><p>Her voice rang with vivacity and beauty...</p><p>Now a man, far removed from his boyhood, he felt his heart skip.</p><p>'Sir?'</p><p>'No, I, that is... I've, um, come to buy flowers.'</p><p>'For your parents? Or for a lover?'</p><p>'F-for my parents. Well, not exactly parents, but the uncle who raised me...'</p><p>'Hmm. I see. But you speak so formally. Are you by any chance a soldier?'</p><p>'No, not exactly...'</p><p>It was an odd memory. His speech stumbled, his vision gradually fading to white.</p><p>When he came to, he was clutching a bouquet of vibrant flowers, standing bewildered in a hospital room.</p><p>'You. I told you it's just a mild pneumonia. There was no need to come... But what is that?'</p><p>At the question from the middle-aged man, Wei Feng-Hu, his response was dreamlike.</p><p>'It's flowers.'</p><p>'Is that supposed to be a get-well gift?'</p><p>'Yes.'</p><p>'So you're telling me that you brought chrysanthemums as my get-well gift?' \[Note: flower girl done did Lei Fei dirty. While chrysanthemums do not directly symbolize death in many Asian cultures, white chrysanthemums are often associated with praying and funerals in Chinese, Japanese, and Korean cultures.\]</p><p>'Uh... yes?'</p><p>'Such an ungrateful bastard! Hey, you bastard!'</p><p>Swish! Swack!</p><p>Laughter escaped him as he was struck with the bouquet, and he couldn’t contain a chuckle at his own blunder, his thoughts drifting back to the girl as lovely as the chrysanthemums.</p><p>After that, his visits to the flower shop became a daily ritual.</p><p>'Ah, hello!'</p><p>'Welcome... Oh, you've come again?'</p><p>'Haha.'</p><p>'It's the chrysanthemums, right? The pure white ones.'</p><p>Spring, summer, autumn, winter.</p><p>Over the course of a year, their dynamic had evolved beyond merely that of a shopkeeper and customer.</p><p>'I have something to say.'</p><p>'What is it?'</p><p>'Will you marry me?'</p><p>'…Ah.'</p><p>'I'll make you happy.'</p><p>This memory lingered the longest of any thus far.</p><p>After a silence that seemed to stretch for decades, she finally responded.</p><p>'I have something to say too.'</p><p>'No, first you should answer…'</p><p>'I'm pregnant.'</p><p>'What?'</p><p>Thump, thump thump. Thump thump thump!</p><p>His heart raced uncontrollably, and the Black Knight writhed in agony.</p><p>'Ah, aah, aaaah!'</p><p>His head felt as though it was bursting, as if his very being was being compressed.</p><p>Amid this unimaginable pain, another memory emerged.</p><p>'Wah, waah waah!'</p><p>'Is this child...'</p><p>'Congratulations on becoming a father, darling.'</p><p>The birth of a new life. And then growth.</p><p>'Dada. Dadada!'</p><p>'Darling. Darling! Did you hear that? He's already calling for dad, could our child be a genius?'</p><p>'Could you change the diaper?'</p><p>'Just wait a moment. I want to hear it again.'</p><p>'Dada, mama!'</p><p>'Hahaha! Yes! We are your dad and mom!'</p><p>The day the baby first managed to roll over, crawl on all fours, and then walk...</p><p>The man felt as though he possessed the whole world.</p><p>Yet, these idyllic days soon morphed into a nightmare.</p><p>'The magical power levels have surged in the Gaoping District!'</p><p>'Gaoping District? Keep trying to contact them and prepare the 2nd Regiment for deployment just in case.'</p><p>'Sir, the communications have been cut off.'</p><p>'What?'</p><p>Disaster struck without forewarning.</p><p>The man quickly rallied his troops and moved toward the epicenter of chaos, facing a scene beyond belief.</p><p>'Kyaooooo!'</p><p>'Everyone, run... Cough!'</p><p>Crash! Boom!</p><p>Flames engulfed the once-serene city sky, as hordes of monsters ravaged the populace below.</p><p>Amidst cries of agony and death, the man unsheathed his sword.</p><p>'Public Security Force!'</p><p>Tssss!</p><p>The aura blade encircling his weapon shimmered brilliantly.</p><p>At his command, roughly a thousand Hunters echoed back with a resounding roar.</p><p>They stood as humanity’s shield and protectors, unable to retreat.</p><p>'Wipe them all out!'</p><p>'Long live the People's Republic of China!'</p><p>Adorned in armor bearing the red five-starred flag, they surged forward like a tide, spreading not foam but blood.</p><p>'Be annihilated by the flame of terror, Fire Rain.'</p><p>Keening.</p><p>Beneath a dark, smoldering sky, amidst a downpour of fire, the man's thoughts turned to his beloved wife and five-year-old daughter.</p><p>Then, he faced 'that creature.'</p><p>'If you had run, you might have lived.'</p><p>'I will kill you.'</p><p>'You are noble. What is your name, human?'</p><p>'I am...'</p><p>\* \* \*</p><p>"...Lei Fei?"</p><p>At the sound of Jin Tae-Kyung's voice piercing his ears, the Black Knight’s body tensed.</p><p>The barrier that had contained his past crumbled, and his life began to reassemble itself.</p><p>Memories of his thirty-six years as a human flooded his vision.</p><p>- I-I am...</p><p>What am I, exactly?</p><p>Amidst the turmoil and agony in the Black Knight’s mind, a commanding roar echoed.</p><p>- You are my most faithful servant and the commander-in-chief of my legion. As your Monarch commands, fulfill your duty until you turn to ash!</p><p>- ...!</p><p>It was an irresistible magical command.</p><p>The dim red light in his eyes ignited with renewed intensity.</p><p>Tremendous magical power surged forth from the body of Lei Fei, or rather, the Black Knight, who had fallen from sustaining strikes.</p><p>Kwaaaa!<br></p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-399.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-401.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 206 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 206</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 206</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: Coldbutteredtoast</span>
+                            <span class="published-date">Published: October 22, 2022</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>Ding!<br>-You have completed [Logout].<br><br>Tae-Kyung knew that he had returned without even opening his eyes. Everything was different. Instead of a furry bed with a hard pillow, he felt the soft cushions of a luxurious sofa. Somewhere nearby, water was bubbling fiercely and a familiar aroma that set off fireworks in his brain.<br><br>"This...!"<br><br>It smelt like ramen. As soon as his mind processed the thought, his stomach, which had spent more than a month in Murim, growled loudly in protest.<br><br>His eyes flew open and a cry came from deep within his soul. "Fuck me, I'm famished!"<br><br>A familiar figure popped his head out of the brightly lit kitchen, rubbing steamed up glasses. Thick hair tied back from his face, a sparse beard, smiling broadly. Jin-Ho hyung.<br><br>"Did my beloved brother Tae-Kyung sleep well?"<br><br>The words were as disgusting as usual, but Tae-Kyung could only think of the delicious smells drifting across the living room.<br><br>"Ramen! Give me ramen!"<br><br>Mock surprise. "Oh my, why are you acting like this?"<br><br>"Kimchi, too!"<br><br>"You've been sleeping like a little baby. You didn't even wake when I shook you!"<br><br>"And at least five bowls of cold rice!"<br><br>"Haha, OK, OK, it's coming."<br><br>Tae-Kyung hurried to the table and was soon sitting before a set of steaming bowls. He wafted the soup aroma into his nose and sighed in anticipation.<br><br>"Careful with the noodles," said Jin-Ho. "There's a soft-boiled egg inside."<br><br>[Ahhh!]<br><br>Exactly as he had said, when Tae-Kyung gently rolled the noodles to one side, he looked upon the wondrous, white, geometric perfection of an egg. Meanwhile, Jin-Ho hyung placed two small plates alongside the bowls.<br><br>"Kimchi and pickled radish," he said. "There's also white rice that was prepared an hour ago. If you eat all the noodles, take a few sips of the broth and then drop in some cold rice..." He blew a chef's kiss in the air.<br><br>"Are... are you a god?"<br><br>Sliding one of his textbooks under the pot to protect the table, Jin-Ho replied solemnly, "Genesis 1:1, the word of Song Jin-Ho. Don't let it cool or the noodles will blow."<br><br>All of his life, Tae-Kyung had lived as a heathen, but at this moment, he found belief. Looking up at his oldest friend, he lifted his chopsticks. "Amen!"<br><br>With a small shake of his head in admonishment, Jin-Ho said, "Ramen!"<br><br>Laughing, Tae-Kyung hunched down over the pot and tucked in. Head close to the broth to shorten the distance to the mouth, quick movements for optimal bowl-to-face transfer.<br><br>The noodles were plump and the soup spicy. When the soft-boiled egg burst, it was like a symphony of ecstasy and regret. A teardrop fell, glistened as it caught the light.<br><br>"Good! It's so fucking good!"<br><br>And the seasoning? Over the last month, every time he got drunk he had craved those strong, artificial tastes that could only be found in modern cuisine. He was in rapture. The tastes and textures and spices were everything that he'd wanted and Tae-Kyung filled himself to bursting until, at last, he woke from the dream. The table in front of him was full of empty pots and bowls, with only a few grains of rice remaining in the pot.<br><br>"Good job, you crazy dude," said Jin-Ho, rubbing his belly and then burping loudly for effect. "That was some serious eating. I've never seen someone eat five bowls of rice and seven bags of ramen by themselves!"<br><br>Tae-Kyung grabbed his friend by the shoulder and said, in earnest, "I need cola!"<br><br>"You got it."<br><br>Only when he had finished three 1.5 litre bottles in a row, did Tae-Kyung feel his sanity return. "Ahhh, phew, that was great! I'm stuffed!"<br><br>"That's weird. Then, why am I so hungry?" Jin-Ho grinned and picked up the rice pot, flopping on the sofa. "Hey, this is really nice, bro. So comfy."<br><br>There had never been space for a sofa in their micro-sized studio apartments in the gosiwon. There wouldn't have been a kitchen: instead, Jin-Ho would have needed to make the ramen on a burner stove in the common room.<br><br>"You've done a good job of moving in." Jin-Ho scraped the rice pot with a spoon.<br><br>"Yeah, I really like it here."<br><br>"Me, too, man. Hey, are you going to catch up with your mum and Ha-Yeon later?"<br><br>[Hang on?] Realisation began to dawn. Tae-Kyung looked around, confused. The space and furniture were incomparable to the meagre existence of a gosiwon. But one thing had stayed the same, and that thing was sitting nearby, dejectedly scraping at a pot.<br><br>"I'm still hungry, bro," said Jin-Ho. "Shall I stick some more noodles on?"<br><br>"What the hell are you doing here?" The shout must have woken most of Ilsan. "Wait! Were you in the capsule?"<br><br>Dropping the pot, Jin-Ho hyung fell to his knees and lowered his gaze to the ground. "I was holding my breath..."<br><br>"No wonder the removal guys nearly died..." Tae-Kyung wouldn't have realised it himself. Compared to when he first found the capsule, he was incomparably stronger now. And no matter how good the new alarm system, it was helpless when turned off. "What about the house you were moving to? Didn't you say you were going to crash with an old buddy?"<br><br>"Ah, yeah, Kim Jong-Soo. You remember him? Guy I went to uni with."<br><br>"Yeah, the car dealer guy? You used to live together?"<br><br>"That's the one. Well, there was a bit of a problem with the deposit. Five hundred bucks... So we're not really friends anymore."<br><br>Tae-Kyung rubbed his greasy forehead and groaned. "So if you're broke, what were you planning to do?"<br><br>"Just... crash here for a couple of months? Only until I got back on my feet."<br><br>"You should have talked to me."<br><br>"I wanted to, but I just... I didn't know how. I'm supposed to be your hyung; how can I ask for help?"<br><br>"Ah shit. That bad?"<br><br>Jin-Ho looked up. His eyes were moist. "Tae-Kyung..."<br><br>"Jin-Ho... I really should kick your ass. Breaking into my house, tsk."<br><br>"You should," Jin-Ho sighed and dropped his head again.<br><br>[This is crazy. We've been friends for so long, why didn't he ask?] They had known one another for so long that Jin-Ho was like his brother. They'd talked about moving out of the gosiwon and getting a place. [I guess there's time. I was only going to tell Ha-Yeon and mum after the SATs, but...] Tae-Kyung looked around at the family home that he'd finally recovered. The few remaining traces of his father were so faint and so precious.<br><br>"You can't stay here, bro," he said, at last. "I hope you understand."<br><br>"Of course! It's your family home. Don't say any more; this is all my fault. I haven't got much to pack, so when you head to work I'll come with you."<br><br>"Nah, Ilsan to Bucheon? It's not the same direction."<br><br>Jin-Ho paused and then his lips tightened. "I got it, dude. No worries."<br><br>"I think I have the address here." Tae-Kyung scanned through his phone messages. "Hang on. Yeah, here you go. Team Leader Choi. I'll forward the address to you, but you'll have to find the place yourself."<br><br>"Sure, sure... wait, what?"<br><br>"The guild gave me an apartment. I said I didn't need it, because I'm here, but it's still mine. This place needs to be remodelled before my folks move in, so I'll stay with you for a while and commute in to work, then afterwards you can stay there when I move back here."<br><br>"Tae... Tae-Kyung."<br><br>Tae-Kyung smiled at the friend who had always been there for him, a constant during his most difficult times. "Stick some more ramen on, dude."<br><br>***<br><br>The humid heat of September was over, but driving still fucking sucked. Cursing to himself, the taxi driver turned up the radio and edged forward through the congestion.<br><br>'...have issued immediate evacuation orders in Uldae-ri, Jangheung-myeon and Yangju City, due to the appearance of F-class gates. The situation is under control, with military personnel and hunters suppressing all sightings. At this time, official casualties stand at six, however civilians are urged to...'<br><br>"It's so busy even the damned monsters will be sick." The taxi driver looked across at his passenger. "You a hunter, right?"<br><br>Even though he wore sweat pants and flip flops, the guy was big and built like a truck. He nodded. "C-rank."<br><br>"I knew it," laughed the driver. "You can tell."<br><br>The difference was like wolves and sheep. Hunters exuded an aura of power; hunters were predators.<br><br>"With that case and those muscles, you were either going to be a rock star or a hunter, am I right? I see people every day. You can just tell." Unfazed by the silence, he continued, "Hey, can I ask you something? Is it me or are there more gates at the moment? What the fuck's going on with that? You never know if one's going to open outside your house when you wake up in the morning. What a shitty way to start the day... And it messes with the price of properties, too, you know?"<br><br>"Uh huh."<br><br>Gate creation was a poorly understood phenomenon and the inability to accurately predict them made protecting the population astronomically expensive.<br><br>As the taxi accelerated onto the highway, the radio continued, '...The F-class gate has been stabilised, with a total of 58 goblins cleared and official deaths risi...'<br><br>"Bored of this crap," said the driver, but his hands movements were nervous as he switched it off.<br><br>The passenger sighed and stared out of the window, watching the city speed by.<br><br>All of a sudden, as the taxi driver fiddled with the A/C, the young man held up a hand. "Turn it off a second."<br><br>The driver frowned and adjusted the dial, then sat up straight. He could hear it, too: a claxon, getting closer. Rounding the curve, the road stretched towards toll barriers, with vehicles stretching back up the highway. Around them, cars were already starting to brake.<br><br>"The fuck...?" Looking up, he saw a black dot spinning through the air towards them. Crushed bonnet, wrecked chassis, its shadow fell across them. "A car?"<br><br>"Damn it," said the passenger. "Why is that here?"</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-205.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-207.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 281 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 281</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 281</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: November 10, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>The limousine sped smoothly down the road.<br><br>From the limo's built-in refrigerator, Park Ji-Hwang retrieved a bottle of water and offered it to the man opposite him.<br><br>"Would you like some?"<br><br>"In this situation? And where did you learn to offer other people's things as if they're yours?"<br><br>"Well, then it's alright to drink half. I do have that much stake in the current Myeongdong Guild."<br><br>"..."<br><br>The middle-aged man, Myeongdong Guild leader Park Tae-Seop, stared intently at Park Ji-Hwang as he sipped from the water bottle.<br><br>"You're calm."<br><br>After drinking precisely half, Park Ji-Hwang reclined into the sumptuous leather.<br><br>"Is there a reason I should be worried?"<br><br>"You're not worried about this?"<br><br>"It's just a minor hiccup."<br><br>"A sandcastle can crumble with just a drop of water."<br><br>"That's because it's a sandcastle."<br><br>"And Myeongdong Guild is different?"<br><br>"We have five hundred affiliated Hunters. Among them, there are twenty A-ranked Hunters. With this, it's more of an iron tower than a sandcastle. And..."<br><br>A playful smirk played at the corner of Ji-Hwang's lips.<br><br>"Never mind the Myeongdong Guild. We have 'that person' on our side, don't we?"<br><br>"...That's true."<br><br>Reluctantly nodding, Park Tae-Seop's expression was one of distaste. Seeing this, Park Ji-Hwang asked,<br><br>"What is it? What's making you so restless?"<br><br>After a brief silence, Park Tae-Seop spoke.<br><br>"A feeling."<br><br>"Pardon?"<br><br>"When you reach my age, you develop a certain intuition."<br><br>Ha.<br><br>Park Ji-Hwang could hardly contain his inner laughter. He wondered what Park Tae-Seop was getting at, concluding it was just a whim of an old man past his prime.<br><br>'Just a feeling? Is he serious?'<br><br>His skepticism was palpable. And Park Tae-Seop, seasoned by time, was certainly not oblivious to it.<br><br>"You might think it's nonsense. I understand. It's a realm that bright-eyed boys like you can't comprehend."<br><br>"Ah, I'm sorry if you feel that way."<br><br>"That insincere tone of yours is something only a young chick would use."<br><br>"From my perspective, I truly can't understand. What's weighing so heavily on your mind?"<br><br>After a weighted pause, a name whispered into the quiet.<br><br>"Jin Tae-Kyung."<br><br>Uttered like a heavy exhale, it was that very name that had haunted him since Team 11's line went dark.<br><br>Initially, he had brushed it off as mere unease over potential complications. But it was more profound.<br><br>His intuition, honed through the Great Cataclysm, knew the truth.<br><br>"That man is a siege weapon. He's capable of creating a fissure even in an iron tower, not to mention a sandcastle."<br><br>Without another word, Park Tae-Seop claimed the water bottle Park Ji-Hwang discarded and drank thirstily.<br><br>Speaking had ignited a fire in his throat.<br><br>Observing this, Park Ji-Hwang's expression grew skeptical.<br><br>'Has the old man lost his mind...?'<br><br>He was aware that managing the situation had its hitches. Particularly concerning the Black Hunters, Team 11, unforeseen issues had arisen.<br><br>Yet, even so, Park Tae-Seop's current agitation seemed exaggerated.<br><br>Even though Park Ji-Hwang deeply trusted 'that person', it was natural for him to feel uncomfortable now.<br><br>"I didn't expect you to rate Jin Tae-Kyung that highly."<br><br>"He's proven himself."<br><br>"Jin Tae-Kyung only recently came into prominence."<br><br>"In that short time, he's shown a lot."<br><br>"Shown?"<br><br>Park Ji-Hwang's words carried a hint of derision.<br><br>"Won Myung-Hoon was trash. Among the elites, he was the lowest of the low. His name only rose once during the Korean Wave. You know that too, Guild Master." \[Note: the Korean Wave refers to the global spread of South Korean culture, including K-pop, K-dramas, films, and other things, which started in the 1990s.\]<br><br>"I've heard he was not only foolish and greedy but also all bark and no bite."<br><br>"And the named monster? While it's called a named monster, that black wyvern was the weakest among the named monsters that appeared in the last 20 years. The magic stone from its corpse wasn't much different from an A-ranked monster's."<br><br>"So, could you have taken down that weak named monster by yourself?"<br><br>"I don't see why not."<br><br>Park Ji-Hwang's tone dripped with self-assurance.<br><br>He took great pride in his prowess.<br><br>Because of his innate talent, he enjoyed the honor of being 'that person's' choice. At such a young age, younger than most, he could sit across from the guild master of Myeongdong and meet his gaze as an equal.<br><br>However, the next question that followed made him hesitate.<br><br>"If you were to fight Jin Tae-Kyung, are you confident of victory against him?"<br><br>"...Of course."<br><br>His affirmation came with a fraction's hesitation. Park Tae-Seop, catching Park Ji-Hwang's subtle lip-twitch, remarked,<br><br>"That hesitation just now seems to speak volumes about what kind of person Jin Tae-Kyung is."<br><br>Park Ji-Hwang's response was icy.<br><br>"I was just reminiscing about the past."<br><br>"Ah, was he your friend?"<br><br>"I don't want to discuss that. What I want to tell you is, this situation isn't as serious as you might think."<br><br>"We can't even determine whether Team 11 is alive or dead, and a person currently at the height of national attention has invaded the Myeongdong Guild headquarters, and you say it's not serious?"<br><br>"He's a fool. That's probably why, unable to control his temper and without any fear, he dared to intrude into the Myeongdong Guild headquarters."<br><br>Merely a short while ago, Park Ji-Hwang, engaged in a call with the leader of Team One, was caught off guard by Jin Tae-Kyung's voice.<br><br>Concurrently, a surge of relief washed over him.<br><br>'This will be easier than expected.'<br><br>The Myeongdong Guild has over five hundred Hunters. Even if half of them were out on raids, an overwhelming number remained at the headquarters.<br><br>This included the guild's elite, Team One.<br><br>"Jin Tae-Kyung has entered the tiger's den. All we need to do is hold him down and clean things up."<br><br>He harbored no concerns regarding media prying either.<br><br>For someone like him or, more aptly, for 'that person', neutralizing journalists was child's play.<br><br>"We'll clean this up by today."<br><br>Park Tae-Seop murmured, his face showing his years,<br><br>"It doesn't look good. Maybe it's age, but I'm beginning to feel drained."<br><br>"It's just a passing breeze. Someone who withstood the typhoon of the Great Cataclysm should not be troubled by mere shaky legs."<br><br>Park Tae-Seop, recognizing the words filled more with criticism than encouragement, kept his mouth shut. Soon after, a bland cellphone chime echoed.<br><br>"It's not my phone."<br><br>"It's mine."<br><br>"Who is it?"<br><br>"It's Manager Kim, in charge of my security. I had asked him to check on the status of Team 11. It seems he just arrived."<br><br>"That's good. First, instruct him to erase all traces related to Team 11."<br><br>"Are you ordering me now?"<br><br>With a deep frown, Park Tae-Seop picked up the ringing phone.<br><br>"It's me. What happened? Huh? Ah, I see."<br><br>His facial muscles went through a tumult of tension and relaxation, eyes darting as if wrestling with a storm of thoughts.<br><br>With an odd mix of dread and disbelief, Park Tae-Seop handed the phone towards Park Ji-Hwang.<br><br>"What happened?"<br><br>"Take this."<br><br>Park Tae-Seop handed over his phone to him. Veins seemed to throb visibly on his forehead.<br><br>"What?"<br><br>"Hurry up!"<br><br>Confused, Park Ji-Hwang snatched the phone and pressed it against his ear.<br><br>A voice, velvety yet with an undercurrent of steel, resonated.<br><br>\- Hunter Park Ji-Hwang of Myeongdong Guild's Team One?<br><br>Park Ji-Hwang realized the moment he heard it.<br><br>Recognition struck him instantly. This wasn’t Manager Kim, a familiar acquaintance.<br><br>The voice was young and sounded polite yet emanated an unapproachable aura.<br><br>"It's me. Who are you?"<br><br>He had a bad feeling about this.<br><br>To Park Ji-Hwang's question, laden with unease, the velvet voice replied,<br><br>\- My name is Choi Min-Woo.<br><br>"Who?"<br><br>\- Ah, I'm with the Peace Guild. I hold the position of team leader.<br><br>"...Peace Guild?"<br><br>\- Yes.<br><br>Damn it. A chill ran down Park Ji-Hwang's spine.<br><br>With just those few exchanges, he pieced it together. He'd been ensnared by the Peace Guild.<br><br>It was evident what had become of the phone's original holder, Manager Kim – captured or forced to watch his own device being commandeered.<br><br>'These damn fools of the Myeongdong Guild.'<br><br>Mr. Choi's tone, coming from the other end, dripped with the confidence of someone holding all the cards.<br><br>\- I called because I wanted to have a conversation with you.<br><br>"That is, I mean..."<br><br>Interrupting Park Ji-Hwang's frantic thoughts, a vibration pulsed against his chest.<br><br>It wasn't from Park Tae-Seop's phone, which he was currently holding, but from his own.<br><br>\- Hunter Park Ji-Hwang?<br><br>"Just a moment. Just one moment.”<br><br>Swiftly, with his unoccupied hand, Park Ji-Hwang retrieved his own phone from his suit's inner pocket.<br><br>A notification lit up the screen:<br><br>\[Team One Leader\]<br><br>So it's done.<br><br>A wave of relief washed over Park Ji-Hwang's features. Surely this meant that Jin Tae-Kyung, who dared to infiltrate the heart of the Myeongdong Guild, had been captured.<br><br>The tilted scales seemed to find equilibrium.<br><br>But then...<br><br>"...Huh?"<br><br>Park Ji-Hwang's momentary solace evaporated.<br><br>Instead of an update from Team One Leader, he was met with an image.<br><br>'What is this?'<br><br>Familiar faces.<br><br>A young man in the photo, smiling with a face splattered with blood droplets. And a middle-aged man, clinging to him with glazed, blue-ish eyes.<br><br>'Is that... Jin Tae-Kyung and Team Leader One?'<br><br>Behind them, an unmistakable background presented itself.<br><br>The plaque declaring 'Hunter Park Ji-Hwang of Myeongdong Guild Team One' made it evident where they stood.<br><br>Another revelation hit.<br><br>'Don't tell me... no one could stop him? Just Jin Tae-Kyung alone?'<br><br>A truth too daunting to accept.<br><br>Doubt clouded Park Ji-Hwang's eyes, and in that moment of vulnerability...<br><br>Vvv vvv.<br><br>With the vibration, a new message arrived. It was short, but powerful.<br><br>In just five words, it shattered Park Ji-Hwang's mental state.<br><br>\[Sender: Team One Leader\]<br><br>Bring Melona when you come. \[Note: Melona is a name brand of fruit-flavored ice cream in South Korea. It seems like MC is inferring that he has worked up an appetite by defeating Park Ji-Hwang's fellow guild members.\]<br><br>“Damn it!"<br><br>With a visceral squeeze, the phone in Park Ji-Hwang's grasp crumbled like a discarded soda can.<br><br>Observing this, Myeongdong Guild Master, Park Tae-Seop, murmured,<br><br>“You're screwed.”<br><br>\* \* \*<br><br>\[We have captured the personnel dispatched from Myeongdong Guild.\]<br><br>That was the notification from Team Leader Choi.<br><br>Earlier, following our raid on the Black Hunters' concealed base, we had divided into two teams.<br><br>One group remained behind, focused on collecting irrefutable proof. The other consisted solely of me, executing independent maneuvers.<br><br>Team Leader Choi's logic was clear: we needed tangible evidence or a witness to pin them down.<br><br>'He's right.'<br><br>Given their meticulous operation, the Black Hunters, Im Young-Jun included, had adeptly concealed their identities. Any ties to the Myeongdong Guild had been expertly severed.<br><br>Team Leader Choi had zeroed in on this precise detail.<br><br>'Always methodical.'<br><br>Reflecting upon it, his strategy was consistently sound.<br><br>While he did have the guidance of Butler Kim, an adept mage and sagacious advisor, it was undeniable that such traits were innately his.<br><br>'With this, we have substantial leverage.'<br><br>Beyond the captured Black Hunters, we had a regular staff from the Myeongdong Guild in our grasp.<br><br>This would certainly make for a formidable shield.<br><br>'And a weapon, if needed.’<br><br>He dispatched the earlier snapped photograph with a note of gratitude.<br><br>The device's premium quality ensured even spontaneous shots were pristine.<br><br>"Maybe I should upgrade my phone.”<br><br>As he mumbled to himself, someone flinched. It was the security team Hunter hired as a dedicated cameraman for the day.<br><br>Of course, there would be no compensation for him.<br><br>"Is there a problem?"<br><br>"No, it's nothing!"<br><br>"Make yourself comfortable. Don’t stand. Take a seat on the sofa."<br><br>"I’m comfortable as is!"<br><br>"You look uncomfortable though."<br><br>"Everything's fine — argh!"<br><br>Is it just his heightened emotions? His exclamation sounds like a blend of frustration and pain.<br><br>Considering he's just a guard from the security team, it's not surprising. After all, he barely had the nerve to even glance at the fallen elite members of Team One.<br><br>'The ones who came later were the same.'<br><br>The Myeongdong Guild Hunters who arrived post-carnage couldn't muster the courage to come near, their faces etched with shock at the devastation.<br><br>While many were undoubtedly loyal and committed, they simply lacked the prowess.<br><br>Those brave enough to confront me were swiftly neutralized.<br><br>Once about fifty met that fate, none dared to venture closer, turning Park Ji-Hwang's office into a no-go zone.<br><br>I settled into his chair, deep in thought.<br><br>'He must be rushing here like a madman by now.'<br><br>Just thinking about him made my heart go cold.<br><br>An old middle school friend I had bumped into on the streets after a decade.<br><br>Where did the façade end and the real Park Ji-Hwang begin?<br><br>'Come quickly, before I get angrier.'<br><br>Crack.<br><br>The chair's armrest succumbed to my tightening grip.<br><br>"He's arrived!"<br><br>"The Guild Master!"<br><br>Whispers erupted outside the office.<br><br>Simultaneously, I sensed the commanding aura of two potent forces making their way without any second thoughts.<br><br>'Finally.'<br><br>And then, with a thunderous noise, the doors were blown apart.<br><br>Boom!</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-280.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-282.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

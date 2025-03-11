@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 351 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 351</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 351</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: February 19, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>Anticipation hung heavy in the air, each moment stretching longer than the last.<br><br>In another life, as just another twenty-something-year-old navigating the 21st century in South Korea, this ordeal might have crushed me.<br><br>Imagine surviving ten days in a bleak, pitch-black cell, devoid of smartphones or Wi-Fi.<br><br>But, I had something that ordinary people in their twenties did not have.<br><br>Martial arts.<br><br>Ding.<br><br>\- \[Qi Cultivation\] has been successfully completed!<br><br>\- \[Qi Amount\] has slightly increased!<br><br>"Sigh."<br><br>I drew a slow, deep breath, channeling the energy within.<br><br>After the Qi cultivation was completed, Cheong Pung, who had been previously snoring, lazily opened his eyes.<br><br>"Ah, are you done?"<br><br>"Sigh."<br><br>"Savior?"<br><br>"Sigh."<br><br>"Savior, are you in pain?"<br><br>"......"<br><br>His incessant interruptions were becoming a nuisance.<br><br>Knowing he'd persist without an answer, I gave in, albeit begrudgingly.<br><br>"Don't talk."<br><br>"Why?"<br><br>"It wastes energy."<br><br>It's not for no reason that gym buffs constantly sing the song of muscle loss.<br><br>Qi cultivation's conclusion doesn't mark the end. It's crucial to also accumulate energy, bask in the afterglow, and meditate. \[Note: I think the direct analogy here is that for building muscle, it's not just working at the gym, but also the resting is just as important. So just like that, if Qi cultivation is the exercise, then meditation is the resting part that the body needs in order to reap the benefits.\]<br><br>"Ah, sorry."<br><br>"Why would you disturb me during this time if you know that you shouldn't?"<br><br>Scratching his head, Cheong Pung offered a sheepish reply.<br><br>"I didn't know there was such a thing......"<br><br>"Huh? Then what have you been doing all this time?"<br><br>"I just get up and go out to have fun right after I finish."<br><br>"Every time?"<br><br>"Yes."<br><br>"Didn't Grandmaster Mae Jong-Hak teach you?"<br><br>"My grandfather said that collecting dust only results in more dust. He said it's more important to do what you want to do in that time. Those things become the seeds of enlightenment later on."<br><br>Is this a YOLO training method?<br><br>This revelation undeniably casts Sword Saint Mae Jong-Hak in a strange light.<br><br>Hold on.<br><br>'This guy has more Qi than I do.'<br><br>The amount of Qi I currently possess is slightly more than a hundred years' worth.<br><br>This level not only elevates me above my contemporaries but also distinguishes me among the elite across the Nine Great Sects, should they choose to endorse me.<br><br>Such prowess was forged through narrowly escaping death within the martial realm and securing treasures like the Scorching Yang Elixir, among others.<br><br>But how does he have more Qi than me?<br><br>"You must have taken the Mount Hua Sect's elixirs!"<br><br>Given Cheong Pung's backing by the Mount Hua Sect's Sword Saint, it seemed plausible.<br><br>But Cheong Pung's retort to my logical suspicion was straightforward.<br><br>"No. My grandfather dislikes visitors."<br><br>"Oh. Then how did you accumulate so much Qi?"<br><br>After a brief reflection, Cheong Pung replied.<br><br>"It just accumulated on its own."<br><br>"......"<br><br>"Ah, I also frequently underwent the Body Purification Process when I was young. Hehe."<br><br>Impossible... Who would talk about the Body Purification Process as if it's as casual as washing your face?<br><br>I stared blankly at Cheong Pung's sheepishly smiling face and thought.<br><br>'This guy really has main-character energy.'<br><br>Endowed with innate brilliance and fortuitous encounters, everything about him seems effortless and expected.<br><br>The notion 'things simply work out for him' seemed tailor-made for Cheong Pung.<br><br>"What a filthy world."<br><br>"Savior, what is filthy?"<br><br>"Never mind. It's just how things are."<br><br>"Okay."<br><br>Recently, my chest has felt oppressively burdened, as if laden with a heap of sweet potatoes. Each breath was a struggle for freedom.<br><br>Facing what martial artists refer to as 'the wall,' I had considered asking Cheong Pung for advice...<br><br>'But what's the use in asking this guy.'<br><br>It was just then, as I let out a small sigh.<br><br>Grrrrr.<br><br>"...Huh?"<br><br>"...Savior?"<br><br>The harsh, grinding noise filled my ears, and Cheong Pung's alarmed stare past me sent a wave of dread through me.<br><br>No way. No way.<br><br>'It's only been ten days.'<br><br>As I hesitantly turned, my gaze fell upon a metal door gradually swinging open at the corridor's end.<br><br>Facing the two emerging figures, my voice quivered.<br><br>"Is...is it over?"<br><br>Silence was their only reply, yet it conveyed everything.<br><br>The Divine Doctor and Mun-Kyung, their weary faces breaking into broad, reassuring smiles, were like beacons in the dim confines of the prison.<br><br>Their smiles alone seemed to dispel the shadows around us.<br><br>\* \* \*<br><br>"The treatment was successfully completed. Though there were difficult moments along the way, we were able to safely overcome them and finish the treatment faster than expected..."<br><br>The Divine Doctor's voice seemed to drift from afar, but the essence of his message — that the treatment was completed — resonated clearly within me.<br><br>Yes, the treatment had reached its successful end. Those were the words I yearned to hear, and hearing them was all that mattered.<br><br>'Grandfather.'<br><br>Without realizing, I felt a surge of strength in my grip on Jeok Cheon-Gang's hand.<br><br>Though still unconscious, his life force unmistakably pulsed stronger than before.<br><br>'His vitality has returned.'<br><br>Not only that. Jeok Cheon-Gang's countenance had undergone remarkable transformation over the ten days. The age spots had vanished, his skin appeared firmer, and his once frail frame now boasted newfound vitality.<br><br>Compared to before, he looked at least ten, no, twenty years younger.<br><br>"Perhaps...?"<br><br>My voice trailed off, laden with unspoken questions as I turned towards the Divine Doctor.<br><br>Meeting my inquisitive look, the Divine Doctor's lips curved into a knowing smile.<br><br>"Unfortunately, it wasn't a complete transformation. However, the medicinal herbs used in the treatment and the energy from the Thousand-Year Snow Ginseng have greatly helped Grandmaster Jeok."<br><br>"I see."<br><br>A mix of disappointment and relief surged through me.<br><br>While I had hoped this treatment might elevate him to a new realm of prowess, it seems my expectations soared too ambitiously.<br><br>"It seems you're disappointed."<br><br>"Ah, no, not at all."<br><br>I quickly gestured to dismiss the notion, conscious of my rudeness towards those who had tirelessly seen the treatment through to its completion.<br><br>"I was just..."<br><br>"Hehe. I didn't mean to blame you. How could I not understand Young Master Jin's heart, full of concern for his master? Isn't that right?"<br><br>"Of course. The Master's words are always right."<br><br>Mun-Kyung responded with deference, then turned to me with reassuring words.<br><br>"Grandmaster Jeok will regain consciousness within three days at the latest. Since the treatment has just ended, he needs time for his energy to properly settle, so you needn't worry too much."<br><br>"Three days at the latest."<br><br>"Yes. Of course, even after he awakens, he should avoid exerting himself too much for a while. Given that Grandmaster Jeok is a well-known figure in the martial world, he should recover quickly."<br><br>"That makes sense. He's always been full of energy. So, now..."<br><br>"Yes."<br><br>Mun-Kyung affirmed with a warm smile.<br><br>"The balance of Yin and Yang has been achieved, and there's no trace of the Phantom Poison left. The treatment is complete."<br><br>"....Sigh."<br><br>Releasing the breath I'd been holding felt like shedding a burden, leaving a sensation of lightness and elation.<br><br>How long had I awaited this moment?<br><br>As I slouched, drained yet relieved, the Divine Doctor teased me with a mischievous expression on his face.<br><br>"It seems this old quack was quite untrustworthy, Young Master Jin."<br><br>"Ah, no, it's not that I didn't trust Old Man Dong. It's just, well, you know how it is. Young Master Cheong knows what I mean, right?"<br><br>"I really don't!"<br><br>"…It's my fault for asking you."<br><br>The Divine Doctor's laughter grew louder.<br><br>He looked at us with a content smile, as if watching his grandchildren's antics, and patted my shoulder.<br><br>"Everything is alright now. This old man will remain here just in case, so if you have any remaining worries, you can put them aside."<br><br>"What?"<br><br>Upon noticing my alarmed expression, the Divine Doctor quickly reassured me with a dismissive wave.<br><br>"There's no need for such a look. I'm just staying to watch over the patient until he wakes up."<br><br>"Phew, you scared me. Thank you for the clarification."<br><br>I thought there was still something more to come.<br><br>Mun-Kyung, unable to suppress a smile at my brief moment of panic, then announced his departure.<br><br>"Excuse me for interrupting, but I think I need to leave now."<br><br>Surprised by his sudden announcement, I asked.<br><br>"What? Already?"<br><br>"Yes. By now, Myo-Ryeong should have regained consciousness, so I thought I should go and check on her."<br><br>"No, you must be tired. Why don't you rest a bit before going?"<br><br>"No need. I haven't really done much anyway. If I still have energy left, it's better for someone as young as me to be on the move, right, Master?"<br><br>"Oh, you little rascal!"<br><br>"Ha ha ha."<br><br>I felt a pang of worry, but it seemed the conversation between them had already concluded.<br><br>As Mun-Kyung quickly packed his bag, I suddenly remembered something I had forgotten.<br><br>"Mun-Kyung."<br><br>"Yes?"<br><br>"Thank you. Sincerely."<br><br>Mun-Kyung looked at me quietly, a smile forming at the corners of his mouth.<br><br>"That's the best compliment a medical student could receive."<br><br>\* \* \*<br><br>"Patriarch, the Sleeping Dragon of Shanxi requests an audience."<br><br>Shhhshshsh.<br><br>The murmur from outside prompted the white snake to retract into its sanctuary.<br><br>It was a rare interruption to Tang Sa-Dok's moments of solitude.<br><br>"Do you mean Jin Tae-Kyung?"<br><br>"Yes."<br><br>"For what reason?"<br><br>"The treatment has ended. And..."<br><br>The guard's voice trailed, tinged with curiosity.<br><br>"He said he wants to use the borrowed item for a few more days."<br><br>"The borrowed item?"<br><br>"Yes. That's exactly what he said. Additionally, he requested to stay a few more days in the underground prison."<br><br>This indirect mention clearly referred to the Ring of All Poisons. Tang Sa-Dok allowed himself a small laugh before commenting,<br><br>"Such a daring fellow..."<br><br>"Excuse me?"<br><br>"It's nothing for you to worry about. Tell Jin Tae-Kyung that he has my permission, but keep an eye on him."<br><br>"As you command."<br><br>As the messenger's presence receded, Tang Sa-Dok's fingers drummed lightly on the table.<br><br>He is not a benevolent hero who helps without expecting anything in return, nor a righteous warrior who cannot stand injustice.<br><br>Though he had lent the family's treasure to Jin Tae-Kyung through a deal, it was only natural for Tang Sa-Dok to maintain surveillance.<br><br>'As the Patriarch of the Tang Family of Sichuan, I trust no one.'<br><br>Just earlier, a young physician attempting departure from the estate was subjected to meticulous verification.<br><br>Without confirmed identity, he would have been barred from leaving, especially if associated with any less renowned martial sect.<br><br>'Nevertheless, the completion of Fire King Jeok Cheon-Gang's treatment is good news. As expected of the Divine Doctor.'<br><br>Fire King Jeok Cheon-Gang's reputation for obstinacy was known to Tang Sa-Dok through tales from his father.<br><br>His pride bound him to settle any score, be it in gratitude or revenge.<br><br>'Bastard... your days are numbered now.'<br><br>A sinister gleam appeared in Tang Sa-Dok's eyes.<br><br>The beast - who murdered his father and the astounding Heaven-Stunning Shinni - had only one arm. This was not unheard of in Murim, though it remained an uncommon characteristic.<br><br>Such an impairment is conspicuous anywhere.<br><br>'Run. Run wherever you can. The martial world of Sichuan will chase you until your last breath.'<br><br>Grit.<br><br>It was at that moment, as Tang Sa-Dok quietly ground his teeth,<br><br>"Uncle!"<br><br>A desperate shout, along with the doors of the hall flinging open. Tang Sa-Dok's face contorted.<br><br>The abrupt entrance of the Water Gate's guardian, accompanied by a figure at his side, twisted Tang Sa-Dok's expression.<br><br>Not merely due to the interruption, but because of the individual who was soaked in blood and clad in a tattered green uniform bearing the "Tang Family" insignia.<br><br>"You are..."<br><br>Undoubtedly, it was a member of the Green Shadow Squad.<br><br>Here, in this place, the Green Shadow Squad should not appear in such a state.<br><br>Facing Tang Sa-Dok, whose expression had hardened, a warrior from the Green Shadow Squad shouted as he coughed up blood.<br><br>"T-they are coming!"</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-350.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-352.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

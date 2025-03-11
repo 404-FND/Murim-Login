@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 286 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 286</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 286</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: November 24, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>The next morning, an interesting post was uploaded to a popular forum frequently used by Hunters.<br><br>Title: Hey guys, I had a weird dream. Anyone interpret dreams?<br><br>Without giving too much away, let's just say I hold a significant position on the security team of a renowned guild. But, that's beside the point.<br><br>While working, I may have dozed off? But the "'Oh, fuck' guy" appeared in my dream.<br><br>Here's how the dream went: Some weird guy kept skulking around, so I went with my immediate superior (a damn traitor. I think his real name's Yamamoto or something, but he hides it) to catch him. Turns out, it was the 'Oh, fuck' guy. \[Note: this should tell you how confused the junior security guard is. In Chapter 280, we see that the superior security guard's name is Lee Min-Soo.\]<br><br>But that's all I clearly remember. After that, my superior said "Yutori", and then I said "Irasshaimase". \[Note: Yutori is a Japanese word meaning "room" or "leeway". It can also translate to "flexible", as in when his superior told him to be more flexible when MC wanted to enter the Myeongdong Guild. "Irasshaimase" is what the inferior security guard said to MC to indicate that he is welcome inside.\]<br><br>(Best Comment) Can someone decipher this post before interpreting the dream? I have no idea what the hell this guy is talking about.<br><br>ㄴ222<br><br>ㄴWhat are "Yutori" and "Irasshaimase"? I don't understand the context.<br><br>ㄴWhy is your superior a traitor? Does he buy his clothes from Uniqlo? \[Note: Uniqlo is big a Japanese clothing brand. In 2019 South Korean citizens boycotted Japanese products because of certain trade disputes stemming from historical conflicts. Specifically, the boycott was started because Japan stopped exporting semi-conductor materials to South Korea, causing big Korean companies like Samsung and LG to find other sources for their materials.\]<br><br>ㄴ(Author) Because he uses a lot of Japanese phrases. He frequently says things like "Yutori" and "Genki". \[Note: "genki" in Japanese means healthy or energetic.\]<br><br>ㄴYou said "Irasshaimase" back to him, right?<br><br>ㄴ(Author) Yeah. I think so.<br><br>ㄴThis guy's crazy. Yep, LOL.<br><br>ㄴI feel bad for your superior. Working with you must feel like torture.<br><br>ㄴ(Author) But when I told my superior about the dream, he said he had a similar one. In his, the 'Oh, fuck guy' beat up a hundred of our guild members and faced off with the Ares Vice Guild Master.<br><br>ㄴI want to beat up the author.<br><br>ㄴ(Author) It's true, I swear;;; And then he freaked out because he lost his phone;; It was the latest AdulPhone model, so he was pissed.<br><br>ㄴHello. I'm a practicing shaman. I felt a strange energy from the post. Can you explain what's going on?<br><br>ㄴ(Author) Wait, are you really a shaman?<br><br>ㄴNo, I'm just kidding.<br><br>ㄴ(Author) OMG. Are you crazy?<br><br>The post was deleted in less than 10 minutes.<br><br>Those who saw the post dismissed it as the ramblings of an overenthusiastic fan. No one suspected that the Ares Guild was involved in this sequence of events.<br><br>Except for me.<br><br>'They must have manipulated memories using mental magic.'<br><br>Clearly illegal, but expecting the same guild that trains the Black Hunters to be bothered by that is a fool's hope.<br><br>From the comments, it seems they had meticulously checked each cellphone as well.<br><br>'That was critical evidence.'<br><br>As soon as Park Tae-Seop and Park Ji-Hwang appeared, my dedicated cameraman withdrew - ultimately falling into the hands of the Ares Guild.<br><br>To be honest, I wasn’t overly perturbed by it. When I exited the building, they subjected me to a search, reviewing my shared cloud folder before returning my possessions.<br><br>With an ominous undertone, one of them warned,<br><br>'Make sure you delete any hidden content now. It won’t be fun if we find you hiding something.'<br><br>The discovery of adult content on my phone had already soured my mood, but the speaker's overbearing tone only served to stoke the flames of my anger.<br><br>Under different circumstances, I would've punched him right then.<br><br>'I’ll remember your face. You punk-looking brat.'<br><br>His features were sharp, complemented by a sporty haircut. The way others referred to him as “team leader” indicated that he was close to Lee Jeong-Ryong.<br><br>Through my \[Qi Sense\], I ascertained his name: Seok Go-Jun. My interest in him was piqued by his martial prowess.<br><br>'The man has indeed trained in martial arts.'<br><br>The more I scrutinized, the more apparent it became.<br><br>The ones Lee Jeong-Ryong had left behind were not mere guild affiliates. Any one of them could take down a pair of average A-rank Hunters with ease.<br><br>Particularly Seok Go-Jun, who was imbued with a strength that could only be described as formidable.<br><br>His assured bearing stemmed from a well-founded confidence in his martial capabilities.<br><br>'How did they nurture such people?'<br><br>Were they practitioners of traditional martial arts, or was it a discipline that was the unique purview of the Ares Guild? My thoughts were awash with queries.<br><br>Then, in the midst of my contemplation...<br><br>"Doctor! Patient Im Hyuk-Jun is awake!"<br><br>A nurse's shout from the corridor outside made me jump to my feet.<br><br>Im Hyuk-Jun, a name seldom spoken, belonging to the man we knew as Mr. Rough Guy, had surfaced from the depths of unconsciousness after three grueling days. \[Note: the direct ranslation of his nickname is Lim Geok-Jeong, who is a Korean folklore figure similar to Robin Hood. However, given that the manhwa has been using Mr. Rough Guy, I'm doing the same here to keep things consistent.\]<br><br>\* \* \*<br><br>"Honey! Jun, it’s Dad!”<br><br>"Daddy!"<br><br>I restrained myself from bursting into the hospital room. It was their moment.<br><br>The cries of a wife and children, who had dearly missed their husband and father, seeped through the cracks of the door.<br><br>After the initial torrent of tears subsided, it was our turn to see him.<br><br>"Oh, is everyone here?”<br><br>Damn it. My throat tightened from his first word.<br><br>Mr. Rough Guy welcomed us with a luminous smile, arms outstretched, though a grimace betrayed his discomfort.<br><br>"Ugh."<br><br>"Mind your arm! Careful!"<br><br>"I thought I'd be fine, but it hurts a bit when I move."<br><br>"It's not normal for a reattached arm to feel perfectly fine immediately. You're not a robot."<br><br>Song Song chided, invoking a healing spell. The pale tone of Mr. Rough Guy's complexion bloomed with newfound vitality, indicating relief from the pain.<br><br>"Thanks, Ms. Song."<br><br>"If you're grateful, please be careful. Didn’t you hear the doctor? You should rest and not overexert yourself for at least two weeks."<br><br>"Hah, I'll keep that in mind."<br><br>"Sir!"<br><br>"Ah, my ears!"<br><br>The sheer sincerity of his laughter was a soothing balm to our spirits.<br><br>Between his mirthful outbursts, Mr. Rough Guy turned to address the others.<br><br>"Mr. Kim, or rather, Guild Master. Thank you so much. I heard from my children’s mother that you took great care of things while I was unconscious."<br><br>Butler Kim bowed his head slightly.<br><br>"It's only natural to help. We're all part of the same guild. We should step up when one of our own is in trouble."<br><br>"I heard you spent a lot on my treatment…"<br><br>A renowned healer was called in for Mr. Rough Guy, and numerous expensive high-tier potions were used in his treatment.<br><br>This is a world where even a person's life has a price. Who would go to such lengths for a D-rank Hunter whose sole merit was his experience?<br><br>Visibly moved, Mr. Rough Guy's voice faltered. Butler Kim, his expression softening, offered,<br><br>"If you really want to express gratitude, thank the sponsor. I'm just the middleman."<br><br>Mr. Rough Guy's gaze pivoted to this sponsor.<br><br>"Team Leader Choi."<br><br>A weight of unspoken gratitude laced his tone, but before he could continue, Mr. Choi gently cut in.<br><br>"It’s not your fault, Mr. Rough Guy. Our guild was underestimated. I should apologize for not preventing this mishap."<br><br>"Team Leader Choooi!"<br><br>Emotion brimmed in Mr. Rough Guy's eyes — eyes that could unnerve even the grittiest criminal.<br><br>He leaned in for an embrace, but Mr. Choi stepped back, startled.<br><br>"Be careful with your arm."<br><br>"It's alright. I just want one hug."<br><br>"...Perhaps someone else should have that honor."<br><br>It didn’t seem like much of an honor, but eventually, it was my turn.<br><br>"..."<br><br>"..."<br><br>Silence hung in the air.<br><br>I had rehearsed countless things I would tell Mr. Rough Guy once he woke up. Yet, with him directly in front of me now, my voice was lost.<br><br>It was Mr. Rough Guy who broke the silence first.<br><br>"How are they?"<br><br>"Pardon?"<br><br>"My wife and kids. Aren't they lovely?"<br><br>His sudden display of tender-heartedness left me fumbling. I couldn't help but smirk.<br><br>"Yes, they are."<br><br>"My wife is quite the beauty, isn't she?"<br><br>"She is. Did you lock her up or threaten her or something?"<br><br>"There's no tree that won't fall with ten strikes. Remember that. I succeeded on the forty-seventh try."<br><br>"Didn't you just say that there's no tree that won't fall with ten strikes?"<br><br>Mr. Rough Guy chuckled.<br><br>"Well, there are those trees that won't budge even after ten."<br><br>"It's a miracle you weren't taken to the police."<br><br>"If I had given up then, would I have won over such a beauty?"<br><br>His wife, trying to mask her tears, buried her face in her hands.<br><br>Two wide-eyed children gazed up at me, their expressions brimming with curiosity and innocence.<br><br>"Daddy, who's this?"<br><br>"Who? Who?"<br><br>Cradling his children close, Mr. Rough Guy introduced me.<br><br>"He's your uncle. Uncle Tae-Kyung."<br><br>"Uncle Tae-Kyung?"<br><br>"Yeah, remember daddy telling you? About the good-looking and strong uncle?"<br><br>So, he had told his family about me.<br><br>A tender warmth unfurled within me. As the children’s gaze landed on me, it was as if their eyes held a brighter gleam.<br><br>Children naturally exude charm, yet these little ones could outshine the most seasoned child actors. This must be the result of inherited good genes.<br><br>"Wow! Mister, are you Uncle Tae-Kyung?"<br><br>"Nice to meet you!"<br><br>My face brightened with a sincere smile.<br><br>Gently patting the two children on their heads, I remarked to Mr. Rough Guy,<br><br>"Your kids are adorable."<br><br>"You think? Wait until you're married and have a daughter. Then you'll understand the weight behind the phrase 'Daddy's little girl'."<br><br>I was nicknamed 'Daddy's little girl' back in high school, even though I clearly wasn't my father's daughter.<br><br>The sight of this family, so full of warmth and joy, made me a bit emotional.<br><br>With cautious movements, Mr. Rough Guy raised his arm to embrace me. His grip was weaker than it once was, making the pats on my back more tender.<br><br>Thump. Thump.<br><br>"Thank you. Always grateful."<br><br>Those words cemented a vow deep within me:<br><br>'I shouldn't repeat the same mistake.' \[Note: this is referencing an earlier chapter where MC scolds himself for not paying better attention to someone close to him.\]<br><br>With renewed conviction, I embraced Mr. Rough Guy more firmly.<br><br>Today was the reunion of a man with his family and friends.<br><br>\* \* \*<br><br>As the hour waned, the room thinned to five of us from the Peace Guild, myself and Mr. Rough Guy included.<br><br>Mr. Rough Guy's wife wished her husband would rest, but his determination was clear.<br><br>"I almost left my beloved wife and kids behind. I need to know now. Every single detail."<br><br>The jovial, tender-hearted Mr. Rough Guy now bore an unwavering sternness.<br><br>With the narrative laid bare before him, Mr. Rough Guy's features hardened.<br><br>"It was the Ares Guild?"<br><br>"Yes."<br><br>"The Lee Jeong-Ryong you mentioned, is he really that Lee Jeong-Ryong?"<br><br>"I'm certain."<br><br>"…Hmm."<br><br>He let out a sigh that sounded like a groan.<br><br>Chasing after the tail called 'Black Hunters' led to the Myeongdong Guild, and stepping on the body named Myeongdong Guild led to the head called Ares Guild.<br><br>The problem was that this head wasn't just any ordinary adversary.<br><br>"Following the snake's tail led us to a dragon's head."<br><br>Mr. Rough Guy cast a discreet glance towards Mr. Choi and Butler Kim, both unfazed, their demeanor as steady as ever.<br><br>However, I had noticed an earlier expression between the two.<br><br>In those fleeting moments before Mr. Rough Guy's return to the world of the waking, as the Ares Guild's name first hung in the air, a flicker of unrest had disturbed their still calm.<br><br>'There's definitely something...'<br><br>I couldn't pinpoint the exact reason. Both Song Song and I felt something was off. While we persistently probed, the two promised to explain later, but have kept silent since Mr. Rough Guy woke up.<br><br>'But now's the time to speak up.'<br><br>Perhaps the weight of our stares pressed heavily upon them. Mr. Choi looked as though he was ready to speak.<br><br>Step. Step.<br><br>The cacophony of the hospital's corridor was punctuated by the approach of distinct footsteps. They carried a gravity, a reverberation that set them apart.<br><br>And with them, an almost tangible aura.<br><br>"They're coming."<br><br>Upon my words, we all found ourselves instinctively standing.<br><br>As expected, the footsteps stopped right outside our room.<br><br>Knock. Knock.<br><br>A soft knocking preceded the turning of the handle, and the face that appeared was one I had confronted not half a day prior.<br><br>'Seok Go-Jun?'<br><br>Wait. If he's here, does that mean...?<br><br>Before I could complete the thought, Seok Go-Jun's face retreated, making way for another man.<br><br>Despite being close to seventy, he looked like he was in his 40s. He radiated the kind of charisma inherent to born leaders, coupled with a palpable aura of dominance.<br><br>'Lee Jeong-Ryong'<br><br>His eyes scanned the room, settling with razor-sharp focus on one individual. A slight, knowing smirk graced his lips.<br><br>"You've grown a lot."<br><br>Mr. Choi's gaze, meeting Lee Jeong-Ryong's, intensified.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-285.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-287.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

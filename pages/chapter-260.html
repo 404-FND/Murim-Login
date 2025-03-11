@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 260 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 260</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 260</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: September 17, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>“Young Master Cheong. Young Master Cheong, wake up.”<br><br>Slap! Slap!<br><br>"Ugh."<br><br>Cheong Pung opened his eyes with a groan.<br><br>Someone was forcefully slapping his cheek. It was the first time someone had slapped him, and while it felt strange, it also felt oddly amusing.<br><br>'Ah, so this is why people hate being slapped.'<br><br>With a small realization, Cheong Pung opened his mouth.<br><br>“Excuse me.”<br><br>Slap! Slap!<br><br>“I’m awake.”<br><br>Slap! Slap!<br><br>“I said, I'm awake..."<br><br>Slap!<br><br>Finally, after one more slap, the hand stopped.<br><br>A familiar-faced young man with a stern expression spoke.<br><br>“Seems you're awake. Do you remember who I am?”<br><br>“It's been a while. Warrior Hyuk Mu-Jin.”<br><br>Hyuk Mu-Jin let out a sigh.<br><br>“You remember.”<br><br>“Of course. Didn't expect to meet this way though.”<br><br>In Cheong Pung's memory, Hyuk Mu-Jin was remembered as a good person.<br><br>However, seeing a good person he hadn't met in a year slapping him, even Cheong Pung felt hurt.<br><br>“If I upset you, I apologize. I suddenly remembered losing money.” \[Note: he made a bet that Cheong Pung would win against Jong Richu\]<br><br>“What?”<br><br>“No, I mean, the urgency of the moment caused me to act brashly.”<br><br>“Yes.”<br><br>If that's the case, he could understand.<br><br>Nodding, Cheong Pung looked around. There were shouts everywhere, and people were running around.<br><br>“Is there a festival?”<br><br>“...A festival?”<br><br>“It's not?”<br><br>“No.”<br><br>With a firm reply, Hyuk Mu-Jin began explaining the rough situation.<br><br>The Dharma King Hong Dao was found dead, and the culprit was right in front of...<br><br>"You mean Jong Richu?”<br><br>“Yes. The famed Ever-Victorious Sword, Jong Richu. That's the one. Much about him remains shrouded in mystery, but the prevailing opinion is that he's an assassin sent from the Demonic Sect."<br><br>"The Demonic Sect..."<br><br>This was a name that resonated through the tales told by his grandfather, the venerable Sword Saint. It was the lair of those nefarious killers who once plunged the world into a maelstrom of blood and terror.<br><br>The realization that Jong Richu might hail from such a place weighed heavy on Cheong Pung, making him lower his gaze inadvertently.<br><br>"No."<br><br>"What are you suggesting..."<br><br>Interrupting, Hyuk Mu-Jin's visage bore an incredulous expression.<br><br>"Do the memories elude you, even after facing him directly? Perhaps the trauma was so profound that you've repressed it, but know this: you narrowly escaped death by his blade.”<br><br>But Cheong Pung remembered. Vividly.<br><br>He could still sense the icy tendrils of fear, the palpable dread he felt against such a formidable foe, even the fleeting moment when he confronted the specter of "death."<br><br>'It was terrifying. Truly.'<br><br>The mere recollection sent shivers down his spine and caused clamminess in his palms.<br><br>Yet, why did the memory of Jong Richu, with his disarming smile of camaraderie, keep flashing before his eyes?<br><br>After a weighted pause, Cheong Pung finally whispered,<br><br>"He's my friend.”<br><br>"…What?”<br><br>“That person, he's my friend. That can't be possible.”<br><br>“Young Master Cheong!”<br><br>Hyuk Mu-Jin's eyes darted around, assessing the environment and the listeners nearby.<br><br>Upon ensuring discretion, he hissed,<br><br>"Have you gone mad? Jong Richu is no different from a common enemy of Murim. Calling such a person a friend..."<br><br>This was the very assassin who had slain the Abbot of the Shaolin Temple and vanished. Just a hint of association with Jong Richu could spell disaster.<br><br>Even if he was raised under the protective wing of the Sword Saint, the backlash would be inevitable.<br><br>“Never mention this again. Understand?”<br><br>“But..."<br><br>Hyuk Mu-Jin's piercing glare made Cheong Pung swallow his words.<br><br>"That man is akin to a Demon. I don’t know what cunning tricks he used to win over Young Master Cheong's trust, but it was all a disguise to target Lord Hong Dao." \[Note: the phrase Demon Head is used again here to describe Jong Richu as it was used to describe Hansu. However, it doesn't quite fit here, so I changed it to "akin to a Demon"\]<br><br>"Are we certain of his guilt? Was there an eyewitness?"<br><br>“All the evidence is clear. Forces to apprehend him, alongside the legions of warriors rallying to defend Shaolin, are already mobilizing, preparing to depart.”<br><br>“Shaolin..."<br><br>"The Demonic Sect threatens Shaolin with their malevolent plots. Lord Jeok and Squad Leader have already set out.”<br><br>Cheong Pung allowed his eyelids to drop.<br><br>Amidst the encompassing void, the visages of Jin Tae-Kyung and Jong Richu danced before him.<br><br>His internal conflict was short-lived.<br><br>“I’ll go ahead.”<br><br>“Pardon?”<br><br>Before Hyuk Mu-Jin could even register the words, Cheong Pung's form was already a fleeting shadow.<br><br>Racing towards Mount Song. \[Note: previously translated as Mount Songshan, but that's the same as saying Mount Song Mountain, so I'm taking out the "shan" part moving forward\]<br><br>\* \* \*<br><br>Majestic in its stature, Mount Song was heralded as one of the Five Great Mountains, revered for its ethereal beauty and peaceful ambiance.<br><br>However, this tranquil haven was marred by bloodshed and punctuated with cries of despair.<br><br>“Arghhh!”<br><br>“Kill them all without exception.”<br><br>Slash! Swoosh!<br><br>With each arc of a blade, blood gushed forth.<br><br>As the sun cast its calm glow, out of nowhere, scores of masked assailants suddenly emerged, executing their onslaught with cold, unyielding precision.<br><br>“Protect the pilgrims! Hold your ground!” \[Note: "pilgrims" refer to common civilians who happen to be traveling to Shaolin for religious reasons\]<br><br>Defenders of the Shaolin, identified by the distinct marks on their foreheads, rose to meet the challenge. But they were on the back foot.<br><br>Facing these formidable masked invaders was taxing enough. Adding to the strain was the duty of safeguarding the novice monks and countless visitors who were lacking in martial prowess.<br><br>“By the heavens!”<br><br>“Gahhh!”<br><br>No one could have anticipated such an event today. Who in their right mind would dare invade the precincts of the Shaolin Temple, the revered sanctum of Murim in central China?<br><br>But just when the tide seemed to favor the relentless masked invaders, a voice resonated like thunder.<br><br>“Do these fiends comprehend where they tread?”<br><br>Emerging with the ferocity of a tempest, a venerable monk, famed for his superb martial prowess, stood tall.<br><br>This old monk, his eyes ablaze with righteous fury, stared down at the invaders, who defiled the sacred grounds of Shaolin.<br><br>“You demons! Mount Tian has revealed its nefarious hand!” \[Note: Tian Shan (Mountain) Range is the nexus of the Demonic Cult as per novel chapter 256\]<br><br>With a fluid motion, the monk unleashed a devastating palm strike that radiated across the battlefield.<br><br>Boom!<br><br>Many masked assailants, caught off-guard by the sudden show of strength, were flung back, defeated.<br><br>In a mere instant, more than a dozen seasoned warriors were laid low – a testament to the monk’s awe-inspiring might.<br><br>Yet...<br><br>“Our Master decrees. The foe shall fall.”<br><br>“By His will, none shall stand.”<br><br>Undeterred, the sea of masked invaders pressed on.<br><br>Their actions unwavering, their blades relentless. Their incantations echoed with an eerie, haunting cadence.<br><br>Slash, slash, slash!<br><br>Witnessing the onslaught, a grave realization dawned on the old monk.<br><br>'Such unspeakable horror...'<br><br>Despite limbs torn asunder and guts laid bare, their demeanor remained unchanged.<br><br>Witnessing these masked figures executing their onslaught, unfazed by pain or fear, dropping lifelessly as if marionettes with snipped strings, a profound dread seeped into the souls of the onlookers.<br><br>'These beings are beyond human. They’re manifestations of malevolent spirits.'<br><br>For the venerable monk, a veteran of the tumultuous Great Faction War, the sight was beyond chilling. One could only imagine the horror experienced by the others. \[Note: Throughout the three (Method/Alpha/Asura) translations, the war between the orthodox and unorthodox sects has been given multiple titles. I'm sticking with the earliest moniker that was used by MethodScans\]<br><br>Seasoned middle-aged martial artists were already struggling, but the young novices, exposed to such savagery for the first time, were paralyzed with dread.<br><br>Yet, they stood their ground. Maybe it was the unyielding sense of duty that the followers of Buddhism felt in the presence of malevolent entities.<br><br>'How did we arrive at such a harrowing juncture?'<br><br>The sage monk's thoughts were shrouded in sorrow.<br><br>During the bygone Great Faction War, Shaolin was at the vanguard, paying a price in blood greater than any other.<br><br>Their valiant sacrifices to preserve Murim came at the cost of many esteemed elders, leading to a decline in their martial arts. The ghosts of those sacrifices loomed large in today's tragedy.<br><br>'Of all times for the Abbot to be absent!'<br><br>The responsibility was clear. He was now the sole shield of Shaolin.<br><br>Elder Hong Tian, with steely determination, unleashed his signature Lion’s Roar. \[Note: if I were to translate this person's name using the Korean characters, his name would be something like Go Cheon. However, to maintain consistency with names having a more Chinese sound for people from Shaolin, e.g., Hong Dao instead of Gyeong Do, I'm going in with Hong Tian\]<br><br>"This is Shaolin's ground!"<br><br>While Abbot Hong Dao's reputation might have eclipsed his, Hong Tian was a martial arts virtuoso in his own right.<br><br>Little known beyond these walls, his unwavering commitment to the martial arts ensured his skills had evolved beyond even Hong Dao.<br><br>"Face me, if you dare!"<br><br>Kwaaaaah!<br><br>The sheer force emanating from his palms sent shockwaves throughout the vicinity.<br><br>"Oh? The legendary Hundred-Stride Divine Fist?"<br><br>"So, it returns, that accursed technique."<br><br>Two voices penetrated Hong Tian's ears.<br><br>Gradually coming into focus were two figures. With their arrival, the masked assailants withdrew methodically, their blades returning to their sheaths.<br><br>"Are you the next challengers?"<br><br>Hong Tian's voice was laced with contempt, to which the crimson-bearded old man scoffed.<br><br>"Indeed, we are."<br><br>"The wicked Demon Heads of the Heavenly Mountain." \[Note: the direct translation is Demon Heads of Cheonsan, but Heavenly Mountain sounds a lot better in my opinion\]<br><br>"Demon Heads of the Heavenly Mountain, you say? A half-truth. But let's not dwell."<br><br>A moment of uncertainty clouded Hong Tian’s face.<br><br>"Are you implying... you aren’t from the Demonic Sect?"<br><br>"The specifics are inconsequential. Our sole purpose here is to claim your vaunted head."<br><br>Responding with an unsettlingly tranquil smile, the scholarly old man inquired,<br><br>"Yeom Ho, are you keen to take this on?"<br><br>"Undoubtedly. After glimpsing the Hundred-Stride Divine Fist, how could I resist?"<br><br>"Control your temper, old friend."<br><br>“I'll ponder that later. At this moment, my desire to finish that monk outweighs grappling with my temper."<br><br>Hong Tian's gaze flitted between the two elders, his eyes widening with recognition and disbelief.<br><br>The name, Yeomho, combined with the immense energy radiating from these two elderly figures with such opposing auras was telling.<br><br>“You two...could you be..."<br><br>Yeomho’s grin was feral as he responded with a nod.<br><br>"Just piecing it together? You’re still wet behind the ears. The ordinary monks of Hanglie have vanished, haven't they?... Could you be the youngest disciple of the Dharma King?" \[Note: I have spent 3 hours trying to find a translation for Hanglie/Hangryeol but can't find anything reliable. The best guess I have is, perhaps, that this is a sub-group of Shaolin that specializes in aerial martial arts. Here's the original sentence if anyone wants to help me with this translation: “이제야 알아차린 걸 보니 아직 어린놈이군. 범(凡) 자 항렬의 땡중들은 진즉 다 뒈졌으니까??… 네가 법왕의 막내 사제라는 그놈이냐?”\]<br><br>"......!"<br><br>“Judging by your reaction, I guess I’m right? Hansu, what was the name of the old monk you killed last?"<br><br>“Fan Gong.” \[Note: a more direct translation would have been Beomgong\]<br><br>The mere mention of the religious title associated with the venerable monk who fell during the Great Faction War sent shivers down Hong Tian’s spine, causing his fists to clench.<br><br>'There's no mistaking it.'<br><br>The infamous monikers, combined with the names Yeomho and Hansu, unequivocally pointed to those responsible for the countless Shaolin losses.<br><br>"Yin-Yang Twin Demons."<br><br>A legend from yesteryears.<br><br>These two malevolent spirits, reigning over the sultry southern tropics and the frigid northern peaks, wreaked havoc in the Central Plains. The alliance that was formed to quash them was fractured by the unexpected surge of the Demonic Sect.<br><br>Against all odds, the duo survived and aligned themselves with the Demonic Sect and carved out a nefarious legacy during the Great Faction War.<br><br>"Hearing 'Yin-Yang Twin Demons' from someone else... it’s been a while."<br><br>"We were in our prime back then. Those days were exhilarating."<br><br>Yeomho, reflecting on those sinister days with a touch of nostalgia, countered,<br><br>"No, no. Now is even better."<br><br>"We were barred from the Southern territories back then."<br><br>"All because of that damn monk."<br><br>"But now, that monk is no more."<br><br>"And the revered Ten Kings and the Three Saints are barely a whisper."<br><br>Hansu, who had been smiling at the gleaming-eyed Yeomho, suddenly put his hands together in a prayer gesture towards Hong Tian.<br><br>"Oh, I almost forgot. I express my sincere condolences."<br><br>Hong Tian, still grappling with the shock of the duo's sudden appearance, felt an impending sense of doom and inquired,<br><br>"Condolences? For what?"<br><br>"During our ascent, we caught wind of a death. The Dharma King Hong Dao, your esteemed elder brother." \[Note: he means a senior in the same sect here, not brother by blood\]<br><br>"......!"<br><br>A staggering blow seemed to blur his vision.<br><br>The news struck him like a sledgehammer. His elder brother, who was supposed to be with the Murim Alliance, was dead? Impossible.<br><br>"You lie!"<br><br>Hansu’s laughter echoed, as he watched the visibly shaken Hong Tian.<br><br>"Judging the truth is up to you. But furthermore…"<br><br>Yeomho's voice brimmed with fervor.<br><br>"Every one of you from the Central Plains, yourself included, will meet their end here. That is our decree."<br><br>Whoosh.<br><br>In harmony with their leader's fierce intent, the masked invaders uniformly advanced, their faces devoid of emotion.<br><br>The ominous aura emanated from hundreds of sword blades filled the Shaolin Temple.<br><br>Hong Tian's eyes flickered uneasily at the sight.<br><br>'Sa-Hyung... Could it truly be?' \[Note: Sa-Hyung is the same as Senpai but used by disciples of the same sect\]<br><br>However, his hesitancy was short-lived, replaced by a fierce determination.<br><br>The elderly master who had devoted eighty years to martial arts tightened his grip.<br><br>"To confront both of the Yin-Yang Twin Demons simultaneously wasn’t something I expected. But so be it. Step forth, you cursed demons."<br><br>"Hahaha! This guy has quite the mouth for a monk. I like that you're still full of vigor."<br><br>Yeomho's laughter echoed as he moved closer.<br><br>"It’s regrettable, but dealing with you requires only one of us. Hansu has... more pressing engagements."<br><br>"Very pressing, indeed."<br><br>Hansu added with a mischievous grin.<br><br>"Would you mind stepping aside? I need to visit the Arhat Cave." \[Note: a direct translation is Face-the-Wall Cave, but that just sounds horrible, so I'm using AsuraScans' translation. In many East Asian Buddhist traditions, "facing a wall" is a meditation practice where a monk sits facing a wall to meditate. This type of meditation emphasizes deep concentration and introspection. Hong Dao mentioned that Nameless is training in this cave per manhwa chapter 164\]<br><br>The Arhat Cave.<br><br>Upon hearing the mere mention of the Arhat Cave from Hansu's mouth, Hong Tian felt as if his heart dropped.<br><br>Within that very cave was Nameless, Sa-Hyung's sole disciple. Not to mention...<br><br>'The Green Jade Ruyi.'<br><br>Realizing the enemies' objective, Hong Tian roared like a lion.<br><br>"Stop them at all costs!"<br><br>"Stop us? That won't be enough."<br><br>With malevolent grins, the Yin-Yang Twin Demons waved their hands.<br><br>As if transported back fifty years, a terrifying aura surged from their bodies.<br><br>"Kill them all."<br><br>Swoooosh!<br><br>Quick notice: This translating process has turned out to be pretty fun so far, so I plan to keep doing this. I'll mainly work on these during the weekends depending on my work schedule, so hopefully, I can keep churning out 2 chapters every week.  <br><br>Edit 1: Sorry I haven't caught this sooner, but there's a mistake. In the line,  <br><br> Just piecing it together? You’re still wet behind the ears. The ordinary monks of Hanglie have vanished, haven't they?... Could you be the youngest disciple of the Dharma King?  <br><br>the word "disciple" is a bit misleading. The correct translation is "Could you be the youngest fellow disciple of the Dharma King?" Hong Dao and Hong Tian have a sahyung/saje (or elder brother/younger brother) relationship. Here, sahyung is the title of a senior brother, while saje is the title of a junior brother under the same master. Specifically, Hong Dao would call Hong Tian saje, while Hong Tian calls Hong Dao sahyung. On a similar note, this is the same type of relationship between Cheong Pung (the saje) and the current Mount Hua Sect's leader (the sahyung) because they're both disciples of the Sword Saint.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-259.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-261.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

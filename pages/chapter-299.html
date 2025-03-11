@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 299 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 299</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 299</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: December 15, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>"It's time to start."<br><br>The signal to proceed from the Seoul Association President broke through the tense air. It had been a grueling ten minutes since Choi Min-Woo and the Peace Guild initiated their protest - a palpable air of anticipation swirling around them.<br><br>The Gate loomed like a chasm between life and death, its ruthless battlefield sparing no mercy. Amidst this chaos, Jin Tae-Kyung was left to confront a Named Monster and its legion of hundreds of skeletons. His survival seemed a distant, almost impossible hope.<br><br>"Could he have survived?"<br><br>"It's been exactly one hour and eight minutes. We'd be lucky to even recover the body."<br><br>"Damn it. This isn't a rescue anymore; it's a body recovery mission."<br><br>"Is this really okay? Every minute and second are critical, and here we are wasting time."<br><br>"What can we do? It's not just a normal A-rank Gate, and there's a Named Monster inside. If you think about it, the Association's position is understandable. If they rushed in and caused a major accident, it would spell disaster."<br><br>The hunters, gearing up for entry, and the reporters, capturing every moment, formed clusters of hushed conversations.<br><br>Their discussions were tinged with frustration, fear, and a sense of impending doom.<br><br>Yet, in all their conversations, Jin Tae-Kyung's survival was a topic left untouched – an unwritten rule in acknowledging the harsh reality.<br><br>"As for the Peace Guild, they've really seen the worst of it."<br><br>"That's right. As for Jin Tae-Kyung, well, it's unfortunate, but he's probably already dead. I'm sure that team leader's going to be in a world of hurt now that he talked shit to the president of the Seoul branch in front of the cameras."<br><br>"That's what I'm saying. That guy is a parachute appointment, so it will probably get a lot of media attention." \[Note: the term parachute is used metaphorically in Korean to describe someone who has obtained their position due to their connections and not their merit.\]<br><br>Choi Min-Woo, overhearing these murmurs, wore a mask of stoic resolve.<br><br>Would the Peace Guild be penalized in the future?<br><br>Such things were the least of his concerns.<br><br>'No one is dead.'<br><br>He fought the urge to confront the doubters and push past the Association Hunters barring the way.<br><br>He remembered Butler Kim's words from ten minutes prior, words that now held him back:<br><br>'Didn't you say so yourself, Young Master? You trust Jin Tae-Kyung more than yourself.'<br><br>With that memory, he quelled his rising anger.<br><br>He had always known Jin Tae-Kyung to defy the odds, to turn the impossible into reality.<br><br>Today would be no different.<br><br>'Isn't that right, Jin Tae-Kyung?'<br><br>Taking a deep, steadying breath, Choi Min-Woo stepped forward with the Peace Guild members rallying behind him, their faces set with determination.<br><br>"Our Peace Guild will take the lead."<br><br>The Seoul Association President met his gaze with a piercing stare.<br><br>"That falls under my jurisdiction as the commander of this operation. But it sounds like you're not asking for permission."<br><br>"Indeed."<br><br>"What?"<br><br>"Shall I repeat myself? I said I am not asking for permission."<br><br>Choi Min-Woo's tone was cool; his resolve unmistakable. He continued.<br><br>"There's no need for further delay or discussion. The Peace Guild will lead."<br><br>"How audacious...!"<br><br>The Association President's face flushed with a mix of anger and disbelief.<br><br>"Let's do that."<br><br>A steady voice interjected from behind.<br><br>The President turned to find Seok Go-Jun, Lee Jeong-Ryong's unflappable right-hand man and head of security, his arms folded and his expression unreadable.<br><br>"Team Leader Seok?"<br><br>"Please consider the feelings of the Peace Guild members who have lost a colleague. The media will view this favorably."<br><br>"Ah, but inside the Gate, there's a Named Monster. If we put unproven Hunters at the front, a disaster could happen..."<br><br>His words trailed off under Seok Go-Jun's piercing gaze.<br><br>The realization hit him – he wasn't just dealing with any team leader, but with Lee Jeong-Ryong's trusted confidant.<br><br>The Ares Vice Guild Master was a man whose motives were as intricate as they were inscrutable.<br><br>The President's moment of hesitation was fleeting.<br><br>"Let the Peace Guild lead. Then, after 3 minutes, our Association and the Ares Guild will..."<br><br>But Choi Min-Woo was already moving towards the Gate, his back to the President, his focus unwavering.<br><br>Many eyes followed him, some with admiration, others with skepticism. Unfazed, Choi Min-Woo spoke softly yet with firm conviction,<br><br>"Let's go. To rescue Jin Tae-Kyung."<br><br>A cheer erupted, echoing through the hall.<br><br>Butler Kim, Mr. Rough Guy, Song Song, and about fifty members of the Peace Guild surged forward, cutting a path through the sea of Hunters. Their determination was palpable.<br><br>Then, with a thunderous command from Butler Kim:<br><br>"Peace Guild! Attack formation!"<br><br>Cha-cha-cha-chak!<br><br>In a mesmerizing display, armor and weapons gleamed under the sunlight. The Peace Guild members swiftly arranged themselves into a wedge formation, their movements synchronized and precise, reminiscent of an arrow poised for flight.<br><br>At the vanguard, Choi Min-Woo, his voice booming, plunged into the Gate.<br><br>"Enter!"<br><br>Swoosh!<br><br>The magic of the Gate had never before carried such a foreboding chill.<br><br>As Choi Min-Woo opened his eyes, a heavy sense of dread weighed upon his heart, sinking it with a silent throb.<br><br>'This is……'<br><br>Scorched Earth.<br><br>Could there be any other term to describe this devastation?<br><br>From their vantage point atop the hill, the path below, once familiar, was now a fiery inferno.<br><br>'Jin Tae-Kyung.'<br><br>The ominous unease that had gripped him at the Gate's threshold was materializing before his very eyes.<br><br>From behind, Mr. Rough Guy's voice quivered, laden with fear and uncertainty.<br><br>"Team Leader Choi. Could it be that Tae-Kyung is………"<br><br>"Stop. We are in the middle of an operation. We must remain focused."<br><br>Yet, even his own words fell flat, unable to lift the growing weight of despair.<br><br>The Peace Guild members, one and all, were visibly shaken. The devastation before them seemed insurmountable, a stark contrast to their fervent hopes.<br><br>'No. It can't be.’<br><br>Choi Min-Woo clenched his teeth, a physical attempt to anchor his wavering spirit, and trudged forward with a heaviness that matched the grim scene.<br><br>"We press on. Stay alert and keep moving."<br><br>They advanced cautiously, prepared for the possible emergence of monsters.<br><br>As they inched closer to the path, the scene of ruin grew increasingly harrowing.<br><br>"How could this have happened?"<br><br>Amidst the ashes, the remnants of bones and shattered weapons lay strewn, painting a tableau of death and despair.<br><br>The blackened earth, blanketed in ash, showed no signs of life. The very air they breathed felt thick with loss and desolation.<br><br>'He's dead?'<br><br>A singular question echoed through the minds of the gathered guild members.<br><br>Those who had known Jin Tae-Kyung the longest stood in stunned silence, their eyes unseeing, unable to reconcile with the grim reality before them.<br><br>Then, breaking the oppressive silence, Butler Kim's voice carried a finality that struck like a death knell.<br><br>"The detection spell reveals no signs of life within a 300-meter radius."<br><br>Choi Min-Woo's eyes fluttered shut, a futile attempt to ward off the creeping despair.<br><br>"Does that mean………"<br><br>"I'm sorry."<br><br>Butler Kim's face was etched with sorrow as he reached out his hand. Something floated up from the direction his fingertips pointed and slowly drifted towards them.<br><br>"What's that..."<br><br>"It appears to be a fragment with considerable magical power, likely a trace of a Named Monster."<br><br>In Butler Kim's outstretched hand lay a palm-sized metallic fragment.<br><br>Despite being coated in ash, it retained a sinister black luster. The skull motif etched into it sent a shiver through the onlookers.<br><br>"A skull pattern! Yes, it's the armor worn by the Named Monster!"<br><br>"That's right! We saw it clearly."<br><br>Then, a sharp and panicked voice cut through the somber air.<br><br>"Here's a dagger too! It's not one of the skeleton weapons!"<br><br>"It belongs to Jin Tae-Kyung Sunbae. It's definitely the one he often used."<br><br>Butler Kim's voice was a muted echo amidst the shock.<br><br>"It seems to have oxidized. Along with all the enemies, including the Named Monster..."<br><br>"......!"<br><br>A heavy silence engulfed the group, the implication of his words hanging in the air like a thick fog.<br><br>The grim reality was undeniable: Jin Tae-Kyung had perished, taking his foes with him in a final, desperate struggle.<br><br>Mr. Rough Guy's weeping pierced the silence, raw and unbridled.<br><br>"Sniff. Sob!"<br><br>His trembling, which started in his hands, quickly spread, consuming his entire large frame. Tears streamed unceasingly from his eyes.<br><br>"Tae-Kyung, Tae-Kyung is…… Sob!"<br><br>No one dared to interrupt his grief.<br><br>Each person present, in their own way, echoed his sorrow.<br><br>They were united in their mourning for Jin Tae-Kyung, plagued by guilt for not fighting at his side, and overwhelmed by a sense of helplessness.<br><br>Tears stained the faces of the Peace Guild members, including Butler Kim and Song Song, as grief gripped them tightly.<br><br>Yet, amidst the tears, Choi Min-Woo stood alone, his face dry but his eyes dark with sorrow.<br><br>'He's dead. Jin Tae-Kyung.'<br><br>Choi Min-Woo's gaze swept over the smoldering path.<br><br>He almost expected Jin Tae-Kyung to emerge, like a miraculous apparition.<br><br>'I thought you would survive any situation.'<br><br>A heaviness settled in his chest, a profound grief he hadn't felt since the loss of his parents.<br><br>It swelled within him, a balloon on the verge of bursting.<br><br>"Ah, how tragic."<br><br>"Jin Tae-Kyung is nowhere to be seen. It seems he is truly dead."<br><br>As Choi Min-Woo slowly turned around, his eyes sweeping over the hundreds who had followed him along the path.<br><br>Among the crowd, two figures at the forefront of the Association and the rescue operation's Hunters caught his attention.<br><br>"It seems that the rescue was in vain, wasn't it, Mr. Association President?"<br><br>"Indeed. Everything has turned to ash. I'm wondering if we can even find the body. But putting that aside, where is the Named Monster?"<br><br>"We'll have to search thoroughly, but according to the detection magic, it seems all the issues you're concerned about have been resolved."<br><br>The Association President's frown eased into a smile.<br><br>"Oh, that's good news to hear. I was worried about more casualties."<br><br>"Thanks to your judgment, Mr. President, we were able to minimize the sacrifices."<br><br>"What are you saying? It's all thanks to Ares Guild's intervention. Once everything is settled, I'll definitely award a plaque of appreciation. Hehe. It's the first achievement of my term, so I plan to hold a big event... Mr. Lee Jeong-Ryong will come to accept the award for his guild, right?"<br><br>"He's the Vice Guild Master, not the Guild Master."<br><br>"Ah, right. My memory these days, I keep forgetting things."<br><br>Seok Go-Jun's smile was barely perceptible.<br><br>"That's understandable. And when the plaque is awarded, the Vice Guild Master will surely attend with a happy heart."<br><br>"It'll be nice to see him after a long time. Please put in a good word for me, Team Leader Seok."<br><br>"I'll just report what I've seen and heard, and he'll be very pleased."<br><br>"Haha."<br><br>Their laughter rang out, piercing the heavy air like a needle threatening to burst Choi Min-Woo's swelling emotions.<br><br>"Shut your mouth."<br><br>"......!"<br><br>The sudden silence was palpable.<br><br>The Association President's face twisted in anger, but Seok Go-Jun was quicker to retort.<br><br>"You should be careful with your words."<br><br>"I said, shut your mouth."<br><br>"Young man, you lack manners. Is this the example you set for the Peace Guild, Team Leader Choi Min-Woo?"<br><br>It was a pointed remark.<br><br>For Seok Go-Jun, Choi Min-Woo was like a kite with its string cut. His grandfather's Ares Guild was practically in the hands of Lee Jeong-Ryong, and now that Jin Tae-Kyung, the Peace Guild's wolf, was dead, there was no longer a need for Seok Go-Jun to hide his fangs.<br><br>"I understand that emotions are high due to the death of a guild member, but you seem to need to calm down."<br><br>Choi Min-Woo's response was laced with bitterness. <br><br>"If you all hadn't wasted time, he could have been saved."<br><br>"We did our best. Mr. Association President's judgment was sound. And……"<br><br>Seok Go-Jun's words, dry and unyielding, cut through the tense air.<br><br>"You all have a responsibility too. Don't you?"<br><br>".....!"<br><br>"Where were you when Jin Tae-Kyung was dying? Comfortably reading the newspaper in the office? Or were you in a bar since noon?"<br><br>Choi Min-Woo's jaw tightened, Seok Go-Jun's words hitting their mark.<br><br>They had all placed unwavering trust in Jin Tae-Kyung, to the extent that they had neglected their own vigilance, focusing solely on training.<br><br>But Choi Min-Woo knew he should not have allowed such complacency.<br><br>Struggling to formulate a response, he was met with another barbed remark.<br><br>"Jin Tae-Kyung was killed by you. You all killed him by being weak and forgetful of your duties."<br><br>".....!" <br><br>Seok Go-Jun's smirk was cold, almost triumphant.<br><br>"It's too late for regrets. The dead do not return."<br><br>At that, Choi Min-Woo's fist clenched, the anger within him reaching its boiling point.<br><br>"What did you say, you son of a bitch?"<br><br>A faint voice pierced everyone's ears.<br><br>Those unfamiliar with the voice were baffled by the sudden curse, while those who recognized it were frozen like statues.<br><br>‘Could it be……’<br><br>As Choi Min-Woo slowly turned, his gaze fell upon a figure emerging from the path.<br><br>"Looks like you held my 49th day memorial while I was just taking a piss, you bastard." \[Note: The 49th day memorial, often observed in several East Asian cultures, particularly in the context of Buddhism, is a significant ritual marking the end of a 49-day period following someone's death. This period is considered crucial for the deceased's transition to the afterlife. The 49th day itself is particularly important as it is believed to be the final day when the soul is still in transition. On this day, family members and loved ones often conduct a significant memorial service, which includes chanting of sutras, offering prayers, and sometimes, a ceremonial meal.\]<br><br>The words fell from Jin Tae-Kyung's lips, heavy with scorn. He spat out a lump of phlegm, his eyes locked with Seok Go-Jun's.<br><br>"That's right. I'm still here, you son of a bitch." </p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-298.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-300.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

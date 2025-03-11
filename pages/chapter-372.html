@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 372 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 372</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 372</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: March 22, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>"This is the place."<br><br>"A cliff? Seems rather ordinary."<br><br>Here I was, standing at the edge of a steep cliff with my companions, surveying our surroundings.<br><br>The cliff's landscape, towering three hundred meters high and composed entirely of solid rock, appeared unremarkable at first glance. \[Note: as usual, the distance unit being used here was "jang". I will start converting this into meters for ease of reading. I have been using "jang" to be faithful to the original source but this change would probably make it easier for many readers to grasp the distance.\]<br><br>'Is there supposed to be an array here?'<br><br>However, my skepticism was short-lived.<br><br>A familiar sensation washed over me, prompting me to approach and halt before a yellowish-brown expanse of rock.<br><br>"This is..."<br><br>All things possess their own flow of Qi. Even the unseen and untouchable adhere to this universal rule.<br><br>Thanks to my ascension to the Transcendent Realm, I could sense the Qi's aberrant current.<br><br>"An array?"<br><br>A voice answered my soft utterance.<br><br>"More precisely, it's an Illusionary Film Array." \[Note: direct translation - Illusionary Array or Magic Film Array.\]<br><br>Mun Kyung, or rather, the Dark Saint, scrutinized me with an impassive look before stepping closer and reaching out.<br><br>An enormous amount of Qi moved, taking the solid rock face with it. Through the dissipating mist, the dark entrance of a cave was revealed.<br><br>"So you're not entirely stupid."<br><br>"Uh, thank you?"<br><br>"Don't ask questions."<br><br>The Dark Saint's abrupt departure toward the cave left me no chance to reply.<br><br>'Was that an insult or a compliment?'<br><br>It felt more like an insult.<br><br>Yet, anger seemed an inappropriate response, as there was no evident malice in the Dark Saint's demeanor — just his usual indifferent severity.<br><br>This left me feeling more awkward than angry.<br><br>"......"<br><br>Given it was the Dark Saint, I opted to overlook his remark.<br><br>What else could I do in the face of the Dark Saint's cryptic words? Even if it stung, I knew I must bear it.<br><br>It was a relief just to stand there unharmed after bringing up the topic of wet dreams.<br><br>'Considering that I almost turned the Dark Saint into the "Rice Saint," he's treating me quite well.' \[Note: There are multiple jokes shoved into this one character change. I'm glad I didn't miss it, even though it took more time than I needed to look into this. "Dark Saint" is Salseong in Korean and "Rice Saint" is Ssalseong. So at the surface level, the author is again phonetically playing with the Korean characters. Another joke is that the character for "ssal" can be used as both a noun and a verb. As a noun, it just means "rice", but as a verb, it can be interpreted as "to shoot", but is typically used as a sex slang for "ejaculate". This brings us to the tough decision between "Rice Saint" and "Coomer Saint". But, given how this guy just saved our MC and our dear Fire King, I have painfully opted for the Rice Saint option. However, when it comes time for the manhwa adaptation, if Asura decides to go with something close to the "Coomer" interpretation, I'll gladly change it.\]<br><br>While I was lost in thought, a low chuckle came from beside me. Glancing over, I caught Jeok Cheon-Gang smirking.<br><br>"Why are you suddenly laughing?"<br><br>"I just thought to myself... the Dark Saint is quite dishonest." \[Note: I'm not too sure how to interpret this line, but here's how I see it. This line is spoken by the Fire King and he is commenting on the Dark Saint's line "So you're not entirely stupid". It seems that the Dark Saint is having a tsundere-like tendency towards the MC. So instead of directly praising the MC for recognizing the Illusionary Film Array, he instead opted for the back-handed compliment. And of course, being the biggest tsundere of this whole manhwa, the Fire King recognized this immediately, and thus commented on how the Dark Saint is not being true to his feelings, just like how he himself typically acts towards the MC.\]<br><br>"Really?"<br><br>"Don't ask questions."<br><br>"......?"<br><br>Is this the latest catchphrase?<br><br>As Jeok Cheon-Gang swaggered off, the two Sect Leaders and I made our way towards the shadowy cave entrance.<br><br>'Anyway...'<br><br>It's astonishing this was concealed right under our noses.<br><br>Especially considering it's merely half a day's travel from the center of Sichuan. It was a trivial distance for the average person and significantly less for a skilled martial artist.<br><br>Navigating the seemingly endless cavern, I took in the surroundings.<br><br>'The entrance is incredibly wide. Several times larger than the underground prison of the Tang Family of Sichuan.'<br><br>On the journey here, it was shared that this cavern served as a refuge for the beasts of Dark Heaven.<br><br>I wondered where such a large number had come from, but it seems they were lying in wait here all along.<br><br>'But how did they get in here?'<br><br>The assault on the Tang Family involved more than three hundred foes under the command of the Western Heavenly Demon Lord.<br><br>Factoring in those dispatched to Qingcheng and Emei, the tally becomes even more alarming.<br><br>'Is the security of the Sichuan Province that much of a mess? No, even so, you'd think that the Beggar's Sect and the Lower District Sect would have noticed.'<br><br>Engrossed in these musings, I began to lose track of time.<br><br>The broad path, wide enough for ten people, came to an end, unveiling a new expanse.<br><br>Unintentionally, I voiced my awe.<br><br>"......Huh. Look at this."<br><br>A chamber vast enough to house a thousand people easily. The ceiling, adorned with numerous phosphorescent pearls, bathed the area in a gentle luminescence. A corner was stocked with jars of dried grains, medicinal herbs, and weaponry. \[Note: for those who read Return of the Mount Hua Sect, these are the same pearls that light up the ceiling in manhwa chapter 93.\]<br><br>Yet, something else held my gaze.<br><br>'What's that?'<br><br>The cave's floor was etched with peculiar designs.<br><br>Resembling a network of meticulously aligned gears, these motifs seemed like relics of a civilization long erased by time.<br><br>"Could that be what you mentioned earlier...?"<br><br>At my inquiry, the Sapphire Wind Blade, leader of the Qingcheng faction, confirmed with a solemn nod.<br><br>"That's right. That's the bizarre array that I spoke of."<br><br>To my surprise, it indeed was an array.<br><br>I've come across a variety of mechanical arrays, even at the Grand Celestial Banquet, but never anything as vast and peculiar as this.<br><br>'This goes beyond bizarre to grotesque.'<br><br>It might be the enigmatic yet ominous patterns that give off this vibe.<br><br>Jeok Cheon-Gang, apparently sharing my sentiment, inquired,<br><br>"But what exactly are these weird symbols?"<br><br>"We... haven't figured it out yet."<br><br>The Sapphire Wind Blade replied, followed by the Annihilating Shinni adding,<br><br>"We cannot jump to conclusions at this moment. We've copied part of the array and showed it to several scholars and experts, but no one knows. The possibility that it's an unknown writing from the West cannot be completely ruled out."<br><br>Suddenly, without thinking, I found myself interjecting.<br><br>"Uh, this is probably not writing."<br><br>"......?"<br><br>"......?"<br><br>"......?"<br><br>All eyes shifted towards me. Breaking his silence since our cave entry, the Dark Saint queried,<br><br>"What's your basis?"<br><br>"The basis?"<br><br>"There must be a valid basis for such a claim. Don't ask questions, just answer."<br><br>Indeed, there exists irrefutable evidence, impervious to challenge by any esteemed scholar or seasoned warrior.<br><br>'Integrated Language Pack.'<br><br>The \[Integrated Language Pack\] automatically translates all languages.<br><br>With this, I have flawless understanding in communication, reading, or writing.<br><br>It was this \[Integrated Language Pack\] that facilitated my conversation with the Skeleton Warlord in modern times.<br><br>Yet, the array's patterns remained untranslated by this passive skill, clearly indicating they aren't a written script.<br><br>The conundrum now is...<br><br>'How do I explain this?'<br><br>I should have remained silent.<br><br>Yet, with the conversation already in motion and the Dark Saint's intensifying scrutiny, I stuttered.<br><br>"Jji, jji."<br><br>"Chizzi?" \[Note: this is a colloquial Korean word for boobs or breasts.\]<br><br>The Dark Saint's eyebrows gave a slight twitch, the first glimpse of emotion he had displayed. Perhaps he was reminded of the wet dreams incident.<br><br>"Ah, no, not breasts."<br><br>"Then, milk?"<br><br>"......"<br><br>I wish you wouldn't say things like that with such an impassive expression.<br><br>"No, that's not what I meant."<br><br>As I scrambled to clarify, Jeok Cheon-Gang cut in.<br><br>"Are you intimidating my disciple now? How dare you intimidate the successor of the Fire King, the Leader of Scorching Clan?"<br><br>"Intimidate? There's no need to, but I guess I could."<br><br>"I have been patient with you due to the life debt I owe, but I won't stand by if you, from the Mun family, persist in this manner." \[Note: I have been assuming that the "Mun" is part of Mun Kyung's given name and not his last/family name. However, with this dialogue, it's clear that "Mun" is the Dark Saint's family name and his given name is only one syllable, like Cheong Pung's name. So I'll start removing the hyphen and go back to fix it in the previous chapters as well.\]<br><br>The tension escalated rapidly, prompting me to blurt out in desperation.<br><br>"I meant, 'clicked'!" \[Note: the word that he says here, "clicked", is written in Korean as jjig, hence the previous "jji, jji" response.\]<br><br>"......!"<br><br>"......!"<br><br>"......!"<br><br>"It reminded me of something I read about once... but that thing isn't writing. Hence, it 'clicked' in my head that this probably wasn't writing either."<br><br>Silence ensued. Then, the Dark Saint, with a barely audible exhale, addressed Jeok Cheon-Gang.<br><br>"This guy is the successor of the Fire King, the Leader of the Scorching Clan?"<br><br>After a pause, Jeok Cheon-Gang replied.<br><br>"Now that I think about it, we haven't formally held the initiation ceremony."<br><br>"......"<br><br>"So strictly speaking, he's not officially a disciple of our Clan yet. That means, for now, this guy is still considered to be affiliated with the Jin Family of Taiyuan..."<br><br>Our eyes met briefly before Jeok Cheon-Gang looked away.<br><br>"Let's leave it at that."<br><br>"......"<br><br>What do you mean 'leave it at that'? Everything that needed to be said has already been said.<br><br>The Annihilating Shinni and Sapphire Wind Blade, having observed the dynamic between master and disicple deteriorate, tactfully shifted the focus.<br><br>"Ahem. Regardless, we need to continue investigating this bizarre array."<br><br>"The insights from Young Master Jin and Grandmaster Jeok have been greatly helpful."<br><br>It was clear to all that the exchange had been anything but helpful.<br><br>The Sapphire Wind Blade delivered a conclusion so implausible, not even a street dog would be convinced, then turned to the Annihilating Shinni with a grave expression.<br><br>"It's truly unbelievable. That so many were summoned just by an array. Huh, really."<br><br>"Exactly. The implication that this could occur anywhere in the world is unsettling, isn't it?"<br><br>Did I catch that correctly?<br><br>Distracted by my own thoughts and the lingering awkwardness from the earlier conversation, I had been looking down. At that moment, I raised my head.<br><br>"What's the matter, Young Master Jin?"<br><br>"It's just that this is the first time I've heard the two of you discuss the array."<br><br>"Hm? Are you talking about the Transportation Array?" \[Note: the direct translation of this term is "Movement Array". However, based on the concept of the characters being used, a more apt name would be "Teleportation Array" because this array allows you to move a large number of people instantly from one place to another. However, given that teleportation is more of a modern concept, I thought it would be rather strange for the people of Murim to use or even know what that word means. So I decided to go with "Transportation".\]<br><br>"…The Transportation Array?"<br><br>"That's right. According to the Third Monster, this peculiar array is called the Transportation Array. It's an absurd notion that's hard to believe, but… Dark Heaven supposedly used this formation to move hundreds of miles."<br><br>The Transportation Array. The Transportation Array?<br><br>It would be less shocking to have a critic appear out of nowhere and give this array 4 out of 5 stars.<br><br>'I've heard of this somewhere before.'<br><br>An array capable of transporting large groups over vast distances.<br><br>Pondering this further only accelerates my heartbeat and dries my mouth.<br><br>Could this Transportation Array be what I suspect it is?<br><br>'No, that can't be.'<br><br>Yet, contrary to my attempts to deny it, a wave of excitement surged through me.<br><br>"Is this array still operational?"<br><br>My query, intended for the Sect Leaders, received a reply from the Dark Saint.<br><br>"I caught the Third Monster here myself."<br><br>"…He tried to escape using the Transportation Array."<br><br>"Yes. But that was just his wishful thinking."<br><br>"That means…"<br><br>"According to his confession later, he attempted to activate the array, but nothing happened."<br><br>"Ah."<br><br>"One thing is certain. There's no flow of Qi felt from this array anymore. It's nothing but an empty shell that has completely lost its power."<br><br>The Dark Saint's voice was devoid of inflection as he added,<br><br>"Based on what we've uncovered so far, Dark Heaven is undoubtedly a successor to the Demonic Cult. With the numerous strange and unparalleled techniques the Demonic Cult possessed, it wouldn't be strange for them to have some bizarre spells."<br><br>The infamous reputation of the Demonic Cult was well-known to me.<br><br>A formidable religious group that epitomized evil itself.<br><br>Despite their defeat in the Great Faction War, their dominance over Murim for an extended time was attributable to the Demonic Cult's collection of esoteric and unmatched skills.<br><br>'Could this array be among those esoteric and unparalleled techniques?'<br><br>No matter how much I think about it, I don't quite know what this is. It's a theme often seen in fusion fantasy novels I've read before, but that just makes me feel more confused. \[Note: "fusion fantasy" is a genre of Korean fantasy novels which fuse fantasy elements with other genres. Since the early 2000s, these novels were mostly a mixture of the fantasy and martial arts genres, but have seen an added mixture of video game elements since the 2010s. Murim Login would qualify as a fusion fantasy novel. Common themes in these novels are monsters, reincarnations, status windows, sword masters, mana, and circle magic.\]<br><br>'The specifics were easily glossed over in those novels. Sigh, why did I even bother reading those unfinished stories.'<br><br>Nevertheless, I chose to etch the array's design and patterns into my memory, just to be safe.<br><br>As I was diligently committing the Transportation Array to memory, the Dark Saint interrupted my focus.<br><br>"Judging by your attitude, it seems like you know something. Do you have any insights?"<br><br>"......"<br><br>What kind of excuse should I make?</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-371.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-373.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

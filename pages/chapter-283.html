@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 283 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 283</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 283</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: November 17, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>Bang!<br><br>The air in the office quivered.<br><br>Park Ji-Hwang's forehead smashed violently into the table, sending him careening to the floor. The ground underneath bore the testimony of the harsh impact, showing spiderweb-like fractures.<br><br>"Ugh…"<br><br>I pressed my knee down on the groaning Park Ji-Hwang's back, using the Thousand-Catty Press to pin him. \[Note: this is the same move that Cheong Pung uses to step on MC's spear in manhwa chapter 106.\]<br><br>My gaze, fixed intently on the back of his head, shimmered with astonishment.<br><br>'Ha, look at this guy.'<br><br>In this age, Hunters don’t understand the concept of martial arts.<br><br>Even those who train in close combat like the Black Hunter, Im Young-Jun, are rare. Most Hunters tend to prioritize weapon skills.<br><br>'Because it’s a more effective way to survive.'<br><br>But Park Ji-Hwang was different. Though it was only for a fleeting moment, his movement resembled that of a Peak martial arts master.<br><br>'It was a bit clumsy, but it seemed like he was an expert in the Joint Locking Techniques.'<br><br>I was caught off guard. The fact that we clashed five times revealed his prowess was far greater than my initial assessment.<br><br>'Is there really such a martial technique existing in the modern world? Why don't others know about it?'<br><br>Curiosity getting the better of me, I asked,<br><br>"Where did you learn that technique?"<br><br>His voice strained but defiant, Park Ji-Hwang retorted,<br><br>"Let me go. Before you regret it."<br><br>"I see. You still have too much spirit left.”<br><br>Thud! Thud! Thud!<br><br>Once, twice, thrice.<br><br>Each time I slammed his head, a suppressed moan escaped. Blood splattered across the pristine office floor.<br><br>As Park Ji-Hwang's body went limp, Park Tae-Seop, who had been watching the situation, suddenly spoke up.<br><br>"That's enough."<br><br>"Could this punk be the Guild Leader's son?"<br><br>"Son?"<br><br>"Or is it the daughter?"<br><br>"Certainly not that either."<br><br>"Then it’s none of the Guild Leader’s business. If you cross this line here, you don’t know what I might do."<br><br>Park Tae-Seop's eyebrows knitted together.<br><br>"You have a sharp tongue."<br><br>"My hands are even sharper. My old nickname was 'The Spicy Stir-Fried Chicken Hand of Haengshin-dong'... Want a taste?" \[Note: this is a direct translation... I too, have no idea what nonsense the MC is spouting here.\]<br><br>"I have my own dignity. I have no intention of fighting with a young buck like you."<br><br>Unfolding his arms, he responded coolly,<br><br>"But if that friend of yours gets seriously hurt, it complicates matters for me. He's an important business partner."<br><br>"He's just a manager sent by your business partner. No, at this level, it’s embarrassing to call him a business partner. From what I’ve seen, he’s pretty much a puppet master pulling your strings. Did they find a weakness of yours?"<br><br>He visibly winced, as if I had touched a sore spot.<br><br>"You're quicker-witted than I expected. Though I've heard you're not the brightest."<br><br>I didn't need to ask who told him that.<br><br>Grabbing a handful of Park Ji-Hwang's meticulously styled hair, I warned,<br><br>"I might be slow to learn. But once I get it, I don’t forget."<br><br>"Now that you've learned your lesson, let him go."<br><br>"That was the plan."<br><br>As I hoisted up the writhing Park Ji-Hwang by his hair, Park Tae-Seop gave a small nod of approval.<br><br>"Smart choi-"<br><br>Using all my strength, I slammed my captive's head.<br><br>Bang!<br><br>‘One more time.’<br><br>Crash!<br><br>The floor cracked upon impact as I drove my foot into his solar plexus. He convulsed like a fish out of water.<br><br>With a thud, Park Ji-Hwang slid across the room, stopping by the door.<br><br>"Cough!"<br><br>Roused by the assault, Park Ji-Hwang trembled, his lips stained with blood.<br><br>"…"<br><br>Facing the speechless Park Tae-Seop, I said,<br><br>"I let him go. Happy now?”<br><br>"You... you're quite something."<br><br>"Do you think only those who sever arms give warnings?"<br><br>"I might not be fond of that guy either, but you would have been better off heeding my advice for your own good.”<br><br>His demeanor was taut, voice unwavering. He was not to be trifled with.<br><br>More than apprehension, intrigue seized me. Who could command such trepidation from Park Tae-Seop, the legendary hero of the Great Cataclysm and a paragon among the nation's elite?<br><br>With a puzzled look, I asked,<br><br>"Who is it? That guy only referred to as 'that person'."<br><br>"I can't say. Even if I told you, you'd only end up resenting me later."<br><br>"Why all the secrecy? Is this person like Asmodeus or something?" \[Note: Asmodeus was the Great Demon King that was defeated at the end of the Great Cataclysm.\]<br><br>"If you were to make them your enemy, the Devil might be preferable. At least the whole world would fight with you... But what are you doing right now?"<br><br>Park Tae-Seop looked at me, eyes widened.<br><br>No, to be precise, he was staring at the phone in my hand.<br><br>"Just checking my phone."<br><br>"Now?"<br><br>"Yes."<br><br>He looked as if he thought I was insane.<br><br>Perturbed, Park Tae-Seop probed,<br><br>"What are you doing with it?"<br><br>"Since you won't tell me, I'm trying to find the number myself."<br><br>"The number?"<br><br>"Yes, that person's number."<br><br>"Wait, don't tell me..."<br><br>"That's right. I took it out of that guy's pocket earlier."<br><br>At my response, Park Tae-Seop's eyes bulged out, and Park Ji-Hwang, who was previously coughing up blood, momentarily forgot his pain and yelled,<br><br>"You can't use that!"<br><br>"Oh, I can't?"<br><br>I fiddled with the mysterious phone, its make unknown.<br><br>It looked different from the phone I had seen when I visited the studio apartment last time. It was unlikely he'd changed it in a few days. This was more likely a secret contact phone.<br><br>It's not unusual these days for two-timers to have two or three phones. \[Note: "two-timer" here refers to a person leading a double life.\]<br><br>'He’s the kind with lots of secrets.'<br><br>As I touched the screen, two notifications popped up along with a lock icon, indicating fingerprint and iris recognition.<br><br>Okay, fingerprints are one thing, but iris recognition? What the hell?<br><br>Motioning to the staggering Park Ji-Hwang, I commanded,<br><br>"Hey, come here and provide your fingerprint and iris."<br><br>"Jin Tae-Kyung, you crazy bastard. Do you even know what you're doing?"<br><br>"Yeah, I do. So, before I gouge out your eyes and cut off your fingers, just open this."<br><br>"Don't threaten me. I was going to do it anyway."<br><br>With clenched jaws, Park Ji-Hwang wiped the residue of blood from his chin.<br><br>But now, instead of gasping for breath, he seemed full of energy.<br><br>Though there was blood smeared here and there, his previously broken forehead and nose seemed to have healed, and he was vibrant.<br><br>It was only then I spotted a small crystalline vial resting near his feet.<br><br>"A potion?"<br><br>"When the enemy is in front of you, never lose focus. Didn't you learn that in training?"<br><br>While I was briefly looking at the phone, he must've taken out his hidden potion and consumed it. I shrugged in response.<br><br>"That’s applicable when our abilities are roughly matched. Isn’t this situation different?"<br><br>"What?"<br><br>"I don’t know where you learned your skills, but..."<br><br>Using the Scorching Sun Divine Arts, I channeled my Qi, awakening the sleeping fire dragon within. \[Note: the Scorching Sun Divine Arts is the cultivation technique of the Scorching Clan.\]<br><br>Eyes ablaze with a fierce fervor, I locked onto Park Ji-Hwang,<br><br>"You and I are in different classes, you little shit."<br><br>In a fleeting moment, the fiery dragon, a manifestation of my Scorching Yang Qi, fragmented into countless rivulets. They surged, rejuvenating every fiber of my body.<br><br>At their final convergence point, they melded into a singular, potent force.<br><br>'Dispersal, compression, and then...’<br><br>Release.<br><br>Woosh!<br><br>The frigid embrace of early winter was instantly dispelled, transforming the once cold office into a blazing summer heat. A massive burst of fire filled the space.<br><br>"Ha."<br><br>I exhaled a hot breath.<br><br>Beyond the shimmering mirage, I could see a face painted with horror. His eyes widened, pupils dilated with dread.<br><br>"You, you…"<br><br>From between Park Ji-Hwang’s lips, a groaning voice emerged.<br><br>"How on earth?"<br><br>"I told you. We're different." \[Note: MC is built different, literally since he has the Martial Body.\]<br><br>Chilled to the bone, he trembled, gnawing his lip with such intensity that blood trickled down.<br><br>“This is, this is impossible. How can you…”<br><br>He struggled to form words, his face warped with disbelief.<br><br>“I need your help."<br><br>It was clear who he was addressing.<br><br>Park Tae-Seop, the guild leader of Myeongdong, who had been riveted by my display, answered with an undertone of resignation.<br><br>"Is there a way to refuse that request?"<br><br>"None."<br><br>"And if I still refuse?"<br><br>“There are clear rewards and penalties based on your choice. You, Guild Leader, should be well aware of 'his' methods.”<br><br>"...I'm sick of this."<br><br>From his side, he unsheathed a rod, roughly 60 centimeters in length. Stroking the jade embedded at its pinnacle, a radiant blade of energy sprang forth.<br><br>Shhhhh!<br><br>"Don't blame me."<br><br>Laden with a cerulean aura, the blade surged towards me.<br><br>This was no ordinary opponent. He was a revered champion of the Great Cataclysm, one of the nation's elites. A vast energy erupted from him, challenging the heat I radiated.<br><br>Park Ji-Hwang, bolstered by his newfound support, sneered triumphantly.<br><br>"You're finished now.”<br><br>“Finished?"<br><br>I laughed out loud.<br><br>I thought he was somewhat intelligent since he attended Hankuk University, but it seems he has completely forgotten what I said last time.<br><br>“I get to decide how this ends, you idiot.”<br><br>Park Ji-Hwang carelessly placed me at the starting line and pulled the trigger to signal the start. But he failed to anticipate the most crucial thing.<br><br>There is no finish line in this race.<br><br>Wherever I stop is the finish line.<br><br>'Open inventory.’<br><br>'Summon White Flames.'<br><br>Whooosh. I stepped forward with my spear.<br><br>The blue fire that flowed along the blade consumed everything in its path as it charged towards my enemy.<br><br>\* \* \*<br><br>“Ha!”<br><br>A resounding battle cry echoed, and a colossal broadsword hurtled in my direction. The blue aura emanating from the sword was denser and longer than anything I had ever seen.<br><br>'As expected from a top-ranked Hunter.'<br><br>Qi and mana.<br><br>Different names, but their essence remains the same. In that sense, the energy that Park Tae-Seop possesses surpassed mine.<br><br>But...<br><br>'That’s all he has.'<br><br>With that thought, I sprung upwards.<br><br>My hair narrowly grazed the ceiling, and the blade that had been aiming for my waist slashed the empty space instead.<br><br>Whoosh! Crash!<br><br>The immense wind pressure swept everything away. The reinforced glass that covered one side of the office shattered and plummeted to the ground below.<br><br>Even before the screams from below reached my ears, I thrust my spear towards the top of Park Tae-Seop's head.<br><br>Shriek, thud!<br><br>With a deafening crash, Park Tae-Seop's knee hit the floor.<br><br>His eyes bulged in shock as he hurriedly blocked my attack with the shield in his other hand, only making it just in time.<br><br>"What the hell!"<br><br>By now, he must be feeling a crushing pressure, akin to tons of boulders pressing down on him.<br><br>It was a difference in the physical capabilities we each possessed, and the disparity in how we maneuvered our energy.<br><br>'Hunters are not efficient.’<br><br>On the other hand, the cultivation techniques of the martial world explosively enhance the efficiency of Qi. This is why the Nine Great Sects and the Five Great Families are so powerful.<br><br>Rooted in these methods, myriad martial arts burgeon.<br><br>When these intricate components mesh perfectly, they transcend into divine techniques.<br><br>'Disperse, compress, release.'<br><br>Qi is precious, to be harnessed judiciously at pivotal moments. But even Park Tae-Seop, a top-ranked Hunter, couldn’t completely overcome its limits.<br><br>Bang! Bang! Thud!<br><br>The very shield that had thwarted four of my strikes was cleaved in two. From the shadows, a glinting streak targeted my flank.<br><br>"Die!"<br><br>The owner of the thin, sharp rapier was Park Ji-Hwang.<br><br>In the moment I thought I had avoided it, the aura at the tip of the sword surged longer and grazed my side.<br><br>Slash!<br><br>Regret briefly flitted across Park Ji-Hwang's eyes, lamenting the fact that his aura only skated past fabric, not flesh.<br><br>Glancing at my untouched side, I licked my lips.<br><br>"...This is interesting."<br><br>"Interesting? You're not scared?"<br><br>"Is it something taught by that person or someone else? Who taught you?"<br><br>"Shut your mouth. Someone of your stature shouldn't even speak of them."<br><br>"Fair enough. By any chance, are you in a Saibi cult?" \[Note: Cults or false/pseudo-religions are called "Saibi" in Korean. MC is asking Ji-Hwang if he is in some sort of religious cult because of how highly revered 'that person' is to him; as if 'that person' is a god to Ji-Hwang.\]<br><br>"You bastard...!"<br><br>Whoosh! Swish!<br><br>From the right, Park Tae-Seop's broadsword rushed in, and from the left came Park Ji-Hwang's rapier.<br><br>Facing their combined onslaught, I extended both arms in defiance.<br><br>Bang! Clang!<br><br>Park Tae-Seop's broadsword was blocked by White Flames, and Park Ji-Hwang's rapier was deflected by a dagger I had just summoned. I smoothly twisted my wrist.<br><br>Clatter!<br><br>The four clashing blades intertwined with each other.<br><br>I recalled the blade technique of the Sword Saint Mae Jong-Hak.<br><br>His sword, which used to let everything pass. I remembered its movements.<br><br>I executed the technique.<br><br>'Flow.'<br><br>Smoothly.<br><br>My spear blade and dagger moved with serpentine grace. Neither the behemoth of a broadsword nor the agile rapier could predict or parry their trajectories.<br><br>In no time, my two weapons rested threateningly at their throats.<br><br>I hissed,<br><br>"Drop your weapons."<br><br>"......!"<br><br>".....!”<br><br>Their gazes, awash with disbelief, locked onto me.<br><br>Between clenched teeth, anger and bewilderment coloring his tone, Park Ji-Hwang managed,<br><br>“How did you...”<br><br>"Seems you didn't hear me.”<br><br>Crack!<br><br>There was no hesitation. The moment my foot descended upon his knee, the cartilage shattered, and a scream erupted.<br><br>"Aaagh!"<br><br>"You took two arms from us. One leg doesn't balance the scales."<br><br>Just as I was about to crush his remaining knee,<br><br>"I think that's enough."<br><br>An unfamiliar voice echoed in my ears.<br><br>An enigmatic voice resonated, deep and sonorous. It sent shivers down my spine, making every hair on my neck bristle.<br><br>Could this be...<br><br>'A Transcendent Master?'</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-282.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-284.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

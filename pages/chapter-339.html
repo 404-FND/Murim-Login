@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 339 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 339</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 339</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: February 19, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>It was early morning.<br><br>The Sichuan Provincial Lord, nestled in his concubine's embrace, queried with a voice thick with sleep, \[Note: this is a new character, not to be confused with the Shanxi Provincial Lord (the little Prince) mentioned in the previous chapter. I went down a dark road thinking that the little cute kid has already started pimping at such an early age.\]<br><br>"Who is it? Who has come to visit?"<br><br>His bodyguard, taken aback by his superior's naked body, looked away hastily, responding,<br><br>"Jin Tae-Kyung from the Jin Family of Taiyuan and a person named Cheong Pung from Mount Hua Sect have requested an audience."<br><br>"Mount Hua Sect?"<br><br>It was a name somewhat familiar to his ears.<br><br>Though born to power and removed from the Murim's daily affairs, he was not unfamiliar with the Mount Hua Sect's renown.<br><br>"Mount Hua Sect... Isn't that one of the Ten Great Sects, or something of the sort?"<br><br>"More precisely, it's referred to as the Nine Great Sects. The Mount Hua Sect is indeed a highly renowned and prestigious major sect in the Murim."<br><br>"Still, they are just vagabonds. It's laughable to call them a prestigious major sect when they wield swords in broad daylight without any proper identification. Tsk, tsk."<br><br>The bodyguard, a former denizen of the Jianghu, held his tongue, aware of his master's disposition.<br><br>Observing the silent deference, the Provincial Lord mused, then added,<br><br>"Wait, the Jin Family of Taiyuan also sounds quite familiar."<br><br>"Two years ago, they unified the Murim of Shanxi and have now made their name known even in the Central Plains. Although, if we talk about the history of the family, it's comparable to the Nine Great Sects in terms of antiquity..."<br><br>"No, not that. I've definitely heard it mentioned frequently... Ah!"<br><br>A flash of realization struck the lord, and he exclaimed, striking his knee,<br><br>"That's right. The Jin Family Escort Agency!"<br><br>"The Jin Family Escort Agency, you say..."<br><br>Only then did the bodyguard recall a memory he had momentarily forgotten.<br><br>When he thought about it, it wasn't that long ago. It was perhaps three or four months at most, when a line of carriages loaded with wealth had arrived, bringing a smile to the Sichuan Provincial Lord's face.<br><br>"But weren't they the Jin Family Merchant Group?"<br><br>"The Jin Family Escort Agency and the Jin Family Merchant Group. Both are affiliated with the Jin Family of Taiyuan. Now I remember." \[Note: in Chapter 312, the MC mentions that his family's Escort Agency now has five branches.\]<br><br>The Jin Family had stealthily risen to prominence in the Central Plains, pioneering new trade routes through the northern tribes.<br><br>"So, what have they brought this time?"<br><br>The Provincial Lord's eyes, which were filled with anticipation, were met with the bodyguard's hesitant response.<br><br>"Well, it seems they have come empty-handed."<br><br>"What did you say?"<br><br>"However, this young man named Jin Tae-Kyung is a direct descendant of the Jin Family of Taiyuan, and he is a late-stage warrior with a great reputation in the Murim..."<br><br>"Fuck this Murim nonsense."<br><br>The Sichuan Provincial Lord's face was already contorted with irritation.<br><br>After all, he was born into a powerful noble family and was deeply entrenched in aristocratic values.<br><br>He would've gladly received the Jin Family's Merchant Group with their lucrative offerings, but his enthusiasm waned for a young man claiming kinship to a minor Murim family, seeking an audience at dawn.<br><br>'It's probably going to be some sort of request. This is why you shouldn't easily accept things from these lowly sorts.'<br><br>Resigned to their unwelcome presence, he cocooned himself in his blanket.<br><br>"Ah, I was finally sleeping well after a long time, and now my mood is ruined."<br><br>Just then, his concubine, newly awakened, inquired in a sultry tone,<br><br>"My Lord, what's bothering you so much?"<br><br>"Some young bastard has come to visit at the break of dawn. Do you remember them, my love? The Jin Family's Merchant Group that visited a few months ago."<br><br>"Oh my. Yes, yes. Of course, I remember them."<br><br>"They're from the Jin Family of Taiyuan in Shanxi, a bunch of ruffians from the Murim. This young bastard claims to be a direct descendant."<br><br>"So, what about it?"<br><br>"What do you mean 'what about it'? He must have come with some dirty request. I should just send him away. How dare he..."<br><br>"My Lord."<br><br>"What is it?"<br><br>"Why don't you meet him just once?"<br><br>"Eh, what?"<br><br>"He might have brought another nice gift. Like this beautiful necklace I am wearing now."<br><br>Her sweet smile thawed the Provincial Lord's annoyance.<br><br>The last time the Jin Family's Merchant Group visited, they had brought many precious items.<br><br>The various gold and jewelry items were said to be made by northern tribes and were mystical and intricate. The concubine was so fond of them that she never took them off.<br><br>"Wouldn't you listen to my request? Just this once?"<br><br>The concubine shot an earnest, pleading look for three seconds.<br><br>Her appeal was irresistible. The Provincial Lord signaled urgently to the bodyguard.<br><br>"Bring them here, quickly!"<br><br>"Yes. Should I guide them to the reception room?"<br><br>"What reception room? I'm just going to have a brief look. Call them here."<br><br>"……."<br><br>"Ah, what are you waiting for? Go and bring those ruffians from the Jianghu already."<br><br>The bodyguard departed from the chamber with a stoic nod. The Provincial Lord puffed out his chest and ample midsection and gazed patronizingly at his concubine.<br><br>"I am meeting them only because you requested it."<br><br>"Thank you, my Lord. But I've heard that those ruffians from the Jianghu are quite rough... I'm scared."<br><br>"Scared, you say?"<br><br>His laughter filled the room as he spoke with an air of authority.<br><br>"Ha! Here I am, governing a city under His Highness the Emperor's command, and you would have me fear those lowly street thugs?"<br><br>"Oh, how wonderful. My Lord, you are so impressive!"<br><br>Nestling into his embrace, the concubine looked up adoringly as he smiled, assured.<br><br>"Don't worry. As soon as those bastards enter, I will make them kneel and not even dare to look at you."<br><br>\* \* \*<br><br>"Wh-wh-what is that!"<br><br>Thud, thud, thud, thud!<br><br>The Provincial Lord, who had leapt from his bed in a flurry, tumbled to the ground, eyes wide.<br><br>"Th-this is the token of His Highness, the King of the Northern Mountains!"<br><br>Did he eat charcoal for breakfast?<br><br>His reaction was so intense that even I felt momentarily taken aback.<br><br>All I did was take the token from my pocket.<br><br>'Was it really that significant?'<br><br>Examining the golden plaque, memories of its acquisition flooded back.<br><br>A year prior, at an exclusive event for King of the Northern Mountains Zhu Biao, this token was given as a reward for completing a quest.<br><br>\[Item Window\]<br><br>\[King of the Northern Mountain's Token\]<br><br>Type: Treasure<br><br>Grade: None<br><br>Restriction: Jin Tae-Kyung<br><br>Description: A token imbued with the authority of King of the Northern Mountain Zhu Biao, the sole brother of the Emperor and a Prince. The clouds and dragon engraved on the surface symbolize the imperial family and are of high artistic value.<br><br>Note: Can only be used once.<br><br>I never thought I'd use this item, which I had thrown into my inventory and forgotten about.<br><br>I knew the authority of the imperial family was strong in this world, but the Provincial Lord's reaction was more than I expected.<br><br>'It's a shame I can only use it once.'<br><br>But this is better than nothing.<br><br>I resolved to extend even greater fan service to the King of the Northern Mountains.<br><br>'I should give him a rare collectible and a free hug next time we meet.'<br><br>As silence lingered, the Provincial Lord gradually righted himself.<br><br>Initially, his gaze had dismissed Cheong Pung and me as mere vagabonds, but now, it flickered with unease, as if struck by an earthquake.<br><br>Shaking, shaking.<br><br>"……."<br><br>Now even his thing was shaking.<br><br>The Sichuan Provincial Lord hurriedly covered his lower half under my disdainful gaze.<br><br>"There is, uh, a reason for this…"<br><br>Undoubtedly, there was a reason.<br><br>Outside, spring was ushering in its blooms, yet within these walls, the air was heavy with the fragrance of nocturnal blossoms.<br><br>Spotting a discarded blanket, I flung it towards him.<br><br>"Th-thank you."<br><br>"Don't mention it."<br><br>I was the one who should be thankful. Seeing a naked middle-aged man with a belly that looked about 35 weeks pregnant was a torture in itself.<br><br>Cheong Pung, eyeing the lord's pronounced belly, murmured inquisitively.<br><br>"Savior, do you think it's a boy or a girl?"<br><br>"Men can't have babies."<br><br>"Wow!"<br><br>His progress was commendable. Only a year prior, he staunchly believed babies arrived via 'Stork Express Delivery'.<br><br>Turning to the Provincial Lord, who now modestly shielded himself with the blanket, I cut to the chase.<br><br>"Since there's no point in dragging out the conversation, I'll get straight to the point. I came here with a request."<br><br>"Speak, messenger of His Highness, King of the Northern Mountains. I will help to the best of my ability."<br><br>"I am looking for someone… First of all, how many people can you mobilize?"<br><br>The Sichuan Provincial Lord, tentative, responded with uncertainty.<br><br>"Well, excluding the troops stationed to guard against the incursions of the border tribes, I think we can muster several thousand men."<br><br>Several thousand from the government ranks, and potentially more with local law enforcement – a promising revelation.<br><br>I grinned, clapped his shoulder, and assisted him to his feet.<br><br>"Then let's start by searching the entire capital city. The first criterion should be that the person must be a doctor."<br><br>"A doctor? The person you're looking for is a doctor?"<br><br>"Yes. People call this doctor the Divine Doctor."<br><br>"What, the Divine Doctor? You mean that one?"<br><br>"Why, do you lack confidence? If you do well, I can speak highly of you to His Highness, King of the Northern Mountains."<br><br>The Sichuan Provincial Lord, after a brief pause, vowed with a quavering voice.<br><br>"I will complete the mission with all my might!"<br><br>Shaking, shaking.<br><br>"……."<br><br>I mean, you can shake, but please don't shake that thing.<br><br>\* \* \*<br><br>The reputation preceding the Sichuan Provincial Lord was less than flattering.<br><br>Labeled an inept bureaucrat, his rise to power was attributed to familial influence rather than merit, marked by corruption and hedonism.<br><br>'But he is the Provincial Lord.'<br><br>In this context, his title was paramount. Similar to how I wielded Zhu Biao's authority as the King of the Northern Mountains, he possessed the influence befitting Sichuan's highest authority.<br><br>"Sichuan Provincial Lord Won Gyun decrees, all officials in Sichuan shall execute these orders flawlessly!"<br><br>When I heard his name, I lost all confidence, but he was indeed the Provincial Lord. \[Note: Won Gyun is a historical figure in Korean history most known for his incompetence and poor leadership during the Battle of Chilcheollyang in 1597 where a significant portion of the Korean naval fleet was destroyed.\]<br><br>Messengers dispatched across Sichuan bore the edict, and marketplaces buzzed with postings for the Divine Doctor, promising a handsome reward.<br><br>"A thousand silver nyang! Truly befitting a friend of His Highness the King of the Northern Mountains, so generous!"<br><br>Won Gyun's awe was short-lived.<br><br>"What are you talking about? It's all coming from your pocket."<br><br>"……What?"<br><br>"Do I look like someone who carries around a thousand silver nyang?"<br><br>"Well, even so, that's a large amount."<br><br>"Oh, then put it on credit. I'll talk to His Highness the King of the Northern Mountains later and ask him to pay."<br><br>"No! I will pay for it!"<br><br>"By squeezing it out of the hard-working civillians? Or by squeezing out your own belly fat?"<br><br>"I will use my personal funds to pay for it, no matter what!"<br><br>"Wow, our Lord is so impressive!"<br><br>The reward was substantial, life-altering for some, and the search was extensive. Yet, this might not suffice.<br><br>'If it were this easy, the imperial family wouldn't have given up.'<br><br>Who was the Divine Doctor?<br><br>They were a mystery, eluding even the Emperor's widespread search.<br><br>Such individuals tend to avoid attracting public attention.<br><br>"Let the military handle the streets and busy areas, and we'll search every promising spot in the mountains and by the rivers."<br><br>"I agree."<br><br>"I guess I'll just stay with the Qingcheng Sect..."<br><br>The hundreds of Qingcheng Sect disciples, who had journeyed down the mountain with their elders, were ideally suited for this mission.<br><br>Thus, a rare collaboration between government forces and the Murim world was forged, culminating in an intensive search. Three days into the operation, a significant development unfolded.<br><br>\* \* \*<br><br>"Squad Leader..."<br><br>The sight of Hyuk Mu-Jin, wearied and depleted, and Goong Gi-Bang, somber with sealed lips, was telling.<br><br>'Something has gone wrong.'<br><br>The lack of relief at their arrival indicated they did not bear the anticipated news.<br><br>Without uttering a word, I bypassed Hyuk Mu-Jin and Goong Gi-Bang, approaching a solitary figure.<br><br>"I am Jin Tae-Kyung from the Jin Family of Taiyuan."<br><br>Before me stood a middle-aged Buddhist nun, her head shorn, her face ashen.<br><br>She was the sole envoy from the Emei Sect, more a forlorn warrior than a reinforcement.<br><br>"My Buddhist name is Myo-Ryong… Cough."<br><br>A trickle of blood stained her chin – a clear sign of an internal injury.<br><br>Supporting the staggering nun, I peered into her fading eyes. I asked urgently,<br><br>"What in the world happened?"</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-338.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-340.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 387 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 387</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 387</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: April 5, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>Emerging from the underground bunker, we found ourselves enveloped by the night's depth.<br><br>The chill of the night air filled my lungs with each deep inhale. Gazing at the night sky, peppered with stars, my thoughts wandered to Murim's Sichuan, hidden somewhere beneath that celestial canvas. Suddenly, a light tap on my shoulder brought me back.<br><br>「I'm thinking of having a light drink. Want to come with me?」<br><br>"Now?"<br><br>「Yeah. Just us.」<br><br>It's Fei Chen. Behind her stood two other people who followed us on the way out.<br><br>One of them spoke, their voice dripping with sophistication.<br><br>「Lady of the East, by any chance, do you have Romanée-Conti among the drinks we might share?」<br><br>「I'm not a lady, and no, I don't have any. Do you like wine, Prince?」<br><br>With a frown, Prince Felix corrected her.<br><br>「It's not Prince, it's Prince Felix. And I do enjoy wine in moderation. Especially Romanée-Conti from '45.」<br><br>「We don't have the '45.」<br><br>「Then I refuse. That's the only thing I'll drink.」<br><br>Could he be more unreasonable?<br><br>With Prince Felix and his entourage gone, Fei Chen addressed the last of us.<br><br>「You're going, right Johnson?」<br><br>With a radiant smile, Magic Johnson replied.<br><br>「Sorry. It's regrettable, but I think I'll have to postpone to another time.」<br><br>「Why?」<br><br>「I might be deployed to the front lines as early as tomorrow, so I feel it's better to have the strategy memorized.」<br><br>Truly a Grand Mage. Heroes of the Great Cataclysm don't emerge by mere chance.<br><br>Admiring Magic Johnson's dedication, I hesitantly spoke.<br><br>"I should probably bow out as well."<br><br>「No.」<br><br>"Why not?"<br><br>「You're neither a prince nor a Grand Mage.」<br><br>"…No? What kind of reasoning is that?"<br><br>Ridiculous. Beyond her stubborn insistence, her desire to indulge in drinks under these circumstances strikes me as utterly senseless.<br><br>「You just cursed me in your mind, didn’t you? You called me a lady with no thought but of drinking in such a situation.」<br><br>"…How did you know?"<br><br>「Oh my, look at how unnecessarily honest this one is?」<br><br>Fei Chen poked the tip of my nose with her long finger. At a glance, she looks like a beauty in her early twenties, but I feel odd knowing she's older than my mother.<br><br>"How about looking for someone else? Maybe Mr. Lee Jeong-Ryong…"<br><br>「Lee?」<br><br>Fei Chen's head tilted slightly. Lee Jeong-Ryong had long since disappeared with the Ares Guild members he had brought.<br><br>「Hmm. He's become quite a slippery person. He wasn't like this even during the Great Cataclysm. It's impossible to know what he's thinking.」<br><br>She has a keen eye for people.<br><br>Fei Chen glanced sideways at another departing figure and continued.<br><br>「Wu Hei-Xing. That guy is too rude. Drinking with him would spoil the taste.」<br><br>I stared at the back of Wu Hei-Xing heading into a sparsely populated forest and responded.<br><br>"There's nothing we can do then. You'll have to drink some other time."<br><br>「No. Drinking is for days like this.」<br><br>"…?"<br><br>「You never know if it might be the last.」<br><br>"Ah."<br><br>I somewhat understood why Fei Chen was seeking out alcohol.<br><br>War grinds down the spirit and marks lives with the sorrow of loss.<br><br>Her desire to drink stemmed from the memory of those she had lost during the Great Cataclysm.<br><br>With the current situation, any one of us could cross a river from which there was no return.<br><br>「Well, anyway, given the circumstances, I have no choice but to change targets. What about you, handsome young man?」<br><br>"I already said I'm not going."<br><br>Fei Chen's gaze shifted, her expression one of disbelief.<br><br>「I'm not talking about you. I'm talking about that young man.」<br><br>The "handsome young man," Mr. Choi, happily agreed.<br><br>"It would be an honor."<br><br>"Eh, Team Leader. You're really going?"<br><br>"I must. When will I get another chance to have a drink with Ms. Fei Chen? I have a lot of questions."<br><br>Fei Chen's laughter filled the air.<br><br>「I thought you were just a pretty face, but you're also quite the charmer. So, what are you so curious about?」<br><br>"By any chance, do you remember where you bought the equipment you're wearing?"<br><br>「…Is that your question?」<br><br>"Yes."<br><br>「This one's not easy either.」<br><br>Fei Chen let out a deep sigh, prompting a robust laugh from Magic Johnson.<br><br>「Haha. Ms. Chen, shall we all go for a drink now?」<br><br>「All of us? Johnson, didn't you say you weren't going?」<br><br>「True. I don't have a hobby of drinking alone with a woman. But if a charming man like Mr. Choi here joins, then it's a different story.」<br><br>「…….」<br><br>「I like men. Especially Asian men.」<br><br>「Alright, let's go.」<br><br>I expected no less from Time magazine's most influential LGBTQ+ person of the year.<br><br>I sent a Sound Transmission to Mr. Choi, who was stiffly being dragged away.<br><br>\- Contact me if anything happens.<br><br>Mr. Choi, looking as sad as a cow being led to slaughter, vanished into the night alongside the two S-rank hunters. After surveying the area, I continued on.<br><br>'It was this way.'<br><br>How long had I navigated the shadowy, deserted path, evading detection? In the enveloping darkness, I called out.<br><br>"Come out."<br><br>A pause, then a voice emerged.<br><br>「…Not bad.」<br><br>Rustle.<br><br>Rustling sounds accompanied Wu Hei-Xing's appearance, as he assessed me thoroughly.<br><br>「How did you know I was here?」<br><br>My response was blunt.<br><br>"Shouldn't you ask why I'm here? Anyone could have found you."<br><br>「Hmm. You're more skilled than I thought.」<br><br>"Don't pretend to praise me now. It's clear you're trying to start something."<br><br>「……!」<br><br>Wu Hei-Xing's complexion reddened, my direct hit evidently striking a chord.<br><br>In some respects, he was straightforward to navigate. Despite being well into his thirties, his simplicity was almost juvenile.<br><br>「That's not it, I sincerely...」<br><br>"You sincerely think I'm a bangzi, right? You must have been annoyed that some nobody from Korea, not even a proper S-rank hunter yet, is getting all the attention instead of you. You started trouble with your typical one-dimensional behavior, but it didn't get you anywhere. And now that bangzi guy isn't as easy to deal with as you thought."<br><br>Without allowing him a moment to interject, I unleashed a barrage of words.<br><br>"So, you throw around a few insincere compliments and make friendly gestures, trying to pull some scheme... Ah, is there anything I've said so far that's wrong?"<br><br>「...」<br><br>"Yeah, I've seen your type a lot. I've been backstabbed one too many times."<br><br>I fixed Wu Hei-Xing with a disdainful gaze. His cheeks aflame, he struggled for words.<br><br>「I wasn't trying to pull any other tricks.」<br><br>"Then what? If you're thinking of getting close to me, you might as well forget it. Hanging around shit makes you smell like it too."<br><br>「...!」<br><br>"What are you doing now?"<br><br>At my softer tone, his hand, inching towards his weapon, froze in place.<br><br>"Don't draw it. You'll get hurt."<br><br>Wu Hei-Xing, his gaze laden with turmoil, finally spoke.<br><br>「If you knew everything already... why did you follow me so easily?」<br><br>"I had something to ask."<br><br>「What?」<br><br>Facing him squarely, I voiced my query.<br><br>"Sound Transmission. Right?"<br><br>「...!」<br><br>His rigid expression confirmed my suspicions. As I idly scratched my head, I continued,<br><br>"Seems I was right. Well, being from the mainland, it's possible various martial arts have survived here. Like Qi cultivation techniques."<br><br>「W-what are you talking about! That's just Message Magic...」<br><br>"Sure."<br><br>I couldn't help but chuckle at his hasty excuse.<br><br>Others who haven't been exposed to martial arts might not notice the difference, but he couldn't fool me.<br><br>'Look at me for a moment.'<br><br>At the end of the meeting, what reached my ears was definitely a Sound Transmission.<br><br>The reason I had accepted the seemingly trivial invitation was precisely because it had come from Wu Hei-Xing himself.<br><br>「How did you know that?」<br><br>"Why, was it a secret no one knew about?"<br><br>Observing Wu Hei-Xing's distress, I couldn't help but probe further.<br><br>"I thought there might be a chance, but it's really quite fascinating. Didn't they destroy all the martial artists during your Cultural Revolution or something? Yet, martial arts have somehow survived."<br><br>「Shut your mouth!」<br><br>"Ah, you said your family is well-off, right? So, did the top members of the Communist Party sneakily preserve it using their positions?"<br><br>「...」<br><br>His expression sank in an instant, which seemed like a confirmation.<br><br>As a foreigner, I might not fully grasp the magnitude of the issue, but I do understand the value of the Qi cultivation technique, also known in modern times as a Mana cultivation technique.<br><br>'If this was Murim, there would have been a bloodbath.'<br><br>His defensive reaction was understandable, given that he was caught red-handed with a golden calf.<br><br>「You better not repeat what you've just said ever again.」<br><br>"I had no intention of doing so, but you're quite touchy, aren't you?"<br><br>Wu Hei-Xing's stare was loaded with hostility.<br><br>「Would you still act this way after knowing who my father is?」<br><br>"I don't know who your father is, but it sounds like he might have been a member of the Red Guards." \[Note: the Red Guards were a student-led paramilitary social movement mobilized by Chairman Mao Zedong in 1966 during the Cultural Revolution.\]<br><br>「...!」<br><br>"Wasn't it your father who held a hammer and smashed Confucius' tomb when he was young?"<br><br>「You little shit-!」<br><br>Crack!<br><br>With a roar, he attacked.<br><br>An aura blade, or rather, Sword Aura, emerged as he drew his blade, targeting my neck.<br><br>Swoosh!<br><br>The air sliced through, brushing my hair. I dodged low, nearly grazing the ground, then retaliated with a knee to his jaw.<br><br>Crack!<br><br>Teeth and blood scattered. Seizing his floundering limbs, I murmured beside his ear.<br><br>"I told you not to draw that sword."<br><br>Crack, snap!<br><br>「Arghh!」<br><br>With a forceful grip, my hands emitted intense heat, fracturing his armor and searing his skin.<br><br>His scream was muffled by the Qi barrier I had instantly raised.<br><br>「Bastard!」<br><br>Whoosh!<br><br>With a swift motion, he demonstrated proficiency in martial arts that focused on hand-to-hand combat. His prowess in this area significantly surpassed his lackluster sword skills.<br><br>Although...<br><br>'Compared to Murim, the quality of martial arts is much lower.'<br><br>A wave of disappointment washed over me as I reached out.<br><br>Boom!<br><br>It was a clash of Qi against Qi.<br><br>His kick aimed at my waist halted, unable to advance.<br><br>Shock and disbelief flickered in Wu Hei-Xing's eyes.<br><br>「H-how is this possible?」<br><br>"Gotcha."<br><br>Seizing the opportunity, I grasped his ankle and hurled him towards the earth with considerable force.<br><br>Whoosh, bang!<br><br>Once more.<br><br>Whoosh, thud!<br><br>Again, and again.<br><br>Bang! Bang! Boom!<br><br>The earth convulsed, ejecting stones and timber.<br><br>As the dust settled, Wu Hei-Xing was found in a substantial crater, appearing utterly defeated.<br><br>"You've got a sturdy body, so there's not much harm done."<br><br>「Hu, huuu…」<br><br>"Hey, you okay?"<br><br>「Huuuuu…」<br><br>He was completely out of it.<br><br>Sighing, I bent down and rummaged through his pocket.<br><br>After searching the pocket, which was enchanted with space expansion magic, I finally found the item I was looking for.<br><br>"Ah, here it is. A high-grade potion."<br><br>Ding.<br><br>\- \[You have acquired a Top-grade Potion!\]<br><br>"...It can't be. A top-grade potion? What is this, you bastard?"<br><br>Witnessing Wu Hei-Xing in a state of disarray, I was taken aback. Even for an S-rank hunter, possessing such an item is extraordinary.<br><br>While high-grade potions are a rarity, top-grade potions are almost legendary, materializing perhaps once or twice annually.<br><br>Ignoring their astronomical value, their extreme rarity means they are virtually unattainable, regardless of one's wealth.<br><br>'I've only seen this on the internet, and here it is.'<br><br>After a moment of contemplation, I sneakily slipped the top-grade potion into my inventory. Then, I rummaged through his pocket, found a high-grade potion, and poured it over him.<br><br>"Since I've taken my compensation, let's call it even. You have a lot at stake, so if you go spreading today's events around..."<br><br>「Huuu, huuuuu…」<br><br>"Okay. We've reached an agreement."<br><br>Just as I tidily concluded the matter, the phone in my pocket vibrated.<br><br>There was a short text message from Mr. Choi.<br><br>〈 Team Leader Choi<br><br>Team Leader Choi<br><br>Jin Tae-Kyung, please come quickly.<br><br>"..."<br><br>No, Johnson.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-386.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-388.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

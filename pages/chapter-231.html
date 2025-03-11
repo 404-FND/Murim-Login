@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 231 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 231</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 231</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: Coldbutteredtoast</span>
+                            <span class="published-date">Published: December 14, 2022</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>"Amitabha, can I pass by for a moment?"<br><br>The voice belonged to a young man in baggy, ill-fitting monk robes. Holding a large rosary in one hand, the newcomer bowed his head and squeezed past the black-clad gangsters of the Dong Tian Faction.<br><br>"Excuse me, please," he said. "Amitabha Buddha, Amitabha Buddha."<br><br>"Huh?" "What the hell?" Taken aback by his sudden appearance, the gangsters gave way before him. Those few who reached out were pushed aside, gently, but with irresistible power. The monk passed slowly through the crowd, bobbing his head and repeating his peaceful mantra.<br><br>Tae-Kyung narrowed his eyes. While the monk seemed innocuous enough, his thick forearms were corded with muscle and his lithe, compact frame suggested incredible strength. It was a physique better suited to sportswear than a robe.<br><br>[Look at those muscles!]<br><br>Emerging into the inn, the monk dabbed his sweaty forehead and exhaled nervously. It was a difficult thing to watch. His face was flushed red; his eyebrows twitched with agitation.<br><br>"Take it slow, man," said Tae-Kyung. "We can wait."<br><br>The monk gave a strained smile. "Thank you. I appreciate it."<br><br>It was then that the scarred giant stepped into his path, snarling. "Who the hell are you?"<br><br>"Just a humble monk." (貧僧 -- Chinese: Lacking Monk, a self-effacing greeting)<br><br>"Enough." (됐고 -- Korean: also provocative) The giant curled his lip. "Are you just an initiate? You don't even have marks on your forehead."<br><br>"Of course." A bead of sweat trickled down the monk's face. "I haven't been studying for long."<br><br>"So what's your Dharma name?"<br><br>"I have yet to receive that honour."<br><br>Grinning, the huge gangster glanced around. "Look at this empty shell. Still, he's young. He'll get there with work, right?" As his men laughed, the giant's face hardened. "Where are you from, monk? Are you from the Poison Dragon faction? The Black Blood Moons?"<br><br>"What do you mean? No, this humble monk came from Shaolin."<br><br>"Shaolin? From the Songshan Mountains?"<br><br>"Yes."<br><br>Shaolin. Things had just got interesting. Even the Fire King, who hadn't been paying attention, turned his head to watch.<br><br>"Grandfather. Does he mean the Shaolin Temple?"<br><br>"Be quiet. I'm thinking how to fix your manners."<br><br>That wasn't good news. Tae-Kyung flushed in the same way as the monk, who stood meekly before the laughing brute.<br><br>"S-sir," said the monk. "Why are you amused?"<br><br>"Sir? Fuck! You kissing my ass, beggar? Mind your tone!" The room shuddered as the giant smashed one fist into the wall. Unlike his third-class subordinates, the huge man clearly possessed considerable power and was accustomed to running roughshod over those in his path. "This bastard!" he roared. "Getting in our way! Are the Dong Tian a joke to you? You think I'm an idiot?"<br><br>The monk dipped his head, knuckles white as he clutched his rosary. "Sir, don't be angry. Please calm down!"<br><br>"You fucking dog!" Another blow from a massive fist and the wall began to sag. Plaster rained from the ceiling; crouching behind the bar, the innkeeper whimpered. "No real name, no stamp on your head, but your teacher is Shaolin?"<br><br>"Oh, how did you work that out?" said the monk.<br><br>Reddening at the wide-eyed question, the giant finally snapped. His spiked mace lashed out with lethal speed and precision.<br><br>Pale-faced, gulping with nerves, the monk raised his prayer beads.<br><br>The customers cowering around the inn yelled warnings to the holy man. "Watch out!" "Run!"<br><br>But their fears did not come to pass.<br><br>With a sharp cracking sound, a steel thorn shattered from the head of the mace.<br><br>"...Huh?"<br><br>As the giant lifted his weapon in confusion, the young monk shouted in terror. "The lord started this!"<br><br>"Wait a moment..." <br><br>But events were already spiralling out of control.<br><br>The rosary wrapped around the monk's arms and coiled through his fists. The beads clenched between his fingers erupted in a familiar light.<br><br>[Hold on, is that...?]<br><br>A terrifying sound rang out across the room.<br><br>The mace shattered from a single blow (一拳 -- Chinese: One Punch!); a chunk of broken metal thumped into the giant's belly. Blood gushed from his mouth. "Ugh! Wait!"<br><br>His desperate, gasping shout fell on deaf ears.<br><br>The monk had gone white as a sheet. Closing his eyes, he yelled, "Amitabha Buddha! Forgive me!"<br><br>And then black-clad swordsmen began to scream.<br><br>"Stay back!"<br><br>Whack!<br><br>"Somebody help!"<br><br>Crunch!<br><br>"Out of my way!"<br><br>Thump!<br><br>"Amitabha Buddha! Amitabha Buddha!"<br><br>Each step was light and quick. The figure whirled through the crowd, pivoting to bring a heel around in a perfect arc. A gangster fell with a broken knee, tumbling into his allies. The blind monk stepped onto the thug's falling body, crushing down to launch himself into the crowd.<br><br>A rosary-wrapped fist snapped out, almost too fast to see. A collapsed throat. A shattered nose. A ruined jaw. A snapped elbow. A broken ribcage. Wherever the shining beads touched, bones broke and blood exploded.<br><br>As Tae-Kyung watched, a moan escaped his lips. "Mother. Fucker."<br><br>From the first moment he'd seen the monk, he'd expected him to win. But he hadn't expected such carnage.<br><br>The Fire King rose from his seat. "Shaolin Arhat Fist!"<br><br>"Shaolin temple?"<br><br>"For certain."<br><br>"That..." Tae-Kyung looked back at the slaughter. "That's Shaolin?"<br><br>Three gangsters were spinning through the air, trailing blood and teeth. The monk turned on the scarred giant, the blurring flurry of hands striking flesh like a beaten drum. Grunting, the giant doubled over, his chin dropping towards the monk, who met it with a rising uppercut. "Ai-aaaaaa!"<br><br>Shout still echoing, the young monk landed, eyes half-open.<br><br>A second later, the giant crashed through a table and hit the ground.<br><br>"Peace comes from within," murmured the monk to himself, voice trembling. "Do not seek it without."<br><br>All around him, the inn was painted red, bodies broken by brutal violence.<br><br>Open mouthed, Tae-Kyung wiped blood from his cheeks. "Grandfather?"<br><br>"...Tell me."<br><br>"Is that really Shaolin martial arts? I'm finding it hard to sense the compassion of Buddha." <br><br>After a short pause, the Fire King said, "Well, he didn't kill anyone..."<br><br>[Death may have been more merciful.]<br><br>Tae-Kyung bit his tongue. Drenched in blood, prayer beads swaying and clicking, the monk was approaching them.<br><br>"Greetings," said the young killer, anxiously.<br><br>"Yes?"<br><br>"Sir, may I ask your name?"<br><br>"Why?" Tae-Kyung heard an involuntary quiver in his voice.<br><br>Timidly, the murderous monk walked closer. "Aren't you the one with the surname Jin?"<br><br>"I'm sorry, you've got the wrong person."<br><br>Cheon-Gang coughed. "That's right. He's Jin Tae-Kyung."<br><br>"Ah haha!" Tae-Kyung went red, glancing nervously at the rosary. "Just a little joke."<br><br>"Amitabha, could it be?" The young monk laughed. It was a pure, joyful sound, in stark contrast to the blood splashed across his face.<br><br>"Why are you looking for me?" asked Tae-Kyung.<br><br>"This humble monk was commanded to escort the chosen of the morning star."<br><br>[Chosen? What?]<br><br>The Fire King spoke up. "Do you know Hongdao?"<br><br>"Yes, he is my master."<br><br>"Huh, that's great. Sitting and staring into space with that old man."<br><br>"If you say that, you must be the great Fire King, right?"<br><br>"Did your master tell you that, too?" The Fire King smiled as the young man bowed silently. "There's no need to discuss this. Let's go talk to him."<br><br>The monk nodded. "Please follow me."<br><br>As the crowd parted like the Red Sea, Tae-Kyung whispered to Cheon-Gang. "Grandfather, who is Hongdao?"<br><br>"The Abbot of the Shaolin," said the old man. "In Murim, he's called the Dharma King."<br><br>***<br><br>Nameless. That was how the young disciple of the Dharma King introduced himself.<br><br>"Even though he's old, he's still the same," said the Fire King, clicking his tongue. "What a way to call a disciple."<br><br>Laughing with embarrassment, the monk said, "That's the name I was given."<br><br>"From the looks of it, the old man hasn't even made you an official disciple. Do you have any regrets about that?"<br><br>"It's all the will of Heaven." The smiling monk gestured at the sky.<br><br>Cheon-Gang shook his head. "He chose an odd one, that's for sure."<br><br>"Hehe, thank you. Amitabha."<br><br>[Dude, that wasn't a compliment!] The smiling face showed no hint of hidden fire, but the strange monk had created living hell with just a string of beads. [This kid's a walking time bomb!] An introverted soul who boiled with inner rage, Nameless could no longer control himself once his eyes were covered.<br><br>Fortunately, the journey from Luoyang to Songshan took little time. The route was well maintained, not only due to its geographical location, but also the number of visitors travelling to the Shaolin Temple.<br><br>As the road began to wind into the mountains, Tae-Kyung spotted wooden buildings in the distance. "Oh, we've arrived?"<br><br>Cheon-Gang shook his head. "Not yet. Visitors normally stay at the guest hall rather than the peaks."<br><br>"You're well informed. Have you been here often?"<br><br>"Often enough," said Cheon-Gang, strolling alongside him. A moment later, he spoke again, "You're still lazy, I see. Do you still sleep until five every day?"<br><br>An answer echoed down from a flat rock far above. "Ah, there were times like that." The voice was deep and sonorous like an old temple bell, full of power and resonance. "Abbot is an important position, though. I can't sleep as much as I used to."<br><br>"Is that so?"<br><br>"Of course. It carries more responsibility than the Gatekeeper of the Flame Clan." <br><br>Jeok Cheon-Gang and Hongdao talked like friends who'd met yesterday.<br><br>"So, how much do you sleep?"<br><br>Stepping from the high ledge, a figure floated down through the air. "Only until four these days," said the Dharma King, with the innocent smile of a child.<br><br>The Fire King looked up with a warm smile. "Hey, lazy old man."</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-230.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-232.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

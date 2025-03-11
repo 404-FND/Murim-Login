@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 197 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 197</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 197</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: Coldbutteredtoast</span>
+                            <span class="published-date">Published: October 12, 2022</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>Spiritual Refinement (伐⽑洗髓 -- Chinese: "Turn over a new leaf", an idiom used by Qing Dynasty poet, Tan Tiau-Heng).<br><br>Beginning with bathing and removing hair, this is a special technique practiced only in long-established and prestigious groups. Through the careful use of Qi over multiple sessions, this procedure enables the removal of accumulated waste products and the permanent alteration of muscles and bones. In this way, it shapes the recipient's physique into one that is optimally suited to the acquisition of martial arts.<br><br>After hearing the explanation, Tae-Kyung asked, "Is it very difficult?"<br><br>The Fire King nodded. "If the process of modifying the innate body with Qi was easy, then everyone in the world would be a master."<br><br>For the average person to get six pack abs, they must eat carefully and work out for months. In contrast, the cleansing ritual of Spiritual Refinement completely rewrites a person's entire musculature and constitution to the absolute peak of human performance. It must be nigh on impossible.<br><br>"There are three conditions that must be met," said the old man.<br><br>[Only three? Sounds eas...]<br><br>"First, it must be carried out by a master with the highest levels of Qi. Like me."<br><br>[...OK, not easy. How many people in the world even have a hundred and twenty years of energy?]<br><br>The Fire King raised two wrinkled fingers. "The second is financial power. The ritual requires the circulation of a special elixir. Every sect and clan has their own approach, but the ingredients typically cost at least a thousand gold."<br><br>"Wow, if you're not one of the nine sects and five great families, it will be difficult."<br><br>"Difficult? Very. That said, it does happen. Did you see Baek Mu-Sung? It looks like the future leader of Mount Hua has received Spiritual Refinement."<br><br>The great orders must select only the most promising candidates for the ritual. A talent like Baek Mu-Sung must be a worthwhile investment for a sect as great as Mount Hua.<br><br>"What about Cheong Pung?"<br><br>"Haven't you been watching him? He's received it since he was young."<br><br>[Damn. I'd thought that the heirs to the Jin Family were all born with silver spoons, but that privilege is nothing compared to the diamond spoons who had Spiritual Refinement like Koreans had double eyelid surgery.]<br><br>"You said that there are three conditions. What is the third?"<br><br>"Patience. The technique changes the physique by manipulating and re-establishing muscles and bones. It's incredibly painful."<br><br>"How painful are we talking?"<br><br>The old man gave a humourless smile. "Enough to kill you. For example, the Tang Clan of Sichuan (四川唐⾨ -- Chinese: Sichuan Tang Gate) fill an urn with a thousand types of poison..."<br><br>Tae-Kyung felt his mouth dry out, his stomach contorting into knots. "That's only the Tang Clan, right?"<br><br>"Of course. The Flame Clan use their own ways."<br><br>"You're not going to make me climb onto a bonfire and then light it, are you?"<br><br>"Huh, what? Who do you think we are?" Bemused, Cheon-Gang shook his head. "Anyway. We cannot do the ritual in a single day. Today, I'll just prepare the foundations by correcting your muscles using Qi."<br><br>[Come to think of it, he's come empty handed. If he'd planned to conduct the ritual, he would have brought the components he needs.]<br><br>"Should I take off my clothes?"<br><br>"If you ask me one more time, I'll give you a beating."<br><br>Stripping faster than at any time in his life, Tae-Kyung stood for inspection.<br><br>The Fire King frowned in surprise. "This... Nothing."<br><br>"Actually, this is not common. Have you ever heard of the Amazon? There is something there called an anaconda..."<br><br>"Be quiet, boy."<br><br>A fiery knuckle rapped Tae-Kyung on the side of his temple.<br><br>* Ding!<br><br>-Abnormal state [Stun] has been cancelled.<br><br>The system notification woke Tae-Kyung. He opened his eyes, looking up at the ceiling, then sat and rubbed his throbbing temple. The room was empty, apart from the system messages floating in the air.<br><br>"What? It's over?"<br><br>* Ding!<br><br>-[Spiritual Refinement] has been successfully completed.<br>-[Muscles] increased by 5.<br>-[Strength], [Vitality], and [Agility] have increased by 1.<br><br>"Five..."<br><br>Tae-Kyung felt his initial excitement fade. It was obviously good. Normally, it was only possible to obtain this benefit from extreme training or levelling up. But he had expected something special.<br><br>The special techniques in martial arts novels were supposed to be like a cheat code for the protagonist. In the books, Bone Tempering and Spiritual Refinement transformed even weak, troubled characters into gangsters. <br><br>[Seems like form is temporary, but class is permanent. And I'm not their class.]<br><br>"Man, this isn't fair..."<br><br>While he was complaining, the door opened a crack and Hyuk Mu-Jin peered inside.<br><br>"You can come in," Tae-Kyung grumbled to himself, picking up the clothes strewn on the floor. "I'll tell you in case you don't know, but if you say anything strange, I'll break the pot. And by pot, I mean your head."<br><br>"Then why are you naked?"<br><br>"The old man wanted to inspect my body. Why? What is it that you're not telling me?"<br><br>"Oh, no, nothing. Well, I saw the Fire King earlier and he had a really strange expression on his face."<br><br>"A bad one?"<br><br>"No. Not really. He looked surprised by something, but I don't know why... he's so scary that I couldn't say anything."<br><br>Tae-Kyung tilted his head, puzzled.<br><br>[What happened?]<br><br>Elsewhere in the Jin Family estate, the Fire King walked along wide avenues, lost in his thoughts. Recognising him, people bowed as he passed, but his head was filled with only one person.<br><br>Jin Tae-Kyung.<br><br>In just a few days, he had changed his opinion of the boy multiple times. Then, upon seeing his naked body for the first time, they had changed again.<br><br>[What a weird guy.]<br><br>Superficially, the young man had an excellent physique, such that it was a waste for him to have grown up in a lesser known provincial family.<br><br>But upon conducting a more thorough examination, Cheon-Gang came to a shocking realisation.<br><br>[He has such a balanced, symmetrical body.]<br><br>The human body grows over time and develops in response to experience. However, balance is much more unusual. Variations in posture or trivial habits relating to food, clothing or shelter, all of these things would create some level of physical disharmony. A swordsman will inevitably develop stronger muscles in the arm that wields the blade. It's as natural as the flow of water.<br><br>But not for Tae-Kyung. The length and angle of his bones, the shape and composition of his muscles. All were in perfect balance. It was as if an omnipotent being had drawn half of the man on an empty canvas and then folded it to create a symmetrical copy.<br><br>[Has he received Spiritual Refinement since he was a child? No, it would still be impossible.]<br><br>In the past, recognising the weakness of his adopted son, Jangcheon, Cheon-Gang had conducted extensive research into the optimal process for Spiritual Refinement. While his experiments had been successful, he had also come to realise that there was a practical limit to the number of rituals and the degree to which a body can be optimised. Perfect balance was impossible; flaws always remained, even with unlimited access to gold.<br><br>However, Tae-Kyung was different.<br><br>With growing astonishment, Cheon-Gang had inspected him from head to toe, evaluating the lean, powerful muscles and tough, elastic skin. He brimmed with internal and external power, so the old man had used his Qi to confirm the wide, sturdy meridians (筋脈 -- Chinese: tendons and veins) distributing energy throughout the body.<br><br>[How can he have a body like that?] <br><br>During his lifetime, Jeok Cheon-Gang had only met a few transcendent masters, all of whom had sublime physical mastery. Among them, the master called Mae Jong-Hak was perhaps the greatest.<br><br>But in more than one hundred years, the best natural physique that he had ever seen belonged to Jin Tae-Kyung.<br><br>[Maybe...]<br><br>In Murim, certain mythical terms were passed down from the distant past.<br><br>The Divine Body (天武肢体 -- Chinese: Heavenly Wushu Physique). Said to be born once in hundreds or thousands of years, at the whim of Heaven.<br><br>[I must be crazy.]<br><br>But as the preparation for the Spiritual Refinement continued, his worries deepened. There were no areas that needed improvement. What would happen if such a body tried to absorb a purifying elixir? Or learned stronger martial arts? Thoughts swirled around in his head. And finally, the greed crouching deep in Cheon-Gang's heart raised its head.<br><br>[What would happen if I taught him?]<br><br>A disciple? His only disciple had torn out his heart and betrayed not only the old man, but his principles, his teachings and their entire way of life. The wound he had suffered still lingered. Moreover, he was already more than a hundred years old. He could feel the age gnawing at the edges of his mind.<br><br>[Even if it isn't me... Mae Jong-Hak, the Sword Sage, my friend. I can tell him. He'll be able to give the boy access to real training.]<br><br>He had not told anyone, but he had already considered going to see the Sword Sage immediately after leaving the Jin Family. His old friend was one of the best in the world and was also the most principled of men.<br><br>[What are you thinking now, you old fool? Cheon-Gang, you stupid man.]<br><br>The Fire King looked up at the sky and sighed.<br><br>"Grand master, are you alright?" The owner of the polite voice was the giant, Jin Wi-Kyung. "If anything is bothering you, please tell me."<br><br>"No, don't worry. Everything is fine."<br><br>"Is it really? Great warrior, is there anything you would like to discuss with me? Your residence is opposite my office, so it's very easy. Perhaps you would like a cup of tea?"<br><br>After a pause, the old man replied, "Give me alcohol, instead."<br><br>"Of course."</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-196.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-198.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

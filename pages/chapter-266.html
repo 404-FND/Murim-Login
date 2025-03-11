@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 266 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 266</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 266</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: October 6, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>"You've shed your shell."<br><br>A clear voice resonated.<br><br>For Cheong Pung, the voice evoked memories of the sunlit, azure skies of Mount Hua. For the Blood Lord, however, it was a jolt, a profound unease that seemed to unsettle the very core of his being.<br><br>Frantically, his eyes darted about. A mere twenty steps away, there had been no sign, no hint of a presence.<br><br>And then, from the shadowed pathway, a silhouette manifested.<br><br>'Who is this?'<br><br>Elegant yet somber, the young man, likely in the prime of his twenties, approached.<br><br>At his waist dangled a sheathless sword, its black blade mottled with foreboding rust.<br><br>A hushed whisper broke from the Blood Lord's lips.<br><br>"Ever-Victorious Sword?"<br><br>The young man, Jong Richu, smiled faintly.<br><br>"I've often pondered."<br><br>"What?"<br><br>"The magnitude of challenges an innocent, fearless youth would encounter upon venturing into the Murim."<br><br>"What nonsense are you..."<br><br>The Blood Lord began, then hesitated, realizing that Jong Richu's words and actions were primarily intended for someone else.<br><br>"But now it's clear. You've grown remarkably."<br><br>The sincerity in Jong Richu's voice stirred a response in Cheong Pung.<br><br>He mustered a dreary smile to his lips.<br><br>Observing this tender exchange, a scoff tinged with scorn escaped the Blood Lord.<br><br>"Look at them......"<br><br>How could they dismiss him? Him, who commands both fear and respect from countless souls beneath the heavens.<br><br>Feeling slighted, rage bubbled within, causing his fists to clench.<br><br>Suddenly, a harrowing sound:<br><br>"Kheugh!"<br><br>Blood tainted Cheong Pung's lips as he convulsed, crumpling in agony.<br><br>Witnessing this, the once calm timbre of Jong Richu's voice now bore a razor's edge.<br><br>"Enough."<br><br>Seeing Jong Richu's now expressionless face, a hint of vindication flickered in the Blood Lord's eyes.<br><br>The Blood Lord smirked.<br><br>"So, you've finally acknowledged me."<br><br>"I've been aware of you. Though, you did escape my sight for a brief moment."<br><br>The Blood Lord's expression clouded.<br><br>"Was it you, then? The bold soul who defied me..."<br><br>"Have you only now figured this out? How dull."<br><br>The Blood Lord studied Jong Richu intently, measuring his every nuance.<br><br>'So, this is the Ever-Victorious Sword, Jong Richu?'<br><br>Flashes of their past encounter where Jong Richu intervened, shielding the Dharma King from death's clutches, danced before him. Overwhelmed by an aura formidable beyond measure, the Blood Lord had found himself in forced retreat.<br><br>'That power... It outclassed even the Ten Kings.'<br><br>Even someone of the Blood Lord's caliber could still face adversaries of greater might within the Murim Alliance. Opting for strategic retreat rather than confronting such overwhelming force, he abandoned the severely injured Hong Dao. Yet, in his wake, Jong Richu's relentless chase never wavered.<br><br>'He almost had me.'<br><br>The Blood Lord prided himself on his peerless martial arts. Still, he had not predicted that the elusive mastermind shadowing him would be Jong Richu. A flicker of disbelief danced in his eyes.<br><br>"Your pursuit was unyielding. You possess incredible speed."<br><br>"And yet you outpace me. Employing techniques foreign to my knowledge."<br><br>A shadow of intrigue settled on the Blood Lord's features.<br><br>Before him stood a young, pale-faced man with profound ties to Cheong Pung, wielding unparalleled martial prowess.<br><br>"What is your relationship with the Martial God?"<br><br>Jong Richu casually stroked his sleek chin.<br><br>"The Martial God... I had learned a few things from him."<br><br>"As his disciple?"<br><br>"In life, everyone we cross paths with teaches us something. Each person can be both master and student."<br><br>"Spare me your philosophies. Speak plainly or meet your end."<br><br>Jong Richu met the threat with a serene, penetrating gaze.<br><br>Such profound stillness that it bordered on mesmerizing.<br><br>'What is this feeling?'<br><br>For reasons elusive to him, the Blood Lord hesitated to harness his power.<br><br>An intangible weight seemed to sap his strength.<br><br>'It almost feels like...'<br><br>With a jolt, the Blood Lord's thoughts arrested.<br><br>Impossible.<br><br>A sudden realization caused him to grimace. To parallel this martial artist with 'Him' felt sacrilegious.<br><br>'No. A mere strike would suffice against him.'<br><br>He steeled himself, but a kernel of trepidation persisted. Could he truly outclass Jong Richu and emerge from this confrontation unmarred?<br><br>Doubts nagged at him.<br><br>The Blood Lord slowly licked his parched lips.<br><br>"You... Who exactly are you?"<br><br>The vast web of informants under the Hidden Shadow Pavilion had eyes in every corner, but Jong Richu remained a mystery.<br><br>A face without a past, an enigma personified. In reply, Jong Richu simply offered a slight tilt of his head.<br><br>"Is that important?"<br><br>"What?"<br><br>"If a few words could stop you, I'd answer. But I know they won't."<br><br>His voice, unwavering, resumed.<br><br>"In the vast expanse of the martial world, many wander. If you won't halt your steps, then you must be halted."<br><br>Screeeee.<br><br>The raspy sound accompanied Jong Richu's motion as he drew the rusted blade. A mocking smile formed on the Blood Lord's visage.<br><br>"You think to challenge me with that pitiful excuse for a weapon?"<br><br>"It serves its purpose."<br><br>"How many have fallen to that blade?"<br><br>"Countless, though I am not proud of it."<br><br>"Don't compare me to the feeble souls you've faced. Who was the last? Some mountain thug?"<br><br>But then, softly, Jong Richu whispered:<br><br>"The Heavenly Venomous Demon Lord." \[Note: The direct translation is "Heaven/Sky Poison/Toxic Demon Lord". From the few Murim manhwa that I have read, I don't remember the Heavenly Demon having "poison" attached to his title. Usually it's either Heavely Demon or Demon Lord, so it makes me uncertain about this translation. From the context of what follows, it seems like this is a special title that only a few know, which somewhat explains this uncommon title, as most would either know the Heavenly Demon or Demon Lord monikers. Anyways, all this is to say that my translation may be wrong here, and if it is, I will make sure to give a notice and fix it. On a lighter note, here are some horrendous names that I thought of using: "Monarch of Skyborne Toxins", "Celestial Poison Mage Monarch", and "Heaven-Touched Master of Venoms".\]<br><br>The Blood Lord's body stiffened.<br><br>The Heavenly Venomous Demon Lord.<br><br>A moniker unknown to most members of the Murim.<br><br>Wasn't he, during the Great Faction War, revered as the Heavenly Demon, the exalted leader of the Heavenly Demon Sect who once overshadowed the world?<br><br>This formidable entity, who once held half the world in his thrall, was indeed the Heavenly Venomous Demon Lord.<br><br>But, as with all legends in the realm of martial arts, he too met his destiny.<br><br>On the day of his reckoning, he was defeated and his conqueror earned a new title.<br><br>"Sword Saint...!"<br><br>A shiver coursed through the Blood Lord.<br><br>Sword Saint Mae Jong-Hak.<br><br>An inkling once entertained regarding Jong Richu's true identity but dismissed as implausible.<br><br>The notion seemed absurd.<br><br>Now, struggling with disbelief, he stammered,<br><br>"How... How is it possible..."<br><br>Jong Richu, now better known as Sword Saint Mae Jong-Hak, gently stroked his blade, articulating,<br><br>"After the curtain fell on the Great Faction War, I pondered my path. However, the uncertainty was short-lived. Martial arts had always been my true calling."<br><br>Shing. Shing.<br><br>With each caress the blade's immaculate core was unveiled.<br><br>"I immersed myself in martial arts, adopted a child and loved him as a grandson. I raised him as my disciple, who occasionally became my mentor. Just when I believed I had touched the pinnacle, I discerned another summit."<br><br>Sword Saint Mae Jong-Hak.<br><br>The martial Grandmaster, who decades earlier had soared to unmatched heights, embarked on a fresh journey once more.<br><br>Upon scaling a peak in his journey, he had reached a higher enlightenment.<br><br>"I hadn't anticipated reaching the state of 'Returning to Youth.' With my body rejuvenated, the outside world piqued my interest. I even began thinking of that mischievous grandson who ran away a year ago."<br><br>Thus, Sword Saint Mae Jong-Hak, donning the persona of Jong Richu, re-emerged into the world's gaze.<br><br>To many, he was a phantom from a bygone era.<br><br>The youthfulness of Mae Jong-Hak, an epitome of quiet elegance, eluded all suspicion.<br><br>Even the far-reaching Hidden Shadow Pavilion, with its extensive web of informants, remained oblivious.<br><br>"It was a pleasant time. At least, until you all appeared."<br><br>Shing!<br><br>With a final swipe, the blade cast off its residual rust.<br><br>Revealing a menacing sheen, the sword's ancient spirit lay bare.<br><br>Imbued with the legacy of countless confrontations, it now stood poised to challenge the Blood Lord.<br><br>"This sword, isn't it still useful, as I said?"<br><br>In the next moment, a violet gleam blazed. Swish!<br><br>"…What?"<br><br>The Blood Lord's eyes widened in disbelief.<br><br>Time seemed to slow, and he witnessed the figure of Cheong Pung slowly collapsing.<br><br>And with it, a recognizable hand tightly gripped the unconscious Cheong Pung's throat.<br><br>'That's...'<br><br>His own hand.<br><br>Thoughts were abruptly stifled by the tide of pain that overwhelmed him. A guttural scream tore through the silence.<br><br>"Kaaah!"<br><br>But this was merely the prelude.<br><br>As he recoiled in torment, a frigid voice pursued him.<br><br>"Your transgressions are vast; isn't retribution due?"<br><br>Shiiing!<br><br>The Blood Lord felt an electric charge coursing through him, raising every hair in trepidation.<br><br>Foreboding encased the Blood Lord. His surroundings blurred, narrowing solely onto the blade, singular in its intent and lethality.<br><br>Swoosh.<br><br>Within this abyss, Mae Jong-Hak's resplendent Qi materialized as thirty-six blossoming plums.<br><br>Amidst this ethereal spectacle, the Blood Lord rasped,<br><br>"Thirty-Six Plum Blossom Sword."<br><br>But this was distinct. A tier above.<br><br>While Cheong Pung's earlier demonstration was a masterpiece of martial prowess, Mae Jong-Hak's rendition was divine, an ethereal artistry.<br><br>And this heavenly force now honed in on the Blood Lord's every weak point.<br><br>'I'm powerless... to resist.'<br><br>In a fleeting instant, as the Blood Lord, still ensnared by shock, sought to evade,<br><br>Thump!<br><br>A vice-like grip clamped onto his ankle.<br><br>Jin Tae-Kyung, whom the Blood Lord had deemed vanquished, flashed a blood-smirched grin.<br><br>"Where do you think you're going, you bastard?"<br><br>"You-!"<br><br>Bang! Bang! Bang!<br><br>His retort was silenced. A surge of violet brilliance overwhelmed the Blood Lord.<br><br>Blood spattered; flesh tore. Overwhelming pain drowned his every thought.<br><br>"Cough!"<br><br>This onslaught was of unparalleled might. The rampaging blade's aura, even from afar, was insurmountable.<br><br>Swish! Swish!<br><br>Yet, on the precipice of defeat, a fiery determination ignited in the Blood Lord's gaze.<br><br>'With this, with this very artifact, I can endure.'<br><br>His mission was accomplished. The Green Jade Ruyi, ensconced in his grasp, was evidence.<br><br>Although his ambition to vanquish the Fire King had been thwarted, life beckoned with more opportunities.<br><br>With malevolence burning in his eyes, he glared at Jin Tae-Kyung, who defiantly sported a gory smile.<br><br>"Our paths will cross again. And it'll be by my hand that your end is sealed."<br><br>"What?"<br><br>"Ensure you survive until then. You owe me that much."<br><br>A sadistic pleasure played on the Blood Lord's lips.<br><br>Anticipating a looming menace, a grave expression flashed across Mae Jong-Hak's face as he intensified the aura enveloping his sword.<br><br>"Isn't it time for you to stop?!"<br><br>Squeeeech! Swish!<br><br>As the Blood Lord's remaining arm was sheared from the joint, a guttural roar erupted,<br><br>"Long live the Heavenly Lord!"<br><br>Shiiing!<br><br>In an act of sheer desperation, he executed a divine maneuver, luminous as a bolt of lightning.<br><br>With grim resolve, he bit fiercely into his severed arm – more precisely, into the Green Jade Ruyi.<br><br>Suddenly,<br><br>Paaah!<br><br>An abyssal black flame consumed him. The Blood Lord, and every vestige of his being, vanished.<br><br>As if he had never been.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-265.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-267.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

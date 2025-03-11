@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 291 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 291</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 291</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: December 8, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>"What happens when you roll a snowball the size of a fist down a hill? Anyone know?"<br><br>At my question, Song Song offered a derisive snort.<br><br>"Even a kindergartener could guess that."<br><br>"Then guess."<br><br>"It would obviously get bigger as it rolls down, right?"<br><br>"Why?"<br><br>"Because. It's collecting more snow from the hill, obviously."<br><br>"Right, just like my feelings for you."<br><br>"Ugh, gross!"<br><br>She's got a taste for melodrama.<br><br>Undeterred, I pressed on, Song Song's exaggerated sounds of disgust providing background music to my words.<br><br>"What Song Song just said is correct. But the premise is different here. This isn't a snow-covered hill, but one where the snow has melted. Even if you roll it with all your might to the bottom, the snowball won't grow much."<br><br>"The snowball you're talking about represents Mana, right?"<br><br>"Team Leader Choi is quick on the uptake. Yes, it's the same with the Mana Cultivation Technique. If the core is just a speck of dust, no matter how much you roll it, it remains a speck of dust."<br><br>"The lower the grade, the more limited it is. Is that what you're saying?"<br><br>"Exactly."<br><br>There's a saying that an F-rank is forever an F-rank.<br><br>It implies that escaping from a predetermined rank is a Herculean task.<br><br>However, there are those who defy the odds and accomplish this task.<br><br>Second Awakeners. That's what they are called, and it's the mask I'm currently wearing.<br><br>"After my Second Awakening as a C-rank Hunter, the effects have increased exponentially. It was only then that some snow began to accumulate on a hill that had none."<br><br>"Thinking back, the results at that time were…"<br><br>"Mana capacity of a C-rank. But even then, control ability was of an A-rank. You know why?"<br><br>"Jin Family's Cultivation Technique."<br><br>A groan escaped Mr. Choi.<br><br>"It wasn't a mistake by the Association then."<br><br>As I became famous and my past deeds came to light, that part was concluded as a measurement error.<br><br>Because of that, the Bucheon Association, which had conducted the re-assessment at the time, got a lot of flak. They must have felt quite aggrieved.<br><br>"Team Leader and Butler Kim, what you refer to as the Mana Cultivation Technique has two effects. The first is the increase in mana quantity. And the second is………"<br><br>Butler Kim seamlessly reclaimed the thread of our discourse.<br><br>"Learning mana control."<br><br>"Correct."<br><br>Mana, also known as internal energy or Qi, varies immensely depending on how one utilizes it.<br><br>The Jin Family's Cultivation Technique is a peak martial art. Though it accumulates Qi slowly, its stability rivals that of some transcendent techniques.<br><br>"Just learning it will lead to tremendous achievements. For now, the newbies should just observe... Only those present here should focus on learning the Jin Family's Cultivation Technique. Ah, and of course, it should proceed in strict secrecy."<br><br>"..."<br><br>"..."<br><br>Their silence spoke volumes.<br><br>An oppressive hush descended upon the hospital. A quartet of bewildered gazes fixed upon me.<br><br>"You’re saying... you’re going to teach us the Mana Cultivation Technique?"<br><br>"Not the Mana Cultivation Technique, the Jin Family's Cultivation Technique."<br><br>"Yes, yes. The Jin Family's Cultivation Technique."<br><br>Mr. Choi's eyes blinked rapidly.<br><br>"You’re going to teach that to us?"<br><br>"Of course. Do you think I brought it here just to brag?"<br><br>I looked around as I continued.<br><br>"As you all know, with our current level, we won’t last long. Lee Jeong-Ryong won't bother us for now due to recent events, but it's only a matter of time. But... what if we had the Jin Family's Cultivation Technique?"<br><br>Mr. Rough Guy, who had been gaping, suddenly shouted.<br><br>"Jin Family's! Cultivation! Technique!"<br><br>"Ah, I like the enthusiasm. Anyway, it's a decision I've made after careful consideration, so for the time being, please follow my instructions without fuss. Understood?"<br><br>The four present were to be the vanguard, subsequently joined by the freshly initiated Hunters.<br><br>Their selection will be stringently curated, and my vision is to forge them not only into Hunters but warriors within the martial realm.<br><br>Powerful enough to handle two or three Hunters of the same rank with ease.<br><br>"Now, then..."<br><br>I scanned the still half-stunned group in turn and then pointed toward one person.<br><br>"Let's start with Team Leader Choi."<br><br>In that instant, a holographic interface emerged above his bewildered face.<br><br>Ding.<br><br>\- A quest, \[Show Me Your Back! Let's See Your Back!\] has been generated!<br><br>"..."<br><br>Somehow, I feel a sudden reluctance seeing that title.<br><br>\* \* \*<br><br>\[Show Me Your Back! Let's See Your Back!\]<br><br>\- Unlike the martial world, it had been a peaceful modern life.<br><br>\- But reality is a cesspool!<br><br>\- Feeling a sense of crisis about such reality, you have decided to impart martial arts to your trustworthy friends.<br><br>\- Whether this choice will be a poison or a benefit... that depends on your decision and ability.<br><br>\- I wish you martial fortune!<br><br>\- Rank: Peak<br><br>\- Restriction: Jin Tae-Kyung<br><br>\- Mission: Guide the acquisition of \[Jin Family's Cultivation Technique\] (Incomplete)<br><br>\- Reward: A substantial amount of experience points<br><br>\- Repeatable Quest<br><br>\- ???<br><br>\- Failure: In the worst case, falling into \[Qi Deviation\]<br><br>"......"<br><br>Which bastard came up with this quest title?<br><br>The necessity to demonstrate the energy flow towards the Mingmen point, located on the lower back, is clear. Yet, confronted by the title's whimsical nature, I’m suddenly besieged by an inexplicable hesitance.<br><br>"Um, Team Leader Choi."<br><br>"Yes."<br><br>"Your back."<br><br>"Excuse me?"<br><br>"No, never mind. Please assume the posture I am about to teach you. Butler Kim and the others, make sure no outsiders can enter the infirmary. Especially, no one should lay hands on our bodies. Understood?"<br><br>"Of course."<br><br>Butler Kim acquiesced with a decisive nod and commenced his enchantment. With every pass of his staff and murmur of incantation, a veil of secrecy unfurled, sequestering the infirmary from the prying eyes of the world.<br><br>Meanwhile, Mr. Choi, having shed his upper garments, adopted a somewhat clumsy lotus position, his back now presented to me in a state of readiness.<br><br>"What are you planning to do with me now?"<br><br>"…You sure have a strange way of phrasing things."<br><br>The mere thought of Qi deviation sent a stream of silent curses through my mind.<br><br>My palm came to rest gently on Team Leader Choi’s Mingmen point.<br><br>From this moment on, utmost care was necessary. In such moments, even the mightiest warriors within the martial realms find themselves vulnerable, their defenses laid bare in the act of Qi cultivation.<br><br>"Now, close your eyes and focus on the mana within your body. No matter what happens, you must endure. Do you feel any discomfort at the moment? Tell me now if you do."<br><br>"There's a slight... on the right shoulder blade area..."<br><br>"Does it hurt?"<br><br>"It's ticklish."<br><br>"…Hah, I'm going crazy. Here?"<br><br>Scritch, scratch.<br><br>As I reached out and scratched it for him, Mr. Choi's voice relaxed.<br><br>"Yes, right there. That's really refreshing."<br><br>"My nickname used to be 'Filial Son's Hand.'" \[Note: "Filial Son's Hand" is an actual product that you can buy from Walmart for back scratching.\]<br><br>"And, my underwear is a bit tight..."<br><br>"Are you crazy? You should adjust that yourself. Did I put handcuffs on you?"<br><br>"Oh, right. I didn't think of that. I'm just a bit tense right now."<br><br>"It's okay. I'm sorry for getting unnecessarily excited."<br><br>"It's not your fault, Jin Tae-Kyung. I should have worn a thong if I knew this was going to happen."<br><br>Does this guy know how to wear underwear...?<br><br>With calm restored to my voice, I issued a firm caution to Mr. Choi, whose anxiety seemed to loosen his tongue.<br><br>"From now on, if you open your mouth, you're done for. Focus only on how and where the mana flows."<br><br>"Understood."<br><br>"Even if your shoulder blade itches or your underwear feels tight, you endure it. Got that?"<br><br>"May I ask what exactly we're about to do?"<br><br>"I'll be using Pure Qi Guidance to move your mana. Then, following the intricacies of the Jin Family's Cultivation Technique, we'll perform the Minor Heavenly Circuit, and conclude with the energy circulation and breath regulation." \[Note: The guidance technique here could have been directly translated to "True Qi Guidance", however, the Qi being referred here is an unaltered, original, and potent form of Qi. So I decided to use the word pure instead of true. Also, Minor Heavenly Circuit refers to a concept related to the flow of Qi through the body's meridians in a specific pattern: a loop that runs from the front of the body down to the perineum and up the spine to the head, then back down the front of the body.\]<br><br>"..."<br><br>"Did you roughly understand? Be honest."<br><br>"Honestly?"<br><br>"Yes."<br><br>After a brief silence, Mr. Choi responded.<br><br>"I was lost after Pure Qi Guidance."<br><br>"Then just close your eyes and keep quiet. If you start fussing about something stuck in your underwear, shaking your hips, I swear I'll take you down before I die."<br><br>"I will bear that in mind."<br><br>His answer was full of determination. The tension that had held Mr. Choi rigid began to yield, giving way to a gentle ease.<br><br>He stood on the threshold of a domain foreign to him — the enigmatic world of martial arts.<br><br>It didn't matter how much social experience Mr. Choi had accumulated, how many languages he was fluent in, or what kind of knowledge he possessed.<br><br>"Then, let's begin."<br><br>Everything depended on me now.<br><br>After steadying my breath, I mustered the Qi from my dantian, guiding it delicately through my palms into the Mingmen point of Mr. Choi.<br><br>Gently. Meticulously.<br><br>Swoosh.<br><br>The moment the heat of the Scorching Yang energy invaded his body, the system, as if it had been waiting, fired off a signal.<br><br>Ding!<br><br>\- Initiating \[Pure Qi Guidance\].<br><br>\* \* \*<br><br>Recollections surfaced of the time when I purged the accumulated impurities from my mother and Hayeon.<br><br>Those endeavors, however, were trivial when cast against the task at hand.<br><br>Pure Qi Guidance entails the precision of directing internal energy along its rightful course within another's body.<br><br>The Qi within Mr. Choi was not only abundant but of a quality far surpassing the average individual.<br><br>'And cleaner than expected.'<br><br>No, correction. Not just cleaner than expected, but if it's this clean, it's at an excellent starting place.<br><br>He had strong muscles and tendons, and his meridians, like an early morning expressway, were clear of any significant waste.<br><br>'What's going on? He said he hadn't learned the Mana Cultivation Technique.'<br><br>Mr. Choi held a B-rank Hunter's license. The energy I usually felt from him matched exactly that rank.<br><br>If there was something that set him apart from an ordinary B-rank Hunter, it would be his clever combat sense utilizing his sharp intellect and the power of premium equipment.<br><br>'Truth be told, for being the only lineage of Cheon Tae-Min, there were areas that left something to be desired.'<br><br>A leader of exceptional caliber, endowed with keen intelligence and decisiveness.<br><br>Yet, his talents were overshadowed, diminished.<br><br>Any luster would dim when juxtaposed with the heroic legacy of Cheon Tae-Min, savior of humanity.<br><br>But my perspective was now undergoing a subtle shift.<br><br>'With this level... with a bit of help, he could quickly ascend to a higher realm.'<br><br>An A-rank Hunter? No. Not just an A-rank Hunter. I planed to turn Mr. Choi into a Peak Realm martial artist. The basic 'hardware' he possessed was too good to waste as it was. \[Note: although Peak Realm and A-rank are somewhat interchangeable, I think it is to be understood here that a Peak Realm martial artist should, in general, be able to whoop a couple of A-rank Hunters simultaneously.\]<br><br>'If only the others were even half as good as Mr. Choi, this would be easy.'<br><br>Buoyed by this reassuring notion, I persisted in directing the Scorching Yang energy. In due course, a robust tide of potent Qi began to navigate the channels of his inner circuits.<br><br>Kwaaaa.<br><br>I could feel the body under my palm twitching with the shock. By now, he must be feeling a heat like he's never experienced before in his life.<br><br>I remained unfazed, herding the errant Qi within him, navigating through the myriad meridian pathways.<br><br>This would be a journey Mr. Choi had to engrain in his memory, a journey he would undertake alone countless times henceforth.<br><br>'Once the body remembers, the rest is easy.'<br><br>The transformation occurred astonishingly fast.<br><br>Swiftly, his Qi ascended by half a level, and any residual impurities were incinerated in the wake of the Yang energy's zeal.<br><br>'Now for the last part.'<br><br>With the Qi now consolidated, the next step was to anchor it in the dantian. Completing this cycle of energy would herald his inaugural step into the martial fraternity.<br><br>But then...<br><br>'What's that?'<br><br>Upon reaching his dantian, my advance halted, arrested by an unforeseen discovery.<br><br>A colossal wellspring of energy dominated half of the dantian's expanse. Simultaneously, the system broadcasted an unexpected alert.<br><br>Ding.<br><br>\- A sudden quest, \[I'll Only Take Half of the Energy You Digested\] has been generated.<br><br>\- Would you like to accept?<br><br>Y/N</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-290.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-292.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

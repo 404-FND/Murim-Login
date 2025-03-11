@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 252 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 252</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 252</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: No_End_9483</span>
+                            <span class="published-date">Published: February 17, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>One day, two days, three days passed.<br><br>As time went by, the tournament bracket became simpler. The number of participants, which had been over 500 on the first day of the main event, was now reduced to about ten.<br><br>And amidst the growing enthusiasm of the crowd, one person's emotions were soaring high without realizing it.<br><br>"This old man has been thinking hard about it..."<br><br>The Fire King Jeok Cheongang spoke in a cautious voice.<br><br>"It seems that the martial arts of our clan are the best in the world. What do you all think?"<br><br>"......"<br><br>Those sitting in the seats of honor had to use all their strength to hide their distorted expressions.<br><br>It wasn't even a day or two, and it was something they had anticipated enough, but it still left a bitter taste in their mouths.<br><br>What made them even more angry was that there was no way to refute it.<br><br>It was not just that they could not go against the will of the Fire King, but the performance shown by his disciple, Shanxi Sleeping Dragon, was amazing.<br><br>Since the preliminaries, he had been sweeping away all his opponents with overwhelming skills, even facing those who were known as strong contenders.<br><br>And just yesterday, he smashed the Hebei-Peng Family's Chaotic Origin Saber(혼원도/混元刀) like swatting a fly.<br><br>'That darn old man. He can't help but show off again.'<br><br>'The best martial arts in the world? What a joke. He had only trained one brat."<br><br>'Still, that guy. Where did he pick up such a monster-like guy?'<br><br>Just by looking at their faces, their thoughts were clear. If it had been any other time, Jeok Cheongang would have scolded them for not controlling their expressions, but now he was like the Buddha himself, the epitome of composure.<br><br>Jeok Cheongang, who had been smiling contentedly, looked at one person and stopped.<br><br>"Hey, Virile Penknife King."<br><br>"......"<br><br>The elderly man with a huge physique like Mount Tai, the Thunderbolt Saber King, looked towards a distant mountain as if he hadn't heard anything. The side of his face was flushed red.<br><br>"If someone calls you, you should answer. This old man is three years older than you, isn't he?"<br><br>"......When I still speaking kindly, shut your mouth."<br><br>"Oh, why are you so angry?"<br><br>Jeok Cheongang smirked and replied skillfully with widened eyes.<br><br>"Is it because of that? The eldest grandson who you praised so much that your mouth dried up, the one from Hebei who is supposed to be the best, got beaten up by this old man's disciple?"<br><br>"......!"<br><br>"Goodness. Haven't you heard of the saying ‘Victory and Defeat are soldiers' daily affairs(승패병가지상사/勝敗兵家之常事)’? Why are you making such a big deal out of it?"<br><br>Finally, the gaze of the rough-looking, elderly man, the Thunderbolt Saber King, turned to Jeok Cheongang.<br><br>"That, is that so? Well, I suppose there are times when you win and times when you lose."<br><br>"That's right. That's just how it is at that age."<br><br>"It's been a while since I heard such sensible words from you. Since we're on the topic, I heard that my grandson had accumulated a lot of fatigue from traveling a long way, so he couldn't show his full strength."<br><br>Jeok Cheongang smiled kindly and nodded his head.<br><br>"I understand. If his original skills are lacking, you need to make an excuse to explain it."<br><br>"....What?"<br><br>"Come to think of it, they aren't even in same age range. Isn't your oldest grandson over firmly standing age^([1])? Our Taekyung is only 22 now. Haha, it's possible. It's possible!"<br><br>"You-, You old man, I'll kill you!"<br><br>"What? What did you say? I can't hear you well because it's words from the high and mighty family head of the Hebei-Peng Family that got eliminated in barely the quarterfinals. Hehehehe!"<br><br>It was someone's hand holding the rosary that blocked the furious Thunderbolt Saber King.<br><br>Dharma King Guangdao sighed as he watched the two men.<br><br>"Amitabha Buddha. Both of you, act your age. Have you forgotten where you are?"<br><br>It's the martial contest stage at the Diverse Stars Grand Festival, where thousands and tens of thousands of people are gathered.<br><br>Only then did Thunderbolt Saber King, feeling the curious gazes pouring toward the seats of honor, put his half-removed buttocks back on.<br><br>"Ugh..."<br><br>"How about you, Donor Jeok?"<br><br>Jeok Cheongang, who had been staring at the Guangdao, nodded quietly.<br><br>"......Got it."<br><br>"Indeed. What are you going to do without this poor monk, who helps everyone to get along well?"<br><br>"What? I would break that old man's nose then."<br><br>Despite the provocation from the Thunderbolt Saber King, Jeok Cheongang did not react.<br><br>He briefly glared at the Thunderbolt Saber King before turning his gaze to the Guangdao with a heavy expression.<br><br>He briefly glance at Guangdao before turning his gaze to the stage with a heavy expression.<br><br>In his mind, he recalled a words that Dharma King Guangdao had spoken before.<br><br>'This poor monk intends to hold this Diverse Stars Grand Festival for the last time before stepping down.'<br><br>He had been preparing for his imminent death for a long time.<br><br>He had said that he had at least a year left, but he couldn't read the Heavenly Qi as accurately as before. If the Dharma King Guangdao said so, it must be true.<br><br>'Because It's like a joke, when I still have at least ten more years to live.'<br><br>Even though he was ecstatic about Jin Taekyung's victory, the thought of Guangdao made his heart heavy. Just like now.<br><br>Having sensed the atmosphere of Jeok Cheongang, Guangdao suddenly spoke up.<br><br>"By the way, there have been a lot of unusual events in this year's Diverse Stars Grand Festival, haven't there?"<br><br>"The Abbot is correct."<br><br>"We didn't expect these kinds of results."<br><br>One of the clan leaders sitting on the seats of honor nodded their heads.<br><br>"Shanxi Sleeping Dragon goes without saying..."<br><br>When Jin Taekyeong was mentioned, the facial muscles of Jin Wigyung, who was sitting on the last seat, twitched.<br><br>He had kept his mouth shut because he still lacked seniority and influence, but if given the chance, he would have stood up and raised a fuss a long time ago.<br><br>The clan leader who look at him with envy continued.<br><br>"But the most unexpected variables were the Life Extending Sword, or rather, the Eternal Victory Sword and the Invincible God Sword."<br><br>"Oh, right. Those two were the most unexpected for me too."<br><br>What kind of place is the Diverse Stars Grand Festival?<br><br>It is a gathering of young and renowned warriors from all over the country. <br><br>However, both the Eternal Victory Sword and the Invincible God Sword were not disciples of famous clans and big sects, and they had never been known before.<br><br>The fact that they have made it this far on the tournament bracket is even more unexpected than Jin Taekyung, who is a disciple of the Fire King and comes from the distinguished Taiyuan-Jin family.<br><br>"The Invincible God Sword is especially outstanding. He can rival the elders of our sect"<br><br>said a senior member of a mid-level martial arts sect, prompting Jukcheon to suddenly speak up after quietly listening to the conversation.<br><br>Upon hearing the words thrown by someone among the leaders of the middle-sized martial groups, Jeok Cheongang suddenly spoke up after he had been quietly listening to the conversation.<br><br>"Keep your mouth shut. That will be the best compromise."<br><br>"......What?"<br><br>"I don't know who you are in which martial group, but that kid has already surpassed the rising star level. Do you not even have a clue, or are you pretending not to know?"<br><br>Dharma King Guangdao and Thunderbolt Saber King agreed while chuckling.<br><br>"Although the words of the old man are rough, they are true."<br><br>"I don't want to agree with that old man, but he's right. Maybe, it's natural. He is quite a bit like Sword…… ahem. Well, in any case, he is similar to a remarkable person?"<br><br>At the end of his sentence, Thunderbolt Saber King, who obscured the tail of his words, glanced at someone slyly.<br><br>It was the Heavenly Sword Authentic Master(천검진인/天劍眞人), a middle-aged man with a gentle smile, who was also the Sect Leader of Mount Hua Sect.<br><br>"Haha, as expected, the eyes of seniors cannot be deceived."<br><br>Upon hearing Heavenly Sword Authentic Master's gallant laughter, people asked suspiciously.<br><br>"Is it true?"<br><br>"That's right. The Invincible God Sword is a disciple of our sect."<br><br>"Ah, really!"<br><br>"You have an excellent disciple, Authentic Master!"<br><br>Some who had high martial arts skills nodded their heads in silence, as if they had guessed it, while others sighed in admiration.<br><br>However, an even more surprising statement flowed from the lips of Cheongeomjin-in.<br><br>"Not my disciple, but my junior brother."<br><br>"Um, what do you mean?"<br><br>"We have the same master, who taught us at different time. It's been over ten years since I last saw him... It's good to see that he has grown up so well."<br><br>Same master.<br><br>The words that followed were not heard properly. There was not a single person among them who didn't know that the master of Heavenly Sword Authentic Master was Sword Star(검성/劍星) Mae Jonghak.<br><br>'The Invincible God Sword is a disciple of Sword Star!'<br><br>Amidst the shocked reactions of the people, Heavenly Sword Authentic Master, with a gentle smile, remained silent.<br><br>Although his demeanor appeared like that of an enlightened taoist, his inner thoughts were quite different.<br><br>'Finally, I caught you. You bastard!'<br><br>Following his master, Sword Star, even the youngest junior brother fled.<br><br>A year ago, when he thought he had finally caught his junior brother, the junior brother instead beat up his disciples and fled once more.<br><br>Every time Cheong Pung appeared on the martial contest stage, the Heavenly Sword Authentic Master had to suppress the desire to grab him by the collar and send him off to the Mount Hua Sect.<br><br>"Hehehe. He's the treasure of our Mount Hua Sect."<br><br>Congratulations poured in towards Heavenly Sword Authentic Master, who appeared to smile like a kind person while hiding his inner thoughts.<br><br>"What a great potential. The name of Sword Star will remain in the Mount Hua Sect for the next generation."<br><br>"Congratulations, Authentic Master."<br><br>"My respects!"<br><br>“Shanxi Sleeping Dragon's and Invincible God Sword's confrontation. The final match is even more anticipated. Haha!”<br><br>In the warm atmosphere, wrinkles formed on Jeok Cheongang's forehead.<br><br>At the same time, a Sound Transmission reached Guangdao's ear.<br><br>*- Everyone seems to have forgotten one person.*<br><br>Guangdao quietly rolled his rosary.<br><br>*- Are you talking about Eternal Victory Sword, Jongli Chu?*<br><br>*- That's right, it's him.*<br><br>The Diverse Stars Grand Festival was a festival of Murim people where anyone, regardless of their origin or background, could participate. Therefore, participants did not have to go through detailed verification processes.<br><br>However, that was only on the surface. In reality, things were different.<br><br>*- I have already mobilized the Hidden Shadow Pavilion to confirm the identity of all the participants who made it this far.*<br><br>A year ago, when Guangdao realized the existence of Dark Heaven, the first person he contacted was Thousand-Faced Fox Song Ho. <br><br>Having heard the situation, he immediately gathered his former subordinates and revived the Hidden Shadow Pavilion.<br><br>*- What were the results?*<br><br>*- Even after checking twice or three times, the results were the same. All of their identities were confirmed, except for one person, Eternal Victory Sword Jongli Chu, who was nowhere to be found.*<br><br>*- Are you sure? What if he hid himself for some reason...?*<br><br>*- I was punished for having such speculation. Three days ago, I lost contact with Dark Secret Executor...*<br><br>*- Dark Secret Executor? Are you saying he was attacked?*<br><br>Dark Secret Executor was such a remarkable person that even Jeok Cheongang had heard of him.<br><br>As the best intelligence agent and assassin for Hidden Shadow Pavilion, Dark Secret Executor was a master of Transcendent realm. It wasn't difficult to imagine that he would have already become a cold corpse.<br><br>*- What do you think? Can you recognize his martial arts?*<br><br>Jeok Cheongang's gaze deepened at Guangdao's question.<br><br>*- This old man is also not sure. In fact, that's the biggest mystery.*<br><br>He had witnessed numerous martial arts so far.<br><br>He had seen them with his own eyes and had even faced and defeated them himself.<br><br>However, Jongli Chu's martial arts, as reflected in Jeokcheon Gang's eyes, were unfamiliar in and of themselves.<br><br>*- His martial arts don't seem to be that strong... but he has managed to win every time and come this far. He must have an unusual martial arts that this old man has never seen before.*<br><br>*- Does that mean his martial arts have gone beyond the norm(상리/常理)?*<br><br>*- Beyond the norm?*<br><br>Jeok Cheongang's face hardened in an instant. Decades ago, going beyond the norm meant one thing.<br><br>'Demonic Path(마도/魔道)!'<br><br>At the same time, those two words crossed their minds. Both of Guangdao and Jeok Cheongang had lived through the era of war. Therefore, they knew its meaning better than anyone else.<br><br>*- Does that mean he's a descendant of the Demonic Cult?*<br><br>*- I don't know; Dark Heaven or Demonic Cult. It could be one of those two or something else.*<br><br>At that moment, when the two men finished their conversation with a serious expression, a shout filled with power shook the stage.<br><br>"Ladies and gentlemen, I present to you the new rising star of jianghu, the Invincible God Sword! And the divine dragon of Wudang Sect, Willow Cloud Divine Dragon!"<br><br>As Invincible God Sword, or rather Cheong Pung, climbed onto the stage, he looked especially excited.<br><br>He jumped up and down in place, waving his hands as he received an intense cheer from the audience.<br><br>"Wow! Wow! Hello! This is my first time at the quarterfinals of Diverse Stars Grand Festival!"<br><br>On the other hand, his opponent, Willow Cloud Divine Dragon, was stretching with a stiff face.<br><br>He too was said to be a great contender, ranked among the top of Ten Dragons and Phoenixes, as the best rising stars of Orthodox Faction alongside Jin Mukyung.<br><br>'He's definitely strong.'<br><br>He was a direct disciple of Wudang Sect Leader and had already passed the firmly standing age.<br><br>According to Zhuge Gyun, he had plenty of combat experience from practicing martial arts early on.<br><br>But, well.<br><br>'Well, I don't know who'll win.'<br><br>I relaxed in my seat.<br><br>I had already advanced to the semi-finals by smashing the Minor Family Head of Hebei-Peng Family, as Jeok Cheongang had wished for.<br><br>Assuming there were no major changes, I would easily make it to the finals, where my opponent would likely be Cheong Pung.<br><br>'Let's see how skilled you are.'<br><br>As soon as my eyes gleamed, the flag signaling the start of the match was raised.<br><br>=====<br><br>[1] It mean 30 years old. Coming from the sentences inside the Analects of Confucius.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-251.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-253.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

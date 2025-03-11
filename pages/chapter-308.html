@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 308 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 308</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 308</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: December 29, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>“Head to Sichuan. If it’s the Divine Doctor, he will surely have a way.”<br><br>The Mad Doctor of Luoyang, a physician of high renown, was ranked among the world's ten finest.<br><br>With unwavering conviction, he implored a consultation with the Divine Doctor, whose medical prowess was revered as the zenith of healing arts.<br><br>‘There’s a possibility.’<br><br>The discovery of the Divine Doctor could mean salvation for Jeok Cheon-Gang.<br><br>Gazing upon Jeok Cheon-Gang, who lies in an almost ethereal slumber, I express my gratitude to the Mad Doctor of Luoyang with a respectful bow.<br><br>“I sincerely thank you.”<br><br>The Divine Doctor, a figure enshrouded in an aura of mystery, remains elusive and unknown.<br><br>Without the token bestowed by the Mad Doctor of Luoyang, the quest would resemble a forlorn voyage across an endless sea.<br><br>“Ahem, just words?”<br><br>“Should I buy a souvenir for you?”<br><br>At this, the Mad Doctor of Luoyang emitted a warm, amused chuckle.<br><br>“You cheeky young one. Instead of spouting nonsense, better pack your bags immediately.”<br><br>“Oh, right.”<br><br>The journey from Henan to Sichuan is thousands of miles long. Even using Qinggong, it would take nearly a month. \[Note: Traditionally, Qinggong is a training technique for jumping off vertical surfaces, but has been exaggerated in Wuxia/Murim fiction, allowing martial artists to move swiftly and lightly at superhuman speed or allowing the martial artists to perform similar gravity-defying moves.\]<br><br>‘Moreover, there’s no guarantee of finding the Divine Doctor quickly.’<br><br>I mused silently, my eyes lingering on the still-active quest window.<br><br>Quest<br><br>\[Finding the Divine Doctor in Sichuan\]<br><br>- You have acquired the only trace left by the Divine Doctor.<br><br>- The Divine Doctor is the greatest physician in the world. Currently, he is the only hope for awakening Jeok Cheon-Gang.<br><br>- You must scour the vast lands of Sichuan to find him!<br><br>- Rank: Transcendent<br><br>- Restriction: Possessor of \[Trace of the Divine Doctor\]<br><br>- Mission: Consult the Divine Doctor (Incomplete)<br><br>- Reward: ???<br><br>- Failure: The death of Jeok Cheon-Gang<br><br>Look at the rank of this quest.<br><br>A single individual to find, and yet, it holds a Transcendent rating.<br><br>Fortunately, the ancient trace implied that Sichuan was the Divine Doctor's location. Yet, with the province's immense size, the task presented incredible challenges.<br><br>‘Isn’t the modern Sichuan Province about twice the size of the Korean Peninsula?’<br><br>Murim and the modern world are different from each other, but still, my experiences suggested similarities in the scale of the land.<br><br>The prospect of locating someone in vast Sichuan, unknown by name or face, seemed an overwhelming endeavor.<br><br>‘Damn, it’d be easier to find Mr. Kim in Seoul.’ \[Note: Mr. Kim is the equivalent to "John Doe" in English.\]<br><br>But the situation left me no alternative. Locating the Divine Doctor was imperative for Jeok Cheon-Gang's salvation.<br><br>Only half a year remained.<br><br>Regular stimulation of the life-preserving acupuncture points could extend his life by a month or two, but that was the limit for Jeok Cheon-Gang.<br><br>‘I must find the Divine Doctor within the deadline.’<br><br>To do so, I need to reduce the required time. Thinking quickly, I spoke up.<br><br>“May I ask you a favor?”<br><br>The task would undoubtedly require extensive manpower and resources.<br><br>Yet, Sword Saint Mae Jong-Hak readily offered a solution without hesitation.<br><br>“Write letters to send to the Tang Family, Emei Sect, and Qingcheng Sect of Sichuan.”<br><br>“Thank you.”<br><br>With the support of the influential Sichuan Tang Family and the cooperation of the eminent Emei and Qingcheng Sects, the task seemed less daunting.<br><br>However, my request extended further.<br><br>“Since you’re helping, could you add a few more things?”<br><br>“Hmm, the atmosphere is tense due to the Blood History that occurred in Shaolin. Everyone is thinking about the movements of the Dark Heaven and the Demonic Cult, so I might not be able to offer much help. The sect’s enemies are always a priority for a martial artist.” \[Note: Blood History is the direct translation of the Korean characters. This seems to be the name for the recent massacre at Shaolin.\]<br><br>“I don’t need that much help.”<br><br>“If there’s anything Mount Hua Sect can do to help, just say it.”<br><br>“Just assign a few people to me. That will be enough.”<br><br>“Do you have anyone in mind?”<br><br>“Yes.”<br><br>Nodding, I mentioned a few names.<br><br>\* \* \*<br><br>After naming my choices, Mae Jong-Hak and the Mad Doctor of Luoyang exited the pavilion, their conversation continuing as they walked.<br><br>“Is it alright? I know meeting the Divine Doctor is your lifelong wish.”<br><br>“A lifelong wish…”<br><br>Reflecting upon Mae Jong-Hak's words, the Mad Doctor of Luoyang was lost in a moment of distant contemplation.<br><br>“Yes, that’s right. I gave up my official position and took up acupuncture because of him.”<br><br>The Mad Doctor of Luoyang had been a scholar of great promise.<br><br>His lineage was illustrious: his grandfather, the head of the National Academy and former tutor to the previous emperor during his princely years, set the precedent.<br><br>A family of scholars, his father and brothers had also carved their names within the court's annals.<br><br>Had a devastating plague not erupted the year he excelled in the civil service examination, his path might have mirrored theirs.<br><br>“Countless people lost their lives. I was responsible for categorizing the dead, the survivors, and those who were destined to die.”<br><br>At the onset of his courtly career, the young Mad Doctor held unwavering convictions.<br><br>He believed in the emperor's benevolence, expecting the distribution of relief supplies and medical aid to combat the plague. He trusted that officials, both civil and military, would strive to alleviate the people's suffering.<br><br>“It was a misconception. While people were dying from the plague, the emperor was reconstructing a palace for his new concubine, and the powerful were dividing among themselves what should have gone to the people.”<br><br>“What did you do?”<br><br>“I turned lies into truth. In my records, a hundred thousand stones of grain, wealth, and medicinal supplies were distributed to the sick, and the royal physicians who tended to the nobility were portrayed as genuine doctors working tirelessly to contain the plague.”<br><br>“It must have been painful.”<br><br>“It was torturous. When I returned to my family after leaving the court, I found royal physicians sent by the emperor. They were there for my grandfather, who had a mild fever.”<br><br>It was then he realized: in this world, even life had its price.<br><br>The hands of the Mad Doctor, tightly gripping his acupuncture needles, turned pale.<br><br>“Then, I heard about the Divine Doctor. A physician who risked death to treat patients at the source of the plague. A single person who subdued the plague and saved thousands of lives.”<br><br>He stormed into the palace, destroyed all his falsified records, and abandoned his court position. Though it meant severing ties with his family, it was a necessary sacrifice.<br><br>He chose the acupuncture needle over the scholar's brush, medical texts over the revered Four Books and Five Classics. \[Note: the Four Books and Five Classics are authoritative books associated with Confucianism. Starting in the Han dynasty, they became the core of the Chinese classics on which students were tested in the Imperial examination system.\]<br><br>“I was often been ridiculed as a quack. There were times I saved patients on the brink of death, and times I couldn’t save them and had to let them go.”<br><br>As a physician, he bore witness to the unrelenting cycle of birth, aging, illness, and death.<br><br>And thus, twenty years later, the once-promising official came to be known as the Mad Doctor of Luoyang.<br><br>“It was all possible because of the Divine Doctor. Without him, I would have become a puppet in a rotten court.”<br><br>Mae Jong-Hak smiled wryly at the Mad Doctor of Luoyang’s words.<br><br>“So, the Divine Doctor created another divine doctor.”<br><br>“What nonsense. I am content being known as a mad doctor. There is only one Divine Doctor in the world.”<br><br>In the eyes of the eccentric Mad Doctor of Luoyang shone a youthful glint.<br><br>Mae Jong-Hak, amused by this revelation, couldn't suppress a chuckle.<br><br>“This is something. Shouldn’t you return the token of the Divine Doctor?”<br><br>“Heaven is heaven because it’s unattainable. If I had wanted to find him, I would have left for Sichuan ten years ago when I received the token. My place is here. And…”<br><br>With a wistful smile, the Mad Doctor of Luoyang concluded his reflections.<br><br>“How would a quack like me, who can’t even cure one patient at this age, even look at the Divine Doctor? This is enough for me.”<br><br>“Thank you. In these times of turmoil, if Jeok Cheon-Gang recovers, the entire Murim will owe you a great debt.”<br><br>“Oh, come now, don’t be like that. It’s not fitting.”<br><br>The Mad Doctor of Luoyang, with a playful dismissal of his hand, suddenly donned a mischievous expression.<br><br>“Are you practicing in advance?”<br><br>“Practicing what?”<br><br>“The gravitas of a Murim Alliance leader, haha.”<br><br>“Oh, that?”<br><br>Mae Jong-Hak, scratching his head, wore an expression of mild irritation.<br><br>“I don’t know who’s spreading such rumors. I’ve already declined several times…”<br><br>“For now, Grandmaster Mae is the most suitable candidate.”<br><br>“Don’t say that. It’s just everyone being hasty and making the wrong choice.”<br><br>The recent Blood History event at Shaolin sounded a clarion call.<br><br>The rise of Dark Heaven, a hidden and menacing force, had emerged.<br><br>This revelation led the orthodox martial arts world's leaders to cautiously broach a crucial topic.<br><br>The reformation of the Murim Alliance.<br><br>“There is someone else more fitting for that position. Certainly not an old man like me.”<br><br>“Do you really think so?”<br><br>The Mad Doctor of Luoyang gestured towards the sky.<br><br>It was still tinged with the early hues of dawn, where the moon and stars faintly lingered.<br><br>“The One God has concealed himself, and the Ten Kings have aged. In my eyes, Grandmaster Mae has strong martial arts and a righteous heart, making you the most suitable person to take on the symbol of the orthodox faction, the Murim Alliance.”<br><br>“Really now. I absolutely can’t do it. There are so many people, why make me the leader of the Murim Alliance?”<br><br>“Then who do you think is suitable?”<br><br>“Hmm…”<br><br>After pondering for a moment, Mae Jong-Hak spoke.<br><br>“That’s right. What about Thunderbolt Blade King Peng, our senior nearby?”<br><br>“To be the leader, his temperament is too…”<br><br>“What? What’s wrong with Peng? I think he’s straightforward and good. Manly.”<br><br>“The Murim Alliance might end up too heated. Manly indeed.”<br><br>“Then it should be Jaegal Liang, our senior. He once held the position of General of the Murim Alliance, and with his transcendent Cultivation Technique and excellent fighting skills, he ascended to the Ten Kings…”<br><br>“He has passed away.”<br><br>“What? When did this happen?”<br><br>“More than ten years ago.”<br><br>“Ah…”<br><br>Realizing his detachment from current affairs, Mae Jong-Hak was struck by his ignorance of even the most basic information about who was alive or dead among his peers.<br><br>With a heavy sigh, he inquired further:<br><br>“Do you know what happened to the other two of the Three Saints?”<br><br>“The Bow Saint has been missing for over twenty years, and the other one… honestly, should be out of the question.”<br><br>“Huh? Why is that?”<br><br>The Mad Doctor of Luoyang gave Mae Jong-Hak a look of disbelief.<br><br>“Who in their right mind would suggest making the Slaughter Saint the leader of the Murim Alliance?”<br><br>“What’s wrong with him? His martial arts are indisputable, and his personality is thorough, perfect for the leader.”<br><br>“The problem is that he uses his martial arts and thoroughness for assassination. The top assassin of the world as the leader of the Murim Alliance? Unthinkable.”<br><br>“Is that so? Now that I think about it, you might be right.”<br><br>Mae Jong-Hak, scratching his head in thought, left the Mad Doctor of Luoyang wondering:<br><br>'Can this man truly embody the virtues of orthodox Murim?'<br><br>In the meantime, preparations for Jin Tae-Kyung's departure were advancing swiftly.<br><br>\* \* \*<br><br>The first to arrive upon hearing of my impending journey was Jin Wi-Kyung.<br><br>"Little brother."<br><br>I responded, busily packing essential items into my travel bag.<br><br>“Yes?”<br><br>“I just heard some unbelievable news.”<br><br>“Believe it. It’s true.”<br><br>“Where are you going?”<br><br>“To Sichuan.”<br><br>“For how long?”<br><br>“Half a year. Maybe one or two months more if it's longer.”<br><br>“No!”<br><br>Jin Wi-Kyung cried out as if in agony.<br><br>“At a time like this, where are you going again?”<br><br>“To Sichuan.”<br><br>“I know! That’s why I can’t let you go!”<br><br>“I’m going anyway.”<br><br>Jin Wi-Kyung, with an uncharacteristic resolve, countered.<br><br>“I forbid it.”<br><br>“Oh. Then I forbid your forbidding.”<br><br>“With father away, as the lesser family head and the acting leader of the family, you cannot defy my orders!”<br><br>“What happens if I defy them?”<br><br>“I’ll have no choice but to punish you according to our family law.”<br><br>“Then disown me.”<br><br>“How can you say such a thing!”<br><br>His face mirrored a man witnessing the world's impending doom.<br><br>Ignoring the aghast Jin Wi-Kyung, I stood, resolute.<br><br>On my back, Jeok Cheon-Gang, still unconscious, was secured to a carrier with silk.<br><br>‘It might be too late to return with the Divine Doctor.’<br><br>Hence, my choice:<br><br>To take Jeok Cheon-Gang with me to Sichuan.<br><br>“Sigh.”<br><br>This arrangement would allow me to utilize some aspects of my Qinggong without hindrance.<br><br>I glanced back at Jin Wi-Kyung, his eyes brimming with worry.<br><br>“Don’t worry too much. It won’t be like what you’re thinking.”<br><br>“At least take the Jin Dragon Squad with you.”<br><br>The Jin Dragon Squad, despite being the elite force of the Jin Family of Taiyuan, would only encumber my pace in this mission.<br><br>Tossing the packed travel bag to him, I declared:<br><br>“That’s why the deputy leader of the Jin Dragon Squad is coming with me.”<br><br>Catching the travel bag, Hyuk Mu-Jin thumped his chest confidently.<br><br>“Just trust me, lesser family head!”<br><br>“……”<br><br>“……Lesser family head?”<br><br>“Ah, no, of course. Please take good care of our youngest.”<br><br>Jin Wi-Kyung, his skepticism palpable, gave Hyuk Mu-Jin a pat on the shoulder.<br><br>“Savior! When are we leaving? Huh? Savior?”<br><br>“…We’re leaving now, so please shut your mouth.”<br><br>Bringing him along stirred doubts in my mind. Was it truly a wise choice?<br><br>A wave of regret flickered through me, yet for a mission necessitating a compact, skilled team, Cheong Pung was the optimal selection.<br><br>‘At least his skills are undeniable.’<br><br>Should any peril arise on this journey, Cheong Pung's prowess would be invaluable, equaling that of a thousand warriors.<br><br>“Sichuan! The Divine Doctor! Adventure!”<br><br>“……”<br><br>It’s not too late, is it? Maybe I should just leave him.<br><br>Battling these thoughts, I exited the pavilion.<br><br>At the entrance awaited the final member of our Sichuan expedition.<br><br>“It’s been a while, hasn’t it?”<br><br>His response, tinged with solemnity, broke the silence.<br><br>“Choosing me wasn’t a wise decision.”<br><br>“No, you need to come.”<br><br>“I have only achieved fifth mastery of my Boundless Wind Chasing technique...”<br><br>“You haven’t gotten past the fifth mastery, right?”<br><br>“How did you know that!”<br><br>“…Do you have anything mastered beyond the fifth mastery?”<br><br>This fifth mastery bastard.<br><br>The late arrival was Goong Gibang of the Beggar Sect, the last member of our journey.<br><br>Hyuk Mu-Jin, Cheong Pung, Goong Gibang. Looking at this lineup, it was no joke.<br><br>With a resigned sigh, I declared,<br><br>“Let's go, you Bermuda Triangle bastards.”</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-307.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-309.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

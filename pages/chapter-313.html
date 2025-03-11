@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 313 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 313</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 313</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: January 5, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>The First Crane of Mount Hua, Baek Mu-Seong.<br><br>In the land of Shaanxi, no, in the entire Murim, there was no one who did not know his name.<br><br>Cherished as the True Heavenly Sword's prime disciple, Baek Mu-Seong had been hailed since youth as the destined future leader of the Mount Hua Sect.<br><br>Whispers swirled among the murmurs, tales of the Sword Saint's youngest pupil, yet none contested Baek Mu-Seong's inevitable ascent to sect leadership.<br><br>"It's said that the martial prowess of the Divine Dragon of Mount Hua has already surpassed the elders of the Nine Great Sects. Truly a genius that appears once in a hundred years."<br><br>"Still, the next leader has to be the First Crane of Mount Hua. Baek Mu-Seong is different. He is born with all the qualities required of a leader."<br><br>"That's right. Whether it's his martial arts or his character, who else but him could be the leader?"<br><br>Those at Xi'an Tower's ground level, savoring their drinks, remained oblivious.<br><br>Oblivious to Baek Mu-Seong's quiet passage behind them.<br><br>"I have long heard of the reputation of Master Baek. It's an honor to meet you."<br><br>"Master? You flatter me too much."<br><br>"Not at all. It's only right to call a Master what he is. What's excessive about that?"<br><br>Baek Mu-Seong offered a modest smile in response to the guard's fervent admiration.<br><br>Being the center of attention was familiar territory.<br><br>With the reclusive Sword Saint Mae Jong-Hak's rise, Mount Hua Sect's influence had grown, as had Baek Mu-Seong's responsibilities.<br><br>'A leader, they call me.'<br><br>For Baek Mu-Seong, still in his early thirties, the title felt both distant and burdensome.<br><br>With a mental shrug, he paused as the guard stopped.<br><br>"Here we are."<br><br>"This place is…"<br><br>"The only separate residence in Xi'an Tower, which we proudly claim to be the best in Shaanxi."<br><br>Surveying the opulent interior, complete with a jade-and-stone garden, Baek Mu-Seong expressed his unease.<br><br>"I'm sorry, but I don't have enough money to use a separate residence. Could you instead provide me with a quiet room?"<br><br>"Ha ha, as modest as I've heard."<br><br>The guard's laughter echoed as he spoke.<br><br>"Don't worry. The owner of the tower has repeatedly said that if a guest from the Mount Hua Sect visits, we should not charge them anything and treat them with the utmost care."<br><br>"The owner of the tower, you say?"<br><br>"Yes, last autumn there was a certain issue with the Southern Edge Sect, but it was smoothly resolved with the help of the Mount Hua Sect. The other two disciples of the Plum Blossoms Three played a major role."<br><br>"Ah, I see. That happened while I was in isolated training, so I wasn't aware."<br><br>"I've only heard about it in stories, too. I've only been working here for about a month, ha ha."<br><br>Baek Mu-Seong nodded, his understanding deepening.<br><br>His own past year had been anything but idle.<br><br>Encountering Cheong Pung and Jin Tae-Kyung, both era-defining geniuses, had profoundly shocked and inspired Baek Mu-Seong, propelling him into a year of solitary training.<br><br>'It was a meaningful time.'<br><br>The enlightenment he gained in seclusion had not only enhanced Baek Mu-Seong's strength but also deepened his wisdom.<br><br>Yet, more had changed; the Mount Hua Sect's status had soared remarkably in this period.<br><br>Even the government, replete with Southern Edge's secular disciples, now prioritized Mount Hua in crises.<br><br>'If the letter sent by my Master is true, it's no wonder.'<br><br>Just five days prior, Baek Mu-Seong received a startling letter from his Master, the True Heavenly Sword.<br><br>It detailed the bloodbath at Shaolin, the Dharma King's demise, and the potential appointment of Sword Saint Mae Jong-Hak as the new Murim Alliance leader.<br><br>"Chaos reigns everywhere. My friends even queried if their martially gifted child could join Mount Hua Sect as a secular disciple."<br><br>Baek Mu-Seong's smile held a trace of bitterness, perceiving the guard's hopeful subtext.<br><br>The guard, likely over forty, yearned for his child to join Mount Hua Sect, a common parental aspiration.<br><br>Feigning obliviousness, Baek Mu-Seong responded,<br><br>"Well, if fate allows it, it may be possible. But is there really a need to learn martial arts? At that age, growing up healthy is good enough."<br><br>"…Is that so?"<br><br>The guard's face fell, disappointment evident, as Baek Mu-Seong thought,<br><br>'If only you knew of the impending storm, your expression would differ.'<br><br>Whispers of the Shaolin bloodshed were already circulating.<br><br>Yet, the existence of Dark Heaven remained a closely guarded secret, known to a select few, including Baek Mu-Seong, who sensed an approaching crisis.<br><br>A blood wind loomed over Murim, dark clouds gathering, foretelling a time when countless weapons would fall alongside their wielders.<br><br>Echoes of grieving parents and orphaned children would soon fill the air.<br><br>'We, Mount Hua, must prevent this. We must.'<br><br>Baek Mu-Seong's conviction mirrored what was needed throughout Murim.<br><br>His mood darkening, the guard looked puzzled.<br><br>"Where is the manager? Manager!"<br><br>"Young Master, the manager has stepped out for a moment. Please calm down and..."<br><br>"Calm down? After I've been treated like this, you expect me to calm down!"<br><br>"But, as I said, the separate residence is already full. I'll guide you to a special room, so please calm your anger."<br><br>"It's so noisy! I must use the separate residence today, move aside now!"<br><br>"Ah, Young Master!"<br><br>Bang! Crash!<br><br>The commotion and shouts escalated, drawing nearer. The guard's expression soured as he apologized,<br><br>"I apologize for showing an unpleasant scene. It seems my subordinates have failed to handle the situation properly."<br><br>"Don't mention it. I completely understand."<br><br>No matter how carefully guests are selected, Xi'an Tower was still a beautiful place. It's natural for insects to flock to a flower garden.<br><br>"Still, it's only noon and he seems quite drunk."<br><br>"It happens often. He appears to be from a noble family, but we'll handle it smoothly and send him back. You don't have to worry, Master Baek."<br><br>Baek Mu-Seong gave a wry chuckle, shaking his head.<br><br>"Ha ha, well, I think I should stay here."<br><br>"What?"<br><br>"He doesn't seem like an ordinary noble's son."<br><br>"What do you mean by that…"<br><br>The guard's confusion was palpable, but he fell silent, alert to the growing chaos and an approaching aura.<br><br>'A Murim warrior!'<br><br>In the escalating tension, guards scrambled in the inner courtyard, their shouts piercing the air.<br><br>"Stop right there!"<br><br>"You cannot pass this point!"<br><br>Despite the high security, befitting a venue frequented by dignitaries, these seasoned warriors seemed ill-equipped to handle the drunken agitator.<br><br>"How dare these lowly thugs from the streets try to stop me..."<br><br>"Ha!"<br><br>Swoosh, thud!<br><br>The guards' brief cries and the sound of swift, potent strikes quickly quieted the surroundings.<br><br>The unsteady footsteps resumed, breaking the eerie calm.<br><br>'To take down six first-rate warriors instantly while in such a drunken state.'<br><br>He's undeniably a martial arts Master, perhaps even a Peak Master.<br><br>As the guard tensed, hand on his sword, Baek Mu-Seong subtly signaled him to refrain.<br><br>"It seems I should step in."<br><br>"Master Baek, that would be..."<br><br>"It's fine. We've met a few times before, so he'll probably back down out of respect for me."<br><br>"That means..."<br><br>"We have a connection that dates back generations. Ah, but..."<br><br>Baek Mu-Seong lightly scratched his cheek, adding,<br><br>"It's not exactly a friendly connection."<br><br>"…!"<br><br>The guard's mind raced, connecting dots.<br><br>The Southern Edge Sect, notorious in its own right, and the name associated with it was that of one infamous individual.<br><br>"Could it be?"<br><br>As a guard at Xi'an Tower for just over a month, he was well-versed in the tales of this notorious Southern Edge figure.<br><br>He was as famous for his fiery temper as for his heritage.<br><br>The guard's expression contorted as he was about to utter the name.<br><br>Crash!<br><br>The door of the exclusive residence, made of sturdy black wood, burst apart, scattering splinters everywhere.<br><br>Baek Mu-Seong greeted the young, irate man stumbling toward him with a smile.<br><br>"It's been a while. How have you been?"<br><br>Simultaneously,<br><br>"Why are you here?"<br><br>Hyuk So-Pyung, known as the Southern Edge Lone Dragon, grimaced fiercely, resembling a wrathful demon.<br><br>\* \* \*<br><br>"Wow! Wow!"<br><br>"Please stop yelling. Everyone is staring at us."<br><br>"My savior! Look, sweets!"<br><br>"Forget those damn sweets. Aren't you tired of them?"<br><br>"No!"<br><br>"Then just open your own store!"<br><br>"Can I go to Sichuan with the sweets vendor then?"<br><br>"No, are you crazy…"<br><br>"Over there, they're selling noodles! They say it's made with beef broth!"<br><br>Cheong Pung, you unpredictable kid. You're like a bouncing ball, never knowing where you might jump next…<br><br>I swiftly grabbed Cheong Pung by the collar as he made a beeline for a street vendor.<br><br>"Please, just be a normal person. Just for once!"<br><br>"Sweets, noodles…"<br><br>"Ah, just wait a bit, and I'll feed you till you burst!"<br><br>"Really?"<br><br>"How many times have I told you? So, please, just keep your mouth shut and follow me quietly, okay?"<br><br>Admittedly, I'd be spending Mount Hua Sect's funds, not my own, but that hardly mattered.<br><br>'I was supposed to just pass through here.'<br><br>Xi'an wasn't initially on my itinerary.<br><br>Yet, the True Heavenly Sword, leader of Mount Hua Sect, had suggested a detour through Xi'an. Considering it was Cheong Pung's hometown, it seemed a fitting choice.<br><br>After a week's march, devoid of decent meals or a bath, the prospect of a day's rest and good treatment was appealing.<br><br>'The First Crane of Mount Hua, Baek Mu-Seong, is waiting there.'<br><br>It had been over a year since our last meeting.<br><br>Before departing for Anhui with Jeok Cheon-Gang, Baek Mu-Seong had told me,<br><br>"Whenever you're in Shaanxi, let me know. I'll ensure you're well taken care of. Ha ha."<br><br>I had half-expected empty boasts, akin to a Busan native's grand claims, but it seemed Baek Mu-Seong meant his words.<br><br>And now, here we were, set to meet.<br><br>"Anyway, where is Xi'an Tower?"<br><br>I asked a passerby who instructed me to follow the main road. Yet, amidst the bustling crowd, it seemed a never-ending path.<br><br>Scanning the surroundings, a dirt-smudged finger pointed towards a distant building.<br><br>"That's Xi'an Tower."<br><br>"Where? Oh, really. How did you know?"<br><br>Goong Gi-Bang, destined to be the Beggar King, replied with a hint of pride.<br><br>"It's the best place to beg. The leftovers are like delicacies, and since high-status people come and go, there's a lot of charity. Any beggar worth their salt knows this place."<br><br>"…"<br><br>A beggar's haven, it appeared.<br><br>Shaking my head, I made my way to Xi'an Tower.<br><br>Approaching the grand entrance, large enough for a crowd to pass through, a guard, presumably of Xi'an Tower, bowed.<br><br>"I'm sorry. We're not open for business today."<br><br>"What? Is it a day off?"<br><br>"It's not that. There's been a bit of trouble during business hours."<br><br>"Ah."<br><br>This turn of events was unexpected.<br><br>Casting a glance to the side, I noticed Cheong Pung, teetering on the brink of tears.<br><br>Rubbing my head in thought, I addressed the guard.<br><br>"Is there any way we can go in? I had an appointment today. With Baek Mu-Seong. They said you would know the name."<br><br>"I repeat, currently it's... Wait, did you just say Master Baek Mu-Seong?"<br><br>"Yes. The First Crane of Mount Hua, Baek Mu-Seong."<br><br>In desperation, Cheong Pung cried out.<br><br>"Baek Sajil! Where are you, Baek Sajil! Can you hear my stomach growling?" \[Note: "sajil" here means "martial nephew".\]<br><br>The guard, initially hesitant, swiftly swung open the main gate.<br><br>"We will escort you to the separate residence immediately!"<br><br>What's this all about?<br><br>Why such a sudden change of response?<br><br>'Did Baek Mu-Seong stand us up?'<br><br>But my speculation was off the mark. Hastily escorted by the guard, now almost jogging, we reached a nearly demolished separate residence where Baek Mu-Seong stood, awaiting us with sword in hand.<br><br>Incredible, what a scene.<br><br>'It's really a full course.'<br><br>But I can't eat a martial artist.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-312.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-314.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

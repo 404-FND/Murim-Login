@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 336 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 336</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 336</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: February 19, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>Ancient Sentinel. \[Note: the direct translation here is literally "old tree".\]<br><br>The moment I saw the old man, this term came to mind.<br><br>The man was shrouded in the shadows created by the heavy curtains which covered the windows on all sides of the room. He stood alone, giving him the eerie semblance of a withered, lonely tree.<br><br>For a fleeting second, I imagined him as part of the very floor, rooted and motionless. Yet, as we made our entrance, he pivoted slowly.<br><br>“Yes…”<br><br>A peculiar, green glint danced in his eyes.<br><br>The venerable figure, known as the Ten Thousand Poisons Shura, Tang Sa-Dok, spoke with a serpentine hiss. \[Note: a Shura is the angry interpretation of a diety, known for their fierce and combative nature.\]<br><br>“You brought a letter?”<br><br>The middle-aged man replied,<br><br>“Yes, Uncle. It’s from the Sword Saint, Mae Jong-Hak…”<br><br>“Did I ask you?”<br><br>“…!”<br><br>“This isn’t your place. Leave now.”<br><br>Chastened, the middle-aged man offered a deep bow before hastily retreating from the chamber.<br><br>Tang Sa-Dok, having curtly dismissed his nephew, reclined in his leather chair.<br><br>‘Look at the presence of that old man.’<br><br>It was the presence of a villain.<br><br>At first glance, one could easily confuse him for a member of the Demonic Cult, not a righteous group.<br><br>I advanced, drawing Tang Sa-Dok's gaze.<br><br>“Jin Tae-Kyung of the Jin Family of Taiyuan greets the Ten Thousand Poisons Shura, Tang Sa-Dok.”<br><br>Tang Sa-Dok replied with an inscrutable expression,<br><br>“I’ve heard that Sunbae Jeok took you in as a disciple in his later years. I also have a connection within the Jin Family of Taiyuan.”<br><br>“Oh, is that so?”<br><br>This seemed promising.<br><br>Pondering, Tang Sa-Dok suddenly said,<br><br>“The name is... yes, the Fire Demon Sword, Jin Baek-Yang, if I recall correctly.” \[Note: there have been several names for the Head Elder including the "Blade of Flowers" and the "Fire Demon Sword", but given that AsuraScans has been more consistently using "Fire Demon Sword", I'll change his moniker to this so that it is easier for later readers to keep track of.\]<br><br>My hopes, once buoyant, plummeted. That name surfaces just when it's least expected.<br><br>Clearly, the Head Elder once held considerable renown.<br><br>He was a former Peak Master, and his contributions during the Great Faction War were significant. Of course he would have connections with other esteemed Masters.<br><br>‘Even the Fire King said that he had met him once or twice.’<br><br>That connection had afforded me an early encounter with the Divine Palm of Fire, even before I could fully explain my predicament during my initial meeting with Jeok Cheon-Gang.<br><br>Tang Sa-Dok's piercing gaze landed on me as he inquired,<br><br>“How is Jin Baek-Yang doing these days?”<br><br>“Well, about that…”<br><br>I glanced around warily before answering. The possibility of a venomous snake emerging or a concealed weapon being launched at me necessitated quick reflexes for evasion.<br><br>“He passed away.”<br><br>“What?”<br><br>Yeah, I knew it would be like this.<br><br>Without hesitation, and meeting Tang Sa-Dok's surprised gaze, I rushed to elaborate,<br><br>“It was an unforeseen accident. Of course, there are circumstances around it that I can explain without any misunderstandings if you give me a little time…”<br><br>“No need.”<br><br>“Pardon?”<br><br>“He was an unlucky guy. Every time people around him praised him as a great hero or a chivalrous warrior, it always irked me.”<br><br>“…”<br><br>“In Murim, there are no deaths without reason. Once dead, that’s the end of it.”<br><br>While it was a relief to have the matter so swiftly concluded, the old man's perspective seemed almost venomous. Was he implying that the demise of the 'unlucky guy' was a positive outcome?<br><br>‘His character is almost at the level of Dark Heaven.’<br><br>As if Tang Sa-Dok sensed the skepticism creeping into my thoughts, he gestured dismissively.<br><br>“Enough about the dead. Let’s get to the main point. So, Mae Jong-Hak sent a letter to this old man?”<br><br>“Yes. It would be best if you see it yourself.”<br><br>Feigning a search through my garments, I summoned the handwritten letter from the Sword Saint that I had safeguarded in my inventory.<br><br>As Tang Sa-Dok perused the letter, his expression grew increasingly furrowed, culminating in a furious exclamation.<br><br>“In all my years, never have I seen such damn bastards!”<br><br>Whooosh!<br><br>A formidable wave of energy erupted with his outburst, causing the hall to shudder.<br><br>His green robe billowing with fury, Tang Sa-Dok spat out his next words,<br><br>“Is everything written in this letter true?”<br><br>“Yes. It is exactly as written.”<br><br>The letter from the Sword Saint detailed the events in Hanam and implored for active collaboration in seeking the Divine Doctor for Jeok Cheon-Gang's treatment.<br><br>“To think that Sunbae Jeok’s condition is so critical…”<br><br>“Before seeking the Divine Doctor, there’s something I wanted to ask of you.”<br><br>The Tang Family of Sichuan, notorious for their mastery of poisons and hidden weapons, also harbored exceptional physicians within their ranks.<br><br>At their zenith stood a figure of unparalleled expertise.<br><br>I fixed my gaze on Tang Sa-Dok and inquired,<br><br>“May I meet the Grand Patriarch?”<br><br>Poison King Tang Sa-Mun.<br><br>Before the Great Faction War, he reigned as the Transcendent Master of poisons and hidden weapons, unmatched across the realms.<br><br>He carved out an epoch, only to vanish two decades prior, after bequeathing the reins of the Tang Family of Sichuan to his sole heir.<br><br>The man now before me, Tang Sa-Dok.<br><br>“It might take days to find the Divine Doctor. If the Poison King could examine my Master’s condition before then…”<br><br>“Stop.”<br><br>Tang Sa-Dok's expression turned to stone, cutting me off mid-sentence.<br><br>“Impossible. That is this old man's answer.”<br><br>“…!”<br><br>His abrupt refusal caught me off guard.<br><br>While the Poison King Tang Sa-Mun had been out of sight for years, Tang Sa-Dok was undoubtedly aware of his whereabouts.<br><br>His stern 'impossible' implied knowledge yet an unwillingness to assist. My voice wavered as I questioned,<br><br>“Why is that?”<br><br>“I cannot say.”<br><br>“You cannot say?”<br><br>“Instead, I will assign some people to guide you. The Qingcheng and Emei Sects will be willing to help.”<br><br>What did I just hear?<br><br>This revelation was far more jarring than the former. Tang Sa-Dok’s statement suggested the Tang Family of Sichuan's refusal to partake in this matter.<br><br>Yet, they weren’t entirely dismissive.<br><br>'A few guides to lead you to the Qingcheng and Emei Sects.'<br><br>Such was the extent of support we could expect from the Tang Family of Sichuan.<br><br>My mind reeled, as if bludgeoned by an iron mace. A tide of frustration rose within my chest.<br><br>“Is that all?”<br><br>“What more did you expect?”<br><br>“We must find the Divine Doctor!”<br><br>“That is your concern, not mine or the Tang Family of Sichuan’s. It’s the same even with Grandmaster Mae Jong-Hak's letter. It was a request, and I have declined it. That’s all there is to it.”<br><br>His words left me speechless.<br><br>Tang Sa-Dok was correct. For him and his family, this situation was a matter of choice, not obligation.<br><br>‘Indeed, that’s the reality of it.’<br><br>Confronting a truth I had been reluctant to acknowledge, a wave of disillusionment and indignation welled up inside me.<br><br>As I stood there, rendered mute, another figure approached, bringing with them the sweet aroma of cookies.<br><br>“Cheong Pung of the Mount Hua Sect greets you.” \[Note: this is an informal tone.\]<br><br>His manner was unexpected.<br><br>Cheong Pung, exhibiting an unfamiliar expression and tone, bowed respectfully before adding,<br><br>“I do not know why the family head has refused, but if you help us, we will never forget this kindness.”<br><br>“I am aware you are a disciple of Master Mae Jong-Hak. One must be careful when forming bonds of gratitudes and grudges in Murim. Do not meddle in affairs that don’t concern you.”<br><br>“It’s not meddling.”<br><br>“Then what is it?”<br><br>Cheong Pung, unwavering in his conviction, responded,<br><br>“My grandfather called it benevolence and righteousness.”<br><br>“…!”<br><br>Tang Sa-Dok, his face a tapestry of conflicting emotions, shook his head.<br><br>“Even if Master Mae Jong-Hak himself came to ask, my answer would not change.”<br><br>“But…”<br><br>Before Cheong Pung, Goong Gi-Bang, and Hyuk Mu-Jin could add their voices, I interjected,<br><br>“What is the reason?”<br><br>“The reason?”<br><br>“Everyone knows about the power of the Tang Family of Sichuan. But why exactly are you refusing?”<br><br>“If I don’t want to speak of the reason, what can you do?”<br><br>“What can I do?”<br><br>Locking eyes with Tang Sa-Dok, whose gaze flickered with a greenish hue, I declared,<br><br>“The bond of gratitudes and grudges you mentioned earlier will now extend between me and the Tang Family of Sichuan. Let me be clear: we will not be on good terms.”<br><br>“…Ha, such a fearless fellow.”<br><br>“I usually don’t act without knowing my place, but this time, I’m quite desperate.”<br><br>At most, half a year remains.<br><br>Even the most esteemed martial arts sects and the imperial court have yet to locate the Divine Doctor.<br><br>Should Jeok Cheon-Gang perish due to delayed treatment, especially if it's due to the lack of help from the Tang Family of Sichuan...<br><br>“After that, I don’t know what I might do.”<br><br>My declaration hung heavily in the air, ushering in a palpable silence.<br><br>Tang Sa-Dok, who had been regarding me silently with penetrating eyes, finally spoke.<br><br>“It is regrettable what happened to Sunbae Jeok.”<br><br>“If you regret it, why not help?”<br><br>“I would like to. But how can I? The main house currently lacks the capacity to do so.”<br><br>Lacks the capacity?<br><br>At that moment, the scenes I had witnessed on my way here flashed through my mind.<br><br>The atmosphere was not just solemn but deadly, with artisans ceaselessly crafting something and weapons constantly being sent off somewhere.<br><br>“What exactly is happening?”<br><br>“Happening?”<br><br>Thud.<br><br>Tang Sa-Dok stepped toward me.<br><br>Could it be the influence of the poison techniques he had mastered? His green eyes, shining more menacingly than ever, were filled with anger and sorrow.<br><br>“The incident has already happened. All that remains is for the main house to mobilize all its power to annihilate every monster involved in this matter.”<br><br>That was it – the reason the Tang Family of Sichuan couldn't assist us.<br><br>The reason he couldn’t easily speak of, even when challenged by someone as inexperienced as me.<br><br>More pressing than securing the Divine Doctor for the Fire King, and the unyielding refusal to engage with Poison King Tang Sa-Mun.<br><br>“…Could it be?”<br><br>My realization must have shown.<br><br>Tang Sa-Dok, his eyes widening, spoke with a voice heavy with a thirst for vengeance.<br><br>“By the time I heard the news, it was already too late. There was not a single part of his body left unharmed.”<br><br>A single statement turned my suspicion into certainty.<br><br>Poison King Tang Sa-Mun was dead.<br><br>\* \* \*<br><br>“Hmm.”<br><br>The middle-aged man, of average stature and with a round, unremarkable face, pondered.<br><br>Resting against the shadowed cave wall, the man scrutinized his forearm, muttering to himself,<br><br>“It won’t work. The Poisonous Qi is too potent.”<br><br>He clicked his tongue softly.<br><br>Using his best efforts, he had managed to concentrate the Poisonous Qi only in one arm.<br><br>“The Poison King… so potent. It's worse than I expected.”<br><br>Poison King Tang Sa-Mun.<br><br>The recollection of the Poison King's final moments, his expression as life ebbed away, lingered vividly in his memory.<br><br>Yet, for the man, this was not the end.<br><br>Eliminating the Transcendent Master known as the Poison King was a feat in itself, but it hadn't addressed a more pressing issue.<br><br>‘I never thought it would be easy.’<br><br>Muttering to himself, he suddenly struck his left forearm with his dagger.<br><br>A dazzling burst of light exploded, and the severed limb dropped to the cave floor.<br><br>Screech, hiss!<br><br>Poison-laden blood splattered, melting everything around it. A pungent poisonous smoke billowed up.<br><br>Small creatures watching the man from the shadows died on the spot as soon as they were exposed to the poison smoke.<br><br>Squeak, squeak...<br><br>Listening to the death throes of the small creatures, the man stepped out of the cave, smiling at the glaring sunlight.<br><br>It was a smile that seemed unbelievable for someone who had just cut off his own arm.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-335.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-337.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

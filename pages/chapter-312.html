@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 312 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 312</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 312</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: January 5, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>Upon the surrender of the Black Stone Fortress bandits, the young leader Ju Hwa-Ran was the first to compose herself.<br><br>Her gaze, ineffable and profound, met mine as she offered a deep bow of respect.<br><br>“I am greatly indebted to you.”<br><br>“It’s nothing."<br><br>I was just passing by and it didn’t take much time. The level-up was satisfying enough for me.<br><br>To Ju Hwa-Ran, however, this intervention was like a lifeline.<br><br>“If it weren’t for Young Master Jin's help, our Dragon Phoenix Armed Escort Agency would have had to bury our bones here. I’ve heard of the reputation of the Sleeping Dragon of Shanxi, but it’s true that you are a hero who can’t stand injustice.”<br><br>“Hero, what hero? Those are just flattering rumors, you know.”<br><br>“What?”<br><br>“Even if I see injustice, I sometimes let it go. I only deal with the ones who really bother me. But somehow, the ones who bother me always turn out to be the worst ones, like Thousand Strength Axe here.”<br><br>As I spoke, I observed the body of Thousand Strength Axe being hauled off.<br><br>“And our family also runs an armed escort agency.”<br><br>“Ah, the Jin Family's Escort Agency.”<br><br>The former Star Cloud Escort Agency operated by the Woo family had rebranded to the Jin Family's Escort Agency, now prospering with over five branches.<br><br>Given the proximity of Shaanxi and Shanxi, an inevitable intersection with the Dragon Phoenix Armed Escort Agency seemed likely.<br><br>“You know about the Jin Family's Escort Agency? If we ever meet, treat us well. Just like today, helping each other with mutual cooperation.”<br><br>“Mutual cooperation?”<br><br>“Is there a problem?”<br><br>“You do realize that the Jin Family's Escort Agency and our Dragon Phoenix Armed Escort Agency are competitors, don’t you?”<br><br>Competitors?<br><br>Surprised, I inquired further.<br><br>“Is that true?”<br><br>“You really didn’t know?”<br><br>“Yes. I haven’t paid much attention to the family business.”<br><br>“If you hadn’t saved us today, the Jin Family's Escort Agency might have been able to expand into Shaanxi. Even though it doesn’t seem like it now, we are still in control of Shaanxi.”<br><br>“I see.”<br><br>“It’s fiercer than it looks in this business. There are many unseen struggles and occasional violent conflicts.”<br><br>“Well, if we can’t expand, it’s okay. I’ll tell my oldest brother to stay friendly.”<br><br>Ju Hwa-Ran, after a moment of contemplation, couldn't help but laugh.<br><br>“Thank you for that.”<br><br>Her smile took me aback with its unexpected beauty.<br><br>I barely managed to stifle my astonishment, when whispers from behind reached my ears.<br><br>“Incredible, it’s the first time I see someone more beautiful than Miss Seo-Wol.”<br><br>“Ju Hwa-Ran, the Flower-Shrouded Blade, is one of Northern Jiangbei's Three Beauties. I don’t know who Seo-Wol is, but you dare to compare her to Ju Hwa-Ran?”<br><br>“What nonsense. Young Master Goong, go scrub on some of that river rock. Your dirtiness is unbearable.”<br><br>“What’s it to you!”<br><br>“You’re a beggar, aren’t you?”<br><br>“Ha, well, that’s true.”<br><br>An innocent voice followed.<br><br>“No, it’s true. Miss Seo-Wol is pretty too.”<br><br>“What’s with you, Young Master Cheong? I didn’t know you could say such things.”<br><br>“And in my eyes, Young Master Goong is pretty too.”<br><br>“…Then, pretty Young Master Goong, why don’t you go wash in the river? Especially focus on your eyes.”<br><br>Without a doubt, it was the Bermuda Triangle.<br><br>Under normal circumstances, I would have made introductions, but the level of conversation was so low it was embarrassing to even speak.<br><br>As I awkwardly cleared my throat, Ju Hwa-Ran glanced over my shoulder.<br><br>“Who are those people?”<br><br>“I don’t know.”<br><br>“But you came with them.”<br><br>“They’re just companions for the road.”<br><br>“Really?”<br><br>“I swear to the heavens.”<br><br>Trying to keep my voice low was futile; the Bermuda Triangle caught wind of our conversation and reacted explosively.<br><br>“Squad Leader! Are we an embarrassment to you?”<br><br>“Are you embarrassed of me?”<br><br>“Savior! I'm fine! Please be embarrassed of us!”<br><br>“...Actually, they are my friends.”<br><br>“They look like it.”<br><br>It was a heart-crushing comment.<br><br>Ju Hwa-Ran, wearing a gentle smile, offered a respectful bow to the trio.<br><br>“I am Ju Hwa-Ran, the young leader of the Dragon Phoenix Armed Escort Agency, and I greet our saviors.”<br><br>I wasn’t quite sure what these guys did to be called saviors, but the Bermuda Triangle also bowed their heads.<br><br>“I am Hyuk Mu-Jin, the commander of the Jin Dragon Squad, and the right-hand man of the Sleeping Dragon of Shanxi.”<br><br>I interjected calmly.<br><br>“He's not the commander, but the temporary commander, and less of a right-hand man, but more like my left pinky finger.”<br><br>Then, Goong Gi-Bang introduced himself.<br><br>“Beggar Goong Gi-Bang at your service.”<br><br>“The future Beggar King.”<br><br>Cheong Pung spoke next.<br><br>“Hello! You’re pretty!”<br><br>“As you can see, this child is a bit special. A bit lacking, but a good friend.”<br><br>After their whirlwind introductions and my own clarifications, Ju Hwa-Ran's mouth slightly opened in disbelief.<br><br>Her eyes, wide and black, seemed to quake in astonishment.<br><br>“So, let me get this straight… left pinky finger, future Beggar King, and a slightly lacking but good friend, is that right?”<br><br>“Yes, that’s accurate.”<br><br>“I’ve never heard such descriptions before.”<br><br>“Should I repeat it?”<br><br>“No, thank you.”<br><br>She sighed deeply, her gaze shifting to each one.<br><br>“I have heard about the accomplishments of the Swift Wind Sword in the suppression of the northern bandits.”<br><br>“...What?”<br><br>Hyuk Mu-Jin stared at Ju Hwa-Ran, confusion written across his face.<br><br>Swift Wind Sword, a moniker unbeknownst to him until now. He seemed pleased by it though.<br><br>Before a response could be mustered, Ju Hwa-Ran continued.<br><br>“The person beside you is Young Master Goong Gi-Bang, disciple of the Boundless Seeker, the leader of the Beggar Sect.”<br><br>“Ni- nice to meet you.”<br><br>“And finally, it's an honor to meet Young Master Cheong Pung, the Divine Dragon of Mount Hua. My grandfather and father always regarded the Sword Saint, Mae Jong-Hak, as a hero of righteousness.”<br><br>The Divine Dragon of Mount Hua, a title bestowed upon Cheong Pung after the Great Celestial Banquet.<br><br>Cheong Pung was visibly surprised.<br><br>“Wow, how do you know all that?”<br><br>Ju Hwa-Ran offered a knowing smile.<br><br>“Because I am the young leader of the Dragon Phoenix Armed Escort Agency.”<br><br>Her response was brief, yet laden with significance.<br><br>We departed Henan mere days after the conclusion of the Great Celestial Banquet.<br><br>‘She's astonishingly quick at gethering intelligence.’<br><br>Particularly impressive was her knowledge of Hyuk Mu-Jin, a relatively unknown martial artist in Shanxi, not to mention the exactitude of his nickname.<br><br>This revealed Ju Hwa-Ran's meticulousness and sharpness.<br><br>‘The Flower-Shrouded Blade. A beauty harboring hidden danger.’<br><br>She was not just hiding a single danger; she was a Peak martial artist, and combined both a keen intellect and an alluring beauty.<br><br>She had rightfully earned her place among the future leaders of Murim, the Ten Dragons and Phoenixes.<br><br>‘Impressive. With such capabilities, she must be managing the escort agency well.’<br><br>I recalled hearing from Goong Gi-Bang about the Dragon Phoenix Armed Escort Agency's recent struggles.<br><br>I dismissed the stray thought that surfaced.<br><br>‘Ah, what does it matter to me.’<br><br>Finding the Divine Doctor is more pressing right now.<br><br>Having already been delayed for nearly an hour, we must hurry if we want to reach our destination before dawn.<br><br>“Miss Ju, we need to get going.”<br><br>Ju Hwa-Ran seemed taken aback by my abrupt statement.<br><br>“Right now?”<br><br>“There’s an urgent matter.”<br><br>“It’s already late. Why don’t you stay the night and leave tomorrow…”<br><br>“That’s a bit… I need to be in Xi’an by tomorrow.” \[Note: Xi'an is the capital of Shaanxi Province.\]<br><br>“Ah.”<br><br>Ju Hwa-Ran appeared to want to say more, hesitating momentarily.<br><br>“Will I see you again?”<br><br>“Of course. If fate allows it.”<br><br>As I nodded and turned to leave, Ju Hwa-Ran added softly.<br><br>“I will never forget the favor of saving my life.”<br><br>“Well, even without me, you would have avoided the worst situation, so you don’t need to be that thankful.”<br><br>“Huh?”<br><br>“Of course, there would have been some damage.”<br><br>Does she still not know? It seemed plausible.<br><br>I offered Ju Hwa-Ran, who wore a look of confusion, a small smile before shifting my attention to the intense gaze of the young courier.<br><br>\[Lv.110 Song Il-Seom\]<br><br>‘The martial world is indeed vast. That such a skilled person is just a courier.’<br><br>He was the source of the piercing gaze I had felt throughout my conversation with Ju Hwa-Ran.<br><br>His stare had been so intense, it felt as if the back of my head was on fire.<br><br>‘But why has that guy been glaring at me like that since earlier? Do we have some grudge?’<br><br>It wasn't just me who sensed the hostility. Cheong Pung, trailing close behind, whispered to me.<br><br>“Savior, did you feel it too?”<br><br>“Yeah. I don’t know why, but it’s quite obvious.”<br><br>“Right? Maybe he thinks you're pretty too."<br><br>“…….”<br><br>Please stop talking nonsense.<br><br>\* \* \*<br><br>As our group rapidly departed, Ju Hwa-Ran watched our retreating figures and was soon joined by another.<br><br>“Hwa-Ran.”<br><br>“Ah, Uncle Heo.”<br><br>Heo Jun, having resolved the bandit situation, joined Ju Hwa-Ran, following her gaze.<br><br>“The Sleeping Dragon of Shanxi, Jin Tae-Kyung. A truly remarkable young man. The others as well.”<br><br>“That’s true. They say not to trust the rumors of Murim… but this time, it seems they were actually understated.”<br><br>Ju Hwa-Ran reflected on Jin Tae-Kyung's martial skills.<br><br>His prowess was nothing short of staggering. While she was thrilled by his abilities, a hint of envy tinged her thoughts.<br><br>‘If only I had such power.’<br><br>The Dragon Phoenix Armed Escort Agency's current predicament might have been averted.<br><br>Suppressing the words teetering on her lips, Ju Hwa-Ran suddenly used Sound Transmission.<br><br>\- Uncle Heo. Keep an eye on Chief Escort Song.<br><br>Heo Jun, an experienced and shrewd chief courier, subtly acknowledged her request, cleverly intertwining his response within a different conversation.<br><br>\- Hwa-Ran. What do you mean by that?<br><br>\- It's still just a guess. But there are several troubling points.<br><br>Ju Hwa-Ran pondered over the events leading to the recent chaos.<br><br>From the unexpected leak of the Thousand-Year Snow Ginseng to the relentless onslaught they faced in the past four months, everything pointed towards a sinister undercurrent within her own ranks.<br><br>'The final words of Young Master Jin keep echoing in my mind.'<br><br>His assertion that the worst would have been avoided even without his intervention implied the presence of a formidable force within the Dragon Phoenix Armed Escort Agency.<br><br>Among them was someone capable of overpowering Thousand Strength Axe and countering the adversaries.<br><br>‘And… those eyes.’<br><br>It was only a moment, but she had seen it clearly.<br><br>The way Jin Tae-Kyung’s gaze lingered on Song Il-Seom as he turned away.<br><br>And the subtle surprise in his eyes.<br><br>‘There’s definitely something.’<br><br>Recalling the past two years, Ju Hwa-Ran, who had taken the reins of the agency at a young age, had faced numerous setbacks.<br><br>If these failures stemmed from excessive trust or, worse, betrayal, how should she proceed?<br><br>Whoosh!<br><br>The cold wind swirled around her as she stood, lost in thought.<br><br>\* \* \*<br><br>“Could you provide a quiet room?”<br><br>The man in white, despite his weary appearance, spoke with such courtesy that it was difficult to decline.<br><br>To the guard at the entrance, he resembled a dignified crane.<br><br>‘Who is he? A new face.’<br><br>The guard watched over Xi’an Tower, which, as its name suggests, was a representative pavilion of Xi’an.<br><br>To stay here, one needed not only money but also a corresponding status. That’s why the faces seen here were usually familiar.<br><br>'A lone young man, without a carriage or attendants…'<br><br>Normally, this would warrant an immediate refusal.<br><br>Yet, there was something compelling about him, prompting the guard to engage personally, dismissing his subordinates.<br><br>“Have you visited our pavilion before?”<br><br>“No, I haven’t. My circumstances don’t allow for such luxury.”<br><br>The young man’s bashful smile and the gesture of rubbing his cheek caught the guard's attention.<br><br>'That emblem!'<br><br>The embroidered pink blossom on the young man's white sleeve caught the guard's eye, signifying something significant.<br><br>The guard's eyes fixed on the unmistakable embroidery of a fully bloomed plum blossom.<br><br>With a tone of hesitancy, he spoke.<br><br>“Ma-May I ask for your name, sir?”<br><br>“I am a Taoist named Mu-Seong, with the surname Baek.”<br><br>“The First Crane of Mount Hua!”<br><br>He was the direct disciple of the head of the Mount Hua Sect, True Heavenly Sword. The First Crane of Mount Hua, Baek Mu-Seong, smiled faintly. \[Note: This is not to be confused with the Heavenly Sword King, who is the grand-patriarch of the Namgoong Family. True Heavenly Sword is the first disciple of the Sword Saint, who appears in manhwa chapter 167. The direct translation of his moniker is "Heavenly Sword True Person", but this doesn't sound quite right.\]</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-311.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-313.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

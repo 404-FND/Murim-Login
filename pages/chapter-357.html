@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 357 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 357</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 357</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: February 23, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>He moved with a serene expression and gait, cloaked in a pristine yellow robe. \[Note: this is the Western Heavenly Demon Lord.\]<br><br>He stood as a lone, alien presence among the buildings - the sole figure untouched by combat, and the only one who could stand to walk through the death-imbued aura shrouding the Tang Family of Sichuan.<br><br>"Push forward! There's only a few of them left!"<br><br>"Fight to the end. We are the great Tang Family of Sichuan!"<br><br>Clang! Swoosh!<br><br>The earth trembled under the roar of battle cries as two forces clashed. Screams and shouts mixed, and a thick fog of blood formed in the air.<br><br>The battle swiftly dictated victory and defeat.<br><br>"Surround them! Not a single one should be spared!"<br><br>"Argh!"<br><br>A tide of black robes engulfed the green surge.<br><br>Only corpses in green remained in the wake of the onslaught.<br><br>From a distance of a hundred jang, the Western Heavenly Demon Lord observed and finally declared,<br><br>"It's over."<br><br>Their determination to stand their ground was commendable, yet they were doomed by their numerical inferiority from the outset.<br><br>Under these circumstances, even the Tang Family of Sichuan's famed poisons and secret weapons lost their efficacy.<br><br>This battle, nay, this war, was a triumph for Dark Heaven.<br><br>"I'm afraid I won't be able to keep my promise. My apologies, Patriarch."<br><br>Desperation often clouds judgment, and Tang Sa-Dok was no exception.<br><br>The Western Heavenly Demon Lord, having secured the answer he sought with the stipulation of allowing the Tang family lineage to live on, chose a simple yet brutal response.<br><br>Rather than ending Tang Sa-Dok's life, he positioned him atop a tree overlooking the Tang estate.<br><br>There, he was to witness the fall of his family until his dying breath.<br><br>"Everything is as the heavens decree."<br><br>Drip, drip.<br><br>As rain began to fall, the Western Heavenly Demon Lord turned from the sky, his gaze shifting towards the entrance of a shadowy cave.<br><br>At the entrance, beside a toppled torch, lay an old man with a hunched back, his eyes staring vacantly. \[Note: I'm pretty sure this is Old Man Goong, the old guard of the Tang Family of Sichuan's prison.\]<br><br>What piqued the Western Heavenly Demon Lord's interest were the scars marking the old man's flesh.<br><br>'Black Blood Sword Technique.'<br><br>The Black Blood Sword Technique was taught only to the martial artists of Dark Heaven.<br><br>Upon this realization, the Western Heavenly Demon Lord proceeded down the stone staircase leading underground.<br><br>Footprints, a blend of blood and mud, were clearly imprinted on the staircase, indicating the passage of at least twenty individuals before him.<br><br>And likely...<br><br>'All dead.'<br><br>There were signs of descent but none of ascent.<br><br>Upon entering the subterranean prison, his suspicions solidified into certainty.<br><br>The Western Heavenly Demon Lord, his existence marred by countless battles, could sense the residual warmth of conflict and the pervasive, musty scent of blood veiling the dim corridors.<br><br>Whose handiwork was this? He contemplated, noting the blood spatters adorning the walls.<br><br>'Your skill is impressive. They couldn't even put up a proper fight before being subdued.'<br><br>With the Tang Family of Sichuan embroiled in dire straits, it was improbable that any of its masters remained to guard prisoners.<br><br>If Tang Sa-Dok's assertion held truth, merely three souls were left in the dungeon depths.<br><br>The Divine Doctor was hardly a force to be reckoned with, and Fire King Jeok Cheon-Gang hadn't even regained consciousness, leaving only one person who could have done this.<br><br>'The Sleeping Dragon of Shanxi, Jin Tae-Kyung.'<br><br>He suddenly remembered the Blood Lord's description of Jin Tae-Kyung.<br><br>The most arrogant, tenacious, and stubborn young bastard in the world.<br><br>For reasons unknown, his desire to eliminate Jin Tae-Kyung surpassed even that towards the Sword Saint, who had severed his own limb, or the Fire King.<br><br>'You have the skill to survive against the Blood Lord, then?'<br><br>Yet, fortune would not favor Jin Tae-Kyung a second time.<br><br>The Sword Saint was not here, and the Fire King was also in no condition to fight.<br><br>The Western Heavenly Demon Lord intended to easily capture the rats lingering in the prison.<br><br>'Along with the Ring of All Poisons.'<br><br>Squish, squish.<br><br>The leisurely advance of the Western Heavenly Demon Lord suddenly halted.<br><br>A formidable stone barrier, extending from ground to ceiling, obstructed his path unexpectedly.<br><br>"Huh, quite the complicated construction."<br><br>His gaze fixed on the barrier, the Western Heavenly Demon Lord's hand tensed; a crimson haze enveloped his arm, cocooning his fist.<br><br>Boom!<br><br>Everything happened in an instant.<br><br>The manifestation of Qi, its compression, and then explosion. Nothing could stand in the way of his fist's power.<br><br>Crash!<br><br>Break, collapse, shake.<br><br>The unleashed energy carved a straight path, piercing through numerous barriers. Stalactites plummeted like hail, and a dense cloud of dust billowed.<br><br>'That's better.'<br><br>The next moment.<br><br>The Western Heavenly Demon Lord, surveying the aftermath of his force, called out.<br><br>"Why don't you come out now?"<br><br>In lieu of a verbal response, a resounding sonic boom echoed.<br><br>Boom!<br><br>Through the settling dust cloud, the Western Heavenly Demon Lord, who caught a flying dagger aimed at his neck, smiled faintly.<br><br>"Are you Jin Tae-Kyung?"<br><br>"Why do you ask if you already know?"<br><br>Step, step. \[Note: if done with care in the manhwa, this will be an epic grand entrance from the MC.\]<br><br>Through the dust cloud walked a tall young man, Jin Tae-Kyung, staring calmly at the Western Heavenly Demon Lord.<br><br>\* \* \*<br><br>I tried to appear calm.<br><br>In combat, the tide often hinges on momentum. One must not underestimate a weaker adversary, nor cower before a stronger one.<br><br>Especially... when confronting a colossus such as the one before me now.<br><br>'What a monstrous guy.'<br><br>I inwardly cursed while studying the man before me.<br><br>With a force akin to Moses parting the sea, he had forged a new corridor in the prison with a mere punch.<br><br>Moreover, the serene expression on his face was the epitome of calm.<br><br>'The very aura he emits is different.'<br><br>Where the Blood Lord wielded his overt madness to instill terror, the figure before me illustrated his menace merely by existing.<br><br>Their martial arts might be similar in strength, but they were completely different Masters.<br><br>"I've heard a lot about you. I've heard you are an interesting young man."<br><br>I casually extended the blade of White Flames as I responded.<br><br>"I tend to be quite interesting."<br><br>"I've also heard you lack manners."<br><br>"You must have mistaken me for someone else. My nickname is 'Manners'."<br><br>"Well, I'll have to see a bit more of you to know for sure, but that's what an acquaintance of mine told me."<br><br>"You don't look like the type to have friends. Who's this acquaintance?"<br><br>The smile on the middle-aged man's face widened.<br><br>"Blood Lord."<br><br>"......!"<br><br>"He very much wants to see you again."<br><br>"I don't want to see that bastard though."<br><br>"That young man, Cheong Pung, said the same thing. Though he used a different tone."<br><br>This guy, he's already met Cheong Pung.<br><br>And yet, he's here...<br><br>I felt my facial muscles tense involuntarily as I spoke.<br><br>"Is he...?"<br><br>With a reassuring smile, the middle-aged man gestured dismissively.<br><br>"Don't worry. I won't kill you. I plan to take you, Cheong Pung, and the Fire King back safely."<br><br>I questioned, my expression betraying my astonishment.<br><br>"Take us back?"<br><br>"I told you. The Blood Lord wants to see you. So, at least until then, you'll be safe."<br><br>"......"<br><br>"Of course, what happens after that will be up to the Blood Lord."<br><br>The middle-aged man delivered two pieces of good news and one piece of bad news.<br><br>The good news was about Cheong Pung's survival and the Blood Lord's absence from this place, and the bad news was the fact that if we lose this fight, we'd have a group meeting with the Blood Lord.<br><br>Of course, the chances of splitting a glass of soju over tripe and parting ways are close to zero.<br><br>'Instead, there's about a fifty percent chance I'll become the tripe.'<br><br>The other fifty percent is the chance of becoming grilled intestines.<br><br>Damn, just thinking about it makes my mouth water.<br><br>I swallowed hard, scrutinizing the middle-aged figure from head to toe.<br><br>Here stood an individual who casually referred to the Blood Lord, presumably a paramount figure within Dark Heaven, as an 'acquaintance' and demonstrated such formidable might with a mere gesture.<br><br>A specific title crossed my mind.<br><br>"You're the Western Heavenly Demon Lord, right?"<br><br>"Ah, now that you mention it, I haven't introduced myself yet. I'm pleased to meet you."<br><br>Pleased, my ass.<br><br>I scoffed internally, eyeing the Western Heavenly Demon Lord's two intact arms.<br><br>"I heard you only had one arm."<br><br>"That was true, until ten days ago."<br><br>"What?"<br><br>"I reattached it. Since it's not originally mine, the movement isn't quite smooth yet, so if you're going to try anything, aim for my left arm."<br><br>"......!"<br><br>What is this guy?<br><br>The notion of reattaching limbs might hover within the realm of possibility, but treating arms as interchangeable as computer parts seemed far-fetched.<br><br>Despite the slight disparity in skin tone, its functionality appeared seamlessly natural.<br><br>'Can such a feat truly be achieved within a mere ten days?'<br><br>I couldn't understand it, but I had to put my astonishment and questions aside for the moment.<br><br>What he said last was more concerning.<br><br>'He told me his weakness.'<br><br>There could only be one reason for such absurd behavior.<br><br>He was overwhelmingly confident of his own strength.<br><br>And indeed, the Western Heavenly Demon Lord exuded an aura of supreme assurance, unfazed by the prospect of confrontation.<br><br>"Shit."<br><br>Inhaling deeply, I fixed the Western Heavenly Demon Lord with a steely gaze.<br><br>"Wouldn't it be better if you just turned around and left, considering this a courtesy visit?"<br><br>"That would be difficult. Besides the both of you, there's something I also need to take with me."<br><br>"Something?"<br><br>Rather than elucidate, the Western Heavenly Demon Lord countered with his own inquiry.<br><br>"Now it's my turn to ask. Could you surrender? Peacefully?"<br><br>"Could you commit suicide? Peacefully?"<br><br>"Then, there is only one answer."<br><br>Thirty yards apart.<br><br>The moment our gazes met in the air.<br><br>Swoosh, swish!<br><br>We both extended our hands without deciding who would make the first move.<br><br>At least, in terms of drawing weapons, I was faster.<br><br>However, the finger strike shot by the Western Heavenly Demon Lord reached its target before my dagger did.<br><br>'Strike later, hit first.'<br><br>A red warning light flashed in my mind. At the same time, my sharp senses took in everything around me.<br><br>The strike was invisible, ethereal, yet the surge of its approach was unmistakable. This heightened awareness, a gift from my clash with the Tai Yi Ruthless Sword, Hwang Bo-Eom, now proved invaluable.<br><br>'Now!'<br><br>With a swift pivot of my head and a surge forward, I evaded an assault swifter than any bullet, which narrowly missed my ear.<br><br>The Western Heavenly Demon Lord, observing this feat, regarded me with a mix of astonishment and recognition.<br><br>"To dodge my eighth-mastery Soul-Sealing Finger Strike. As expected, you also have a talent for surprising people..."<br><br>"Finger Strike this!"<br><br>Whoosh!<br><br>The Western Heavenly Demon Lord's voice was cut off.<br><br>In the slowed moment, my figure, rushing up to him, was reflected in his gradually widening eyes.<br><br>It was a speed that exceeded the Western Heavenly Demon Lord's expectations, something far beyond the limit of a Peak Master.<br><br>'Strength, power, agility. And the Brilliant Path of Fire.'<br><br>Every ounce of my being funneled into that solitary advance, erasing the distance and piercing through the air.<br><br>The fire dragon, nestled within my sea of Qi, unfurled its wings majestically. The blade of White Flames, now the dragon's talon, descended upon the foe.<br><br>'Heavenly Strike.'<br><br>Kwaaaaaa!<br><br>\* \* \*<br><br>Grrrrrrrrr!<br><br>A tumultuous rumble engulfed the Tang Family of Sichuan.<br><br>Piled corpses toppled over in its wake.<br><br>The building shook as if an earthquake had struck, causing combatants to falter, momentarily losing their footing.<br><br>"An earthquake! It's an earthquake!"<br><br>"Damn it, at a time like this..."<br><br>An earthquake is a disaster beyond mortal intervention.<br><br>Though brief, the tremor instilled widespread panic.<br><br>Yet, within the ruins of what was once the Tang Family of Sichuan's grand hall, two figures stood undeterred.<br><br>"Hahahaha!"<br><br>The First Monster, erupting into hearty laughter, shifted his gaze towards Cheong Pung.<br><br>"You must have felt it just now, didn't you?"<br><br>Cheong Pung nodded in agreement while wearing a vacant expression.<br><br>"Yes."<br><br>He had indeed sensed it — the tremor was an overwhelming surge of energy palpable even from hundreds of jang away.<br><br>The First Monster, his voice laced with mockery, remarked,<br><br>"It seems the Western Heavenly Demon Lord has firmly made up his mind. Hehehe."<br><br>"That's right. It's really incredible."<br><br>"Now that he has forsaken even a sliver of mercy and embraced the intent to kill, neither the Fire King nor his disciple will be able to survive. Do you understand what this means?"<br><br>"Yes. Savior is truly amazing."<br><br>"There's no need to watch out for the Blood Lord's mood anymore. From now on, I won't show any mercy to you either... Wait. What did you say?"<br><br>The First Monster halted, confusion etching his brows.<br><br>The words that had just been uttered by the lump of blood before him were incomprehensible.<br><br>"Savior? You mean the Fire King's disciple?"<br><br>Yet, Cheong Pung’s reply was not intended for the First Monster.<br><br>From the onset, his focus had been elsewhere.<br><br>A soft whisper broke from Cheong Pung’s lips.<br><br>"At first, I thought I was far ahead, but before I knew it, you were there..."<br><br>The look that Cheong Pung cast towards the epicenter of the disturbance was tinged with both admiration and sorrow.<br><br>No one in the Tang Family of Sichuan, not even the First Monster before him, could guess what had happened, but Cheong Pung knew.<br><br>"I'm certain, because he's my Savior."<br><br>When Cheong Pung lived on Mount Hua, he was happy but lonely.<br><br>The splendor of nature, the companionship of animals, and even the esteemed presence of his grandfather failed to fill a certain void.<br><br>'In Murim, there are many young martial artists of your age. Among them, the Ten Dragons and Phoenixes are the strongest.'<br><br>'Hmm. So, are those Ten Dragons and Phoenixes stronger than me?'<br><br>'Huh? To even ask that. Of course, Pung, you are stronge...'<br><br>'Grandfather?'<br><br>'Ahem. Of course, you are lacking in experience compared to them.'<br><br>'What! Really?'<br><br>'Yes, really! The world is vast, and there are many masters. So, we must continue to diligently practice your martial arts, right?'<br><br>'Yes......'<br><br>At his grandfather's casual remark, Cheong Pung felt a burgeoning emotion, a seedling of curiosity and ambition, take deeper root within his heart.<br><br>The emotion he later came to realize was named competitiveness.<br><br>'Who is stronger, me or them?'<br><br>He yearned to test his mettle, to engage in martial arts with them, to immerse himself in the camaraderie of competition.<br><br>Thus, Cheong Pung descended from Mount Hua, stepping into the broader world, and on a bright winter day, their paths crossed.<br><br>'If you two won't eat the candies, can I have them, please?'<br><br>'...Mu-Jin...give them to him...'<br><br>That was his first encounter with Jin Tae-Kyung.<br><br>He always called Jin Tae-Kyung his Savior, yet in his heart, he was Cheong Pung's friend. Jin Tae-Kyung had emerged as Cheong Pung's most formidable rival.<br><br>A gentle smile formed on his lips.<br><br>"I know that Savior feels the same way."<br><br>"……!"<br><br>Flames seemed to leap in the eyes of the First Monster.<br><br>If it weren't for the Western Heavenly Demon Lord's order, this lump of blood who dared to ignore him would have been dead long ago. Now, his fate was as good as sealed.<br><br>"How dare this damned bastard…"<br><br>The First Monster, his double axe adorned with the remnants of his adversaries, poised to strike.<br><br>But in the very next instant, he stood petrified, witnessing an extraordinary display.<br><br>Swooooosh.<br><br>A gust stirred as crimson energy cascaded from deep within Cheong Pung, tracing along the wrist to the blade's hilt.<br><br>Gliding past the plum blossom emblem adorning the sword grip, entwining the blade, it finally bloomed into a vibrant red plum blossom.<br><br>Tssssss!<br><br>A luminous, devastating brilliance unfurled before him.<br><br>An exclamation of disbelief escaped the First Monster at the marvel before his eyes.<br><br>"…Sword Aura." \[Note: a quick reminder - Sword Aura is an advanced step-up of Sword Qi only used by Transcendent Masters.\]<br><br>The embodiment of unparalleled martial skill, a testament to one's ascension to the Transcendent Realm.<br><br>Yet, the visage of the young man before him, now twenty-three, bore an innocent smile unbecoming of a martial artist of his stature.<br><br>"Shall we begin now?"</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-356.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-358.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

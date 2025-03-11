@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 354 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 354</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 354</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: February 19, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>Clash! Crash!<br><br>"Merely killing these villains won't bring any satisfaction! Make sure their ends are gruesome!"<br><br>"The Heavenly Lord decrees it! Annihilate the Tang Family!"<br><br>The air vibrated with the clash of swords, punctuated by desperate gasps and anguished cries. A thick miasma of murderous intent and gore enveloped the battlefield, spreading in every direction.<br><br>Shrouded in dawn's fog, now blackened by noxious smoke, adversaries thirsting for blood lifted their weapons and surged forward in a deathly charge.<br><br>Pffft!<br><br>"Argh!"<br><br>A young man's scream pierced the air.<br><br>Born into a branch of the Great Tang Family of Sichuan, he easily reached the first-rate level of martial arts. Thanks to his considerable martial talent and composure beyond his years, he was the focus of high expectations.<br><br>Yet, with a single stroke of a shadowed blade, his promising future was extinguished.<br><br>Swoosh! Slash!<br><br>A clean, diagonal strike severed his life in an instant.<br><br>The assassin, draped in black, viewed the youth's demise with a sneer of contempt.<br><br>'Such a fierce young one.'<br><br>The confrontation was over in mere moments.<br><br>Nonetheless, the fallen Tang martial artists's final act was an attempt at mutual annihilation.<br><br>Hidden beneath the assassin's collarbone, a cow's hair needle served as silent testimony to this last desperate ploy.<br><br>'So, this is what the Great Tang Family of Sichuan is capable of?'<br><br>With a tsk of annoyance, the assassin extracted the needle.<br><br>Barely visible, its tip was darkened with poison.<br><br>"Gasp!"<br><br>Suddenly, his vision dimmed. The poison, beginning its deadly dance at the collarbone, swiftly invaded his body.<br><br>Under these circumstances, even with a Qi amount in the Peak Realm, he could only buy time.<br><br>Especially in such a chaotic battlefield, being struck by the poison of the Great Tang Family of Sichuan meant one was as good as dead.<br><br>Yet, the assassin remained unshaken, a sardonic smile playing on his lips.<br><br>"The Heavenly Lord...is...magnificent."<br><br>Struggling for breath, his voice was a whisper of defiance.<br><br>For the first time, a tiny pearl within his mouth was revealed.<br><br>In that moment, an unearthly glow emanated from the pearl, cascading down his neck in a spectral flow.<br><br>Swoosh.<br><br>The change was swift and profound. Clarity banished the blur from his eyes, vitality surged through his veins.<br><br>Liberated from the poison's grasp, the figure clad in black shuddered.<br><br>He revered the Heavenly Lord, a deity of unparalleled majesty.<br><br>His body thrummed with divine energy, a gift from his god.<br><br>"The Heavenly Lord has come upon me!"<br><br>His exultation was cut short as he turned, seeking his next quarry.<br><br>"You're wrong. What's coming for you is not divine favor, but Yama."<br><br>Thud!<br><br>A dagger, hurled with precision, found its mark between his eyes.<br><br>The Qi it carried obliterated flesh and bone alike, rendering his brain inert. Death claimed him before his body touched the earth.<br><br>Thump, thud!<br><br>The pearl that fell from the mouth of the collapsing black-clothed person was caught by someone's hand.<br><br>An elderly man with aged gray eyes muttered as he looked at the pearl.<br><br>"These people... they possess such artifacts."<br><br>An ordinary martial artist might have thought the pearl was a poison-preventing pearl.<br><br>However, the elderly man, Tang Jin-Hu, a direct descendant of the Great Tang Family of Sichuan who had experienced the Great Faction War, instinctively realized that this pearl was something different.<br><br>'What is this?'<br><br>Normally, a poison-preventing pearl has a clear color. Its transparency correlates with its detoxifying effectiveness and its value.<br><br>But this pearl, shrouded in darkness like a tempest contained, displayed a potency against the Tang poison that was unnervingly effective.<br><br>The pressing concern became evident.<br><br>'With such artifacts at their disposal, wouldn't our ancestral poisons and strategic traps be rendered futile?'<br><br>Their armors, too, shrugged off blades with ease.<br><br>Tang Jin-Hu sensed the gravity of their predicament, reminiscent of the calamitous Year of the Tilted Moon.<br><br>"These people..."<br><br>Crunch.<br><br>With a gesture of defiance, he crushed the pearl, his countenance hardening with resolve.<br><br>The silver thread around his wrist sparked to life, becoming rigid with charged energy. Then, in an instant, brilliance engulfed the scene.<br><br>Screeeeech, splat!<br><br>"Ugh!"<br><br>"Argh!"<br><br>Only a few managed to leave their last words. Death came equally to both First-Rate and Peak Masters.<br><br>Resistance was in vain. The Soul-Severing Thread, unleashed by Tang Jin-Hu, spared nothing in its path.<br><br>Steel, bone, sinew, and soul alike were cleaved asunder.<br><br>With the fall of a dozen adversaries in a mere moment, Tang Jin-Hu's voice thundered across the battlefield, instilling vigor.<br><br>"Do not retreat! Aim for their vital points with hidden weapons and attack together!"<br><br>"Head Elder! This old man has come too!"<br><br>"Have you seen these bastards who dare to invade our home? Do they not know what I, the Heavenly Poisoner, am capable of?"<br><br>Tang Jin-Hu was a Transcendent Master who had retired over a decade ago and was the head of the council of elders.<br><br>The arrival of former masters joining the battlefield brought color back to the faces of the faltering Tang Family warriors.<br><br>"Grandfather!"<br><br>"The Head Elder is here! The council has taken action!"<br><br>However, their resurgence was fleeting.<br><br>Crash, slash!<br><br>"Argh!"<br><br>"Tang Hwi!"<br><br>"Young man, is this the time to be distracted?"<br><br>Puh!<br><br>"Help... ack!"<br><br>"Oh Heavenly Lord!"<br><br>"The magnificent Heavenly Lord is with us. Kill them all!"<br><br>The martial prowess of the black-clothed men surpassed those of the Great Tang Family of Sichuan, and their strange armor and poison-preventing pearls rendered the Tang Family's famed poisons and hidden weapons useless.<br><br>Despite the valiant stand of Tang Jin-Hu, the elders, and the family's peak masters, their strength waned against the relentless assault.<br><br>Screeech, splat!<br><br>With the Soul-Severing Thread, Tang Jin-Hu dispatched two assailants, his resolve hardening amidst despair.<br><br>"Where do these bastards come from...!"<br><br>The sight before his eyes was utterly tragic.<br><br>The black-clothed men, as if possessed, cried out for the Heavenly Lord while swinging their weapons.<br><br>Blood sprayed and Tang family members fell as the black-clothed men blocked swords and hidden weapons with their armor and cut through the poison smoke.<br><br>In the empty eyes of a fallen Tang Family warrior, a red flame ignited. The hot flames and acrid smoke drove away the poison smoke and consumed the fallen bodies.<br><br>Tang Jin-Hu's roar tore through the battlefield, his voice laced with the agony of betrayal.<br><br>"No, this cannot be! How dare you, how dare you do this to my kin!"<br><br>Even the mighty army of the Demonic Cult had to suffer a thousand casualties to surpass the Tang Family, yet how could these mere three hundred enemies cause such carnage?<br><br>"Ugh! Head Elder... Head Elder..."<br><br>"Brother!"<br><br>Ack!<br><br>Death spared not even the revered elders who were once great Masters.<br><br>Though they had not reached the state of Transcendence like Tang Jin-Hu, each of them had reached the brink of peak.<br><br>Yet for every black-clothed man felled, five more surged forth; and where five lay defeated, ten more rallied.<br><br>Among those ten black-clothed men charging in disregard of their lives, there was one peak master hidden.<br><br>Screech, thud!<br><br>A figure in black, having sacrificed his comrades to silence another elder, crowed over his grim victory.<br><br>"The elders of the Tang Family are nothing special."<br><br>"Bastard!"<br><br>Screeeeech, crack!<br><br>Tang Jin-Hu's valiant stand bore little fruit as the tide of battle turned grim.<br><br>More than a hundred Tang men had perished and the family's stronghold was breached and battered.<br><br>"Huff, puff."<br><br>His vitality and spirit ebbed away with each passing moment.<br><br>The situation could no longer be changed by the strength of a single, aged Transcendent Master.<br><br>A mournful sigh parted Tang Jin-Hu's lips as the reality of their situation set in.<br><br>"What are the Patriarch and the Ten Wonders of the Tang Family doing?"<br><br>Their presence could have rewritten this dire chapter. The Patriarch, Tang Sa-Dok, and the revered Ten Wonders held the power to sway the course of conflict.<br><br>However...<br><br>"Keke. They must be quite busy right now."<br><br>The mocking taunt, cutting through the chaos, sent a chill down Tang Jin-Hu's spine.<br><br>"Who are you?"<br><br>"If you're asking who I am... Shit. I can't even see you... Just go away."<br><br>Bang!<br><br>With a powerful blast, several black-clothed men were blown away, leaving behind only blood smears and organs.<br><br>A blood-soaked elderly man advanced with a disdainful sneer towards Tang Jin-Hu.<br><br>"Now you're a bit more visible."<br><br>The sight of the diminutive, grotesque elderly man made Tang Jin-Hu's gaze waver.<br><br>"You are..."<br><br>"Hm? You know who I am?"<br><br>"...I didn't know the Malevolent Ghost of Qinghai was still alive."<br><br>The elderly man, known as the First Monster, widened his eyes in recognition of Tang Jin-Hu.<br><br>"Ah, and you are that brat from the Tang family. So, you've improved your use of the Soul-Severing Thread?"<br><br>"I'll cut off your head for that."<br><br>"I thought the Great Tang Family of Sichuan was more realistic than the other righteous factions, but seeing you, it seems not. It's amusing to see you caught up in such vain delusions."<br><br>"…!"<br><br>"My child. Since you still haven't grasped the situation, let this elder spell it out for you."<br><br>The First Monster continued with a chuckle.<br><br>"You, the Patriarch, the Ten Wonders of the Tang Family, or whatever those fools are called, will all die. Whether it's those bearing the Tang surname or dogs, I'll kill and burn them all."<br><br>"You bastard-!"<br><br>"Don't be too disheartened. The Heavenly Lord bestows the same punishment on the nuns and Taoist priests as well. Kekeke."<br><br>Tang Jin-Hu stilled, his fury momentarily quelled.<br><br>A realization dawned — he did not see the First Monster's infamous siblings, who always clung to him like shadows.<br><br>'...Emei and Qingcheng.'<br><br>The bloodbath was not limited to the Tang Family alone.<br><br>The Great Tang Family of Sichuan, Emei, and Qingcheng.<br><br>Today, the three factions ruling Sichuan must engage in a battle that would decide their fate.<br><br>In this hellscape that these monsters have created.<br><br>"Even though such a long time has passed... you truly are a demon."<br><br>To Tang Jin-Hu's scornful remark, the First Monster replied with a grin too gleeful for the grim setting.<br><br>"What a compliment. Could there be any greater praise for this old man?"<br><br>"I will kill you."<br><br>"You've grown old, but your dreams are still grand."<br><br>With a deranged laugh, the First Monster brandished his double axe.<br><br>"Let's taste blood again, shall we?"<br><br>At that signal, legions of adversaries in black surged forth from the outer hall, an overwhelming tide of malice.<br><br>The Tang Family's remaining defenders positioned themselves, their resolve unyielding, prepared for a final stand.<br><br>"Go! Kill everything you see!"<br><br>"We must stop them! They must not be allowed into the inner hall!"<br><br>Those who sought to breach and those who sought to block.<br><br>At the vanguard, two figures advanced, their collision imminent.<br><br>Screeeeech!<br><br>Tang Jin-Hu, his gaze steely with unwavering purpose, unleashed the Soul-Severing Thread with all his might.<br><br>'Patriarch, please be safe.'<br><br>Boom!<br><br>\* \* \*<br><br>"Cough."<br><br>Tang Sa-Dok, his vision clouded with disbelief, observed his palm. Amongst the dark crimson of his blood lay fragments of his own intestines.<br><br>"H-how..."<br><br>His voice, laden with exhaustion, barely rose as he witnessed the extinguishing of another life.<br><br>Thud! Bang!<br><br>The body of someone, whose head had vanished, fell like a rotten log.<br><br>A life once celebrated, now concluded without semblance or honor.<br><br>"Were they called the Ten Wonders of the Tang Family? They were more powerful than I thought."<br><br>A few steps in front of the corpse, a middle-aged man wiped the blood splattered on his face and continued speaking.<br><br>"Of course, now we'll have to call them something different. Let's see... Yes, the Three Wonders of the Tang Family seems fitting."<br><br>"…!"<br><br>Tang Sa-Dok faced the Western Heavenly Demon Lord with a blurry gaze.<br><br>The enemy who had killed his father was too strong. Neither Tang Sa-Dok's poison nor the collective might of the Ten Wonders of the Tang Family had left a mark.<br><br>'Is this the end?'<br><br>Yet, Tang Sa-Dok and the surviving Three Wonders of the Tang Family felt a surge of resolve.<br><br>But... how could they possibly stand against this monster?<br><br>The legacy and pride of the Tang bloodline fueled their defiance against despair.<br><br>"It's not over, not yet."<br><br>"Just sit down. You don't have the strength anyway."<br><br>"For some reason, I know you have no intention of killing me."<br><br>"…Hmm. Once again, it seems the Poison King has raised his child well."<br><br>"You really should kill me."<br><br>"I would rather not, for now. However, it seems necessary to drain some of your strength."<br><br>It was at that moment, as the Western Heavenly Demon Lord frowned and reached out his hand towards Tang Sa-Dok.<br><br>"Just a moment, please wait!"<br><br>"…?"<br><br>With that shout, a young man rushed in breathlessly and sighed in relief.<br><br>"Phew, it's not too late. Thank you for waiting!"<br><br>Seeing the young man, Cheong Pung, the Western Heavenly Demon Lord thought.<br><br>'What kind of madman is this?'</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-353.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-355.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

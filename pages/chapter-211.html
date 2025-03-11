@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 211 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 211</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 211</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: Coldbutteredtoast</span>
+                            <span class="published-date">Published: October 29, 2022</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>The stranger was definitely a hunter. That much was evident from his extraordinary energy. However, it was still nothing compared to his appearance. Casually leaning on the car like it was a photoshoot. Impeccably dressed in an intricately-patterned suit and dripping with luxury goods. Dazzling white teeth and smooth, flawless skin. More celebrity than hunter. Perhaps that was why something seemed familiar about him.<br><br>[Yet somehow Choi is better...]<br><br>While Tae-Kyung liked luxury goods, this man was... a bit too much.<br><br>Despite drizzling rain, the stranger looked down through large sunglasses. "Weird," he was murmuring. "Sound cancellation, perhaps?"<br><br>"What do you want?" said Choi.<br><br>"Ah, you can hear me! Then, why didn't you answer?"<br><br>"We're in a hurry. If you don't have anything to say, I'd be grateful if you moved aside."<br><br>"Oh, you're busy?"<br><br>"Yes. Quite."<br><br>The stranger looked at Choi and then past him into the car. "Isn't that Jin Tae-Kyung? You look better in the flesh than on screen. No wonder everyone's falling in love."<br><br>"No, really," said Choi. "Who are you?"<br><br>"Calm down, I'm not a reporter. I run a guild in Incheon."<br><br>"Ah."<br><br>It was a recruitment offer, then. Since the Tollgate massacre, the Peace Guild had already received several transfer bids. Tae-Kyung was a hunter who'd proven able to handle groups of ogres alone, so his skills were the real deal, and he had been splashed all across the front pages, so he could handle public relations. This made him a very attractive proposition for all but the most influential guilds.<br><br>"My card."<br><br>Tae-Kyung smiled politely. "I'm sorry. I have no intention of leaving the Peace Guild. I'm very satisfied here."<br><br>In the rear-view mirror, a faint smile flickered across Choi's lips.<br><br>The stranger brushed damp hair away from his forehead. "I'm sorry to hear that. Will you at least have a cup of coffee with me? I'm a big fan. It'll only take 30 minutes. We're all busy men."<br><br>[This is out of line. I can't believe he's pushing like this in front of Team Leader Choi.]<br><br>"Strange," continued the man. "Perhaps I read the interview wrong?"<br><br>"What do you mean?"<br><br>"Well, I saw an article in Weekly Hunter which said that your favourite hunter is... me."<br><br>Tae-Kyung blinked. "Wait. Are you...?" He looked down at the business card: raised lettering; gold-plated, with tasteful thickness.<br><br>[Star Guild CEO Won Myung-Hoon]<br><br>Smiling at the sudden recognition, the A-rank hunter extended a hand through the half-open window. "Nice to meet you, Mr. Jin. I've got to take a quick call, but please consider joining me for that coffee." A ring glinted as he pointed across the dreary street. "Say, over there?"<br><br>As he turned away and the window closed, Choi said, "You know him?"<br><br>"Won Myung-Hoon? Of course! Currently, he's thirty-nine years old. His birthday is on 1st April. He's 185cm tall and 80kg. Awakening as an A-rank hunter during his freshman year, he's sometimes known as the Victor, because he's won at life: A-rank and handsome, with excellent skills. Widely prasied for his public appearances, he also runs a charitable foundation..."<br><br>Choi raised an eyebrow, a strange smile fixed on his face. "How do you know all this?"<br><br>"He's my idol. I say it every interview: the people I most admire are my mother and my favourite hunter, Won Myung-Hoon."<br><br>"That might be the worst thing I've ever heard."<br><br>"Haven't you heard of Won Myung-Hoon Syndrome? Every man wants to be him."<br><br>"News to me." Choi's tone was dry. "Why are you looking at me like that? I'm not the one who should be pitied."<br><br>[How don't you know the coolest man in Korea?] Hunter Won Myung-Hoon had been his inspiration. An A-rank hunter, a star, his face had been everywhere when Tae-Kyung was growing up.<br><br>"Movies, dramas, commercials. He's so talented! He was also a renowned vocalist for a time."<br><br>"Him? Is he a singer or a hunter?"<br><br>Tae-Kyung laughed. "You'd know his songs if you heard them. Lots of them are pretty famous here. He was a hit in Japan, too. How about this one?"<br><br>As Tae-Kyung hummed a few lines, Choi pretended to know. "Oh. Yes. That one."<br><br>"He's still popular at karaoke clubs, too. They say a Korean who doesn't know Won Myung-Hoon is probably a spy or monster."<br><br>"Hmmm." Choi shook his head. "Even considering all that, there's definitely something strange about him."<br><br>"Oh yeah, you were living abroad, right! When did you return to Korea, Team Leader?"<br><br>"Three years ago."<br><br>"Ah, so you may not have heard, but there was kind of a scandal. It's been eight years already. What's happened since that time?"<br><br>Across the street, Won Myung-Hoon had finished his call. He raised a hand towards the car.<br><br>"Manager," said Tae-Kyung.<br><br>"Go on. I have thirty minutes," said Choi. "There's a clothing store at the Q-Ube. I'll meet you there."<br><br>"OK!"<br><br>Won Myung-Hoon gave a youthful laugh as Jin Tae-Kyung ran across the street. "Your Team Leader isn't coming?"<br><br>"No, he has some business. It'll be easier for us to speak this way, anyway."<br><br>"Sounds good. I can already tell you're going to be like a younger brother to me."<br><br>[My God, Won Myung-Hoon called me his brother?] What would Jin-Ho hyung say? He'd been the manager of a Myung-Hoon cafe for years. Trembling with emotion, Tae-Kyung followed his idol into the cafe and out of the rain.<br><br>Behind the counter, a pretty student sat with her head in a book. She looked up with a forced smile. "Welcome, can I take your orde..." Her voice trailed off and a blush spread across her cheeks.<br><br>[Ah, celebrity status!] Tae-Kyung nudged Myung-Hoon with his elbow. "You've still got it!"<br><br>"Haha, true, but I haven't done a signing in a while."<br><br>"Jin Tae-Kyung?" The girl squealed and clasped her hands. "You're Jin Tae-Kyung, right!"<br><br>"Huh?" His heart skipped a beat.<br><br>"From the ring road, right? The B-class gate? You're the Tollgate Hero!"<br><br>"Oh, yeah... yeah, that's me."<br><br>She scrambled for a pen. "Please give me your autograph!"<br><br>[What the hell?]<br><br>"Wow, that's bullshit." For a moment, Myung-Hoon stared with cold eyes, face twisted. Then, it shifted like a mirage, the snarl replaced by a warm smile and playful tone. "What are you waiting for, brother? Give her your signature!"<br><br>"Yeah, ah yes." [It's bright in here. I probably saw it wrong.] Tae-Kyung turned his head to the cafe server and took her pen. "What would you like me to say?"<br><br>Her voice trembled in excitement. "Oh! Please write 'Hye-Kyung and JTK xxx <3"<br><br>[What the f...]<br><br>However, after an awkward few minutes, Tae-Kyung began to relax. Other customers approached his table and he spent about twenty minutes chatting with his fans before finally getting the chance to become a fan again himself.<br><br>"As you know, not many A-rank hunters use spears."<br><br>"That's right. Quite a few who start with spears eventually switch to swords."<br><br>Although spears seem like easy weapons to handle, they can actually be quite challenging. Versatile and deadly, as long as a warrior can keep their foes at range, they are a solid choice in lower level gates. They become less effective in high-tier gates, where unexpected dangers lurk and close-quarter ambushes are frequent. Even in F-class gates, Tae-Kyung had considered switching to a one-handed weapon and shield on more than one occasion. "But hyung was persistent and made his name using a spear. You even wrote that textbook on polearm fighting."<br><br>"Ah, that's a long time ago. Must be ten years..."<br><br>"That's right! I was in high school and you were already a ranker!"<br><br>Just as differences exist between Peak Masters, not all hunters of the same rank are equally strong. In Korea, a ranker was one of the 100 best out of all 100,000 or so registered hunters.<br><br>"I referenced your textbook so many times while I was training. My copy basically fell to pieces."<br><br>"Oh yeah? I hope it was helpful."<br><br>"Of course. Incredibly helpful."<br><br>The instructions had been invaluable to F-ranked Jin Tae-Kyung. Of course, the manual could not be compared with the divine martial arts of Murim. Yet, as an ant cannot be taught how to be a tiger, there was a place for rudimentary training.<br><br>After a sufficient amount of praise, Woo Myung waved his coffee dismissively<br><br>"That's all in the past. I fell out of the top 100 a long time ago. Most people have forgotten me by now."<br><br>"That's not true." It was true. Over the past eight years, Myung-Hoon's star had been eclipsed by many younger, brighter lights.<br><br>"Honestly, I only really decided to make a comeback last year. That's when I took over a guild from a friend who'd decided to retire."<br><br>"Star Guild?"<br><br>Tae-Kyung had managed a crafty look online earlier. Prior to its acquisition, the midsized guild had been one of the top three in Incheon.<br><br>"Yes, right. Did you hear about it?"<br><br>"I was so busy, sorry..."<br><br>For years, Tae-Kyung had lived the same day: raid, gosiwon, raid. Every moment had been spent hustling for cash. Even if he'd heard about the news, he wouldn't have remembered. Life was too hard; Myung-Hoon was a pleasant memory from an easier time.<br><br>"No need to be sorry!" Myung-Hoon laughed bitterly. "It wasn't big news. My star has dimmed."<br><br>There was some truth to that, but his incredible good looks and awakening had opened the door to a lifetime of incredible wealth and influence.<br><br>Until that incident.<br><br>Tae-Kyung stepped around the unpleasant topic. "I see."<br><br>"Then I heard your story. It was like seeing myself in my youth!"<br><br>"M-me?"<br><br>"Yes, you! I was really flattered to hear that you're a fan. That got me several offers to appear on TV, actually."<br><br>[I helped Myung-Hoon hyung?] Tae-Kyung couldn't help himself from grinning.<br><br>"Tae-Kyung. Can I ask you something?"<br><br>"Uh... Sure?"<br><br>His eyes dark and earnest, Won Myung-Hoon leaned forward and grasped Tae-Kyung's hand.<br><br>"Join my guild, brother. I'll make you a star."</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-210.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-212.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

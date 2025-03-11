@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 352 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 352</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 352</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: February 19, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>'T-they are coming!'<br><br>A disjointed sentence spat out by the Green Shadow Warrior.<br><br>For the Tang Family Patriarch, this warning was a thunderclap, crystallizing the vague disquiet in his soul into a stark epiphany born of years of wisdom.<br><br>'The beast is not alone!'<br><br>The Patriarch faced a dire threat: the one-armed man responsible for the death of his father and the Heaven-Stunning Shinni, now marshaling forces against the Tang Family of Sichuan.<br><br>The identity of the puppet master, their numbers, or their uncanny ability to navigate Sichuan with impunity mattered little now.<br><br>Suddenly, with a voice that cracked the air like lightning, the Patriarch commanded,<br><br>"First Division, Three Factions, Five Squads, prepare to meet our enemies!" \[Note: I'm a bit unsure about this translation. The original phrase can be literally translated as "One Origin, Three Parties, Five Teams". Based on my interpretation, I believe that "One Origin" could mean either the main branch of the family, i.e. the bloodline of the Patriarch, or the most elite team of martial artists. Then "Three Factions" would be a tier below the most elite team, and the "Five Squads" are teams of first-responders, like the Green Shadow Squad.\]<br><br>Crash!<br><br>With a resounding crash, the grand hall vibrated, echoing the Patriarch's formidable decree.<br><br>This call to arms transformed the atmosphere within the Patriarch's Hall, with the Patriarch's guards being the first to spring into action.<br><br>"Patriarch!"<br><br>Bang!<br><br>With a thunderous entrance, the guards rushed in, while the family members, having caught wind of the Patriarch's rallying cry, swiftly relayed his orders across the estate.<br><br>In no time, hundreds within the Tang clan, united by shared grievances and thirst for vengeance, would converge.<br><br>And then...<br><br>'Let me show you what the Tang family's revenge looks like.'<br><br>Contrary to his boiling heart, the Tang Family Patriarch's eyes were as cold as the north wind in deep winter.<br><br>"Patriarch, what in the world..."<br><br>"The ones who must die are coming. That's all."<br><br>He gestured dismissively to the bewildered guards, his attention returning to the beleaguered Green Shadow Warrior.<br><br>The warrior's battered and blood-stained uniform spoke volumes of the fierce skirmish he had endured.<br><br>"What happened? Tell me everything you've seen and heard."<br><br>Regaining his composure, the Green Shadow Warrior started in an exhausted tone.<br><br>"It started when we discovered a suspicious group near the Golden Hall."<br><br>"A suspicious group?"<br><br>"Yes."<br><br>"The Golden Hall is only half a day's journey from our main house. The Beggar Sect and the Government Army have already completed all checkpoints and searches, so how could this have happened?"<br><br>The Tang Family Patriarch's eyes darkened as he stopped abruptly.<br><br>"…The Government Army. It was the Government Army."<br><br>The Green Shadow Warrior nodded with widened eyes.<br><br>"Yes, that's right! They were disguised in the Government Army's uniforms."<br><br>"Disguised, huh."<br><br>Tap, tap.<br><br>The Tang Family Patriarch tapped the table with his fingers.<br><br>He was completely caught off guard.<br><br>Merely two days prior, both the Beggar Sect and the Government Army had widened their search perimeters, having assured the capital's security through repeated inspections.<br><br>Yet, the enemy had slipped through the less vigilant areas of their defenses.<br><br>'It wouldn't have been too difficult.'<br><br>The elites are always deployed to the front lines. Those among the Beggar Sect and the Government Army with experience and sharp insight had already vacated the capital.<br><br>Moreover, thousands of the Government Army had been roaming around the capital for nearly ten days. If they were dressed as the Government Army, they could have blended in naturally.<br><br>"How many were there?"<br><br>"Perhaps to avoid suspicion, they were moving in several groups, but from what we could tell, there seemed to be at least three hundred."<br><br>"Three hundred?"<br><br>"Yes, without a doubt."<br><br>The Water Gate Guardian, listening to the Green Shadow Warrior's report with an anxious expression, chimed in with a triumphant tone.<br><br>"Ha, just three hundred? These guys must be insane to come here just to die. Isn't that right, Uncle?"<br><br>"…"<br><br>"The warriors we can immediately deploy for battle from our main house alone number over three hundred. Is that all? Haven't we built impenetrable defenses exactly for such times? They won't even be able to cross the walls and will die from poison and hidden weapons."<br><br>At this, the Patriarch spoke, his voice cutting through the air.<br><br>"Shut up."<br><br>"Excuse me?"<br><br>"I said, shut up."<br><br>"Uncle, why are you like this? It's just three hundred. In the blink of an eye…"<br><br>"Just three hundred?"<br><br>The Patriarch's tapping ceased abruptly.<br><br>His gaze on his nephew was now laden with a mix of reproach and sorrow.<br><br>"You should know about the bloodshed during the Year of the Tilted Moon."<br><br>"…How could I not know?"<br><br>The bloodshed during the Year of the Tilted Moon was a taboo topic within the Tang family.<br><br>Half a century prior, it marked a day of shame when the Tangs were forced to vacate their ancestral stronghold and seek refuge elsewhere.<br><br>That harrowing day saw the current Patriarch losing his elder brother and the Water Gate Guardian was left fatherless before his birth.<br><br>"But it's different now!"<br><br>The Water Gate Guardian's impassioned plea was met with the Patriarch's icy query.<br><br>"Oh? In what way?"<br><br>"The Demonic Cult's forces numbered two thousand, while our family's warriors were merely three hundred, were they not?"<br><br>"So far, you're correct. Continue."<br><br>"Although we retreated in defeat, we suffered only around a hundred casualties, unlike the Demonic Cult, which suffered losses of more than a third of their forces."<br><br>"That's also true. The injuries we inflicted delayed the Demonic Cult's control over Sichuan. Our family lost its stronghold but gained even greater fame."<br><br>"Then why!"<br><br>Bang!<br><br>With a thunderous slam, the Water Gate Guardian's fist left an imprint on the metallic surface, his gaze aflame with resolve.<br><br>"Why do you fear merely three hundred enemies? Fifty years ago, even the far more numerous fiends of the Demonic Cult had to spill countless blood to attempt to overcome our family!"<br><br>His declaration reverberated through the chamber.<br><br>The Patriarch's retort to his nephew's fervent protest was terse.<br><br>"Are you done?"<br><br>"…Yes?"<br><br>"Pathetic bastard."<br><br>With a sigh, the Patriarch regarded the Water Gate Guardian, whose eyes betrayed his turmoil.<br><br>"The bloodshed during the Year of the Tilted Moon should never be forgotten; it's a history of disgrace but also a memory that proved our family's strength to the world."<br><br>"That's true. That's why the martial artists of the world still praise our family's martial prowess and spirit."<br><br>"Ha, ha, ha!"<br><br>The Patriarch's laughter was devoid of joy, a response to his nephew's naivety.<br><br>"Indeed. Would the beasts who are coming to our door know what the whole world knows?"<br><br>"…!"<br><br>"After the Great Faction War, our family erected an impenetrable fortress. We increased the number of our family members and armed them thoroughly. Is there anyone in the world who doesn't know this fact? Is there anyone who doesn't know the strength and determination our family showed during the Year of the Tilted Moon?"<br><br>Confronted with his uncle's daunting presence, the Water Gate Guardian's confidence waned.<br><br>He now realized that the three hundred enemies approaching the Tang Family of Sichuan were not merely 'just' anyone.<br><br>Meanwhile, the Patriarch's seasoned wisdom remained unclouded, his decisions informed by a deep understanding of past and present dangers.<br><br>"Sound the Tang War Drum."<br><br>This command sent a wave of urgency through the guards, who until then had stood motionless, now galvanized into action.<br><br>"The Tang War Drum?"<br><br>"Moreover, arm every soul with poisons and hidden weapons — every man, woman, and child, elders retired from combat, and those yet to be initiated into martial arts. Our clan shall muster its full might for this conflict."<br><br>"As you command!"<br><br>The guards, invigorated by the command, wasted no time in mobilizing.<br><br>Soon, the resonant beats of the Tang Battle Drum would reverberate across the lands of Sichuan, a solemn declaration to all.<br><br>A declaration that their family stood on the precipice of destruction.<br><br>And at the heart of this brewing storm stood the Tang Family Patriarch, sensing the gravity of the moment.<br><br>'This is dangerous.'<br><br>His experience and intuition, accumulated during his time as Patriarch, whispered to him.<br><br>This was perhaps a crisis greater than the Year of the Tilted Moon.<br><br>Then came the foreboding tolls that marked the onset of their darkest hour.<br><br>Boom, boom, boom!<br><br>This deep, resonating sound, enough to stir the soul of any who heard it, elicited a reflection from the Water Gate Guardian.<br><br>"The Tang War Drum..."<br><br>Not since before his birth had the drum been sounded. This moment, his first encounter with its call, ignited a mixture of awe and anticipation within him.<br><br>"We've been outmaneuvered."<br><br>"Uncle?"<br><br>The Water Gate Guardian turned, confronting the profound gaze of the Tang Family Patriarch.<br><br>Simultaneously, figures burst into the hall, their pale faces betraying urgency.<br><br>"Patriarch!"<br><br>"The enemy! They are coming! They are sounding their own war drums!"<br><br>"To sound their war drums while attacking... Such audacity! It is truly appalling."<br><br>The assembly, caught between alarm and confusion, watched as the Patriarch greeted the news with an unexpected laugh.<br><br>"This is no time to laugh!"<br><br>"Please, issue your command, Patriarch!"<br><br>Among them were warriors of all ages: youths in their prime, seasoned veterans bearing the marks of time, and elders whose experience mirrored that of the Patriarch himself.<br><br>Each had demonstrated their valor, earning a place among the clan's most esteemed.<br><br>To these venerable warriors, the Patriarch bestowed a special honorific.<br><br>"The Ten Wonders of the Tang Family. You've arrived just in time. I've been waiting for you."<br><br>"Patriarch, what in the world! We should deal with them right now..."<br><br>"Well, why don't you ask that friend over there for the details?"<br><br>The attention of the Ten Wonders of the Tang Family shifted, guided by the Patriarch's nod, towards the Green Shadow Warrior, who suddenly became the center of scrutiny.<br><br>The Green Shadow Warrior swallowed hard.<br><br>"I-I will tell you everything I know!"<br><br>"That's good to hear. Now, I have a question..."<br><br>The Patriarch's tone softened, yet carried an undercurrent of gravity.<br><br>"Why do you have two arms?"<br><br>"…!"<br><br>"…!"<br><br>At that moment, it seemed as if all time had stopped.<br><br>Outside, the reverberations of the Tang War Drum, the bustling activity, and the cries of the family members continued.<br><br>Inside the hall, however, time stood suspended in a moment of revelation.<br><br>Within this bubble of stillness, one figure seemed to defy the temporal standstill.<br><br>Crack, creak.<br><br>Bones realigned with audible snaps, muscles bulged in transformation.<br><br>His garb, drenched and torn, split further to expose the emblem of the Tang Clan, now rend in twain.<br><br>The Green Shadow Warrior slowly stood up, no longer a young man in his twenties, and certainly not the Green Shadow Warrior anymore.<br><br>"You have a keen eye. The Poison King has raised his child well."<br><br>The middle-aged man offered a wry smile, gently touching his restored limb, where the skin tone betrayed the seam of an unnatural joining.<br><br>"And to answer your question... I'm not quite sure myself. Let's just call it dark arts and move on."<br><br>The Patriarch's gaze sharpened, a flicker of green betraying his inner turmoil.<br><br>"So, it was you. The one who tortured my father."<br><br>"The Poison King Tang Sa-Mun truly lived up to his reputation. I must admit, I was impressed. I lost one arm back then, too."<br><br>The figure flexed his new hand, his expression clouding momentarily with reflection.<br><br>"The sensation isn't quite the same as before. I wonder if I can return to how it was..."<br><br>"Worry not. I will personally ensure you no longer have to worry about such things by taking your head."<br><br>"We will also take part in this."<br><br>Rumble!<br><br>The immense Qi emanating from the Tang Family Patriarch and the Ten Wonders of the Tang Family shook the hall.<br><br>Yet, even in the face of the deadly poison that could kill with a single breath, the middle-aged man, the Western Heavenly Demon Lord, smiled calmly.<br><br>"If you can, by all means, try."<br><br>Boom!</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-351.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-353.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

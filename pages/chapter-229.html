@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 229 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 229</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 229</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: Coldbutteredtoast</span>
+                            <span class="published-date">Published: December 4, 2022</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>"You're leaving? For a year?"<br><br>"Yeah."<br><br>"You've already made up your mind?" Jin Wi-Kyung knelt before them, a range of complex emotions warring on his face. Joy, pride, disappointment. He raised his eyes to the Fire King. "Elder, please take care of our youngest."<br><br>"Get up. As he's said, he's not good enough, but I'll take good care of him."<br><br>[I never said that!]<br><br>Concealing a smirk, Jeok Cheon-Gang glanced up at the sky. "It's dawn, so I'll be setting off shortly."<br><br>"Oh! Today?"<br><br>"Of course. Once a man makes up his mind, he should act."<br><br>Wi-Kyung's face fell. "Of course. I'll have a bag packed right away."<br><br>"What? Why? He's training, not going on a cruise."<br><br>"But where are you headed?"<br><br>"Anhui Province. It's only a short walk."<br><br>That made Tae-Kyung suspicious. "How far is it?"<br><br>"A month," said his brother.<br><br>"Oh?"<br><br>"On horseback."<br><br>"Nonsense!" cried Cheon-Gang. "That's just what slow people say. It won't take that long."<br><br>Tae-Kyung grabbed his brother's hand. "Please pack me a nice bag for the road."<br><br>"Hey, you punk!"<br><br>"Or I won't go. I'm a child of the Jin family. I don't want to go begging; let's travel in style!"<br><br>[After all, what's the point of having money if you don't use it?]<br><br>"Youngest, there are a few places you should visit before you leave," said Wi-Kyung.<br><br>"Fine."<br><br>His brother turned to the Fire King. "My apologies, I also have something urgent to tell you, great elder. It shouldn't take long."<br><br>The Fire King pulled a face. "If you're going to talk about something lame, don't waste your breath."<br><br>Wi-Kyung shook his head, his expression as serious as any Tae-Kyung had seen. "It's important. You should know about it."<br><br>Cheon-Gang clicked his tongue. "Half an hour. No longer."<br><br>"That will be enough."<br><br>Turning his head towards Tae-Kyung, the Fire King said, "That goes for you, too."<br><br>"Got it." Tae-Kyung left them, stepping out into a clear day, a warm breeze carrying the last blush of autumn. "Oh, nice weather."<br><br>Squinting under the bright, blue sky, Tae-Kyung turned towards the distant cliff.<br><br>***<br><br>An iron sword cut the air, reverberating with force. One more time, then again, the posture without error. His 10,000 strikes fell like steel rain, each cut in pursuit of perfection.<br><br>How long had it been since he'd started? The young swordsman had no idea. Time was meaningless in the cave and, besides, he didn't care.<br><br>The tip of his sword trembled. The variation was slight, subtle, and utterly unacceptable. According to the rules he had given himself, each mistake had to be rectified a hundred times. In silence, he continued to swing the blade.<br><br>The exercise relied on mental fortitude and pure muscle strength, without Qi. Most warriors would have long since collapsed from exhaustion, but Jin Mu-Kyung was not most warriors.<br><br>[It must be perfect, no matter how many years it takes.]<br><br>He had taken up the sword at the age of five. From the first day, he'd loved the weight in his hand, the sound of steel cutting air, the hard-earned sweat. Twenty years had passed in a moment until, at some point, people started talking.<br><br>"The peak of martial excellence. There is no genius greater than him."<br><br>The Heavenly Jin Blade.<br><br>He only trained because he liked martial arts and enjoyed being strong, but they called him a genius. He became the pride of his family. Sometimes, he'd been proud of his reputation. Now he knew it was all hollow.<br><br>Cheong Pung.<br><br>Recalling the name, his sword twitched. [One hundred corrections.] Mu-Kyung tried to focus, closing his eyes and controlling his breathing, but his heart thumped in his chest. The memory of their first meeting returned, unbidden.<br><br>His strength was evident from the first moment. A boyish figure, simple iron sword at his waist, sloppy attitude and posture. But he knew in an instant how things would play out. And he was right. The pain from his defeat was still fresh. After only 300 seconds, his knees hit the ground, teeth clenched, hands curling into tight balls.<br><br>The agitation in his heart was mirrored in the movements of his sword. His posture lost stability; his precise movements faltered.<br><br>One hundred times for every mistake, two hundred, three. Errors were snowballing.<br><br>"Why does it sound so scary in there?"<br><br>A familiar voice from the other side of the iron gate sealing the training hall.<br><br>Wielding his sword as though possessed, Jin Mu-Kyung paused abruptly. "Is that you, brother?"<br><br>"Why ask when you know already? Pretty cringe, dude."<br><br>Only one person in the Jin Family of Taiyuan could speak to him so disrespectfully. "How long have you been there?"<br><br>"Not long."<br><br>It sounded innocent enough, but his face darkened. Caught up in his emotions, he was making mistakes. "Go. I'm training."<br><br>"Training? Sounds more like therapy."<br><br>"What?"<br><br>"You sound really angry. You can't learn in that state."<br><br>Mu-Kyung turned sharply. Ten paces away, through an iron gate, yet Tae-Kyung could see right through him. [This guy... again? What a terrifying growth rate.]<br><br>"I'm leaving," said his brother. "I've decided to learn from the Fire King... Grandfather."<br><br>Fire King Jeok Cheon-Gang. Mu-Kyung had heard that he'd visited the family. In the past, he would have hurled himself at his feet and begged to learn. But he'd stayed. This was something he had to do himself.<br><br>Why choose his brother? That was obvious. The man behind the iron gate was a monster. A genius. Any King would be able to see his true value.<br><br>"Did you become his disciple?"<br><br>"Not exactly. Like a disciple, but not a disciple"<br><br>"What the hell are you talking about?"<br><br>"Don't try to understand. I sure don't!"<br><br>After a moment, both brothers laughed. The whole conversation was ridiculous.<br><br>"Did you come to tell me that? Do you want me to come see you off or something?"<br><br>"What? No. You should do what you like." Tae-Kyung paused and then said, "There's a year left before the Convocation of the Stars."<br><br>"The Convocation of the Stars." Mu-Kyung's murmur was like a moan. A banquet hosting the greatest talents from every corner of the world. "Why are you telling me that?"<br><br>"I plan to attend. Cheong Pung, too."<br><br>"What's that to me?"<br><br>"I thought you might want to think about it." Tae-Kyung got to his feet. "I'm going now. See you later."<br><br>Jin Mu-Kyung watched the iron gate, as the sound of footsteps faded.<br><br>He wasn't stupid. He knew why his brother had come to the training cave and spoken about the Convocation.<br><br>"A year..."<br><br>Mu-Kyung lifted his blade. The tip was steady; his heart had grown calm. "See you later, brother," said Mu-Kyung, his sword swinging like lightning.<br><br>This time, his strike was perfect.<br><br>***<br><br>At the main gate, Tae-Kyung found several familiar faces waiting for him.<br><br>"Captain!"<br><br>"Benefactor!"<br><br>"Master Jin!"<br><br>Hyuk Mu-Jin, Cheong Pung, Wol-Hwa. Over their shoulders, he could see others approaching. Lee Seo-Wol was waving awkwardly, the Plum Blossom Three chatting among themselves.<br><br>"How did you all know?" said Tae-Kyung.<br><br>Wol-Hwa smiled. "Because I'm from the Lower District Sect."<br><br>"Did you plant a spy?"<br><br>"A spy?" She laughed, gesturing with her thumb. "Who needs that when there's a great source of information around?"<br><br>In the direction she'd pointed, Hyuk Mu-Jin was proudly holding a travel bag. "The luggage requested by the Lesser Family Head!"<br><br>"Ah. You're the culprit, then."<br><br>"Yes, uh, what?"<br><br>"Forget about it. Good job."<br><br>He had wanted to leave without fuss, but as soon as Tae-Kyung lifted his bag, Cheong Pung clung to his collar. "Benefactor! I want to come, too! I want to become a disciple of our grandfather!"<br><br>"Sure, once you've got permission."<br><br>"From who?"<br><br>"Sword Sage Mae Jong-Hak."<br><br>"Already done!"<br><br>Keeping his face steady, Baek Mu-Sung muttered, "His whereabouts have been unknown for more than a month. How did you get permission?"<br><br>"What are your plans now?" asked Tae-Kyung, prying Cheong Pung off.<br><br>"Either return to Mount Hua with Master Uncle or search Jungwon for last traces of our grandmaster." Mu-Sung laughed. "Nothing in this world is easy!"<br><br>Next to him stood the small figure of Eun Hyang and, beside her, a scowling giant. <br><br>"Let's forget the past and just get along," said Tae-Kyung.<br><br>Hesitantly, Chul Woo shook his hand. Suddenly, he gasped, "Ugh!"<br><br>"Smile motherfucker." With the sound of bones snapping, the huge hand was crushed like a hydraulic press. Tae-Kyung whispered in his ear. "Don't mess with me, got it?"<br><br>"Got it!" His hand released, Chul Woo staggered.<br><br>The youngest member of the Plum Blossom Trio shook her head. "To think, there's someone stronger than my Iron Brother. The world is wide after all."<br><br>It was also narrow. No matter how big the world was, Tae-Kyung was sure their paths would cross again.<br><br>"I hope we meet again," he said to Eun Hyang<br><br>Turning to the last guest, Tae-Kyung and Lee Seo-Wol faced each other awkwardly. He wasn't sure why, but as time went on, it seemed to get harder. Despite being a political marriage, the proposal had shaken him. "Greetings, Matriarch."<br><br>“Please call me Seo-Wol.”<br><br>“Ah, Seo-Wol, then."<br><br>"Saviour, please give me your answer."<br><br>Looking at Lee Seo-Wol's lowered eyes, he spoke the words he'd prepared. "I wish you a prosperous business and success in everything you do." [Good! She's the head of a family, so there are no better words than this!] Tae-Kyung smiled happily, waiting to see her reaction.<br><br>"What are you grinning at?" said the old man, appearing with Jin Wi-Kyung and Wi-Peng. Snatching Tae-Kyung by the scruff of his neck, he announced, "We have a long way to go. Come with me."<br><br>"Whoa! Wait a minute!"<br><br>But it was already too late. All of the faces were quickly receding.<br><br>Jin Wi-Kyung waved a handkerchief with reddened eyes and shouted, "Youngest! Come back safely!"<br><br>[Don't! That makes me more nervous!]</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-228.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-230.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

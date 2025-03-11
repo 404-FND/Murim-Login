@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 326 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 326</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 326</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: February 2, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>The negotiations progressed smoothly.<br><br>"First, if we only consider the year before last, the Dragon Phoenix Escort Agency suffered a loss of 25,000 silver nyang due to the schemes of the Southern Edge Sect. Do you acknowledge this?"<br><br>“Twenty-five thousand silver nyang! I will never admit this...”<br><br>“Ha, the old man is at it again.”<br><br>Swoosh!<br><br>“Cough, I admit it! I admit it!”<br><br>Of course, there were times when they didn't go smoothly, but this method was enough to smooth it out again.<br><br>The Beggar Sect meticulously compiled a wealth of data, while the Lower District Sect analyzed it, deftly manipulating their abacus.<br><br>“Let’s see, the contract with Nakcheon Merchant Group was canceled on the 17th of January last year. The Southern Edge Sect was also involved in this matter.”<br><br>"The amount of loss?"<br><br>"When calculated in silver nyang, it's six hundred and thirty-two."<br><br>While the Beggar Sect and Lower District Sect engaged in their exchange, I interjected.<br><br>“Seven hundred nyang.”<br><br>"Pardon?"<br><br>“Seven hundred nyang.”<br><br>“…Oh, yes."<br><br>The middle-aged Lower District Sect member promptly amended the figure from six to seven.<br><br>Observing their work attentively, I reached for a neglected bamboo slip.<br><br>“What is this?”<br><br>“Ah, that happened on May 6th last year…”<br><br>“I don't care about the date. How much did they lose?”<br><br>"It's nine hundred and twenty-six silver nyang."<br><br>"Nine hundred and twenty-six? Did you calculate it correctly?"<br><br>Seeing my expression, the man from the Lower District Sect quickly corrected his statement.<br><br>“You're right it’s one thousand nyang.”<br><br>“One thousand nyang? Now you've really overdone it. Let someone else check your work."<br><br>A sum of two silver nyang suffices for a month's sustenance for a family of four. Given the stark disparities in wealth, a thousand silver nyang represented a substantial fortune, sufficient to sustain three generations of a modest family in opulence.<br><br>As I tutted, the Lower District Sect representative cautiously added,<br><br>“Uhm, but Young Master Jin. That wasn't an incident involving the Southern Edge Sect."<br><br>“It's not? Then why is it here?”<br><br>“Uhm, my dear Young Master Jin.”<br><br>A slender finger gently tapped my forearm. It was Wolhwa, who had been silently observing from behind, her presence marked by a peculiar scent.<br><br>"We compiled every document that held even a hint of suspicion. Upon further scrutiny here, it became apparent that numerous incidents weren't orchestrated by the Southern Edge Sect. Miss Ju Hwa-Ran, as the Young Master of the Dragon Phoenix Escort Agency, you're aware of this, aren't you?"<br><br>"Is that so?"<br><br>Ju Hwa-Ran was already perusing the bamboo slips. With a swift glance over the contents, she nodded in agreement.<br><br>"Indeed. The loss was significant, and I remember it vividly. The failed escort mission was our own oversight, wasn't it, Uncle Heo?"<br><br>In the midst of everyone's attentive eyes, Chief Escort Heo Jun cleared his throat before replying.<br><br>"Correct. I was in command of that mission, with Chief Escort Song also participating. Regrettably, due to various unforeseen complications, we missed our deadline, resulting in a penalty of 1,000 nyang."<br><br>His expression was etched with embarrassment.<br><br>But I noticed Heo Jun's eyes were filled with suspicion as he slowly turned his head and looked at Song Il-Seom.<br><br>Song Il-Seom, too, seemed detached, leaning nonchalantly against the wall as if uninvolved in the proceedings.<br><br>“Hmm.”<br><br>“What’s wrong, my dear Young Master Jin? Is there any problem?”<br><br>"No. Let’s move on.”<br><br>“Okay, then let’s set this aside.”<br><br>At that moment, another hand intercepted Wolhwa's delicate fingers as they reached for the bamboo slip. This hand was rugged, undoubtedly belonging to a martial artist. It was Ju Hwa-Ran.<br><br>"Hold on a moment."<br><br>"Yes, go ahead."<br><br>“Yes, please speak.”<br><br>"I've been thinking, and it seems to me that this might indeed be the work of the Southern Edge Sect."<br><br>"…Excuse me?"<br><br>"…What?"<br><br>Amidst the ensuing confusion, Ju Hwa-Ran, composed and decisive, took the bamboo slip and presented it to the Lower District Sect member tallying the losses.<br><br>"Please add this as well."<br><br>"Miss Ju, Miss Ju..."<br><br>This situation felt eerily familiar.<br><br>The Lower District Sect member, glancing anxiously between me and Wolhwa, sighed deeply and began to write.<br><br>With a few deft strokes, Ju Hwa-Ran added an impactful thousand silver nyang to our calculated losses, then reached for another slip.<br><br>"Alright, shall we review the others as well?"<br><br>“…”<br><br>“…”<br><br>"This one, and that. Oh, pass me the one in the corner, please. Yes, that one."<br><br>Ju Hwa-Ran swiftly perused each slip, her eyes darting across the figures. With each examination, the ledger of losses seemed to swell alarmingly.<br><br>Her calculations were meticulous, and her stance against deceit was unwaveringly firm.<br><br>"This one is also suspicious."<br><br>"Uhm, that has been confirmed as a mistake made by Chief Escort Heo Jun."<br><br>"No, it's certainly the doing of the Southern Edge Sect. Please add it."<br><br>"Then, we'll add another 150 silver nyang..."<br><br>I interjected with a light chuckle.<br><br>"Let's make it 200 nyang."<br><br>"Excuse me?"<br><br>"Two hundred nyang."<br><br>Ju Hwa-Ran disagreed with a shake of her head.<br><br>"My estimate is closer to three hundred nyang."<br><br>“…”<br><br>“…”<br><br>She was unapologetically bold.<br><br>Hwang Bo-Eom, already wearied, exclaimed with a mix of outrage and disbelief.<br><br>"This, this is like being robbed by bandits!"<br><br>Robbed by bandits?<br><br>It seemed Hwang Bo-Eom was inadvertently inviting a wake to his own door.<br><br>As I braced myself to intervene, Ju Hwa-Ran cut in sharply.<br><br>"Did you just say 'bandits'?"<br><br>Her gaze upon Hwang Bo-Eom was icy, a stark contrast to any expression I had seen her wear before.<br><br>"We at the Dragon Phoenix Escort Agency are merely asserting our just dues. Should you refute this claim... we'll ensure the world recognizes the true marauders."<br><br>"H-how dare you..."<br><br>"Should the truth behind these incidents be laid bare, I wonder how the disciples of the Southern Edge Sect will face the public."<br><br>Ju Hwa-Ran, thrust into the leadership of the Dragon Phoenix Escort Agency at a tender age after her father succumbed to Qi Deviation, stood unyielding.<br><br>Her losses to the Southern Edge Sect's machinations were substantial, fueling a deep-seated resentment within her.<br><br>“Chief Escort Seok Do-Min, Escort Officer Gil Wang-Jun, Hong Seok-Jeong, No Doo-Sam, Jaeng Ja-Su, Seok-Sam...”<br><br>Ju Hwa-Ran's voice trembled as she solemnly listed the names, largely unfamiliar to the gathered audience. Her eyes, brimming with tears, bore into Hwang Bo-Eom with an intensity that spoke volumes.<br><br>"Thirty-three lives lost. Each name I've uttered belonged to a soul that was part of our Dragon Phoenix Escort Agency family. Despite our financial woes and the inability to pay them adequately, they remained loyal till their untimely end."<br><br>Family isn't always defined by blood, but rather by bonds forged in trust and loyalty.<br><br>Like myself, who had experienced the loss of teammates, Ju Hwa-Ran had endured the agony of losing those who believed in her leadership.<br><br>"There will be no leniency from our side. And let it be known, every member of the Dragon Phoenix Escort Agency, myself included, will carry the memory of this tragedy forever."<br><br>"......!"<br><br>"Do you have anything else to say, Hwang Bo-Eom of the Southern Edge Sect?"<br><br>My fists were trembling with the want to administer another slap. Hwang Bo-Eom stood silently, his response a mere closing of his eyes.<br><br>Replacing him, Hyuk So-Pyung advanced with a respectful martial salute directed at Ju Hwa-Ran.<br><br>"On behalf of the sect, I convey our apologies, Miss Ju."<br><br>"You will refer to me as Young Master. And I refuse a mere verbal apology."<br><br>Her reply was sharp, cutting through the air. Hyuk So-Pyung, exhaling deeply, conceded,<br><br>"I'll promptly inform our Master and the elders, who remain unaware of this grave matter."<br><br>"Let us hope they genuinely are."<br><br>The character of the Southern Edge Sect's leader, the 'Storm Sword Supreme', was unknown to me.<br><br>Yet, given Jeok Cheon-Gang's previous endorsement of him as a Taoist-like figure and his selection as successor, I harbored hopes of his reasonable demeanor.<br><br>'Both for the Dragon Phoenix Escort Agency's sake as well as my own.'<br><br>As the old saying goes, 'the shrimp backs the crab, and the arm bends inward.' \[Note: this is a Korean proverb. 'The shrimp backs the crab' means that those who are weaker tend to support those who are stronger in order to gain favor. 'The arm bends inward' reflects the human tendency to favor one's own family, friends, etc. over others. My interpretation of this is that the MC is hoping for his sake and for the sake of the Escort Agency that the Sect Leader is a just person who, after hearing the evidence, will not take the side of Hwang Bo-Eom simply because that is his martial brother.\]<br><br>Having vanquished numerous foes, Hwang Bo-Eom represented more than just an adversary. <br><br>He was an emblem of the Southern Edge Sect and the martial brother of its Leader.<br><br>'I could eliminate him if I wanted to... but what comes next is the problem.'<br><br>The Southern Edge Sect, one of the Nine Great Sects, was not to be underestimated.<br><br>Would they have idly watched had I executed Hwang Bo-Eom?<br><br>Hyuk So-Pyung and the others probably surmised that I wouldn't go to such extremes.<br><br>'Should I be satisfied with just crippling him?'<br><br>It's a bitter pill, but a necessary one.<br><br>The injuries inflicted upon Hwang Bo-Eom today would need at least a year for full recovery.<br><br>What mattered was his survival. By the time he healed, I'd have grown stronger still.<br><br>'Thanks to their own blunders, the resolution came easier than anticipated.'<br><br>Hwang Bo-Eom's strategic blunders were glaring. His first error was unsheathing his sword, but his second and more grievous mistake was trapping us with the Tai Yi Sword Team.<br><br>While drawing his sword was a serious misstep, the latter decision was catastrophic.<br><br>"Not only the Beggar Sect and the Lower District Sect but also the Mount Hua Sect got involved."<br><br>This debacle was set to significantly diminish the Southern Edge Sect's standing, impacting them not only in the martial realm but also financially.<br><br>The cumulative losses tallied on the bamboo slips, encompassing material damage, human casualties, and the hefty penalty that would have been imposed in the case of mission failure, were substantial evidence.<br><br>"The total damage to our agency, including material and human losses, plus the huge penalty for the failed escort mission, adds up to 400,000 silver nyang. The Southern Edge Sect's finances should be able to handle that."<br><br>Ju Hwa-Ran's tone was measured, but the gravity of her words weighed heavily on her listeners.<br><br>Goong Gi-Bang's hand faltered, dropping the bamboo slip he held, while Wolhwa, beside me, clicked her tongue in disbelief.<br><br>"Miss Ju, no, the Young Master of the Dragon Phoenix Escort Agency is no joke, right?"<br><br>“How much is 400,000 silver nyang?”<br><br>"Well, the annual budget of a large sect in the Nine Great Sects is just under 100,000 silver nyang..."<br><br>"…Wow."<br><br>"If they pay all that at once, it would uproot half of the Southern Edge Sect."<br><br>It was like trillions of won in modern terms. Thinking of it that way made it feel more tangible.<br><br>I was still processing this astronomical figure when a soft voice whispered in my ear.<br><br>"Remarkable. A combination of beauty, intellect, and determination. My dear Young Master Jin, this will be a challenging affair for you."<br><br>"Excuse me?"<br><br>"What?"<br><br>"You just said…"<br><br>"Me?"<br><br>I was certain I heard something unusual.<br><br>As I glanced at Wolhwa with a hint of suspicion, Ju Hwa-Ran's assertive voice cut through the room.<br><br>"Master Hwang Bo-Eom, please affix your handprint here as confirmation."<br><br>The end was near.<br><br>Hwang Bo-Eom, seething with fury, had no alternative left.<br><br>With a look of deep resentment towards everyone present, he stamped his bloodied palm onto the bamboo slip.<br><br>“Is this satisfactory?”<br><br>"It's enough. With this, any contracts between the Dragon Phoenix Escort Agency and the Southern Edge Sect, other than the compensation owed to us, cease to exist."<br><br>Then, Ju Hwa-Ran performed a deep bow with clasped hands.<br><br>"We shall not detain you further. Please return safely to your main sect. It is our sincere hope that our paths do not cross again under any circumstances."<br><br>"You…”<br><br>Hwang Bo-Eom, struggling against the hands of the Southern Edge Sect disciples trying to support him, found it difficult even to push them away.<br><br>His final glare, filled with a blend of anger and suffering, was directed squarely at me.<br><br>"Let me ask you one thing."<br><br>"You can ask, but be mindful of what you say. Otherwise, you'll be buried right there."<br><br>A tremor passed through him before he spoke.<br><br>"Did you really scale that wall?"<br><br>“That's what you're curious about?”<br><br>“I saw that you were not yet able to complete your Protective Qi, but how…”<br><br>"My Master used to say that people only see what they want to see and believe what they want to believe."<br><br>“What is that...”<br><br>"Ah, is it because of your age? You're not getting the point. Feel free to think whatever you want about my level. But..."<br><br>I fully understood the doubts he must be feeling now.<br><br>But what can I do? I am person that can be described as 'beyond the ordinary,' both in reality and Murim.<br><br>I am who I am because of the System.<br><br>I stared intently at Hwang Bo-Eom and continued.<br><br>"Remember two things. You are weaker than me, and I am stronger than you. And this place is... Murim."<br><br>The unforgiving law of survival of the fittest governs Murim.<br><br>Standing in the martial world, as an eighty year old martial artist, Hwang Bo-Eom understood the implications of my words better than anyone.<br><br>“Murim. Did you say Murim?”<br><br>His words were a mix of resignation and acceptance. His face, briefly twisted into a cold smile, was a mask of frost.<br><br>"We'll meet again, undoubtedly."<br><br>"Our next encounter will likely be at your funeral."<br><br>Half an hour ago, he would have been grinding his teeth in anger, but now he had no teeth left.<br><br>Hwang Bo-Eom, exuding a chilling aura, shrugged off his disciples and insisted,<br><br>"Let go of me, I'll walk on my own!"<br><br>Despite his severe injuries and unsteady gait, Hwang Bo-Eom limped away, followed by Hyuk So-Pyung, who bowed deeply before departing. The Southern Edge Sect disciples quickly trailed behind.<br><br>As I watched them leave, a singular thought crystallized in my mind.<br><br>'Enmity.'<br><br>It was indeed one of the driving forces of the martial world.<br><br>The repercussions of today's events remained uncertain, but my conscience was clear. My conflict with the Southern Edge Sect was inevitable, given their deceitful tactics. Ignoring such flagrant trickery was not an option for me.<br><br>'Pests should be eliminated before they grow up and cause harm.'<br><br>Pest control. That's all this was.<br><br>As I reveled in this resolution, a sudden realization dawned upon me.<br><br>'Ah, now that I think about it.'<br><br>There was still one remaining pest that needed to be caught.<br><br>And not just any pest, but one that had transformed a thousand-year-old ginseng into a hundred-year-old one.<br><br>But it wasn't me who drew the sword for this extermination.<br><br>Swoosh.<br><br>The sound heralded the unsheathing of a flexible sword. The Flower-Shrouded Blade, Ju Hwa-Ran, with her deep red lips barely moving, spoke in an even tone.<br><br>"Now, we're left with only one issue to resolve, aren't we?"<br><br>In her dark, glinting eyes, there was the reflection of a single individual.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-325.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-327.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

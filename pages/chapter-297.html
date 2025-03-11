@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 297 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 297</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 297</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: December 15, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>Sigh. Hoo.<br><br>Choi Min-Woo exhaled deeply, his breath mingling with the ambient Qi.<br><br>As he inhaled, he consciously absorbed the Qi saturating the air, simultaneously stirring the dormant cluster of Qi in his lower abdomen.<br><br>'Mana.'<br><br>It was the power bestowed upon the awakened, a formidable weapon against monsters.<br><br>Yet, his mentor, Jin Tae-Kyung, who had taught him the Jin Family's Cultivation Technique, referred to it differently.<br><br>'Qi.'<br><br>The more Choi Min-Woo observed Jin Tae-Kyung, the more enigmatic he seemed.<br><br>Undertaking and accomplishing feats others wouldn't dare dream of, his teachings were far from ordinary.<br><br>Dantian, Qi, Qi circulation, Jin Family's Cultivation Technique...<br><br>Each new revelation about him was astonishing, yet now, it was bewildering.<br><br>'To impart the Mana Cultivation Technique so casually...'<br><br>Choi Min-Woo understood the sheer power of the Jin Family's Cultivation Technique.<br><br>It was evident not only to hunters but to any perceptive individual.<br><br>If a hunter is a sword, then Jin Family's Cultivation Technique is a whetstone.<br><br>It could sharpen even the bluntest blade.<br><br>Given its effectiveness and rarity, its worth was immeasurable.<br><br>'Such generosity to divulge such a profound secret, the prowess to vanquish named monsters solo, the courage to confront Lee Jeong-Ryong and the Ares Guild... Is there anyone else like him?'<br><br>Each day, Choi Min-Woo's realization of Jin Tae-Kyung's extraordinariness deepened, as did his gratitude for being under Jin Tae-Kyung's tutelage.<br><br>'I must not fail to meet his expectations.'<br><br>This resolve fueled Choi Min-Woo to practice the Jin Family's Technique relentlessly, even in his sleep.<br><br>And now, the results were palpable.<br><br>Swoosh.<br><br>He was so engrossed in practicing the Qi circulation technique that time became irrelevant.<br><br>A powerful energy surged through his meridians, growing incrementally. A week ago, he hadn't even been aware of such energy.<br><br>Suddenly, a conversation he had with Jin Tae-Kyung that day flashed through Choi Min-Woo's mind.<br><br>'Hey, Team Leader.'<br><br>'Yes?'<br><br>'Did you ever consume something good when you were young? Like ginseng, or some round elixir?'<br><br>'Not at all. My meals have always been organic, but I've never eaten anything special.'<br><br>'I bet you've never even caught a common cold from childhood until now. Right?'<br><br>'That's correct. How did you know?'<br><br>'Your physical condition, it's... No, your body has always been remarkable.'<br><br>'Is that so? But any hunter would naturally have a good physique.'<br><br>'It's not merely because you're a hunter; it's fundamentally due to your extraordinary constitution. I suspect your grandfather may have played a role in this.'<br><br>'My grandfather...?'<br><br>'Yes. Does anything come to mind?'<br><br>'I'm not sure. I was too young to remember clearly. According to Butler Kim, he visited me occasionally... but that's it.'<br><br>'Hmm. Personally, I think that's the only answer.'<br><br>Choi Min-Woo's thoughts drifted to his grandfather. Had he last seen him before starting elementary school?<br><br>His memory of his grandfather's face was hazy, contrasting with the clarity of the photographs online. Their relationship, much like their physical proximity in those pictures, seemed distant.<br><br>'Could such immense energy within me be my grandfather's doing?'<br><br>This revelation about his grandfather set Choi Min-Woo's heart racing.<br><br>As if responding to his feelings, the energy coursing through him vibrated.<br><br>The tremendous amount of energy that Jin Tae-Kyung referred to as a 'Gapja' made one final, majestic revolution before settling calmly in his dantian, below his navel.<br><br>With a tingling sense of elation, Choi Min-Woo's eyes fluttered open.<br><br>"Hoo."<br><br>His prolonged breath held traces of the Qi cultivation technique.<br><br>Unbeknownst to Choi, he had achieved 4th level mastery of the Jin Family's Cultivation Technique in an astonishingly short period of a week.<br><br>For someone with Choi Min-Woo's immense Qi and remarkable constitution, which even Jin Tae-Kyung acknowledged, such rapid progress was possible.<br><br>'The others haven't reached this point yet.'<br><br>Surveying the room, Choi Min-Woo noted the three individuals deeply engrossed in their Qi cultivation.<br><br>Butler Kim, Song Song, and Mr. Rough Guy sat spaced apart, each absorbed in their practice.<br><br>Their learning of the Jin Family's Cultivation Technique was a closely guarded secret.<br><br>They were in Choi Min-Woo's private training room, heavily secured and isolated.<br><br>'I shouldn't disturb them.'<br><br>Remembering Jin Tae-Kyung's warnings about the perilous 'Qi Deviation,' Choi Min-Woo treaded lightly as he exited.<br><br>Outside, he reactivated his phone, which had been off for some time. Within moments, his jaw dropped in astonishment.<br><br>The screen lit up with a flurry of internet news updates, each more startling than the last.<br><br>\- Urgent News: Named Monster Reappears! South Korea Faces Crisis!<br><br>\- Unforeseen Complications at the A-rank Gate, \[Black Forest of the Necromancer\].<br><br>\- Jin Tae-Kyung's Heroic Act: Volunteers as Bait. Eyewitness Accounts Praise His Noble Sacrifice.<br><br>\- Hunter Association Mobilizes: Formulating Countermeasures, Assembling Rescue Teams.<br><br>\- Peace Guild in Disarray: Leadership Unreachable.<br><br>\- Public Outcry Grows Over Association's Delayed Response. Jin Tae-Kyung Alone for Over 20 Minutes.<br><br>\- Hope for a Miracle?<br><br>"Wait, what is this?"<br><br>What do they mean by sacrifice, and what about being alone?<br><br>Jin Tae-Kyung, who should be patrolling the gate with his guild members, is now being talked about as a sacrifice.<br><br>And now, a Named Monster had emerged!<br><br>Choi Min-Woo's initial shock quickly gave way to focused determination.<br><br>'This isn't the time for shock.'<br><br>He knew Jin Tae-Kyung's strength well enough.<br><br>Yet, if Jin Tae-Kyung had chosen to act as bait, allowing his guild to retreat, he must be facing an extraordinary peril.<br><br>'This is... really dangerous.'<br><br>His grip on the phone tightened just as the training room door swung open, revealing three figures.<br><br>"Ah, that feels refreshing."<br><br>"Mister, don't you think my skin looks better?"<br><br>"Ah, Young Master. You were already here..."<br><br>"Butler Kim!"<br><br>The urgency in Choi Min-Woo's voice instantly alerted the others to the gravity of the situation.<br><br>Butler Kim's voice remained calm.<br><br>"What's happened?"<br><br>"We need to go to Jin Tae-Kyung, right now!"<br><br>\*\*\*<br><br>The scene at the entrance of the A-rank Gate, \[Black Forest of the Necromancer\], was chaotic.<br><br>Hunters from the Association and various guilds had gathered for safety measures, alongside reporters daring enough to seek exclusive stories.<br><br>The air was thick with murmurs and whispers from the crowd.<br><br>"Is Jin Tae-Kyung dead?"<br><br>"It's grim. It's been silent for over an hour now."<br><br>"But didn't Jin Tae-Kyung already defeat a Named Monster once?"<br><br>"Ah, that Wyvern, right? Impressive indeed, but..."<br><br>While conversing with a junior reporter, the senior reporter flicked ash off his cigarette.<br><br>"Think about it, you're a Hunter section reporter. Didn't you hear the interview with the Peace Guild member who was with Jin Tae-Kyung? It wasn't just one Named Monster; there were hundreds more. It's a different case."<br><br>"Is it that serious?"<br><br>"Absolutely. We're only holding on because it's Jin Tae-Kyung out there. With anyone else, there wouldn’t even be a sliver of hope. This isn’t a rescue mission in the making. It’s more likely a recovery operation."<br><br>The junior reporter let out a subdued sigh.<br><br>"That's a tough situation."<br><br>"We're crazy to be here writing articles amidst this. Totally messed up."<br><br>"But we're allowed to report since it's somewhat secure, right?"<br><br>"See over there? More than a dozen A-rank hunters have come."<br><br>The senior reporter gestured towards a group of formidable-looking hunters.<br><br>Among them, the ones with crossed sword and shield emblems on their chests stood out.<br><br>"Ares Guild sent reinforcements too."<br><br>"They've just come in. They rarely heed government calls unless there's something in it for them... I wonder what drew them here."<br><br>"Did they come to rescue Jin Tae-Kyung?"<br><br>"Maybe. Or maybe they're after the Named Monster."<br><br>Named Monsters were treasures of immense value.<br><br>'One-Eyed Carus,' the recent one vanquished by Jin Tae-Kyung, was in its early stages of awakening but had already been worth billions.<br><br>"But... with this much force, can't they start the rescue operation now? We have enough power."<br><br>"Sure, we have enough. But they might be thinking differently."<br><br>"How so?"<br><br>"Never mind. Forget it."<br><br>The senior reporter abruptly ended the conversation.<br><br>A veteran of nearly two decades in journalism, he had a wide network and extensive experience. He had seen and heard more than most.<br><br>'Jin Tae-Kyung must have become a thorn in their side.'<br><br>Recently, he had stumbled upon intriguing information from a reliable source.<br><br>There was an unusual undercurrent between the Myeongdong and Peace Guilds.<br><br>It was a whisper in the wind, yet his journalistic instincts sensed an unfolding narrative.<br><br>'The appearance of the Ares Guild too.'<br><br>The presence of the Ares Guild was noteworthy but not unexpected, given the situation involving a Named Monster.<br><br>Yet, there was an air of unease, a feeling the reporter couldn't quite place.<br><br>His gaze shifted towards the group of leaders, his brow furrowing.<br><br>'Their palms will get worn out at this rate.'<br><br>The head of the Seoul branch of the Association, effectively in charge of the situation, was seen eagerly rubbing his hands while speaking to a man in his thirties.<br><br>'What was that guy's name? Seok Gosa… Seok Go-Jun?'<br><br>Recognized as the security team leader of the Ares Guild, Seok Go-Jun was practically Lee Jeong-Ryong's right-hand man.<br><br>The sight of the Seoul branch head pandering to him hinted at why the rescue team’s deployment was being delayed.<br><br>"These guys, always finding a way to have their fun."<br><br>The senior reporter muttered under his breath, extinguishing his half-smoked cigarette.<br><br>"It's the Peace Guild!"<br><br>"What? Where!"<br><br>"Hey, hey! Get the camera ready!"<br><br>Amidst the rising commotion and the media crew's shouts, all eyes turned in unison.<br><br>A group of four, three men and one woman, moved through the crowd with an air of purpose.<br><br>They reached the gate, only to be stopped by the Seoul branch hunters.<br><br>"Please step aside."<br><br>Choi Min-Woo's voice was calm but carried an unmistakable authority. The head of the Seoul branch approached hastily.<br><br>"It's not yet confirmed to be safe. We need more time to initiate the rescue operation..."<br><br>"Time? Are you still talking about time here?"<br><br>"Just a moment, just a brief moment is enough."<br><br>"Nearly an hour has already passed."<br><br>Choi Min-Woo's tone remained steady, but his eyes blazed with a fiery urgency, mirrored by his companions.<br><br>"We must begin the rescue now."<br><br>"Not now. Follow the policy."<br><br>"Whose policy? The Association's? Or..."<br><br>In an instant, Choi Min-Woo's gaze swept past the Association head, landing on Seok Go-Jun.<br><br>He bit his lip, frustration evident, then continued resolutely.<br><br>"Send the Association hunters away. If necessary, our Peace Guild alone will enter."<br><br>"Do you not realize that this goes against the regulations?"<br><br>The chairman of the Seoul branch replied in an authoritative tone, snapping his fingers. Hunters from the Seoul branch swiftly surrounded the Peace Guild members, their expressions a mix of disapproval and wariness.<br><br>"It won't take too long. Have patience and wait."<br><br>At these words, Choi Min-Woo's restraint shattered. His voice, fierce and full of desperation, echoed across the area.<br><br>"My friend is in there!"<br><br>Click, flash!<br><br>Cameras snapped furiously, capturing this intense moment, but Choi Min-Woo's impassioned plea continued unabated, his rage palpable.<br><br>"He could die! He must be saved!"<br><br>Images of Jin Tae-Kyung, battling alone against the Named Monster and its skeletal horde, ignited a seething volcano of fury within him.<br><br>"Move aside, you bastards!"<br><br>\*\*\*<br><br>The Skeleton Warlord spoke with a commanding voice.<br><br>\- In the name of the commander, arise. My faithful subordinates, the strong soldiers of the legion!<br><br>Suddenly, someone struck the Warlord's skull with a lightning-quick movement.<br><br>Thump!<br><br>"Damn it, really. Why are your spells so unnecessarily long? I told you to make it quick."<br><br>"..."<br><br>"Aren't you going to answer?"<br><br>\- ...Yes.<br><br>The Warlord's voice carried a tone of reluctant acquiescence.<br><br>\- Fine, fine. Skeletons, arise...<br><br>Whoosh!<br><br>A surge of magical energy erupted from the Warlord, blanketing The Black Forest.<br><br>The young man, witnessing the rapid emergence of skeletons from the earth, wore a bright, almost gleeful smile.<br><br>"Ah, looks like this year's harvest will be bountiful."</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-296.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-298.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

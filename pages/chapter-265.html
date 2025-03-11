@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 265 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 265</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 265</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: October 1, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>I was convinced he had met his end.<br><br>Even if he clung to a semblance of life, I surmised he was far from what could be classified as living.<br><br>And yet...<br><br>Swish. Thud!<br><br>Even though I was looking at it, it was an unbelievable sight.<br><br>Skin, once blackened to the brink of disintegration, now gleamed with renewed vitality. Dislocated bones realigned, shrouding themselves beneath fresh flesh.<br><br>'What is this?'<br><br>What should I call this? Recovery?<br><br>No, it’s regeneration — an otherworldly, monstrous form of it. The chilling spectacle elicited a gasp from Cheong Pung.<br><br>"Ah, ah..."<br><br>In mere moments, the metamorphosis was complete. Even the face, stripped to its sinews, was made whole again.<br><br>With a deliberate crack of its neck, the creature smirked in our direction.<br><br>“Always aim for the head, if you want certainty.”<br><br>Jeok Cheon-Gang, seemingly immobilized by shock, mustered his voice.<br><br>“How?”<br><br>The Blood Lord responded nonchalantly.<br><br>“Let's just call it dark arts. It's all the same to orthodox sect bastards like you, no?”<br><br>“You, you...”<br><br>“Hold on!”<br><br>Alarmed, I hastened to Jeok Cheon-Gang’s side, propping him up. His face was ashen, streaked with blood.<br><br>My judgment was clouded. Jeok Cheon-Gang had expended every last reserve.<br><br>Even the Ghostly Dance of the Fire God, invoked by tapping into the very depths of his strength, had been rendered futile. In my embrace, he was no longer the indomitable Fire King, but a feeble elder.<br><br>“Quickly, escape..."<br><br>Jeok Cheon-Gang's voice trailed off, his head lolling. I quickly assessed his vitals. Faint, yet discernible.<br><br>'He's still okay for now.'<br><br>But it was too early to breathe a sigh of relief.<br><br>“It seems even the renowned Fire King has his limits.”<br><br>The Blood Lord, with a delighted expression, took a step forward.<br><br>“I must admit, it was exhilarating. Terrifying, even. I never anticipated this.”<br><br>“Stop spewing shit from your mouth. It stinks.”<br><br>Rising, I grasped the White Flames, momentarily set aside.<br><br>With Jeok Cheon-Gang incapacitated, any further exertion here might lead us past the point of no return.<br><br>“You're going to stop me alone? Admirable thinking.”<br><br>“Are you blind? There are two of us.”<br><br>The Blood Lord regarded me with a disdainful tilt of his chin.<br><br>“No, there's only one. I don’t count frightened rats as humans.”<br><br>Frightened rats?<br><br>Following his gaze, I saw Cheong Pung, paralyzed by terror.<br><br>His pupils darted erratically, and the sword in his grip quivered.<br><br>'Fear.'<br><br>That was the only emotion emanating from Cheong Pung right now.<br><br>“Sending a greenhorn, who still smells of milk, into the martial world. The Sword Saint surely has an odd way of doting on his disciple.”<br><br>Thud.<br><br>The Blood Lord stood a considerable distance away, perhaps fifty paces.<br><br>Yet, as he took but one deliberate step closer, Cheong Pung flinched as though scorched by an unseen flame.<br><br>'This feeling...'<br><br>Despair gripped my heart. I recognized this all too well.<br><br>Cheong Pung was now navigating the same tumultuous waters that countless warriors, myself included, had waded through.<br><br>'Why now, of all times?'<br><br>This is a growing pain that every warrior, every hunter experiences. But for the prodigy before me, this phase had come too late.<br><br>Reading the thoughts written on my face, the Blood Lord smirked.<br><br>“You know too, right? That child’s spirit has broken. The sense of powerlessness he’s feeling for the first time, the fear of death. Once ensnared by these emotions, it's not easy to break free.”<br><br>“…It's because of Jong Richu.”<br><br>Without a doubt. It was due to the duel with Jong Richu.<br><br>Jong Richu had sown the seeds of trepidation within Cheong Pung. Encountering another formidable adversary like the Blood Lord caused those seeds to sprout.<br><br>“Yes. I don’t know where he came from, but that guy did a great job. Thanks to him, I caught the attention of orthodox sects, and even managed to outmaneuver the Sword Saint’s disciple. Haha!”<br><br>I felt as if my mouth were full of sand.<br><br>With Cheong Pung incapacitated by fear, and the Blood Lord confidently shrinking the gap between us, a sense of desperation surged within me.<br><br>'Damn it.'<br><br>Fortunately, I still had one last move. However, it was a double-edged sword.<br><br>Success remained uncertain, while failure would seal my fate.<br><br>'But I have no choice.'<br><br>I began to gather my dwindling energy.<br><br>One Strike, a blow with all my might, is the only way.<br><br>Can I do it? I discarded such thoughts.<br><br>'I have to. No matter what.'<br><br>It demanded not merely belief, but a sheer, desperate resolve. I needed to commit every fiber of my being, betting on the slimmest of chances.<br><br>“Young master Cheong.”<br><br>Tik. Tik. Tik.<br><br>I didn't need to look. The chattering of Cheong Pung's teeth echoed in my ears. Drawing from deep within, I bellowed,<br><br>“Cheong Pung!”<br><br>Startled, Cheong Pung snapped to attention.<br><br>“I won't repeat myself. Listen closely and decide for yourself.”<br><br>“Y-Yes?”<br><br>“You have two choices. First, carry Grandfather and run as far away as possible.”<br><br>“S-Savior!”<br><br>“I'm not done yet. Your second option: put aside your trembling cowardice and fight with me against that guy, using all the strength you have, even if it leads to our end.”<br><br>I sensed the tumult of emotions in Cheong Pung's uneven breathing. Yet, he boldly stepped forward.<br><br>Thud. Side by side, we shielded the unconscious Jeok Cheon-Gang.<br><br>“Your decision?”<br><br>“This stand is my answer.”<br><br>“Honestly.”<br><br>“I’m scared, Savior.”<br><br>“Damn, that’s brutally honest.”<br><br>“But I’m really terrified. More than I’ve ever felt in my entire life.”<br><br>I kept my gaze fixed on the Blood Lord, who was slowly approaching, and asked,<br><br>“If you're that scared, why don’t you run?”<br><br>“I don’t know. I just feel like if I run now... I'd regret it for the rest of my life.”<br><br>That regret. I know what it feels like.<br><br>Casting a sidelong glance at Cheong Pung, I noted his quivering form, but also the unwavering resolve in his steps.<br><br>He stood steadfast.<br><br>This would suffice for now. As a quiet nod passed between us, the inevitable confrontation loomed.<br><br>“Regret? Run away?”<br><br>Twenty paces away, the Blood Lord stopped and laughed as if he had heard a great joke.<br><br>“Such naive words from youngsters. That’s for me to decide. It’s the right of the strong and the fate of the weak.”<br><br>“Well, part of what you said is true..."<br><br>I raised my spear and aimed it at him. The transparent blade of the White Flames glinted menacingly in the sunlight.<br><br>“Why do all the words coming out of your mouth sound like shit?”<br><br>“Truth is often uncomfortable. Especially for the weak.”<br><br>“This banter tires me. Brace yourself. My method of silencing is quite direct – with a spear. I warn you, it's not a gentle procedure.”<br><br>“Hahaha!”<br><br>“You're laughing? You don't seem like the type. But that’s life, you know. I should have listened to my mom when she asked me to eat fruit.” \[Note: the direct translation of this last sentence is "I should have realized when mom said let's go eat something delicious." but in Chapter 148, the last time we see MC in the real world, the last thing his mom said to him was "There's quite a lot of fruit left..."\]<br><br>The smirk on his face deepened.<br><br>“The Sleeping Dragon of Shanxi. The more I see, the more interesting you become. A mysterious martial art, and now this audacity... I like you.”<br><br>“Do I meet your expectations?”<br><br>“Join me. I might spare the Fire King.”<br><br>“Spare me the bullshit. After today, I won't have any dealings with a bastard like you.”<br><br>"There's a saying: Once is coincidence. Twice is fate. Thrice is destiny.”<br><br>“Looks like this asshole's been reading romance novels.”<br><br>The Blood Lord shrugged his shoulders.<br><br>“Well, it's not a romantic relationship, but if we've met twice in this vast world, wouldn't you call it fate?”<br><br>“Twice?”<br><br>His words momentarily eluded me.<br><br>What was he insinuating?<br><br>“Did you see me at the Grand Celestial Banquet?”<br><br>“Of course. I saw you.”<br><br>A voice filled with mischief continued.<br><br>“And at the Eight Spring Gorge.”<br><br>“...What?”<br><br>“The scene was magnificent. Corpses piling up into mountains, blood flowing like rivers... The moment you took Jin Baek-Yang's life was especially memorable. Wasn't that when they started calling you the Sleeping Dragon of Shanxi?”<br><br>“What are you talking about..."<br><br>“Jin Baek-Yang, the Blade of Flowers. Such a pathetic man. Once fervent in ambition, but age or perhaps ineptitude wore him down. One wonders about the discernment of whoever enlisted such mediocrity. Tsk tsk.”<br><br>I gazed, uncomprehending, at the Blood Lord. His words seemed surreal.<br><br>“And the Mount Heng Sword Sect, they still exist? I'd heard some minor pawn eliminated the sect leader's heir. Post Eight Spring Gorge, I confess, my interest waned.”<br><br>"......!"<br><br>An icy shudder gripped me.<br><br>“So, you are...”<br><br>“Didn’t I say?”<br><br>The Blood Lord's eyes gleamed with malevolence.<br><br>His whisper bore into my ears:<br><br>“Once is coincidence. Twice is fate. Thrice is destiny. What do you think? Aren’t we fated?”<br><br>I was momentarily breathless.<br><br>Before me stood the architect of that devastating war.<br><br>Seeing my expression, the Blood Lord laughed uproariously.<br><br>“Why the face? Thanks to me, you advanced smoothly. From the novice of Taiyuan to the champion of the Great Celestial Banquet. Shouldn’t you be thanking me?”<br><br>I offered no retort. One thought consumed me.<br><br>'How many died?'<br><br>I wasn't sure. A thousand? Two thousand?<br><br>Countless people met their end in a senseless war. There was no clear victor, no clear loser.<br><br>In the aftermath of the war, numerous individuals — soldiers who simply followed commands, martial artists, and even innocent bystanders—fell, leaving behind a legacy of war orphans.<br><br>As Shanxi's martial realm grappled with this devastation, bandits from the plateau seized the opportunity to rise again, heralding another chapter of turmoil.<br><br>'And yet he wants gratitude.'<br><br>I licked my parched lips. The grip on my spear tightened unconsciously.<br><br>An unexplained energy surged within my exhausted body. An ability not shown in the System window?<br><br>Pure rage.<br><br>“Hey.”<br><br>"Hmm?"<br><br>“That crap about 'Once is coincidence, twice is fate.'”<br><br>I took a deep breath, feeling like flames would spew from my mouth if I didn’t.<br><br>"For us, let’s just skip to destiny.”<br><br>''Destiny?''<br><br>“Yeah. A destiny where one of us dies.”<br><br>Before I even finished speaking, I darted forward. In an instant, the distance closed, revealing his mocking face.<br><br>'One Strike.'<br><br>Gooohohng.<br><br>My spear's blade cleaved the air.<br><br>Crack!<br><br>“Arrgh!”<br><br>Cheong Pung's arm snapped, revealing the white of his bone amidst torn flesh.<br><br>Overwhelmed by a pain he'd never known, he howled. Blood splattered his face.<br><br>The metallic stench threatened to turn his stomach. As he doubled over, a powerful kick connected with his midriff.<br><br>Thud. Crash!<br><br>“Damn fool. I pity the Sword Saint for having a brat like you as a disciple.”<br><br>Thrown aside, Cheong Pung tried to rally himself.<br><br>Pain. Despair. His body's plea to yield.<br><br>'My body... won't listen.'<br><br>Resigned, he lay back, the expanse of the heavens his only view.<br><br>Mount Hua's sky had always been a beacon of beauty — vivid clouds by day, a tapestry of stars by night, the landscape alive with wildlife.<br><br>Yet now?<br><br>'Why is the sky here so red?'<br><br>This wasn't the sky he knew. It was hauntingly crimson.<br><br>Blinking away his discomfort, Cheong Pung registered the ruptured blood vessels clouding his vision.<br><br>It was the first time this had happened, but he wasn't surprised.<br><br>'After all, it's also the first time I broke a bone and bled so much.'<br><br>\[Note: at this point in the chapter, the author has switched from the MC's first-person narration to a third-person-limited narration focused on Cheong Pung.\]<br><br>As Cheong Pung reflected on his condition, his breath quickened on its own.<br><br>A haunting sound echoed, making Cheong Pung shiver as he lay wounded.<br><br>Shh, kwachik!<br><br>“Cough!”<br><br>“This bastard!”<br><br>Cheong Pung's gaze darted to the sound's origin. From his skewed perspective, he saw two figures clashing violently.<br><br>No, calling it a mere clash wouldn't do it justice.<br><br>Puk! Puk! Puk!<br><br>“Grunt!”<br><br>“Still not dead after this? Not even after this?”<br><br>Wham! Crash!<br><br>His nose crunched, ankles snapped, shoulders wrenched out of place.<br><br>Once, thrice, ten times...<br><br>However, no matter the injury, no matter how many times he fell, he would rise again.<br><br>It would be the same even if it happened a hundred times.<br><br>Because the man Cheong Pung knew was indomitable.<br><br>'Savior.'<br><br>Contrary to hope, reality was cruel.<br><br>The tide of the battle quickly turned.<br><br>While Cheong Pung couldn’t discern the specific martial technique, Jin Tae-Kyung’s blow was unmatched in ferocity. It shattered the enemy's crimson blade and delivered a blow to his body.<br><br>In an instant, the Blood Lord rebounded, gaining the upper hand.<br><br>"Crazy... truly unparalleled in this world."<br><br>Everything seemed to be coming to an end.<br><br>Cheong Pung, looking pale and drenched in blood, no longer had the vitality to heal.<br><br>His once carefree smile vanished, replaced by ragged breaths as he grappled with Jin Tae-Kyung's spear embedded in the earth.<br><br>“Huff, Hah, alright. Let's end it.”<br><br>Death loomed.<br><br>Hearing the finality in those words, Cheong Pung felt the ground beneath his touch. The agony from his shattered limbs and the stench of blood began to wane.<br><br>Numbness consumed him.<br><br>'What is this?'<br><br>Confusion set in as he stared at the looming figure of the Blood Lord.<br><br>“Ha, what’s this now? Do you want to die too?”<br><br>Amidst the menace in the Blood Lord's eyes, Cheong Pung's hand quivered.<br><br>Yet, catching sight of Jin Tae-Kyung, defeated behind the Blood Lord, the tremors subsided.<br><br>“Savior, Savior.”<br><br>"Have I ever encountered such lunacy..."<br><br>With a laugh tinged with incredulity, the Blood Lord brandished his sword.<br><br>Shaaak!<br><br>Blood gushed from Cheong Pung's chest as he lurched forward.<br><br>'It hurts.'<br><br>Yet, he neither stopped nor collapsed. His sword had already slipped from his weakening grip.<br><br>"What's this?"<br><br>In amazement, the Blood Lord watched the unfolding spectacle and firmly seized Cheong Pung’s throat.<br><br>"Cough!"<br><br>"What's this? Why haven't you died yet?"<br><br>His voice carried genuine curiosity.<br><br>With his consciousness waning, Cheong Pung found his voice, albeit faint.<br><br>"If I back down... I feel like I'll regret it for the rest of my life."<br><br>"That's the reason? A coward like you not retreating for such a ridiculous reason?"<br><br>The murderous intent intensified. Yet, oddly enough,<br><br>It didn’t feel scary at all. As if returning to the days he spent at Mount Hua, Cheong Pung unknowingly lifted the corners of his mouth in a smile.<br><br>"Hehe. Yes."<br><br>Outrage contorted the Blood Lord's visage. To laugh in his very presence was an audacity he hadn't anticipated.<br><br>"Your last words, noted."<br><br>Just as he was about to thrust his spear into Cheong Pung's chest,<br><br>"You've shed your shell."<br><br>A clear voice resonated.<br><br>It reminded Cheong Pung of the azure skies over Mount Hua.<br><br>It was a voice he'd come to recognize instantly.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-264.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-266.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 396 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 396</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 396</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: April 27, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>The Black Knight raised his gaze skyward.</p><p>The sky was a deep azure, utterly cloudless. To the Black Knight, however, it appeared a dreary ash gray.</p><p>'It's dark.'</p><p>This realization jolted him, unsettling his thoughts. What was darkness?</p><p>From the beginning, he was the Black Knight. A being born from darkness does not know what it is.</p><p>'But what is this?'</p><p>Sunlight, laughter from a child, the gentle caress on his head...</p><p>Fragments of thoughts and vague images danced through his mind, sowing confusion.</p><p>If not for his subordinate's call at that moment, the Black Knight would have lingered indefinitely.</p><p>- Lord.</p><p>- Please.</p><p>They were clad in pitch-black armor, and helms concealed their heads. Eerie green flames emanated from the holes in their helms.</p><p>Two Death Knights dismounted from their skeletal steeds and kneeled before him. Their voices were devoid of emotion.</p><p>- Give us.</p><p>- Your command.</p><p>Ah.</p><p>A fleeting memory returned to the Black Knight — a directive from the lord he served.</p><p>- Go. Advance in all directions, trample everything, and kill. Offer me mountains of corpses and seas of blood.</p><p>The lord's order was incontestable. The Black Knight dutifully complied, as his soul was bound to his master.</p><p>He appointed the ten Death Knights under his command to lead five legions, and himself as the commander of the sixth.</p><p>'But why this place of all places?'</p><p>His eyes settled on a distant town.</p><p>A place that had stirred the memory of the word 'child' and a surge of potent, unfamiliar emotion.</p><p>Still, he could not fathom why he had been drawn here.</p><p>- Lord?</p><p>- Lord?</p><p>Watching his subordinates silently, the Black Knight finally commanded.</p><p>- Advance.</p><p>- As you command.</p><p>- As you wish.</p><p>With these words, the Death Knight climbed onto his skeletal steed, brandishing a colossal spear.</p><p>As he raised the weapon, dark demonic energy surged from its tip, prompting the legions of monsters that filled the vast plain to emit unearthly shrieks.</p><p>- Krik. Krikikik!</p><p>- Grooooooar!</p><p>The horde ranged from freshly dead skeletons, flesh still clinging to bone, to smaller creatures like goblins and orcs, and towering figures such as trolls and ogres.</p><p>Their numbers swelled into the tens of thousands, with swarms of gargoyles and wyverns casting immense shadows from above.</p><p>- Gather.</p><p>- Come.</p><p>At the command, around two hundred Dullahans took formation. Each held their severed heads in one hand and weapons in the other, mounted atop beasts wrought from bones, their menacing glares cut through the air.</p><p>- Ready.</p><p>- Charge.</p><p>Leading the charge, two Death Knights positioned their spears skyward, then aimed them downward, targeting the human city below.</p><p>A city soon to be overrun by the undead.</p><p>「Public Security Force, assemble!」</p><p>「Shit, shit! It's the monsters! They've appeared!」</p><p>「Sound the alarm immediately and report to headquarters!」</p><p>Whoooosh!</p><p>The cries of people and the urgent blare of alarms melded with the gusting wind.</p><p>But the order was irrevocable. Nothing could halt the inexorable march of the undead legion.</p><p>Thump, thump, thump.</p><p>They advanced in a meticulously arranged formation.</p><p>The Death Knights and Dullahans spearheaded the assault, while swift Lycanthropes and colossal creatures like ogres, trolls, and golems formed an imposing phalanx.</p><p>Strategically positioned in the rear were monsters skilled in archery and sorcery.</p><p>This unprecedented discipline and strategic arrangement among the horde of monsters were possible only under the command of the Black Knight.</p><p>'Where did I learn such things?'</p><p>Dismissing the nagging question for the moment, the Black Knight commanded:</p><p>- Follow.</p><p>Compelled by their leader's will, his skeletal steed began its march.</p><p>Click-clack, click-clack.</p><p>The hooves, made of white bone, crushed the tender sprouts beneath. The undead legion, spanning the expanse of the field, pressed forward under the command of their leader.</p><p>A massive tremor reverberated through the earth as the legion, moving like a creeping wave, soon became a tide of skeletons sweeping across the plains.</p><p>Thud, thud, thud!</p><p>- Groooaaar!</p><p>A tremendous roar erupted from tens of thousands of monstrous throats.</p><p>At the vanguard, the Black Knight surged forward, his form a blur of speed.</p><p>「That one is the leader!」</p><p>「Ranged units, ready!」</p><p>「Tankers, stay calm! Tank Unit! Work with the Hunters to intercept him!」</p><p>Tankers, tanks, hunters.</p><p>The Black Knight not only heard the humans' commands but understood them with startling clarity.</p><p>Even the commands that followed.</p><p>「Commence focused fire!」</p><p>Ratatatat!</p><p>Blamblamblam!</p><p>Sssssssss!</p><p>The city erupted in a symphony of destruction: flames, ice, and lightning.</p><p>Some attacks arced gracefully downward, while others sped towards the Black Knight and his undead cavalry in nearly straight lines.</p><p>- Ah.</p><p>In a world veiled in ashen gray, these bursts of light were mesmerizing and hauntingly familiar. A profound stirring filled him as he extended his hand.</p><p>Swoosh.</p><p>His great sword, secured to his back, was now drawn.</p><p>Before the barrage of shells, magical spells, and arrows could reach him, the dark blade danced through the air, carving vertical and horizontal arcs.</p><p>Kwaaaaa!</p><p>A tempest of magical energy erupted. The very air seemed to split, spells fizzled like snuffed candles, and arrows fragmented into dust.</p><p>The spectacle of light consumed by encroaching darkness was visible to all within the city.</p><p>A thought struck Choi Min-Woo and Shao Shen simultaneously.</p><p>'This is…'</p><p>'Unstoppable.'</p><p>A realization close to certainty. And the next moment, a dark flash surged towards the hunters.</p><p>Kwaaaaang!</p><p>A thunderous roar, as if the heavens themselves were tearing apart, reverberated through the air.</p><p>Dozens of tower shields splintered apart, and a mist of blood erupted. With a single sweeping stroke, the Black Knight, having just dispatched three A-rank hunters and twenty B-rank hunters, surveyed the stunned humans through eyes that glowed a fierce red.</p><p>From beneath his heavy helm, a voice as cold as death emanated.</p><p>- Aksar. Garosh.</p><p>Kill them all.</p><p>These were the demonic words last heard by those who had perished here just a day prior.</p><p>And now, they formed the grim command the Black Knight issued to his followers.</p><p>- As you command.</p><p>- As you wish.</p><p>Two Death Knights flanked the Black Knight, and then, like an army of sharpened spears, one hundred Dullahans charged and shattered the human defenses.</p><p>Crackle!</p><p>\* \* \*</p><p>'An ambush?'</p><p>Urgent reports were streaming in from every front. Wei Feng-Hu shouted, demanding updates, but the only response was disconcerting: all communications had been severed.</p><p>「Complete cut-off? But weren't we still connected just last night?」</p><p>The communications officer, drenched in sweat, replied anxiously.</p><p>「Th-that's… For some reason, the interference with communication has intensified. The emergency report that just arrived was actually from about 30 minutes ago.」</p><p>"…!"</p><p>Thirty minutes?</p><p>If that report was accurate, then the attack had unfolded during their meeting.</p><p>Moreover, this news had struggled through interference to reach them — it could have been delayed an hour, not merely thirty minutes.</p><p>Magic Johnson spoke with a grave expression.</p><p>「That can't be. Surely before I left it wasn't that severe…」</p><p>Suddenly, a thought flashed through his mind. It was something Magic Johnson had said before leaving the city.</p><p>'The Archlich. Its power has been gradually decreasing. Especially since last night, a significant part of the interference has disappeared. Well, the communication situation still seems to be a mess, though.'</p><p>He had been mistaken.</p><p>It wasn't that the Archlich's power in the area had diminished, but rather it had cleverly masked its true strength.</p><p>Subtly and unobtrusively, it had recalled its legion, feigning a reduction in its power to lull them into complacency.</p><p>'This is…'</p><p>It was undoubtedly a trap.</p><p>How the Archlich discerned the absence of S-rank hunters remains a mystery. What mattered was its swift exploitation of this moment to advance its monstrous legion.</p><p>Recalling the horrific slaughter I had witnessed just the day before, the nausea surged within me, more intense than my initial experience with teleportation.</p><p>Yet, instead of succumbing to sickness, I seized Magic Johnson by the arm and urged,</p><p>"Teleport."</p><p>「What?」</p><p>"Teleport, right now!"</p><p>I expected Magic Johnson to cast his spell instantly. However, his response took me by surprise.</p><p>「Jin, take a jet.」</p><p>"What? A jet, suddenly... That would be too late."</p><p>「It's problematic right now.」</p><p>"Why? You know the coordinates of the hospital rooftop we were at earlier."</p><p>Magic Johnson shook his head.</p><p>「It's not about the coordinates. If we try to teleport like this... we both might die.」</p><p>"…!"</p><p>In my haste, I had overlooked the Arch Lich’s magical interference. A creature cunning enough to set such a trap would hardly permit an easy escape via teleportation.</p><p>Magic Johnson’s voice was low, filled with concern.</p><p>「Ten minutes, maybe twenty. Take a jet, Jin.」</p><p>"…In that time, many people will die."</p><p>「Yes. But if you were to die in the process of teleporting, it would result in even more casualties.」</p><p>An S-rank hunter is a pivotal asset in battle.</p><p>Though delayed, my arrival could still save lives, but a mishap during teleportation could doom not just myself but also the reinforcements.</p><p>Magic Johnson was clearly prioritizing my safety while reminding me of this.</p><p>「It's brave, but foolish.」</p><p>"…."</p><p>「The jet will be ready to take off soon. We don't have time for this.」</p><p>Outside the bulletproof glass of the conference room, pilots hustled towards their jets lining the airstrip.</p><p>The retreating figures of other S-rank hunters exiting the conference room were also visible.</p><p>Watching this scene in silence, I suddenly spoke up.</p><p>"You said it was possible, didn't you?"</p><p>「What?」</p><p>"Teleporting a missile, like the hologram video we saw earlier."</p><p>Magic Johnson's eyes widened.</p><p>「Jin, you can't be serious?」</p><p>"There's no need for you to risk yourself as well. I can do it alone."</p><p>「My God. Are you insane? I just explained, and you still don't understand!」</p><p>"I understand perfectly. I am fully prepared for this."</p><p>「You...」</p><p>He paused, his frustration peaking as he slammed his fist down on the table. Bang! The impact splintered the fine wood.</p><p>「Fuck! This is bullshit!」</p><p>Watching Magic Johnson curse under his breath, I couldn’t help but laugh lightly.</p><p>His reaction was all the confirmation I needed.</p><p>"Can I take that as your consent?"</p><p>「Yes, you cocky bastard.」</p><p>He looked at me with bloodshot eyes.</p><p>His gaze was intense, bloodshot, as if he might unleash a tirade at any moment.</p><p>Magic Johnson was not just furious; he was deeply concerned.</p><p>「Listen, Jin. I...」</p><p>"I know. You have people you need to protect too. I'm sorry for asking this of you."</p><p>「Damn it. Should I just send you to the hospital rooftop then?」</p><p>"Yes. That's enough."</p><p>Ssshhh.</p><p>Gritting his teeth, Magic Johnson pressed his substantial palm against my chest.</p><p>With far greater care than before, he slowly wrapped his mana around me.</p><p>「10%. That's your chance of survival. There's a 90% chance you will die.」</p><p>10%...</p><p>I looked up at the cloudless sky.</p><p>Is Murim somewhere out there? Are they waiting for me?</p><p>A sudden thought sparked a slight grin.</p><p>"That's fine. 10% is enough."</p><p>「What?」</p><p>As I spoke, a brilliant burst of light erupted, enveloping my body in a comforting warmth.</p><p>"It's probably about a thousand times more likely than crossing dimensions."</p><p>「…!」</p><p>I could only imagine the expression on Magic Johnson's face at that moment.</p><p>Despite my curiosity, his features were no longer visible to me. A dazzling flash obscured my vision, and I was yanked through the distorted space by a rough, powerful force.</p><p>Ssshhh!<br></p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-395.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-397.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

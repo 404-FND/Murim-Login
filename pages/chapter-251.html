@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 251 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 251</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 251</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: No_End_9483</span>
+                            <span class="published-date">Published: February 17, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>The expectation that Zhuge Gyun would win has turned out to be completely off the mark.<br><br>When I found the location where several martial contests, including Zhuge Gyun's, were taking place, what awaited me were the cheers of the audience who were calling out the name of the Invincible God Sword, and Zhuge Gyun sitting there dumbfounded.<br><br>"What happened, did you lose?"<br><br>In response to my question, Zhuge Gyun nodded his head bitterly.<br><br>"I was completely defeated. I couldn't even touch a hair on him."<br><br>Zhuge Gyun is a direct descendant of the Zhuge Family, one of the Five Great Families.<br><br>As his alias, 'Mystical Clever Dragon' suggested, his true weapon was his brilliant mind, but he was also exceptional in martial arts as he had learned them from his family's strict teachings.<br><br>'Such a guy was completely defeated?'<br><br>If that was the case, then his opponent must have been one or two ranks stronger.<br><br>Suddenly, curiosity overwhelmed me and I asked Zhuge Gyun.<br><br>"Where is your opponent?"<br><br>"He left immediately after the martial contest... Oh? He's over there."<br><br>As I looked in the direction Zhuge Gyun pointed, I narrowed my eyes.<br><br>"That guy? The one eating dumplings?"<br><br>"Yes."<br><br>"...Hmm."<br><br>"Why are you being like this?"<br><br>"Nothing. He just feels familiar."<br><br>The sloppy long sleeves, and the deep pressed bamboo hat over his head, made it hard to see his face and body shape clearly, but the sight of him eating dumplings without a break was strangely familiar.<br><br>'Where and when have I seen this scene before?'<br><br>At times like this, the correct method is to approach directly. I walked towards the Invincible God Sword.<br><br>As I got closer step by step, the memories became more and more clear, but it was still blurry.<br><br>However, one thing was clear.<br><br>'He's strong.'<br><br>His posture was incredibly sloppy, and he seemed completely relaxed, but the energy I felt from him was definitely not inferior to mine.<br><br>Has there ever been someone like him?<br><br>After much thought, I opened my mouth.<br><br>Excuse me."<br><br>\*Munch Munch.\*<br><br>The Invincible God Sword's mouth, that had been chewing and swallowing as if possessed by a demon, stopped abruptly.<br><br>"Invincible God Sword. That's you, right?"<br><br>"......"<br><br>"I apologize for approaching you suddenly. I have something to ask you."<br><br>"......"<br><br>"Excuse me?"<br><br>What's with this guy? Why isn't he answering when someone calls him?<br><br>As I stared at him, the neck of the Invincible God Sword that can be seen under the hat swayed heavily.<br><br>\*Gulp.\*<br><br>"Um, cough."<br><br>"Cough, cough. Now, wait a minute."<br><br>After clearing his throat a few times, a low-pitched voice flowed through the lips of the Invincible God Sword.<br><br>But somehow, the pretense is clearly apparent.<br><br>"Why. Umm, what's the matter?"<br><br>“There is something I want to ask.”<br><br>"Please speak. No, go ahead."<br><br>"......"<br><br>What is this bastard doing?<br><br>I looked at the Invincible God Sword with suspicion. He seemed to have noticed my attitude and pressed harder on the bamboo hat. There's something strange about this. I threw a bait.<br><br>"Oh, sorry for not introducing myself earlier. My name is Park Taekyung from the Taiyuan-Park family."<br><br>"Huh? When did you change your surname?"<br><br>"......."<br><br>"......!"<br><br>A chilling silence. The Invincible God Sword, who realized his mistake, waved his hand in a fluster.<br><br>Instead of his forced low-pitched voice, a clear and bright voice like a boy's poured out in a hurry.<br><br>"No, that's not it. I knew about Shanxi Sleeping Dragon because he's so famous."<br><br>"Ah, I see."<br><br>"Yes. Yes."<br><br>"May I have your name?"<br><br>"It's the Invincible God Sword."<br><br>"Not your alias. Your real name."<br><br>"Ga-, Gang Pung." (Gang Pung=Strong Wind)<br><br>What Pung again?<br><br>Looking at his sense of naming, I couldn't help but laugh.<br><br>This was not a problem that needed to be confirmed with the [Qi Sense] skill. At this point, not knowing was even more strange.<br><br>"It's been a while, let's talk somewhere quiet."<br><br>"......Why, why? Isn't this the first time we met?"<br><br>"Oh really? Then should I send a messenger pigeon to Mount Hua Sect?"<br><br>"......!"<br><br>The Invincible God Sword sneakily lifted his bamboo hat slightly.<br><br>A young man with an innocent expression looked at me with a mixture of resignation and delight.<br><br>"Hello, Benefactor."<br><br>A familiar face that I haven't seen in a year.<br><br>I lightly tabbed Cheong Pung's bamboo hat and smiled.<br><br>\* \* \*<br><br>Murim Alliance was close to a city. It had residential areas and various facilities for daily living, so it was not surprising that there were entertainment districts.<br><br>We settled in the most remote alleyway inn.<br><br>Apart from the elderly owner, who was too old and had poor hearing, we didn't see any guests.<br><br>"I heard the news. They said you ran away on the way back to Mount Hua Sect?"<br><br>"Yes. Right after the Benefactor left with grandfather Jeok."<br><br>"Why did you do that? Isn't it like going back to your hometown?"<br><br>"I didn't want to go back. Even if I went back, my grandfather was not there, and I haven't seen much of the world yet."<br><br>"Still, you managed to escape."<br><br>“Disciple-niblings stopped me, so I put a lot of strength into dealing with them. They probably didn't wake up for three days, then I quickly ran away. Hehe."<br><br>"..."<br><br>No, how much strength did he use exactly?<br><br>Anyway, that would be possible with Cheong Pung.<br><br>Even if it was Mount Hua Lone Crane or other Plum Blossom Three Clarities, none of them can stop him. Because Cheong Pung was already a true genius who was out of normal bound.<br><br>Even the Three Powers Sword Method learned by a third-rate swordsman would become a peak martial art when unfolded in his hand.<br><br>From what I've seen, his depth of understanding and speed of acquisition of martial arts skills were unparalleled.<br><br>'If there is another genius, it would be someone like Jin Mukyung.'<br><br>I listened to the exciting adventures of Cheongpung's travels while having various thoughts.<br><br>As expected, despite my expectations, the discussion was filled with stories of eating and playing, without any serious discussion of martial arts training.<br><br>"I ate dumplings in Sichuan and they were spicy!"<br><br>"Oh, really? That's surprising."<br><br>"The dumplings in Guangdong and Hainan have seafood in them!"<br><br>"Right, because they are close to the sea."<br><br>"The dumplings in Zhejiang are..."<br><br>Did this guy eat dumplings all year round?<br><br>I couldn't take it any longer and spoke up when I heard about Hunan’s dumplings.<br><br>"So, what are your plans for the future?"<br><br>"What do you mean?"<br><br>"Will you continue being Invincible God Sword in the future?"<br><br>"Yes. Disciple-nibling Baek Museong already knows that I am going to be participating in the Diverse Stars Grand Festival. But If I hide like this, no one will recognize me!"<br><br>"Hehe. Everyone is being fooled."<br><br>I swear on my right hand and all of my property that he has already been caught. I'm even willing to raise it up and make them double.<br><br>'No wonder there were a lot of Mount Hua Sect's disciples near the martial contest stage earlier.'<br><br>Since the Diverse Stars Grand Festival is  open as much as it can for all martial artists in the world, there is no special restriction even if you hide your identity.<br><br>However, if it is Mount Hua Sect, one of the Nine Sects One Groupe, they would have noticed the existence of Cheong Pung for sure.<br><br>Yet, they were just watching him from afar…<br><br>'It's like a group of people are secretly filming him.'<br><br>Cheong Pung Show. It wouldn't be strange if a movie was made with a title like this.<br><br>I clicked my tongue in my mind as I watched Cheong Pung, who was enjoying himself, then I spoke up at a sudden thought.<br><br>"Then, will I see you later?"<br><br>Cheong Pung's smile on his face grew deeper.<br><br>"I hope so."<br><br>"Is that so? You want to fight me?"<br><br>"Yes, I was curious about how strong Benefactor has become. I really wanted to fight you at least once."<br><br>I felt the same way.<br><br>One of the reasons why I decided to participate in the Diverse Stars Grand Festival was because of Cheong Pung and Jin Mukyung.<br><br>"What do you think now that you've seen me again?"<br><br>"Hmm..."<br><br>"Be honest."<br><br>I leaned back in the old chair.<br><br>In the creaking silence, Cheong Pung suddenly tapped the scabbard tied to his waist.<br><br>"My grandfather used to say that a martial artist should speak with their weapon."<br><br>"Those are wise words."<br><br>It has been a long time since I heard Sword Star's wise words. I chuckled and stood up from my seat.<br><br>"Benefactor, where are you going?"<br><br>"I'm going to prepare for the final round. Let's finish our conversation there, with our martial arts, of course."<br><br>"The final round..."<br><br>Slowly uttering the word, Cheong Pung nodded his head with a rare serious expression.<br><br>"Okay. Anyway, I'll win the championship."<br><br>"You dream big. After eating nothing but dumplings all year."<br><br>"I also trained in martial arts occasionally."<br><br>"Sure."<br><br>As I listened to Cheong Pung's muttering, I paid the bill and left the inn.<br><br>And as soon as I stepped out of the narrow and dark alley, I ran into a familiar face.<br><br>"Jongli Chu?"<br><br>Jongli Chu shook my hand with a smile.<br><br>"Oh, we meet again here. We must have a connection after all."<br><br>"What connection? It's probably just a coincidence. But what brings you here?"<br><br>"I came here to eat."<br><br>"Why here?"<br><br>There were only a few stores lined up in the back alley, and they were all old and on the verge of collapse.<br><br>It didn't seem like a particularly good choice to have a meal, even to someone who needed to eat.<br><br>But Jongli Chu nodded his head calmly.<br><br>"I had some noodles at a nearby street vendor, and the owner of the shop said that the dumplings at that store are really good."<br><br>"Really?"<br><br>"Of course. It's a hidden gem that only those who know about it would know. Have you tried it?"<br><br>Suddenly, Cheong Pung, who had been pressing down on his bamboo hat, interjected with an awkwardly modulated voice.<br><br>"It's really, really delicious. Well, it's tasty."<br><br>Jongli Chu's gaze turned towards Cheong Pung.<br><br>"Ah, you're a friend I haven't met before. May I ask who you are?"<br><br>"I'm Gang Pung, the Invincible God Sword."<br><br>"A cool alias. I'm Eternal Victory Sword Jongli Chu. Nice to meet you, friend."<br><br>"Fri-, Friend?"<br><br>Cheong Pung, who lifted his bamboo hat slightly, looked at Jongli Chu and vigorously nodded his head.<br><br>"Great! No, it's good! I'm happy! You're the first person to ask me to be friends!"<br><br>“......That's enough. That's more than enough.”<br><br>You might as well wear the 'Cheong Pung of the Mount Hua Sect' headband on your head and go around like that.<br><br>Jongli Chu smiled softly at my efforts to calm down Cheong Pung, who was jumping around in joy.<br><br>“You seem to have a good friend by your side. Anyway, let's see each other next time, my friend.”<br><br>“Yeah, let's see each other once in a while, but not too often.”<br><br>“Take care! Take care, my friend!”<br><br>“Sure thing.”<br><br>He nodded his head and disappeared into the dark alley.<br><br>Cheong Pung emerged onto a bright street where the sunlight was shining and giggled.<br><br>“He seems like a good person. That's the feeling I get.”<br><br>I gave him some serious advice.<br><br>“Just because he likes dumplings doesn't make him a good person.”<br><br>“Oh, I should have told him to dip dumplings in soy sauce a little when eating.”<br><br>"......"<br><br>He really doesn't listen, even to my advice.<br><br>\* \* \*<br><br>Cheongpung's concerns were unfounded.<br><br>Since Jongli Chu didn't enter the store, his footsteps didn't stop even after passing by the store.<br><br>How long did he walk through the dark and winding alleys like a maze? Jongli Chu stopped walking in a place where only rats and filth existed.<br><br>His lips flowed with a clear voice.<br><br>"Invincible God Sword. The more I think about it, the better it seems as a cool alias. What do you think?"<br><br>The moment he finished speaking.<br><br>Changes occurred in the static alley.<br><br>\*Shishishik! Pabak!\*<br><br>Three beams of light that aimed for Jongli Chu's vital points.<br><br>At the same time, a small masked figure soared into the air. His steps were as fast and secretive as the wind, running on the wall.<br><br>He had outstanding Lightweight Art, and even more sophisticated Hidden Form Technique(은형술/隱形術). However, at that moment when he tried to leap using his power.<br><br>\*Tok\*<br><br>"What are you hurrying for?"<br><br>"......!"<br><br>"Let's go down and talk."<br><br>The immense strength of a thousand catties boulder pressing on his shoulders, the breath tickling his neck.<br><br>The body of the fallen masked man trembled as if struck by lightning.<br><br>'How could this happen!'<br><br>He had performed hundreds of missions, but he had never encountered anything like this before.<br><br>Overwhelming. The word 'Inevitable' hit him harder than ever before. He realized he only had one way left for him.<br><br>'Pavilion Lord, I will be going there first.'<br><br>The face of Thousand-Faced Fox Song Ho, the Pavilion Lord of Hidden Shadow Pavilion, whom he had served with loyalty for decades, flashed before his eyes.<br><br>It was a moment when the now-forgotten Hidden Shadow Pavilion's best agent, Dark Secret Executor(암중살/暗中綬)^[1], was trying hard to bite the poison pill with all his might.<br><br>"Indeed, it's the Hidden Shadow Pavilion. There's no hesitation. But..."<br><br>\*Tududoo.\*<br><br>Lightning-fast hand movements strike the entire body of the Dark Secret Executor. A soft voice settled in his stiffened ear.<br><br>"You should have known who you were chasing."<br><br>With a distant sense of despair, Dark Secret Executor's consciousness was sucked into the abyss.<br><br>=====<br><br>[1] It appears to be some korean term that is not very related to the given hanja. Not sure if I translated this correctly.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-250.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-252.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 403 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 403</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 403</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: May 4, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>Twenty military transport planes and their escorting fighter jets struggled to land.</p><p>「Sir...」</p><p>「We can't find a landing spot!」</p><p>The small town lay in ruins.</p><p>Buildings, closely packed, had toppled like dominoes, while fires blazed throughout.</p><p>Yet, what terrified the pilots most was the gruesome scene unfolding below from their high vantage point.</p><p>School playgrounds, convenience stores, government offices — all signs of peaceful daily life were replaced by heaps of bodies and streams of red blood.</p><p>A singular vision of hell, left in the wake of the monstrous legion.</p><p>As they gazed upon this lifeless landscape, an unspeakable fear gripped them.</p><p>「Proceed with the landing.」</p><p>「But, Commander-in-Chief...」</p><p>「There is no 'but'. This is an order.」</p><p>Confronted by the firm expression of the middle-aged man speaking in a stern tone, the pilot understood his lack of alternatives.</p><p>His role was clear: a soldier under the command of Wei Feng-Hu, the Minister of the Central Military Commission's National Defense and the esteemed adviser to President Shao.</p><p>Defying an order from Wei Feng-Hu bordered on insanity.</p><p>In the next instant, following Wei Feng-Hu's directive, the pilot realized:</p><p>Defiance would actually be less mad.</p><p>「Head to the general hospital that serves as the temporary headquarters on the western front.」</p><p>「What? But that place...」</p><p>「According to the last communication, it was the site of the fiercest battle. Perhaps even now. I am well aware.」</p><p>「...」</p><p>「It might already be too late. But we must go. If even one person is still alive, we need to go and fight alongside them.」</p><p>Wei Feng-Hu's expression was intensely grave.</p><p>「Take the controls. And land first.」</p><p>For the Commander-in-Chief to venture this far was extraordinary, and being the first to land was a perilous task given the potential presence of monsters.</p><p>'Damn it.'</p><p>With his eyes closed, the pilot activated the communication system. His trembling voice echoed across the network to all aircraft.</p><p>「VIP-777 to all units, I repeat, to all units...」</p><p>As he heard his orders relayed, Wei Feng-Hu took a slow, deep breath.</p><p>The weight of the parachute gear strapped to his body felt like a thousand-pound burden.</p><p>'Is it because it's been over thirty years since I've seen real combat? I'm trembling.'</p><p>Such feelings were not unique to Wei Feng-Hu alone.</p><p>Aboard the twenty military transport planes, the 4,000 Hunters each harbored their own fears, both significant and trivial.</p><p>Some were ready to flee immediately, while others steeled their nerves, sparking their combat readiness.</p><p>In the impending battle, the fate of each was uncertain; even Wei Feng-Hu, the Commander-in-Chief, was no exception. He had joined the front lines to elevate his troops' spirits.</p><p>'If I only push my subordinates into danger, I don’t deserve to be a commander.'</p><p>This principle had guided Wei Feng-Hu's entire career, earning the deep respect of his nephew, Lei Fei, who regarded him as a father figure.</p><p>Suddenly, an image of a dearly missed face flashed before the old general’s eyes, causing a pang in his heart.</p><p>「...I miss you.」</p><p>Wei Feng-Hu whispered softly.</p><p>It had been fifteen days since Lei Fei disappeared, yet hope had not faded. Lei Fei’s wife and daughter, safely relocated, shared this sentiment.</p><p>'Today, I was reminded of you.'</p><p>A young man in his twenties who had earned significant honors in a distant land. Learning of the peril on the western front, he had departed instantly.</p><p>He had even managed a smile as he braved a teleportation spell with merely a 10% chance of success.</p><p>'That's fine. 10% is enough.'</p><p>'It's probably about a thousand times more likely than crossing dimensions.'</p><p>When Wei Feng-Hu learned this from Magic Johnson, he immediately rallied the command's full capabilities and organized a squadron.</p><p>The bravery of the young foreigner, Jin Tae-Kyung, struck him, reminding him poignantly of his absent nephew.</p><p>'You would have done the same, wouldn’t you?'</p><p>A soft smile touched Wei Feng-Hu’s lips as he pondered this silent question.</p><p>「No, this can’t be...!」</p><p>「Commander-in-Chief!」</p><p>At the pilots' alarmed calls, Wei Feng-Hu looked out the window.</p><p>Below, the landscape was more horrific than any battlefield he had seen: mountains of corpses and seas of blood.</p><p>Corpses and blood, blood and corpses...</p><p>The western front's temporary command post, the general hospital, lay in shambles, its steel skeleton grotesquely exposed. A vast sinkhole, resembling the mouth of hell, along with numerous craters, were awash in a mix of red and green blood.</p><p>The mingled remains of monsters and humans were innumerable. Thousands? No, definitely more than ten thousand.</p><p>「...My God.」</p><p>「Who on earth did this?」</p><p>A desolate landscape scarred by calamity.</p><p>The pilots, rendered speechless by the sight of the ravaged terrain, snapped to attention at Wei Feng-Hu's command.</p><p>「Lower the altitude, quickly!」</p><p>「Yes, sir!」</p><p>Although the monster threat had subsided, vigilance was imperative.</p><p>The pilot, drenched in a cold sweat, navigated the aircraft with heightened precision and began the landing process.</p><p>Creak, thud!</p><p>After enduring several harsh jolts, the aircraft touched down successfully. The first to exit was Wei Feng-Hu.</p><p>Thud, thud, thud!</p><p>He was followed by about two hundred Hunters disembarking swiftly from the transport plane.</p><p>Their reactions were distinctly divided into two types.</p><p>「This is insane…」</p><p>Some were stunned by the horrific sight before them.</p><p>「Ugh, ughhhh!」</p><p>Others were overcome by nausea from the stench of blood and the sight of mutilated bodies.</p><p>At that moment, a single question pervaded their thoughts.</p><p>'Who on earth?'</p><p>As everyone, including Wei Feng-Hu, stood petrified,</p><p>Squelch, squelch.</p><p>Footsteps resonated across the eerily quiet battlefield.</p><p>More than two hundred pairs of eyes focused on the figure traversing the battlefield, his boots squelching in pools of blood.</p><p>Observing the man drenched in greenish blood, Wei Feng-Hu uttered almost painfully,</p><p>「Mr. Jin…?」</p><p>It was unmistakably him.</p><p>Though barely recognizable under the gore coating his skin and clothes, Wei Feng-Hu knew it was him.</p><p>Having survived a teleportation spell with only a 10% survival rate, Jin Tae-Kyung had dramatically altered the course of the battle.</p><p>His relentless advance stopped short in front of Wei Feng-Hu.</p><p>Squelch.</p><p>As he wiped the viscous blood from his hair, Jin Tae-Kyung broke the heavy silence.</p><p>"The battle is over. There are no monsters left alive."</p><p>「......!」</p><p>「......!」</p><p>A collective shiver of awe swept through the audience at his astounding revelation.</p><p>The last reports from the western front indicated that the monster legion numbered a staggering ten thousand.</p><p>Moreover, the Death Knight Lord, a formidable lieutenant of the Arch Lich, had led the charge, marking it as the most intense attack among the five fronts. \[Note: in a military context, "five fronts" refers to five distinct operational areas or zones where forces are deployed. In this case, we have northern, southern, eastern, and western fronts listed by name. There seems to be a fifth front, which could potentially be named "central" if going by the usual standards. However, this fifth front has yet to be named explicitly.\]</p><p>Conversely, only a thousand Hunters had stood against this formidable force, making the rest of the People's Liberation Army seem inconsequential.</p><p>'To think they won such a battle, let alone annihilated a legion of ten thousand monsters.'</p><p>Such a victory would have been impossible without the pivotal presence of one individual.</p><p>An S-rank Hunter could turn the tide of battle, but who since the Great Cataclysm had achieved such a feat?</p><p>Around two hundred Hunters gazed at the young man before them with deep admiration.</p><p>However, Wei Feng-Hu differed.</p><p>The aged general looked at Jin Tae-Kyung with a mix of sorrow and fear, focusing particularly on the sword in his hand.</p><p>A sword painfully familiar, and therefore, all the more heart-wrenching.</p><p>Because he knew what it meant for Jin Tae-Kyung to carry this sword.</p><p>「Did you... meet him?」</p><p>After a moment of silence, Jin Tae-Kyung replied.</p><p>"He asked me to tell you that he loves you."</p><p>「......!」</p><p>"And that he is sorry."</p><p>Wei Feng-Hu clenched his jaw, fighting the tears that threatened to overflow. Although his vision blurred, he heard the final words clearly.</p><p>"He was the greatest Hunter I have ever seen."</p><p>Tears trickled down Wei Feng-Hu’s weathered cheeks, one by one. \[Note: this one hurts in a whole new way.\]</p><p>A warm, gentle breeze enveloped him.</p><p>\* \* \*</p><p>His rank, achievements, or even his status as a Hunter are irrelevant.</p><p>He is a hero because he sacrificed himself for others.</p><p>Thus, Lei Fei will live on in my memory for a long time.</p><p>A hero resurrected as an undead but died with the dignity of a human.</p><p>He was a true Hunter and hero, fulfilling his mission to the very end.</p><p>Just like the many others who perished here today.</p><p>And also... the two who remained unconscious.</p><p>'The healer said they wouldn't wake up until all the fatigue had recovered.'</p><p>I recalled what that person who had visited earlier had said as I looked at Mr. Choi and Shao Shen deeply asleep.</p><p>Although a Top-grade Potion had mended their wounds as if erasing them, their physical and psychological exhaustion lingered significantly.</p><p>'Even I sometimes still pass out after leveling up.'</p><p>They had fought bravely to the end.</p><p>They had clung to their weapons even through the agony of limbs being severed.</p><p>"Hero, hero..."</p><p>I whispered quietly, gazing at the sword laid beside me — the weapon and cherished memento left by that hero.</p><p>Wei Feng-Hu, tears flowing continuously, had reluctantly handed the sword back to me, stating:</p><p>'He would have wanted Mr. Jin to have it.'</p><p>Is that true, Lei Fei?</p><p>I caressed the sword's blade, posing a question that would remain unanswered. The famed sword emitted a chilling keenness just by looking at it.</p><p>'Item appraisal.'</p><p>Ding.</p><p>Item Window</p><p>\[Hero's Soul\]</p><p>Type: Sword</p><p>Grade: Transcendent</p><p>Restriction: Only for those worthy of being called a hero</p><p>Description: Remarkably durable and sharp. It contains the last soul of a venerable hero, granting enhanced power to those deemed worthy.</p><p>Hero's Soul?</p><p>The name seemed apt for Lei Fei, yet the sword itself was extraordinary.</p><p>Despite the brutal combat, it showed not a single blemish; indeed, a Transcendent grade weapon, but with a particularly unique requirement.</p><p>'Only for those with a heroic spirit, huh?'</p><p>Hmm. Let's see how it feels.</p><p>Without a second thought, I took hold of the hilt and swung the sword through the air.</p><p>Swish!</p><p>Better than expected.</p><p>The balance and weight felt perfect, and I appreciated the sharpness that seemed to slice through the breeze. The system notification that followed was just the cherry on top.</p><p>Ding.</p><p>- \[Hero's Soul\] has recognized you as a possessor of a heroic spirit.</p><p>- \[Hero's Power\] has been activated. All your stats have slightly increased and your fatigue has decreased. You can draw even greater power in certain situations.</p><p>I'm unsure of what those certain situations would be, but they don't appear applicable at the moment. The boost to my stats is so negligible, it's akin to adding a mere bucket of water to a vast lake.</p><p>'It seems perfect for a character assessment, though.'</p><p>I'll call it the Character Assessment Sword.</p><p>If anyone tries to approach me, I'll test them with the Hero's Soul. If they are righteous enough for the sword to accept, I'll keep them close; if not, I'll cut them off completely like a weed...</p><p>Zap!</p><p>Suddenly, a strong current flowed through my grip, and I dropped the sword.</p><p>"What's this?"</p><p>Confusion swelled as an urgent alert and a system message materialized before me.</p><p>Beep!</p><p>- You have an evil heart!</p><p>- \[Hero's Soul\] has rejected you!</p><p>- The effect of \[Hero's Power\] has disappeared!</p><p>"......"</p><p>Absurd. It was merely a fleeting thought.</p><p>Gazing down at the dropped sword, I chuckled. It's possible some essence of Lei Fei remains within it.</p><p>But if that’s the case?</p><p>"Are you listening?"</p><p>After a brief silence, the Skeleton Warlord stored in my inventory answered.</p><p>- ...Yes.</p><p>"I have a question to ask."</p><p>- ...If your question is about the Ego Sword, then no. The sword contains only a faint trace of a soul; the person you are thinking of has already perished.</p><p>Although often unreliable, he is a Named Monster and leader of an undead legion.</p><p>Given that Lei Fei's essence dispersed upon his death and only some seemed to absorb into this sword, it’s likely his assertions are accurate.</p><p>That aside...</p><p>"Is something bothering you?"</p><p>- Hmm?</p><p>"Just, the atmosphere has seemed gloomy for a while."</p><p>Even as I spoke, I questioned the logic of it. How could an undead creature feel melancholy? Aren’t they naturally somber?</p><p>'It's a problem when someone who doesn't usually do this starts behaving this way.'</p><p>But then, the Skeleton Warlord suddenly spoke up.</p><p>- I just had a thought.</p><p>"What thought?"</p><p>- What kind of person was I in the past?</p><p>"......!"</p><p>- I have no memories at all. Although the human Lei Fei has perished, I secretly envied him because at least he got to know who he was.</p><p>It was unexpected that he harbored such reflections.</p><p>After a brief pause, I responded gently.</p><p>"Should I end your existence then?"</p><p>- ...!</p><p>"You said you were envious."</p><p>- No, no, that's not what I meant...</p><p>The Skeleton Warlord’s hasty clarification was interrupted, not by its conclusion, but by a courteous voice from outside the door.</p><p>"Mr. Jin, the Minister of State Affairs is looking for you."</p><p>It seems it's already time.</p><p>"Yes, I'll come now."</p><p>I cast a final glance at the two figures still deep in slumber before standing. Then, I voiced a thought I had yet to express.</p><p>"Well, I think he was probably a pretty good guy."</p><p>- ...Huh? Are you talking about me?</p><p>"No. I'm just talking to myself."</p><p>- Oh, yes. Right.</p><p>Yet, there was an unmistakable lift in the Skeleton Warlord’s tone. I smiled quietly as I exited the room.<br></p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-402.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-404.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

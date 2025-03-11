@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 242 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 242</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 242</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: Coldbutteredtoast</span>
+                            <span class="published-date">Published: January 8, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>The stranger was a young man, in his late twenties at most, but something about him seemed sad. And yet, for some reason, a smile was playing on his lips.<br><br>"Phew," he said. "Why are you walking so fast? Hello?"<br><br>“Do you know me?”<br><br>"Not yet!"<br><br>"So why are you following me?"<br><br>"Isn't it said that a relationship exists between people even if they've just brushed past one another?"<br><br>"We haven't even brushed past each other, though."<br><br>"It doesn't matter because we've exchanged words, instead. Let's be friends!"<br><br>Whether or not he was crazy, the stranger had well-developed muscles beneath his long robe and a sword hilt hung easily at his waist. More importantly, there was a phenomenal amount of Qi flowing through his body.<br><br>[Is he at the Peak?]<br><br>It was an outstanding achievement to have reached the Peak in his twenties, but this was something more. His energy was far in excess of normal Peak Masters. The reason that Tae-Kyung had not initially noticed may have been due to the fact that he'd spent so much time surrounded by monsters. When a person hit the triple combo of Jin Mu-Kyung, Cheong Pung and Jeok Cheon-Gang, it became that much harder to determine what was normal.<br><br>In any case, he understood enough. With a polite nod, Tae-Kyung said, "Never mind that for now. Please go on your way."<br><br>"Oh, one shouldn't be so cold-hearted with friends!"<br><br>"If we're friends, can I speak informally?"<br><br>"Haha, of course!"<br><br>"Then get lost, you weird bastard!"<br><br>As Tae-Kyung marched away, he thought for a moment that he had left the stranger behind. But glancing to the side, he found the young man had caught him and was walking alongside. "That was the first time in my life I've heard such abusive language," said the young warrior, cheerily, "so my mind went blank for a moment. So honest and direct. This is how real friends should be!"<br><br>"Please leave me alone. I've asked you nicely."<br><br>"What's your name, friend?"<br><br>"Michael Johnson," said Tae-Kyung.<br><br>"That's a strange name."<br><br>Tae-Kyung glanced across at him. "Did you actually believe that?"<br><br>"I'm curious, are you a student of one of the Great Sects or the Five Great Houses?"<br><br>"Why would you want to know?"<br><br>"I'm just interested. I heard you killed the enemy in a single blow?"<br><br>Tae-Kyung pulled up short. "What? Who?"<br><br>"The leader of those Black Mountain Clan. That was your handiwork, right?"<br><br>That rang a bell. Tae-Kyung remembered the hairy brigand he'd met on the way through Henan. He'd seemed strong for a bandit, but it was surprising to hear that he'd been so well-known. "How did you hear that?"<br><br>"A while ago, I was having a drink with some merchants from the Golden Frog Consortium. The surviving bandits said they'd been attacked by a monster wearing iron balls and chains." Smiling broadly, the stranger pointed to the shackles. "Like those."<br><br>When he had arrived, Tae-Kyung had suspected that they might cause a misunderstanding, so he'd covered the chains with a cloth and disguised them as a bag. Apparently, that wasn't enough to fool the eye of a master.<br><br>"But I guess you were just passing by. I was just interested."<br><br>"Hmm."<br><br>"So, what's your name, really?"<br><br>[Should I tell him?] After thinking for a moment, he started to wonder which school this eccentric man represented. "I'm Jin Tae-Kyung."<br><br>"Oh, is that Jin Tae-Kyung from the Jin Family of Taiyuan, Shanxi?"<br><br>"You know me?"<br><br>"I do. There are so many rumours that the Sleeping Dragon has become a disciple of the King of Fire. A dragon needs to breath flame, right?"<br><br>A year could be a short time or long, but either way it was enough time for rumours to spread across the mainland.<br><br>"What about you?"<br><br>"Ah, me?" The young man smiled and scratched his head. "Jongli Chu. I'm called Jongli Chu from Yunnan. Please forgive me, but there's a reason why I can't reveal any other private matters."<br><br>"Jongli Chu from Yunnan?"<br><br>"That's right! My nickname is 'Flourishing Sword' (常勝劍 -- Chinese: Eternal Victory Sword). Have you heard of me?"<br><br>Of course, he knew distant Yunnan, but he'd never heard of either name. That said, he'd also spent a year stuck in the Chamber of Divine Flame, so wouldn't even have recognised the most famous swordsman in the world. "No, I'm sorry," said Tae-Kyung. "I haven't."<br><br>"Really? Well, it doesn't really matter." The strange youth gave an easy shrug. Reputations were hard won and precious in Murim, so a warrior of his age would normally be disappointed. Instead, with an exaggerated whisper, Jongli Chu confessed, "Actually, I just invented it. A sword flourish and a flourishing swordsman: always getting better, always winning. Pretty cool, huh?" As Tae-Kyung stared at him like he was crazy, he grinned. "In order to celebrate this newfound friendship, how about we have a drink or two?"<br><br>"Uh, we could do, but everywhere's full."<br><br>"What are you talking about? I've been following you around and there have always been a couple of seats free."<br><br>"...The stewards have all told me that there weren't."<br><br>"Then why have they been telling me to come in because there's space?"<br><br>Damn it. Of course. No matter whether or not it was the Convocation, did it make sense that not one of the dozens of local inns had a single empty seat?<br><br>[Fuck it. I can't blame them. I'm so filthy.]<br><br>At this point, even washing in a stream would have to do. Maybe then he could avoid the need to sleep on the street.<br><br>"I know of a good place. Let's go together and I'll get a round in to celebrate our friendship." 	<br><br>"What friendship? Look. Jongli Chu, right? I think we should go our separate ways."<br><br>Even though he was practically broke, he had no intention of flirting with a weirdo.<br><br>[Wasn't there a river around here?]<br><br>As Tae-Kyung walked away, tried to recall where he had seen fresh water, Jongli Chu strolled alongside him. "Where are you going?"<br><br>"You don't need to know. Stop following me."<br><br>"Then, one last question! Where will I see you again, friend?"<br><br>"At the tournament."<br><br>That was enough. Calling his Qi, Tae-Kyung crossed a hundred streets in an instant.<br><br>As he went, the voice of the young master echoed in his ears. "See you next time!"<br><br>[Not if I can help it, man.]<br><br>***<br><br>One left; one stayed behind.<br><br>Jongli Chu stared off in the direction that the warrior had disappeared.<br><br>"Jin Tae-Kyung," he murmured. "The Sleeping Dragon of Shanxi."<br><br>Dimples appeared, then, in cheeks that didn't even have a single wrinkle. Laughing happily, the young warrior turned and strolled back to a nearby inn.<br><br>The door was quickly answered by the scarred steward who had turned Master Jin away. The brute grinned and bent his back in a bow. "Come in!"<br><br>"Are there any rooms left?"<br><br>"Oh yes, of course."<br><br>With a friendly smile, Jongli Chu stepped inside.<br><br>***<br><br>When he stood, hot water slopped around inside the barrel. Tae-Kyung had found the empty keg in an alley, filled it with water from a stream, and then heated it with his Flame Qi. Now, after soaking, throwing away the water and refilling it several times, he felt like he'd lost several kilos of grime. Some shampoo or body wash would have been nice, but the inventories for Murim and Hyundai (현대의 -- Korean: modern) were separate, so he couldn't bring any with him. Still, even this modest bath had been amazing.<br><br>[I finally feel human again... now I just need some clothes...]<br><br>Frowning, he looked at his rags. It was hard to tell whether they were clothes or trash. Aside the embarrassment of wearing them, there probably wasn't any point in washing them at this point.<br><br>It was decided. With the meagre funds remaining, Tae-Kyung went out to buy some cheap clothes. The street thronged with people of different classes and occupations, with strange garb or hairstyles from faraway places, but even here warriors stood out. Naturally, he could not help but eavesdrop on their conversations as they passed.<br><br>"Did you hear that the Sword Dragon of the Namgoong Family isn't participating in this Convocation?"<br><br>"Why would he pull out? Is there any problem?"<br><br>"I don't really know. He's a pretty strong candidate for the championship, so it's a pity. More and more unknown faces, man."<br><br>"Yeah, they say he's got the most potential of the Ten Dragons and Phoenixes, too... ah, the age limit is up to thirty-five, so maybe next time?"<br><br>"That makes sense. Besides, it's a big world out there. At least that means there's a good chance that we'll get to see someone strong who isn't from the Great Sects or Families."<br><br>"Like who? Like the Heavenly Blade or Sleeping Dragon from the Jin Family of Taiyuan?"<br><br>"Right! I don't know if either is attending this year, though."<br><br>Just hearing it made Tae-Kyung blush, so he hurried along the road and out of earshot.<br><br>Soon after, turning down one of the main streets, he spotted a large, impressive storefront displaying a huge range of clothing and fine silks. Taking a chance, he stepped into the busy emporium and looked around. Inside, the salesman nearest the door was fawning over a group of female customers.<br><br>"Some say that clothes are like wings and they look amazing on you. Are you fairies, by any chance?"<br><br>"Excuse me," said Tae-Kyung. As the clerk glanced over, visibly irritated, he continued, "Why do you think I'm here?"<br><br>"Begging, I presume?"<br><br>Still, the ragged clothes exposed rather than hid his defined muscles.<br><br>Tae-Kyung stared at the clerk, who flinched and said, "What? Am I wrong?"<br><br>"You should stop saying things you'll regret and show me some clothes."<br><br>"Clothes? Really?"<br><br>"Really. I have money, so don't treat me like a beggar." Tae-Kyung produced his single silver nyang.<br><br>As the coin glinted in the light, the salesman's expression changed, but not in the way Tae-Kyung had expected. "Is that all you've got?"<br><br>"Yeah, so what?"<br><br>"There's not a lot you can buy here for a nyang, 'sir'."<br><br>"Bitch what?" Had the price of silver dropped during his year in the cave?<br><br>Seeing his confusion, the clerk snorted. "Have you read the price tags? You can read, I presume?"<br><br>Involuntarily, Tae-Kyung glanced over at the wooden placard on the wall. Written in letters the size of a door, the sign proudly proclaimed: [The Owner Has Gone Crazy! For A Limited Time Only, A Special Convocation Discount! Warrior Uniforms For Just Two Nyang!]<br><br>"Two nyang? For uniforms?"<br><br>"It's the only way to live. Our store sells only the finest materials, so even our uniforms are made from high-quality silk."<br><br>It was a department store brand. Tae-Kyung hadn't expected to be embarrassed this way when he'd entered; other employees and customers were staring and whispering about him. "Oh my, the poor beggar. Why hasn't he left, yet? He must be so ashamed!" "I guess he must be. He looks strong and handsome, though. Maybe I should give him a job in my household?" "Oh, you're so merciful, Gaga! I'm sure he'd be delighted!"<br><br>[It pisses me off being treated like a beggar, but people saying shit like that pisses me off twice as much!] Tae-Kyung shouted in anger. "Who's the beggar!"<br><br>Customers shrieked in fright, backing away with hands before their mouths. At the same time, several uniformed guards rushed forward and surrounded Tae-Kyung, the truncheons in their hands held ready to strike. "You bastard!" cried one. Another yelled, "Do you know where you are, beggar!" and "Let's kick out this scum!"<br><br>"Good idea." Tae-Kyung rolled up his torn sleeves. "Let's break some shit. Who's the owner here?"<br><br>"That would be me," said a deep growl. "This isn't the place to come with your threats. You're the kind who needs to see the coffin before you come to your senses."<br><br>Turning his head, Tae-Kyung saw a powerful figure approaching. A black robe embroidered with bamboo thickets and writhing dragons. A calloused hand resting on the sword hilt, as though ready to draw at any moment. His wry smile was visible beneath the wide-brimmed bamboo hat of a wandering warrior. "You may have some skills, beggar. But if you don't want to see blood, back off."<br><br>Tae-Kyung cocked his head. "And if I do want to see it?"<br><br>"Unnamed warrior. The price of your recklessness is death."<br><br>Hearing a line that came straight from a Kung Fu movie, the crowd cheered loudly. Once the cheers had died down, Tae-Kyung raised a hand. "Hey, can I ask you a question first?"<br><br>"Speak. It'll be the last thing you ever say."<br><br>Reaching forward, Tae-Kyung lifted the rim of the bamboo hat. "Aren't you Hyuk Mu-Jin?"<br><br>Behind him, written on the signboard of the store, it was written, 'Hyuk Fabric Store'.<br><br>"I'll give you three seconds, you bastard. Get your head on the ground."</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-241.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-243.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 374 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 374</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 374</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: March 22, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>Tang Ho-Ryong, proprietor of the Poison Dragon Pavilion, stood to welcome his visitor.<br><br>An unfamiliar aura of intimidation radiated from the man of noble presence who had just stepped through the doorway.<br><br>“You’ve had a hard journey coming all this way.”<br><br>“Compared to the hardships the Tang Family of Sichuan has experienced, this is nothing. I express my deepest regrets once again.”<br><br>Despite his rugged exterior, the visitor's voice was soft and soothing, carrying an authoritative undertone that demanded attention.<br><br>Was this the distinctive aura of a leader, the kind that commands attention? Tang Ho-Ryong, with a gaze both tender and penetrating, was suddenly reminded of someone.<br><br>‘This feels... like facing my elder cousin.’<br><br>This thought slightly puzzled Tang Ho-Ryong.<br><br>He had heard that the man before him was under forty, quite young by any standard.<br><br>Conversely, his elder cousin was not only older but a prominent figure in Murim.<br><br>He had distinguished himself in the Great Faction War, amassing considerable military achievements and revitalizing a once-diminished lineage as its resolute Patriarch.<br><br>Ten Thousand Poisons Asura Tang Sa-Dok.<br><br>Tang Ho-Ryong, the acting Patriarch of the Tang Family of Sichuan, felt a heavey heart as he reflected on his still-comatose elder cousin.<br><br>‘Please wake up soon and lead us, Patriarch.’<br><br>Born into a lineage of martial artists, Tang Ho-Ryong excelled in the arts of poison and hidden weaponry.<br><br>Yet leadership presented an entirely different challenge.<br><br>Lately, the burdens were relentless, leaving no room for grieving lost family members or harboring resentment due to the myriad crises at hand.<br><br>'How I wish someone like him could stand in my stead.'<br><br>Thus, Tang Ho-Ryong found himself envying the man before him.<br><br>This wasn't merely a superficial assessment. The tales of the man's exploits were vast and grand.<br><br>Even if only a fraction were true, this visitor had the makings of a leader.<br><br>"Acting Patriarch Tang. Is there something on my face?”<br><br>“No, nothing at all. I was just too preoccupied and acted rudely.”<br><br>The man accepted Tang Ho-Ryong's swift apology with a grave nod.<br><br>“It’s understandable. After such a tragic incident that you’ve been through.”<br><br>The calamity that had befallen the Tang Family of Sichuan was too profound to be merely labeled as tragic.<br><br>Dozens of kin had perished, and much of their estate lay in ruins.<br><br>Preserving their lineage offered scant comfort when faced with the daunting task of restoring their former stature.<br><br>“The disciples of the Sichuan Murim are stepping forward to help... but I worry about what lies ahead.”<br><br>Had Patriarch Tang Sa-Dok faced this scenario, not a trace of vulnerability would have surfaced, unlike Tang Ho-Ryong.<br><br>The visitor, with his sincere approach, gracefully touched the teacup with his slender fingers.<br><br>"I believe you know why I have come here."<br><br>"I understand you're here to investigate the Blood History of the Three Great Sects."<br><br>"To be precise, when I first left Henan, it was to find the beast that murdered the late Poison King and the Heaven-Stunning Shinni. However, the situation has drastically changed on my way here."<br><br>"Indeed. Those Dark Heaven bastards have shown their claws."<br><br>"While there was a precedent in Henan, the fact that they brazenly attacked three renowned great factions of Murim all at once is evidence that a war is on our doorstep."<br><br>A minor upheaval often spirals into greater turmoil.<br><br>Nevertheless, the reality of Dark Heaven's existence is now irrefutable and beyond concealment.<br><br>Since the harrowing events surrounding the Blood History of the Three Great Sects, seven days and nights have elapsed.<br><br>The news has spread far and wide, with messengers dispatched globally.<br><br>And from the fear of an imminent war, a united front has emerged.<br><br>"I've heard that the righteous Murim factions in Henan are uniting after the incident at Shaolin. So, perhaps..."<br><br>"Our focus reamins on rebuilding and preparing."<br><br>The man continued with a heavy voice.<br><br>"For that reason, might I propose that you go to Henan?"<br><br>"Henan?"<br><br>"Yes. The event you are preparing for will happen soon."<br><br>After a moment of contemplation, Tang Ho-Ryong responded.<br><br>"While I'm honored by your proposition, my current responsibilities as the acting Patriarch forbid me from leaving. I must..."<br><br>"Acting Patriarch Tang."<br><br>"Speak."<br><br>"Just as you said, you are the acting Patriarch. Naturally, you cannot leave the Tang family members behind."<br><br>"......!"<br><br>It was only then that Tang Ho-Ryong grasped the full extent of the visitor's suggestion, his expression one of astonishment.<br><br>Such a notion had never crossed his mind before.<br><br>"So you're saying... I should move my family's home?"<br><br>"Perhaps."<br><br>The visitor's penetrating stare seemed to discern Tang Ho-Ryong's innermost thoughts.<br><br>"Grandmaster Mae Jong-Hak told me that a war greater than the Great Faction War is about to erupt."<br><br>"The Sword Saint..."<br><br>Tang Ho-Ryong hesitated, his voice trailing off.<br><br>This wasn't just the opinion of the Sword Saint alone.<br><br>The Shaolin incident had sparked widespread outrage and alertness among the righteous factions of Murim, with a new Murim Alliance's formation already in motion.<br><br>The entire righteous Murim was mobilizing for the looming conflict.<br><br>'Can our family survive in such circumstances?'<br><br>This daunting thought weighed heavily on his heart.<br><br>The Sichuan Tang Family had faced unparalleled devastation.<br><br>Additionally, both the Qingcheng and Emei Sects had been greatly weakened.<br><br>Should they face another assault, defense would be impossible.<br><br>"Ah..."<br><br>A sigh of resignation slipped from Tang Ho-Ryong, his expression one of utter defeat, until a soothing voice reached him.<br><br>"What do you think is the reason the Tang Family of Sichuan has lasted for hundreds of years?"<br><br>"It is..."<br><br>"Because it is the Tang Family. Even if you remove the 'Sichuan', that fact does not change."<br><br>"......!"<br><br>"If you decide to leave, the righteous Murim will help the Tang Family."<br><br>Overcome with emotion, Tang Ho-Ryong found his voice.<br><br>"We have made numerous enemies until now. There are those among the Nine Great Sects and the Five Great Families who are uncomfortable with our family. Will this be a problem?"<br><br>"Everything will be conducted in a fair and just manner. Rest assured and build a new nest. Whether it's Henan, Shaanxi, or..."<br><br>The man's lips curved into a comforting smile.<br><br>"Shanxi might be good as well."<br><br>"Shanxi?"<br><br>"Just let me know. There's plenty of land available."<br><br>In that moment, Tang Ho-Ryong recalled an important detail he had overlooked.<br><br>The man before him was the unifier of Shanxi's Murim, the largest landholder in Shanxi Province, and a man of considerable wealth.<br><br>"Thank you. Truly, thank you, Master Jin!"<br><br>"It's nothing."<br><br>Jin Wi-Kyung, the lesser family head of the Jin Family of Taiyuan, responded with a dignified yet gracious nod to the bow from the interim leader of the Sichuan Tang Family.<br><br>Thud.<br><br>"I heard you called for me."<br><br>Jin Wi-Kyung, spotting a younger man at the pavilion door, issued a roar reminiscent of a lion's.<br><br>"Younger brother!"<br><br>Thud, thud, thud, thud, crash!<br><br>It was a charge like that of an enraged bull.<br><br>The scene of the brothers' reunion, something between a hug and a collision, brought to Tang Ho-Ryong's mind a well-known fact about Jin Wi-Kyung.<br><br>'They say he absolutely adores his younger brothers.'<br><br>The formidable Leader of Shanxi's Murim and the province's most affluent landowner seemed to vanish, replaced by a tender-hearted elder sibling.<br><br>'Clearly, he lacks the seasoned poise of the Tang Patriarch. He is quite youthful, indeed.'<br><br>Tang Ho-Ryong was, of course, oblivious to the existence of Mimi-chan.<br><br>\* \* \*<br><br>"Youngest brother!"<br><br>Jin Wi-Kyung, with tears spraying, lunged to embrace me fervently.<br><br>After being in this world for two years, I fully expected this reaction.<br><br>Crack!<br><br>...But I hadn't anticipated this.<br><br>As the sound of bones misaligning filled the air, I sighed, feeling like an anaconda from the Amazon rainforest was squeezing my entire body.<br><br>I had willingly embraced him, happy for the reunion, but his reaction was the most intense it had ever been.<br><br>"Hold on, eldest brother. Let's talk after you let go, please."<br><br>"Eldest brother? What's with the formal title? Didn't I tell you to just call me hyung? You've changed, haven't you?"<br><br>"Okay, I got it, now please let go."<br><br>"You used to talk informally when you were younger. Why use honorifics now? You've changed!"<br><br>"Let go, damn it."<br><br>"Gasp, even at your worst, you never cursed! You've changed......!"<br><br>"Wow, you're really laying it on thick."<br><br>Might his primary occupation be a martial artist, with a sideline as a Dementor?<br><br>Feeling as if my soul was being extracted, I recoiled and extended my hand.<br><br>Swoosh, thump!<br><br>Jin Wi-Kyung, propelled backward, landed with a resounding thud.<br><br>The elder from the Tang Family of Sichuan watched, taken aback.<br><br>"It's okay, it's alright. We often roughhouse like this among ourselves."<br><br>"But still..."<br><br>"Look. He's getting up just fine."<br><br>Jin Wi-Kyung rose effortlessly, his eyes shimmering with emotional tears.<br><br>"You've become stronger since I last saw you."<br><br>At his unchanged demeanor, I couldn't help but let out a snicker.<br><br>"Really, some things never change."<br><br>"Never change? Do you know how worried I've been these past two months? I've been so restless at night and lost my appetite. I'm becoming skin and bones."<br><br>I said, eyeing his muscular physique.<br><br>"Seems like your 'skin and bones' are quite well-fed."<br><br>Two months, has that much time passed?<br><br>The realization hit me that my departure was drawing near.<br><br>Given that a ten-day stay in this world equates to merely an hour back in the other...<br><br>'It must have been about six hours. The plane might be landing soon.'<br><br>The timing felt right, especially after surmounting the significant challenge posed by the Western Heavenly Demon Lord.<br><br>Cutting to the chase, I broached the subject.<br><br>"When do we leave?"<br><br>"Our youngest, how much you must have suffered... Huh?"<br><br>Jin Wi-Kyung, who had been scrutinizing me closely, stopped.<br><br>"What did you say?"<br><br>"You came to take me with you, right? And the Third Monster."<br><br>Jin Wi-Kyung's expression turned to one of astonishment.<br><br>"How did you know that?"<br><br>An old man from the Tang Family of Sichuan, evidently a person of stature, showed a look of disbelief.<br><br>"Master Jin. Weren't you here to investigate the whole affair?"<br><br>"That's correct, but among the investigation team, including myself, some of us will return to Henan. Just before arriving in Sichuan, we were tasked with escorting one of the main culprits behind the Blood History of the Three Great Sects, the Third Monster."<br><br>"So, the conversation about our home is..."<br><br>"Of course, the offer still stands. However, I know it would be difficult for the Tang family to act immediately."<br><br>"That's right. The Patriarch is still unable to travel long distances. We would also need to get the agreement of the other family members."<br><br>"Yes. And..."<br><br>While Jin Wi-Kyung engaged in whispered dialogue with the elder, he discreetly asked me through a Sound Transmission.<br><br>\- But, how did you know?<br><br>\- It was just a guess. It just seemed like it would be this way based on the situation.<br><br>\- Ah, our youngest. You overcame such a great ordeal and even sharpened your mind!<br><br>\- .......<br><br>That came across as slightly insulting.<br><br>To be truthful, my insight wasn't purely situational. A quest involving the escort of the Third Monster had revealed it to me.<br><br>"So, when do we leave?"<br><br>Upon concluding his discussion, Jin Wi-Kyung addressed my inquiry.<br><br>"Knowing already makes things easier. The sooner, the better. Are you ready?"<br><br>"All I brought are the clothes on my back, really."<br><br>And the two bundles wrapped in bandages.<br><br>Jin Wi-Kyung, acknowledging this, inquired,<br><br>"Acting Patriarch Tang. Where is the Third Monster?"<br><br>The man referred to as Acting Patriarch Tang answered,<br><br>"He's been tightly bound and kept under strict surveillance. Ever since his testicles were crushed, he's been looking for a chance to commit suicide, so be cautious." \[Note: just this fact alone makes me want to revert the title "Dark Saint" back to "Slaughter Saint".\]<br><br>"......That's tough."<br><br>I'd feel the same way in his situation.<br><br>We were both ready to move quickly.<br><br>After a brief contemplation, Jin Wi-Kyung casually proposed,<br><br>"Then, let's say half an hour. Is that okay?"<br><br>"No problem."<br><br>My response was immediate. Just then, commotion erupted outside the pavilion, accompanied by cries of,<br><br>"The Patriarch! The Patriarch has awakened!"<br><br>Jin Wi-Kyung adjusted his earlier statement,<br><br>"One hour. Let's make it an hour."<br><br>"......Yes. That would be better."<br><br>Dammit. I could have run away with the Ring of All Poisons.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-373.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-375.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

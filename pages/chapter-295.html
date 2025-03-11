@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 295 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 295</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 295</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: December 9, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>A suit of armor glimmered, its surface polished to a lustrous sheen. Its dark green cloak fluttered like ethereal wings and purple, ghostly flames flickered in its vacant eye sockets.<br><br>Then, a voice pierced the silence.<br><br>\- Come. Down. Hu. Man.<br><br>The voice, grating like metal against stone, echoed. I teetered on the edge of the tree branch.<br><br>'Did it just speak?'<br><br>This wasn't an entirely foreign experience. The wyvern I encountered before, the infamous 'One-Eyed Carus,' had spoken too.<br><br>Yet, the notion of a speaking monster remained a startling rarity.<br><br>“A Named Monster…”<br><br>The words slipped from my lips, a whisper tinged with disbelief.<br><br>Indeed, it was said that only the so-called Named Monsters possessed the gift of speech.<br><br>And right before my eyes, a Named Monster was born.<br><br>No, not born – it had 'evolved'.<br><br>\[Lv.105 Skeleton Warlord\]<br><br>Evolution, huh? I've never heard or seen a Named Monster do this.<br><br>'What is this, Digimon?'<br><br>Doubt clouded my mind. Was this creature truly a monster? Capable of evolution?<br><br>Even I, light years away from an ordinary life, felt a surge of surprise. The guild members' reactions were beyond imagining.<br><br>“What's that?”<br><br>“Wait, did it just speak?”<br><br>“I've never seen anything like that in the Monster Encyclopedia…”<br><br>Of course.<br><br>Named Monsters are anomalies, each with unique traits and unpredictable power. Their emergence always brings the unknown.<br><br>'But why now?'<br><br>I licked my dry lips.<br><br>The Skeleton Warlord's true power was unknown, yet its aura screamed of a Named Monster's might.<br><br>'Plus, there are two A-rank Skeleton Knights.'<br><br>Around them, a horde: 150 B-rank Skeleton Mages and Warriors, collectively as daunting as an army.<br><br>However, targeting the Warlord and its core force, the Skeleton Knights, might tip the scales.<br><br>'I’ve been non-stop raiding up until now.'<br><br>Currently, only about fifty members of our guild have passed through the gate.<br><br>Yet, more than half are battle-hardened warriors, sculpted by training sessions akin to traversing through hell itself.<br><br>After a week of relentless encounters with skeletons, these seasoned fighters could likely withstand adversaries double, perhaps triple, their number.<br><br>'The new recruits also have outstanding basic skills.'<br><br>Only the finest were selected, lured by salaries rivaling those of the larger guilds.<br><br>This recruitment cycle, I took a direct hand in the process, evaluating interviews and various assessments, meticulously gauging their potential for growth.<br><br>It was akin to handpicking the sturdiest saplings, those capable of weathering the Ares Guild's storm, and planting them firmly in the Peace Guild's front lawn.<br><br>'It's worth taking a bit of a risk.'<br><br>Mr. Choi and others had temporarily abandoned their guild responsibilities, dedicating themselves to mastering the Jin Family's Cultivation Technique.<br><br>Their presence would have simplified the battle, but even if they were here, I wouldn't have called them to arms.<br><br>A hidden blade wields its deadliest force from the shadows. It must remain concealed, especially in a place swarming with prying eyes.<br><br>With my thoughts concluded, I summoned a member.<br><br>"Jin-Soo!"<br><br>"Yes!"<br><br>Kim Jin-Soo, effectively my second-in-command, responded promptly. I gestured towards the Skeleton Warlord with my dagger.<br><br>Its eye sockets, still ablaze with ghostly flames, seemed to fixate on me.<br><br>“That's a Named Monster.”<br><br>A wave of gasps and tense swallowing resonated amongst the guild members.<br><br>Many were novices, their hunting careers spanning less than two years. Their faces were etched with apprehension, confronting a Named Monster – a rarity even for veterans of two decades.<br><br>But Kim Jin-Soo's reaction was distinct. He absorbed the shock quickly, nodding with composed acknowledgment.<br><br>“I see.”<br><br>"Look at you, acting all calm."<br><br>“To be honest, I'm a bit shocked, but we can't just stand here and be taken by surprise, can we?"<br><br>Look at this guy.<br><br>His bravery was apparent from the beginning, but displaying such valor in his first year was extraordinary.<br><br>Feeling my gaze, Kim Jin-Soo allowed a faint smile and added,<br><br>"If the situation were desperate, you would have signaled a retreat long ago, right? Am I wrong?"<br><br>“Hmm.”<br><br>"…Uh, did I miss something?"<br><br>“No.”<br><br>I let out a chuckle, shaking my head.<br><br>“You’re right. This is a fight worth taking on.”<br><br>“Ah.”<br><br>“I'll take those three over there. The rest are yours. How long do you think you can hold them off?”<br><br>After a brief moment of thought, Kim Jin-Soo replied.<br><br>“The new guys lack experience, but still... we should be able to hold out for about an hour.”<br><br>"An hour?"<br><br>"Yes. At least an hour."<br><br>Kim Jin-Soo’s reply was laced with confidence. Just then, the Skeleton Warlord slowly opened its gaping maw, unleashing a sound so strange and unnerving, it defied description.<br><br>\- Gr․ ah, ah․ ah. Ah!<br><br>Ding!<br><br>\- \[Lv.105 Skeleton Warlord\] has used a special skill!<br><br>\- Special Skill, \[Summon the Dead\] has been activated!<br><br>\- The dormant dead heed their commander's call!<br><br>A ghastly wail reverberated, a sound that seemed to rouse the accursed dead.<br><br>Thud, thud-thud-thud!<br><br>The ground convulsed, quaking under our feet. Countless pale skeletons burst forth from the earth, rapidly forming ranks.<br><br>Skeletons armed with dirt-encrusted bone swords and wooden shields, still bearing roots. Mages adorned with skull-themed necklaces stood amidst the throng of Skeleton Warriors.<br><br>Even the A-rank Monsters, the Skeleton Knights, swelled in their numbers.<br><br>With this new emergence, the skeleton forces now numbered well over 300.<br><br>"..."<br><br>"..."<br><br>In the ensuing silence, I finally spoke up.<br><br>“Jin-Soo.”<br><br>"Yes."<br><br>"An hour, can you do it?"<br><br>"Uh, well..."<br><br>“Be honest.”<br><br>“...Maybe closer to 30 minutes.”<br><br>“Really?”<br><br>“Yes. The situation has worsened, but we should manage.”<br><br>Kim Jin-Soo said with a grim face as he looked at the Skeleton Warlord.<br><br>“That is, if that thing doesn't pull any more tricks.”<br><br>“It probably will.”<br><br>“You think so?"<br><br>\- Gr․ ah, ah, ah. Ah!<br><br>“See? Told you."<br><br>Kim Jin-Soo sighed.<br><br>“Hah, please."<br><br>Ding.<br><br>\- \[Lv.105 Skeleton Warlord\] has used a special skill!<br><br>\- Special Skill, \[Commander's Battle Cry\] has been activated!<br><br>\- Under the command of the Skeleton Warlord, the strength, agility, and magic of the monsters have been enhanced!<br><br>\- The enemy’s momentum has greatly increased!<br><br>The Skeleton Warlord’s roar thundered through the air.<br><br>Its impact was tremendous.<br><br>"Wow…”<br><br>Utilizing \[Qi Sense\], I observed that each monster had gained 5 levels.<br><br>The aura emanating from the now 300-strong skeleton army was formidable, a stark contrast to their prior state.<br><br>Turning, I caught Kim Jin-Soo’s dazed expression.<br><br>"Still think 30 minutes is feasible?”<br><br>“.......”<br><br>His eyes spoke volumes, silently cursing me.<br><br>Even I had to admit the situation was dire. Without delay, I issued the next command.<br><br>"Retreat slowly. Don’t provoke them."<br><br>“How far should we retreat?"<br><br>“To the trail right in front of the gate. Stay ready to escape anytime.”<br><br>“The trail is narrow, so it will be easier to fight.”<br><br>“Exactly."<br><br>Kim Jin-Soo was right; the trail leading to the gate was so confined that only about five men could pass through it side by side.<br><br>Even for skeletons, inherently slender in build, only about seven or eight could squeeze through the narrow trail at once.<br><br>Yet, there was a change in plan...<br><br>“Actually, just get out of here."<br><br>A frontal assault was no longer an option.<br><br>“What?”<br><br>“Take the kids and get out through the gate.”<br><br>Upon hearing my command, confusion washed over Kim Jin-Soo’s face.<br><br>“Then what about you, Sunbae...”<br><br>“You think I'll be playing tag with them while you guys are leaving? Someone needs to buy time."<br><br>“Sunbae! That's dangerous!"<br><br>“Jin-Soo. No, dear members of the Peace Guild."<br><br>I gazed down solemnly at the fifty guild members, their faces turned up towards me like baby birds.<br><br>“In our Peace Guild, the safety of our members is always our top priority.”<br><br>Some of the more seasoned fighters muttered under their breath.<br><br>“That's the biggest nonsense I've heard this year.”<br><br>“I think I almost died seven times this week.”<br><br>“I'm at about ten.”<br><br>The rookies, fresh on their first day, had eyes shimmering with fear.<br><br>"Sunbae!"<br><br>"Ah, damn it!"<br><br>“To go to these lengths for us…!”<br><br>My voice grew heavy with emotion.<br><br>“For your safety, I'll face any peril. Even if it costs me my arms! Even if my legs are severed! I vow to see each of you safely returned to your families!"<br><br>A fervor ignited among some members.<br><br>“We can fight!"<br><br>“Let us fight with you!"<br><br>I clenched my teeth, shaking my head resolutely.<br><br>“I cannot permit it! In times like these, sacrifice is inevitable, and I must be the one to step forward."<br><br>“But still……!”<br><br>Swoosh! Shush!<br><br>Before any further objections could be raised, a sinister black aura surged forth.<br><br>The Skeleton Warlord, towering at a colossal height, cleaved through a massive tree with a circumference of several meters. Its voice echoed like the scrape of metal on stone.<br><br>\- I. Will. Destroy. Kill. Obliterate․ You. All!<br><br>Swoosh, thud!<br><br>I jumped down from the tree and shouted.<br><br>“Everyone, return to the gate! I’ll cover the rear!"<br><br>This time, there were no dissenting voices. The skeletal army, now numbering over 300, began their relentless march.<br><br>Clatter, thump, clatter, thump.<br><br>Their approach, bolstered by the Warlord’s special skill, resonated with formidable force.<br><br>A ghostly light flickered within their hollow skulls.<br><br>\- Roaaaaar!<br><br>The Skeleton Knight, resembling a deputy commander, unleashed a fierce roar. Rusted arrows and spells of offense flew from their ranks, aimed directly at the Peace Guild members.<br><br>Whish, whish, whoosh!<br><br>"Defend!"<br><br>“Tanks! Don’t lower your shields, retreat slowly!"<br><br>“Commence covering fire!"<br><br>The gap between us spanned roughly 300 paces. A strategic withdrawal required expanding this distance.<br><br>I wielded White Flames, confronting the monster's vanguard.<br><br>"You fiends! Dare to attack our precious Peace Guild members!"<br><br>Swish, crack!<br><br>My spear, surging with energy, shattered bones effortlessly. The spear's radiant energy cleaved through the air, felling ten foes in a single strike.<br><br>Then, three Skeleton Knights bore down on me simultaneously.<br><br>\- Growl!<br><br>\- Roar!<br><br>Swish!<br><br>Three streaks of dark aura grazed past, the wind pressure leaving a wound on my neck.<br><br>Despairing cries from the guild members, now fleeing down the trail, filled the air.<br><br>"Ah! Sunbae!"<br><br>"It’s dangerous!"<br><br>Clank, clank, clang!<br><br>I deflected the incoming attacks with unyielding determination, my voice firm and commanding.<br><br>“Go ahead! I’ll be right behind you!"<br><br>“But……!"<br><br>“Jin-Soo! Hurry up and go!”<br><br>After a brief internal struggle, Kim Jin-Soo rallied the guild members toward the gate, his voice resonating with urgency.<br><br>"You have to make it back!”<br><br>I offered a faint nod and a reassuring smile.<br><br>“Okay.”<br><br>"I’m sorry, Sunbae!”<br><br>"It’s fine. Just go!”<br><br>“Sob!”<br><br>Kim Jin-Soo's form, laden with reluctance, vanished beyond the gate's threshold.<br><br>Left alone, I stood amidst a sea of skeletons crowding the narrow trail.<br><br>\- So. Fool. Ish. Human.<br><br>Creak!<br><br>The Skeleton Warlord emerged, parting the skeletal ranks like a macabre tide.<br><br>\- Are. You. Pre. Pared. To. Die. Hu. Man?<br><br>I paid no heed to its taunts.<br><br>Only after a thorough sweep of the area, ensuring everyone's safe passage, did I exhale in relief.<br><br>“Phew, they’re finally safe.”<br><br>\- ......What?<br><br>“Those kids are too sensitive. When the team leader says to run, they should just bolt. What help could they offer? Right?”<br><br>I dabbed at the blood trickling from my neck. I tried to control it, but the cut was deeper than I thought. Maybe about 0.2 centimeters?<br><br>“Ah, damn. What a waste of blood.”<br><br>The Warlord's eerie purple flames flickered uncertainly.<br><br>\- What. The․ Hell. Are. You. Schem. Ing?<br><br>“Nothing out of the ordinary.”<br><br>My smirk was barely concealed as I surveyed the skeleton army, a legion of seasoned cadavers, crammed into the confined space.<br><br>“You all are going to die here. That’s all you need to know."<br><br>\- What. Did. You. Say?<br><br>Rather than offering a verbal response, I inhaled deeply, centering myself.<br><br>Every muscle in my body tensed, ready for action, as the fiery dragon residing within my dantian responded to the intricate maneuvers of the Scorching Sun Divine Arts.<br><br>In the next instant, I became a seamless extension of the spear in my grasp, propelling myself forward with a singular purpose.<br><br>"One Strike."<br><br>Kwaahhh!</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-294.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-296.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

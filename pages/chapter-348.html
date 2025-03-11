@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 348 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 348</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 348</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: February 19, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>Figures clad in black robes stood in formation, their ranks quickly swelling. Their presence was not merely quantifiable by their substantial numbers, which easily surpassed the hundreds, but also by their aura.<br><br>It was oppressive.<br><br>The overwhelming presence emanating from those with eyes hollowed from darkness and postures unyielding as steel encroached upon the space.<br><br>Dominating their ranks was a colossus of a man - the Western Heavenly Demon Lord.<br><br>"Monstrous Trio."<br><br>Woo-woong.<br><br>His voice, imbued with a majestic force, pierced their senses. The cloaked assembly quivered, including the three venerable figures at the forefront.<br><br>Without hesitation, they advanced and knelt before the figure of authority, the Western Heavenly Demon Lord, proclaiming,<br><br>"The juniors of Mount Qilian pay their respects to the Western Heavenly Demon Lord."<br><br>The three elders were remarkably similar in face, physique, and voice.<br><br>They were triplet brothers.<br><br>Birthed to a mother who perished in labor and forsaken by a father who left them in the desolate expanses of Qinghai, they concealed themselves within its vast mountains, evading the disdain of others.<br><br>Emerging from obscurity, they reclaimed their place in the world as the notorious Monstrous Trio of Qilian.<br><br>"You've aged quite a bit since we last met. It's now appropriate to call you the Three Elders of Qilian."<br><br>"Ah, how could we be elders in the presence of the Lord?"<br><br>Once dreaded as the harbingers of carnage across Qinghai, the Monstrous Trio of Qilian now stood subdued before the Western Heavenly Demon Lord.<br><br>With a swallow of apprehension, they spoke in unison,<br><br>"However, Lord, we regret to see that your arm is..."<br><br>"Are you talking about this?"<br><br>The Western Heavenly Demon Lord, gazing at his vacant sleeve, retorted in a tone devoid of warmth.<br><br>"It was paid for with the lives of two tigers."<br><br>"That means..."<br><br>"The two old pillars of the Tang Family and Emei Sect are no longer of this world."<br><br>"…!"<br><br>The air trembled violently.<br><br>Who were the Poison King and Heaven-Stunning Shinni? They were giants who left their marks in the history of Murim. They were Transcendent Masters who dominated an era.<br><br>However... they had both met their ends at the hands of one man.<br><br>Awe-stricken, the Monstrous Trio of Qilian and the assembly of robed figures gazed upward at their leader.<br><br>"Then that means..."<br><br>"Yes."<br><br>A gleam ignited within the eyes of the Western Heavenly Demon Lord.<br><br>"The time has finally come."<br><br>\* \* \*<br><br>In this moment, my eyes remain shut.<br><br>I center my thoughts in the encompassing quiet. A distinct voice reaches me, and within the veil of darkness, a figure materializes.<br><br>Of average height, this young man, Cheong Pung, conceals his lethality behind a smiling face.<br><br>"First, I'll target the Savior's shoulder, chest, and stomach in sequence with the Tiger Subduing Fist."<br><br>In the darkness, Cheong Pung's form springs into action.<br><br>Rapid. His fist becomes a blur, bridging the gap instantly, accompanied by the distinct sound of air being cleaved.<br><br>"That can be easily dodged. Step back diagonally by half a step and turn to the side."<br><br>"After slipping in the Falling Blossom Palm, I'll follow with the Thirty-Six Plum Blossom Swords." \[Note: direct translation - Chaotic Flower Hand.\]<br><br>"Which technique?"<br><br>"Heaven's Ultimate Slash." \[Note: direct translation - The world is broken.\]<br><br>The Heaven's Ultimate Slash is among the most powerful techniques of the Thirty-Six Plum Blossom Swords.<br><br>Even when Cheong Pung and I were intensely sparring in the past, I chose to avoid it rather than block it.<br><br>"Isn't that a bit too aggressive?"<br><br>"Given the opponent, I must use all of my strength."<br><br>"Don't you still call me your Savior?"<br><br>"That's one thing, and this is another. Hehe. Anyway, I'll use the Heaven's Ultimate Slash."<br><br>The Heaven's Ultimate Slash. Imagining how the attack would come wasn't too difficult.<br><br>As Cheong Pung smoothly evades after deploying the Falling Blossom Palm, his hand drifts to his waist, unleashing a brilliant flash.<br><br>Swoosh. A chilling sound accompanies a horizontal surge of sword Qi that appears before my eyes.<br><br>What's my counter? The contemplation was brief.<br><br>"Deflect it. The first technique of the Divine Spear of the Fire Dragon. Ultimate Tail of the Fire Dragon."<br><br>"Will you be able to block it?"<br><br>"When was the last time we fought?"<br><br>"Um, about a year ago?"<br><br>"If it's short, it's short, and if it's long, it's long. For me, it was a long time ago. Each day of that year felt like ten."<br><br>"…!"<br><br>"Think again. Am I able to block it?"<br><br>A brief silence ensued before Cheong Pung responded, his tone now richer, more contemplative.<br><br>"I must have thought wrong. If it's Savior... it seems possible."<br><br>"Then let's continue."<br><br>Our conversation delved deeper into martial strategies for a time.<br><br>Despite it being over a year since our last physical duel, our discussion thrived on a profound understanding of each other's martial prowess and philosophies, stretching from the events of the Great Celestial Banquet to the present.<br><br>"Three steps to the left. Plum Blossom Five Forms."<br><br>"The Plum Blossom Five Forms is a great martial art, but as long as you watch the vital points, it's okay. Follow up with a punch towards the chest using the Flame-Extinguishing Divine Fist."<br><br>Our mental spar evolved with a series of imagined assaults and parries.<br><br>The count of exchanges climbed swiftly—first a hundred, then two hundred, and soon, we surpassed five hundred maneuvers when Cheong Pung introduced a new tactic.<br><br>"Approaching within close combat distance with the Shadow Blossom's Fleeting Fragrance, I'll use the Plum Blossom Triple Rising Swords." \[Note: direct translations - Dark Fragrance Mark and Plum Blossom Three Ling Sword. The first one is similar to the MC's Brilliant Path of Fire.\]<br><br>Really?<br><br>Cheong Pung is weaker than me in close combat. Although he has mastered the excellent internal arts of the Mount Hua Sect, the Scorching Clan is slightly ahead when it comes to close-range attacks, possibly because Mount Hua's foundation lies in swordsmanship.<br><br>This maneuver suggested...<br><br>'Ah, I see.'<br><br>It was a typical move for Cheong Pung, yet it elicited a smirk from me.<br><br>Eyes now open, I met his expectant gaze with a sly smile. After a pause, Cheong Pung, narrowing his eyes, inquired,<br><br>"Savior, why?"<br><br>"That's enough for today."<br><br>"But why?"<br><br>"Because it's a pity."<br><br>"Huh?"<br><br>"Let's actually spar later. Not just discussing it like this but really crossing weapons."<br><br>It was too good to conclude the match with just a discussion. So, I intended to have a full-fledged match later on.<br><br>Cheong Pung is as innocent as a child, but not stupid, so he should understand just from this much...<br><br>"Why are we crossing weapons? Wouldn't we bump into each other?"<br><br>"..."<br><br>Maybe he really is stupid.<br><br>While I was regretting my hasty judgment, Cheong Pung nagged me.<br><br>"I'm bored, Savior. Can't we just continue?"<br><br>"Ah, Young Master Cheong. Have you heard?"<br><br>"Heard what?"<br><br>I looked intently at Cheong Pung.<br><br>"They say there's a former royal chef at the Tang Family of Sichuan."<br><br>"Royal chef, you say?"<br><br>"They're said to make exquisite dishes. Especially desserts."<br><br>"Hmm."<br><br>Cheong Pung's eyes momentarily clouded over with longing, then he vigorously shook his head.<br><br>"No, I can't. I need to stay and protect Grandpa Jeok with Savior."<br><br>"It's okay. I'll remain here anyway..."<br><br>"Then, I'll come back!"<br><br>"...Okay, sure."<br><br>Whoosh!<br><br>What was that, a bullet technique?<br><br>As his figure faded, my surroundings came into sharper focus.<br><br>This underground prison, with its chilling gloom and pervasive stench, has confined me since the treatment commenced.<br><br>"It's only been four days."<br><br>A sigh escaped me.<br><br>Time here crawls at a snail's pace, not for the absence of sunlight, but due to the palpable anxiety and tension that only those in waiting can endure.<br><br>Perhaps that's why each day feels as though it leeches my vitality.<br><br>"Maybe I should've just stayed in front of the treatment room."<br><br>Muttering to myself, I dismissed the thought. Idling by the door would have served no purpose.<br><br>Had I succumbed to that impulse, my heightened senses would have driven me far from this underground confine, unable to withstand the sounds from within.<br><br>Just like now.<br><br>'Being left alone makes it too quiet.'<br><br>The absence of Cheong Pung, who had been my constant companion these past days, left a void.<br><br>With the Tang Family's edict, even Old Man Goong was barred entry, isolating me further.<br><br>'Well, if I think about it, I'm not alone.'<br><br>My thoughts weren't on the Divine Doctor and Mun-Kyung, who were absorbed in their care for Jeok Cheon-Gang.<br><br>Rather, it was the ten or so prisoners sharing this underground cell, each awaiting their fate, who were my unwitting roommates.<br><br>'They're not exactly the best roommates.'<br><br>Not the type to neglect household chores or endlessly entertain guests, but rather each was a formidable name within Murim.<br><br>Sharing quarters with such individuals was far from a desirable situation.<br><br>What compounded the inconvenience was...<br><br>Ding, dong, dang.<br><br>'I have to feed these guys.'<br><br>The sound of the bell, now familiar, brought a frown to my face.<br><br>With Old Man Goong absent, the responsibility of overseeing the prisoners' welfare, including their meals, fell to me.<br><br>The ringing bell signaled mealtime.<br><br>'It's only once a day, so that's somewhat better.'<br><br>Yet, it remained a cumbersome duty. I let out a sigh and proceeded.<br><br>In a prison corner, an ancient wooden bucket filled with a mix of provisions dropped through a chute from above.<br><br>To call it food would be generous.<br><br>'I guess it's feeding time.'<br><br>There was a reason the Tang Family Patriarch used the word "feed" three days ago.<br><br>The Tang Family of Sichuan treated the prisoners here like dogs or pigs.<br><br>No, actually, dogs or pigs might be treated better. At least the livestock wouldn't be subjected to Old Man Goong's creepy smile as he brought out various torture devices.<br><br>"Tsk tsk."<br><br>With the mindset of a zookeeper, I carried the slop bucket around the prison.<br><br>The prisoners, restrained by chains and behind stout bars, awaited as I ladled the slop into their bowls with deliberate generosity.<br><br>Their reactions varied; eyes brightened in some, desperation in others, as they sought to converse.<br><br>"I haven't seen your face before."<br><br>"I've seen you the past three days. What bullshit are you spouting?"<br><br>"Release me. Then, I'll impart to you a martial art that will make you invincible across the world."<br><br>"Considering you're stuck here, that martial art must be pretty insignificant."<br><br>"You... If I get out of here, I'll tear you apart myself."<br><br>"Oh, impressive. I should tell Old Man Goong exactly that."<br><br>"Please...don't."<br><br>The enticements never stopped. There was the one offering to teach his martial arts, and also a middle-aged temptress who once sucked the vitality from the Tang Family's direct lineage using the method of Harvesting Yang to Replenish Yin. \[Note: "Harvesting Yang to Replenish Yin" is similar to a succubus seducing and having sex with men to drain their life force.\]<br><br>"My dear. Won't you come closer? I'll show you what heaven is like."<br><br>"Awesome Asuka... Uehara senpai..." \[Note: these at first seem like random Japanese names, but given the MC's history of knowledge regarding the world of JAV, I'm sure that these must be the last names of some actresses. As to who they could be, I'll let you do your own background research. Essentially, the MC is chanting Japanese porn actresses' names as a mantra to ward off the temptress's advances.\]<br><br>"…Huh?"<br><br>"The continent falls behind the island nation. Stop talking nonsense and eat your damn food." \[Note: the MC is saying that Japan is superior to China in terms of sexy things, so he can't be seduced by her.\]<br><br>"Hey, hey! You turtle bastard!"<br><br>Ignoring the enraged shouts, I moved towards the last cell of the prison.<br><br>Located in the most secluded and damp corner was a bizarre figure with disheveled hair.<br><br>'The most well-behaved old man in this prison.'<br><br>Yet, paradoxically, he was the most formidable. This was evident from the muscle atrophy in his amputated limbs and the exceptionally robust restraints compared to those used for the other inmates.<br><br>Clang. Thud.<br><br>The figure, fixated on a bowl of something barely recognizable as food, suddenly remarked,<br><br>"They were talking about this old man."<br><br>I paused for a moment.<br><br>Not because it was the first time I'd heard his voice in three days, but because I couldn't understand the meaning of his words.<br><br>"Talking about you? When?"<br><br>"Three days ago. Didn't Goong say so?"<br><br>Goong? Old Man Goong?<br><br>As the recollection dawned upon me, my gaze shifted towards the elder with a mix of intrigue and speculation.<br><br>"Ah, I heard you peed on the Kunlun Sect's signboard…"<br><br>"Yes. I am exactly that Heavenly Force Demon…"<br><br>"So, you were the Kunlun Sect's public urination offender."<br><br>"…"<br><br>A flicker passed over the elder's eyes.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-347.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-349.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

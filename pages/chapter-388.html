@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 388 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 388</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 388</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: April 13, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>Jang Wei, the captain of the second company of the Sichuan Public Security Force, had harbored reservations about the mission from the start.<br><br>'Advance with the army and seize the city first? That's different from the orders Senior Colonel Shao had given.'<br><br>His doubts intensified when they were rerouted from the battle that their allies were locked in and told to head in a new direction.<br><br>「Colonel Wang. Are you sure Senior Colonel Shao agreed to this operation?」<br><br>A middle-aged senior officer scowled and responded to Jang Wei.<br><br>「Why are you curious about that?」<br><br>「It just seems strange, no matter how I think about it. Clearly, Senior Colonel Shao instructed us to conserve our strength in the rear and protect headquarters...」<br><br>「Ah, that young one, huh?」<br><br>Shao Shen's mention elicited a derisive sneer from the senior officer, causing Jang Wei to bristle.<br><br>「Senior Colonel Shao Shen is of the same rank as Colonel Wang. He is even up for a promotion to Major General soon.」<br><br>「Just a naive kid who got lucky. Not only did he awaken as an A-rank Hunter, but thanks to the efforts of some Korean, he also got onto the promotion list this time. Seeing such a rapid promotion, does he have some decent connections in politics or what?」<br><br>「...He may be young, but he is exceptionally talented. He is trusted enough to be like a brother to us.」<br><br>The senior officer waved his baton dismissively.<br><br>「I'm well aware that there's no hierarchy among Hunters. But this is a wartime situation. This order comes directly from General Liao.」<br><br>「The General himself... did he really say that?」<br><br>「Yes. So, if you don't like to follow the orders, you might as well return now. Just be aware that what you're doing now is defying orders.」<br><br>「...!」<br><br>「We're only trying to speed up the advance. It may not be possible under the circumstances, but if there are any remaining monsters, we'll sweep them away and rescue the civilians in danger. Got it?」<br><br>After a reflective pause, Jang Wei nodded and receded.<br><br>Though the Public Security Force was normally a separate entity from the military, this was wartime. Defying General Liao, the western front commander, wasn't prudent.<br><br>「What did they say?」 \[Note: Jang Wei has left the presence of the person he was speaking to previously. This is a new person.\]<br><br>Jang Wei murmured to his subordinate.<br><br>「It's a simple operation, so just shut up and follow. If you refuse, it's disobedience of orders.」<br><br>「Do you believe that?」<br><br>「If you're asking about the former, certainly not. But the latter is true. What do you think?」<br><br>「I obviously can't believe it. Colonel Wang, that guy, has no real skill but has climbed up here just with connections from the royal faction. It's widely known that he's a loyal dog raised by General Liao.」<br><br>「It's precisely General Liao's order. We may not like the stench, but we have to tolerate it for now.」<br><br>「Damn it.」<br><br>「But what Colonel Wang said might be true. Most of the monsters nearby are already engaged with our forces. With our current strength, we should be sufficient to handle any remaining monsters.」<br><br>Jang Wei scanned the area. Around him, there were a hundred Hunters, about twenty tanks, and five hundred infantrymen. Above, three combat helicopters cruised, securing the airspace.<br><br>'Hopefully, there won't be any ongoing carnage.'<br><br>His hopes seemed to have reached the heavens, and what he feared did not happen.<br><br>Upon entering, they found that the small town near Suining City was indeed devastated by monsters, yet all that remained was a desolate silence.<br><br>Here and there, goblins and orcs appeared but were hardly a challenge.<br><br>\- Screech!<br><br>Squeak!<br><br>After eliminating roughly a dozen monsters at the forefront, Jang Wei allowed himself a brief moment of relief.<br><br>「It seems that these monsters appearing individually have strayed from their pack.」<br><br>「Just as expected. What did I tell you?」<br><br>He disliked the smug reply, but it was preferable under the circumstances.<br><br>With this thought, Jang Wei was nodding in agreement when he hesitated at the senior officer’s next statement.<br><br>「Did you say to split the forces?」<br><br>「Yes. In this situation, we should start searching for survivors as quickly as possible.」<br><br>「But Colonel Wang. We have not even been here for an hour yet. We should move further into the center before…」<br><br>「Insolent.」<br><br>「Excuse me?」<br><br>「You Hunters might have better combat skills, but I am several steps ahead in tactics. I have command here, so just shut up and follow orders.」<br><br>「...!」<br><br>「Didn't you hear? Shall I give the orders directly to your subordinates then?」<br><br>「...I will do it.」<br><br>「You have the detailed maps, right? Then let's meet at the central square in two hours.」<br><br>Just as the officer, flashing a taunting grin, was about to climb into the armored vehicle.<br><br>Squeal, boom!<br><br>Jang Wei blinked in disbelief. Wiping his face, his hand came back covered in thick blood.<br><br>The blood was undeniably human, and the officer’s body, now halved, fell from the armored vehicle.<br><br>Thud.<br><br>A heavy silence fell. Jang Wei, quickest to react, yelled.<br><br>「Everyone, get ready for battle-!」<br><br>「Monsters! Monsters have appeared!」<br><br>「Tank!」<br><br>「Sir, the Colonel has been killed!」<br><br>The Hunters from the Public Security Force were the first to react to the cry, with the soldiers understanding the gravity of the situation moments later.<br><br>The sudden death of their Colonel threw them into turmoil, and what followed was an even more devastating end.<br><br>Kaboom!<br><br>A lone explosive noise.<br><br>A beam of light, traveling at incredible speed, sliced through the advancing soldiers arranged in rows and columns.<br><br>Squirt!<br><br>The beam ripped through dozens like popping balloons and finally penetrated an armored vehicle surrounded by infantry.<br><br>The light beam pierced the vehicle's robust exterior and burrowed deep. Jang Wei's voice boomed.<br><br>「Everyone, take cover!」<br><br>But before his command could spread, the next moment, a massive explosion engulfed everything.<br><br>Boom!<br><br>The armored vehicle's explosion sent out red flashes and black smoke, hurling shards like countless blades in all directions.<br><br>Not just the soldiers, but also the slower-reacting Hunters, toppled like dominoes.<br><br>The lifeless bodies of the fallen remained motionless.<br><br>「...!」<br><br>「What in the world...」<br><br>Jang Wei shouted to those petrified like statues.<br><br>「Disperse! Everyone, scatter! Stay as far away from the tanks and armored vehicles as possible!」<br><br>But the soldiers, new to real combat, froze, and the unseen adversary exploited the turmoil relentlessly.<br><br>Crash!<br><br>Death's harbinger sounded again, this time with multiple beams of light.<br><br>Boom! Boom!<br><br>「Aaaargh!」<br><br>Flames and screams engulfed the scene.<br><br>The destruction of about twenty armored vehicles and tanks occurred in an instant.<br><br>The three combat helicopters, previously patrolling the sky, fragmented and plummeted.<br><br>Boom! Crunch.<br><br>Amidst a blood-drenched horror, a cold dread swept over Jang Wei.<br><br>'These are at least A-rank monsters. And not just one or two.'<br><br>This turned out to be Jang Wei's most precise assessment of the day.<br><br>Swoosh.<br><br>Amid the dark alleys and crumbling structures, atop the still smoldering rooftops, ten figures materialized like a black mist.<br><br>Their glowing purple eyes surveyed the hundreds of surviving humans.<br><br>A groan slipped from Jang Wei as he noticed the figures astride skeletal warhorses.<br><br>「...Death Knights.」<br><br>Once noble, these knights had been corrupted by dark magic and had disappeared following the Great Cataclysm along with the Liches, only to reemerge now in alarming numbers.<br><br>There were ten of them.<br><br>The first thought that struck Jang Wei was 'death.'<br><br>'This is the end.'<br><br>Death Knights surpass even A-rank monsters.<br><br>Despite the presence of a hundred Hunters and military personnel, Jang Wei understood.<br><br>They stood no chance against the trap set by these beings.<br><br>But...<br><br>「We won't die without a fight.」<br><br>This conviction was not Jang Wei's alone.<br><br>Unlike the soldiers, paralyzed by fear, the Hunters of the Public Security Force readied their weapons with resolve.<br><br>「You all don't have to do this.」<br><br>At Jang Wei’s gentle words, one of the Platoon Commanders responded sharply.<br><br>「Is that something you should say, Company Captain?」<br><br>「I'm sorry. I shouldn't have brought you all here.」<br><br>「It's not about who brought whom; we followed you here. Thanks to you, sir, we've survived more than ten times; it's about time something like this happened.」<br><br>Their attempt to sound casual couldn't mask the quiver in their voice.<br><br>Facing the ten stoic Death Knights, Jang Wei moistened his parched lips.<br><br>「Fight your best, and let at least one of us survive. That's my final order.」<br><br>Instead of verbal replies, a robust cheer erupted. The Hunters' eyes, now free from fear, sparkled like vivid stars.<br><br>They could have chosen safer, more lucrative paths.<br><br>Yet, they had opted for the Public Security Force over jobs like guarding affluent tycoons or serving as mercenaries, drawn by the honor and duty inherent in their role as Hunters.<br><br>Retreat was not an option.<br><br>「Let's go! Sons and daughters of the people, descendants of China!」<br><br>Jang Wei's roar filled the air as he prepared to charge at the nearest Death Knight.<br><br>Grrrumble!<br><br>It was almost a reflex.<br><br>A powerful vibration accompanied by a surge of energy made the surviving humans turn in terror, their hair standing on edge.<br><br>At the center of their fearful stares, a black knight moved slowly through the devastated downtown.<br><br>Beneath his heavily shadowed helmet, red glows flickered. A chilling breath escaped his bloodless lips.<br><br>\- Sar, Garosh.<br><br>A cryptic tongue from the underworld, indecipherable to all.<br><br>But in a flash, Jang Wei grasped the meaning of those words.<br><br>'Kill them all.'<br><br>The ten Death Knights surged forward from every direction, their lunges reflected in the widening eyes of Jang Wei.<br><br>Shiing!<br><br>The massacre commenced.<br><br>\* \* \*<br><br>Squelch.<br><br>The skeletal horses' hooves splashed in pools of blood.<br><br>The Death Knights, having converged around the black knight who gazed down at the corpse of Jang Wei — the middle-aged Hunter who had fought valiantly to the end — bowed on one knee.<br><br>\- Lord. Your next command.<br><br>The next command.<br><br>A moment of silence ensued before the black knight extended his hand.<br><br>Swish, squeak!<br><br>A black beam, unleashed like a whip, tore through concrete and steel.<br><br>A building collapsed diagonally, revealing a space where humans huddled, covering their mouths.<br><br>「Jinjin. Honey. It's okay, it's okay...」<br><br>「Sob, sob!」<br><br>「Appappa?」<br><br>A man and a woman. And... a being so tiny and frail, its gender indiscernible.<br><br>They might call it a child.<br><br>'Child, child?'<br><br>Where had he encountered that word before?<br><br>The black knight momentarily shelved his burgeoning curiosity and extended his hand, intent on obliterating any human within reach, as if he was supposed to.<br><br>However...<br><br>\- ...?<br><br>Oddly, his hand stalled.<br><br>Despite the humans' evident vulnerability, where a mere twitch of his finger would reduce them to mere splatters of blood, it seemed as though an invisible shield encased them.<br><br>\- You three. What are you?<br><br>Just then, the infant cradled in its parent’s arms burst into a loud cry.<br><br>\- Hmm.<br><br>Abruptly, the black knight lifted his gaze to the horizon, then wheeled his horse around.<br><br>The Death Knights showed their bewilderment at their leader’s abrupt change in behavior.<br><br>\- Lord?<br><br>\- We're returning. Now. Immediately.<br><br>\- What about the humans?<br><br>\- We're returning. Now. Immediately.<br><br>With no further explanation, the ten Death Knights, who had just saluted, spurred their mounts and followed their leader.<br><br>As they dissolved into the mist, the black knight’s sinister red glow lingered briefly on the three surviving humans before fading.<br><br>Whoosh.<br><br>A wind laden with the stench of blood wafted through the ruins strewn with corpses.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-387.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-389.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

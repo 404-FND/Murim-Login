@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 325 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 325</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 325</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: February 2, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>Shock.<br><br>That was the feeling enveloping everyone in the teahouse.<br><br>Every member of the Mount Hua Sect, Beggar Sect, Southern Edge Sect, Lower District Sect, and Dragon Phoenix Escort Agency was gripped by disbelief. Dozens of eyes, wide with stupor, stared at the unfolding drama.<br><br>"So."<br><br>Thud!<br><br>“If you don't have anything nice to say.”<br><br>Thud!<br><br>“Shut the fuck up.”<br><br>Thud!<br><br>“Where do you get off insulting me and then throwing the first punch?”<br><br>Bang!<br><br>The sound of the last hit was unusually loud. Accompanied by the sound of splattering blood, the elder's body hit the ground hard.<br><br>Blood smeared his face, distorting the once proud features that had enchanted countless admirers. The once perfect set of teeth, defying his eighty years, was now reduced to a solitary front tooth.<br><br>“Talking shit about someone's master, fucking bastard.”<br><br>Bang!<br><br>The last tooth arced through the air, landing obscurely in a corner.<br><br>The onlookers, faces blank with shock, shared a collective thought:<br><br>'What am I witnessing right now?'<br><br>An unimaginable, unprecedented scene was playing out.<br><br>A young man, virtually unknown in Murim, was overpowering the First Sword of the Southern Edge Sect, the Sahyung of the Sect Leader. It was beyond belief.<br><br>Yet, the evidence was before their eyes.<br><br>The rapid exchange, too swift for the eye to catch. At the end, the old man lay defeated, the young man standing victorious and solitary.<br><br>“Fire Dragon…”<br><br>The words, whispered by someone, echoed deeply within the hearts of the witnesses.<br><br>Sleeping Dragon of Shanxi. That was the name given to Jin Tae-Kyung when he first became known in Murim.<br><br>But it was wrong. The sleeping dragon had awakened, poised to dominate not just Shanxi, but the entire world's horizon.<br><br>He was no longer just a dragon; he had transformed into a Fire Dragon.<br><br>“The only school subject in my life where I scored 100 points was ethics, but now I am attacking the elderly. Wake the fuck up, old man."<br><br>Or perhaps, he had become something more fearsome – a Mad Dragon?<br><br>The chaotic scene around Jin Tae-Kyung, clutching the bloodied and soot-streaked beard of Hwang Bo-Eom, jarred the thirty Tai Yi Sword Team members back to reality.<br><br>They recognized the old man in Tae-Kyung's grip as their esteemed elder, Hwang Bo-Eom, the Tai Yi Ruthless Sword, elder martial brother to their Sect Leader.<br><br>“Now, wait!”<br><br>“Master!”<br><br>Voices erupted in unison.<br><br>Amidst them, a particularly loud and forceful shout rang out.<br><br>"Bastard! Unhand Sabaek right now.”<br><br>At that moment, Hwang Cheon, leader of the Tai Yi Sword Team and disciple of the Southern Edge Sect, swiftly unsheathed his sword, advancing towards the fray.<br><br>Swoosh, clank.<br><br>“…!”<br><br>Hwang Cheon's eyes widened in disbelief.<br><br>In the blink of an eye, the situation had turned.<br><br>The threatening edge of a sword halted at his throat. A pale bamboo cane pressed firmly against his chest, and his half-drawn blade was now trapped by another's.<br><br>Three Peak Masters had effortlessly subdued Hwang Cheon, issuing warnings in succession.<br><br>“It would be best not to pull out that sword.”<br><br>“If you want to fight, me and the Dragon Pheonix Escort Agency will fight you.”<br><br>“If you get hit with the Dog Beating Stick Technique, it will be quite painful. I’ve already achieved fifth mastery of it.”<br><br>Baek Mu-Seong, the First Crane of Mount Hua, Ju Hwa-Ran, the Flower-Shrouded Blade, and Goong Gi-Bang from the Beggar's Sect were all poised for action.<br><br>But there were more.<br><br>“Protect the young mistress of the Agency!"<br><br>"This is troublesome. It's almost over, but it would be problematic if it ends like this."<br><br>Heo Jun, Chief Courier, and the stoic Song Il-Seom, both of the Dragon Phoenix Escort Agency, whispered enigmatically, rallying their couriers against the Southern Edge Sect's disciples...<br><br>"The Branch Master of the Beggar's Sect commands you beggar bastards. Show those bastards, who are worse than yellow dogs, what it feels like to be beaten with a stick!" \[Note: "yellow dogs" just refers to an average stray dog, many of which are tan or yellow.\]<br><br>“So we're both bastards?"<br><br>"Hah, it's been a while. Let's have a proper brawl."<br><br>“If you get even slightly injured, it’s the Branch Master's fault. Don’t scold us if we can’t beg later.”<br><br>Heuk Geol-Gae and his fellow beggars eagerly brandished the clubs strapped to their waists.<br><br>"You guys, don't get needlessly involved and get hurt. Just write down everything that happens without missing a detail. It'll sell for a high price later."<br><br>"Are you planning to make enemies of the Southern Edge Sect?"<br><br>"Huh? Why would I make an important customer an enemy? This is for the Southern Edge Sect. Even if I mark up the price, they'll have no choice but to buy it."<br><br>"Remarkable, as expected!"<br><br>"Draw a picture too. Make it vivid, as if it's going to jump out at any moment."<br><br>"Yes!"<br><br>Wolhwa, alongside the Lower District Sect, eagerly set about transforming the extraordinary scene into vivid narratives and illustrations, aiming for a major sensation.<br><br>"Wow! I've never seen anything like this in my life!"<br><br>"Look there! Even Hyuk Mu-Jin is here, the Vice Leader of the Taiyuan Jin Dragon Squad and the right-hand man of the Squad Leader!"<br><br>Observing from a distance were Cheong Pung and Hyuk Mu-Jin, who had remained unnoticed until now.<br><br>As the situation veered off course, Hwang Cheon's face flushed with a mix of humiliation and rage.<br><br>“What is this? Everyone stop now!”<br><br>The reply came from an unexpected source.<br><br>“What if I don’t want to stop?”<br><br>“…!”<br><br>Hwang Cheon gasped sharply.<br><br>Through the crowd, his gaze collided with eyes blazing with an icy intensity.<br><br>“I asked: What are you going to do if I don’t want to stop?”<br><br>Vapors of white steam curled from the corner of Jin Tae-Kyung's mocking mouth.<br><br>Was it the aura of a deity he witnessed? The mere act of locking eyes and the faint whisper reaching his ears left Hwang Cheon breathless.<br><br>An overwhelming presence stood before him.<br><br>'How can you be so strong at such a young age?'<br><br>Hwang Cheon was struck by the realization that for Jin Tae-Kyung, who had vanquished the First Sword of the Southern Edge Sect, age was merely a trivial detail.<br><br>'A monster, he is a monster.'<br><br>And now, that very monster was looking at him.<br><br>His own martial prowess, once a source of pride, now seemed insignificant under Jin Tae-Kyung's imposing aura. Hwang Cheon found himself nervously swallowing.<br><br>"Sajae, step back now. Everyone else, sheath your swords."<br><br>At those words, the figure obstructing his view became clear.<br><br>Eyes widening in recognition, Hwang Cheon exclaimed.<br><br>“Hyuk Sahyung…!”<br><br>The Lone Dragon of the Southern Edge Sect, Hyuk So-Pyung. The future of the Southern Edge Sect, still holding his fame and position despite his indulgence in pleasures.<br><br>Hyuk So-Pyung stood before Hwang Cheon, staring at Jin Tae-Kyung with a stern gaze.<br><br>Despite being aimed at by dozens of weapons, his voice was resolute and unshaken.<br><br>“Please stop the meaningless fighting.”<br><br>“Meaningless? You want me to stop?”<br><br>A hushed hiss of breath escaped Jin Tae-Kyung's lips.<br><br>“You may have started it, but I am the one who will finish it.”<br><br>“I know. That’s why I’m asking you for a favor.”<br><br>"Asking, huh? Just because you have a mouth doesn’t mean you should speak carelessly. You might actually get it ripped open."<br><br>"The outcome is already clear, so I'm asking you to show the generosity of the strong."<br><br>The Southern Edge Sect disciples were taken aback not only by his respectful tone and manner but also by the nature of his appeal.<br><br>From behind him, Hwang Cheon, silent until now, lifted his head and interjected.<br><br>"Sahyung! Speaking of the generosity of the strong, such words demean the prestige of Sabaek and the Great Southern Edge Sect…"<br><br>"Sajae."<br><br>“Yes, Sahyung?”<br><br>Hwang Cheon's interruption was swiftly curtailed by a voice serene yet edged with firmness.<br><br>“Can you shut your mouth?”<br><br>“…Sahyung?"<br><br>Both Hwang Cheon and the rest of the Tai Yi Sword Team stared at Hyuk So-Pyung in disbelief.<br><br>Hyuk So-Pyung, under their astonished gazes, slowly began.<br><br>"Had you eyes, you'd have seen, and had you ears, you'd have heard: how this all started." \[Note: this sentence was structured a bit differently than normal. Essentially, Hyuk So-Pyung is saying if they have eyes and ears, they should have seen and heard how all of this started.\]<br><br>“…”<br><br>"Plotting in the shadows to swallow up the Dragon Pheonix Escort Agency is not the act of a noble and reputable Sect. Thus, our sect has already lost its dignity."<br><br>His voice was measured, his face contorted with emotion, yet Hyuk So-Pyung continued.<br><br>"Furthermore, wielding swords with murderous intent in front of such clear evidence, without admitting faults, means even the last strand of trust in our sect is broken. Who among us dares to speak of prestige? Me, who wallowed in pleasures, forgetting my duties? Or you, who refuse to admit wrongs and only protect your pride?"<br><br>Hwang Cheon bowed his head, shame evident. Along with him, all thirty disciples of the Southern Edge Sect stood silent, their grip on their sword sheaths betraying their turmoil.<br><br>They were confronted with the bitter truth of Hyuk So-Pyung's words, a hollow feeling of disgrace replacing their sect pride.<br><br>Though no one spoke, their emotional turmoil was palpable to all present.<br><br>“At least for today… We were not the Great Southern Edge Sect.”<br><br>With these parting words and a rueful glance at his peers, Hyuk So-Pyung turned away.<br><br>He then bowed deeply, showing utmost respect to the silent observer.<br><br>"I, Hyuk So-Pyung, a disciple of the Southern Edge Sect, dare to ask. Deeply reflecting and apologizing for the wrongs our sect has committed, please show mercy just this once and spare him."<br><br>His demeanor was profoundly deferential, akin to addressing a superior in the martial arts realm.<br><br>The recipient of the bow was a young man, his features tinged with a youthful, blue hue.<br><br>After a brief pause, Jin Tae-Kyung, who had been silently observing Hyuk So-Pyung's gesture, finally spoke.<br><br>“It’s really distasteful to let an old bastard like him live... But fine, I’ll let it go just this once.”<br><br>Before Hyuk So-Pyung could even raise his head, a cheerful voice continued.<br><br>“After just one more hit.”<br><br>Crack!<br><br>\* \* \*<br><br>Describing the interior of Dengwang Tower as merely 'ruined' would be an understatement.<br><br>The roof had caved in, and all furnishings lay in ruins, casualties of the fierce duel between me and Hwang Bo-Eom. Cold wind and murmurs from onlookers drifted through the shattered walls.<br><br>“Oh my god, Dengwang Tower…”<br><br>“What the hell is going on? Does anyone know what happened?”<br><br>“I don’t know exactly either. However, as I heard the story, about an hour ago, the Tai Yi Ruthless Sword of the Southern Edge Sect led his disciples…”<br><br>In Xi'an, the heart of Shaanxi Province, no event at Dengwang Tower could escape public scrutiny.<br><br>Curious and concerned locals gathered, only to be met by the stern gazes of dozens of martial artists.<br><br>"That's enough."<br><br>“It’s Murim’s business, so don’t get involved and leave quickly!”<br><br>Armed with various weapons, these martial artists formed a barrier, causing the onlookers to hesitantly withdraw.<br><br>I watched the Southern Edge Sect disciples, laboring to conceal the interior chaos, with a hint of disdain.<br><br>“Such effort, really.”<br><br>The prestige of the great Southern Edge Sect lay in tatters, their desperate attempts to preserve any semblance of dignity appearing both pitiful and futile.<br><br>I flopped down onto a wooden chair with a broken backrest and spoke.<br><br>“Alright, despite the unpleasant incidents, what needs to be ended must be ended. Let’s now find a consensus through dialogue instead of barbaric violence.”<br><br>“…”<br><br>“…”<br><br>Ignoring the sharp glares from every direction, I couldn't help but smile wryly at one individual.<br><br>“So, Hwang Bo-Eom, what do you think?”<br><br>Hwang Bo-Eom's response was more of a pained groan than words.<br><br>“Huh, huhuhuhuh...”<br><br>Both arms broken, a fractured leg, and internal injuries that would need a year to mend. His nose and teeth, too, were beyond repair.<br><br>From his barely open mouth, the sound of blood-tinged phlegm mixed with his groaning.<br><br>“Huhuhuh.”<br><br>Gently grasping Hwang Bo-Eom's wrist, his breath ragged, I suppressed the impulse to inflict further harm.<br><br>Channeling a hint of my energy into him, his ashen complexion showed a slight improvement.<br><br>“Patient, patient, please come to your senses. It's time for an injection, no, a negotiation.”<br><br>“Huh, Jin Tae-Kyung. You…”<br><br>“That's my name. Don't wear it out.”<br><br>“You bastard, do you think our Sect will leave you alone…?”<br><br>"Hmm."<br><br>He's still delirious.<br><br>Pondering briefly, I then moved my hand swiftly, striking like a bolt of lightning.<br><br>Swoosh!<br><br>“Cough!”<br><br>The slap sent Hwang Bo-Eom reeling, his eyes rolling back. <br><br>He teetered on the brink of falling off the chair, but Hyuk So-Pyung caught him, releasing a weary sigh.<br><br>"Hah."<br><br>“It's not my fault. This guy keeps asking for it. He practically begs to be killed, what can I do?”<br><br>“Still, restrain yourself. Any more and his life will be in danger.”<br><br>“You have it tough too. Given his personality, I doubt he was very nice to you either. Right?”<br><br>“…It doesn't matter what kind of person he was. He is my master's elder brother and a disciple of our sect.”<br><br>The complexity in his expression hinted at deeper undercurrents.<br><br>Was his past indulgence in drunken brawls a consequence of this?<br><br>The question momentarily intrigued me, but I refrained from probing. My curiosity was not so keen.<br><br>More pressing matters demanded attention.<br><br>“So, let's start the negotiation. Miss Ju, are you ready?”<br><br>“Me? Yes, certainly.”<br><br>“Just tell us your demands.”<br><br>Is this reality, or some surreal dream?<br><br>Bewildered, Ju Hwa-Ran, her cheek tinged with red, began to speak.<br><br>“Our escort agency demands the Southern Edge Sect for contract nullification and a penalty for this incident…”<br><br>Her words were abruptly cut off by Hwang Bo-Eom's hoarse interruption.<br><br>"We refuse. Our sect will not provide any compensation.”<br><br>I knew he would be like this.<br><br>I winked at the rigid Ju Hwa-Ran.<br><br>"Miss Ju, just a moment."<br><br>"Yes?"<br><br>"It'll only take a second."<br><br>Without further delay, I administered another slap to Hwang Bo-Eom.<br><br>Swoosh!<br><br>“Cough!"<br><br>“Sabaek!”<br><br>“I ask again. Will you compensate them?”<br><br>Hwang Bo-Eom's gaze, ablaze with resentment, met mine.<br><br>"Our sect will not make... any compensation..."<br><br>Swoosh!<br><br>“Cough! We will not make any compensation.”<br><br>Swoosh!<br><br>“Cough! We will make any compensation!”<br><br>"Okay, compensation! Okay! Thank you!"<br><br>Negotiation is easy, right?</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-324.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-326.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

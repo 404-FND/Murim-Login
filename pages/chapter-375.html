@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 375 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 375</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 375</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: March 22, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>Even in visiting the sick, there is an order to be followed.<br><br>Upon the announcement that Tang Sa-Dok, the family Patriarch, had regained consciousness, the Tang Family members hurried over, abandoning their prior engagements.<br><br>Yet, not everyone among the hundred or so attendees received permission to visit Tang Sa-Dok.<br><br>"Savior, when will we be able to see Grandpa Tang?"<br><br>"Well, the people in front of us have been inside for quite a while, so maybe they will come out soon."<br><br>"Ah, I see."<br><br>Cheong Pung acknowledged my response with a nod.<br><br>Hold on. Cheong Pung?<br><br>"When did you get here?"<br><br>"Just now."<br><br>His presence was so seamless, I hadn't realized he was among us. But what brought him here?<br><br>Sensing my puzzlement, Cheong Pung gestured towards his chest and shared,<br><br>"Mimi said that she wanted to see him."<br><br>"…?"<br><br>What did I just hear?<br><br>No, I can't believe that he can communicate with that thing. Is this guy from the Mount Hua Sect or Slytherin?<br><br>Under my scrutinizing look, Cheong Pung appeared puzzled.<br><br>"Why are you suddenly staring at my forehead? Is there something on it?"<br><br>"Just checking to see if there was a lightning bolt-shaped scar or something."<br><br>"Really?"<br><br>"Yes."<br><br>At that moment.<br><br>Clunk.<br><br>The solid door to the infirmary swung open, and a group of about a dozen emerged.<br><br>They were the direct descendants of the Tang Family of Sichuan, including Tang Ho-Ryong.<br><br>"Sigh…"<br><br>His eyes, red with tears, glanced skyward as he approached.<br><br>"The Patriarch wishes to see you."<br><br>"I was hoping that he would."<br><br>Jin Wi-Kyung led the way into the infirmary, with Cheong Pung and myself in tow.<br><br>The walk, amidst the omnipresent aroma of herbs, felt endless. Guided by a physician, his face half-hidden by a white cloth, we eventually came upon familiar faces.<br><br>"Have you come?"<br><br>At first glance, Tang Sa-Dok, caught in a fit of coughing, was clearly in dire straits.<br><br>His condition was critical, with multiple fractures and internal injuries destabilizing his Qi.<br><br>The Divine Doctor, having just acknowledged us with a nod, restrained him from attempting to rise.<br><br>"Patriarch, didn't I tell you not to move?"<br><br>"I am a sinner. It's only right that I seek punishment for a crime worthy of death."<br><br>With a pallid complexion, Tang Sa-Dok fixed his gaze on me, admitting without evasion,<br><br>"I won't make any pathetic excuses. The reason why the Western Heavenly Demon Lord went to the underground prison was because I informed him."<br><br>I crossed my arms.<br><br>"Ah, I see."<br><br>"…?"<br><br>"What?"<br><br>Confusion crossed Tang Sa-Dok's features.<br><br>"Ah, did you already know?"<br><br>"Of course, I didn't know at first. It was quite chaotic back then. But after giving it some thought, how did that bastard know the location of the Ring of All Poisons?"<br><br>The Ring's existence and whereabouts were secrets known to very few.<br><br>Cheong Pung might look as light as a petal, but he's as solid as a tree root. So the only person who could have divulged its location was Tang Sa-Dok.<br><br>"Why did you do it?"<br><br>"…He said he would preserve the lineage of our family if I revealed the location of the Ring of All Poisons."<br><br>"You believed that?"<br><br>"I was foolish. My judgment was clouded for a moment, and I committed an act that should not have been done."<br><br>"You realize that?"<br><br>Tang Sa-Dok's eyes flickered with emotion as he met my gaze.<br><br>"It must be heaven's will that this old man's life could have been saved so that I could apologize and receive punishment from you all."<br><br>"Then, what punishment do you seek, Patriarch?"<br><br>This query came from Jin Wi-Kyung, who until now had remained a silent observer.<br><br>"Are you the lesser family head of the Jin Family of Taiyuan?"<br><br>"Yes. I am also an older brother who raised two younger siblings like his own children."<br><br>Jin Wi-Kyung's eyes radiated an intense, barely containable fury.<br><br>"If one walks the righteous path, such actions should not have been taken."<br><br>"I know. That is why I am seeking punishment."<br><br>"What if I were to suggest you take your own life?"<br><br>"…!"<br><br>The suggestion startled everyone, myself included, casting incredulous looks towards Jin Wi-Kyung.<br><br>Yet, Tang Sa-Dok remained composed.<br><br>He spoke with a steady voice.<br><br>"Though I have betrayed morality, you all risked your lives, and the lineage of my house can continue. If this worthless old man's life can serve as an apology, I would gladly accept such a fate."<br><br>Jin Wi-Kyung exhaled deeply.<br><br>"Sigh…"<br><br>He turned to me with a look that was a mix of resignation and contemplation.<br><br>"What shall we do?"<br><br>"…What? Ask him to commit suicide?"<br><br>"Anything."<br><br>The weight of the decision caused my heart to race, feeling the metaphorical sword's grip tighten in my hand.<br><br>The fate of Tang Sa-Dok, the Patriarch of the Tang Family of Sichuan, teetered on my decision.<br><br>'Look how the atmosphere has turned sour.'<br><br>This is not a matter to be taken lightly, nor am I the heroic type to forget personal grievances, especially considering the gravity of the betrayal.<br><br>After all, it wasn't just my life at stake at the time.<br><br>But...<br><br>"It's fine. I don't wish to go that far."<br><br>I see the broader context of Tang Sa-Dok's choices.<br><br>Faced with the dilemma of protecting my own kin or an outsider, I might have decided similarly.<br><br>'There was also a debt I owed from before.'<br><br>Tang Sa-Dok played a pivotal role in Jeok Cheon-Gang's awakening.<br><br>He had provided his family's divine artifact secretly, without consulting his own family first.<br><br>"So, let's call it even. No, that's going too far. Let's just say the Tang Family of Sichuan owes us a great debt over this incident."<br><br>Upon my declaration, Cheong Pung and the Divine Doctor expressed their readiness to align with my decision.<br><br>"Clearly, it was Grandpa Tang's mistake that put Savior in danger... but I too will follow Savior's wishes."<br><br>"I've already forgotten about it. However, as a physician, my only wish is for the Patriarch to recover quickly. There are still family members who have survived, aren't there?"<br><br>Jin Wi-Kyung was the last to comment, his earlier ire now imperceptible.<br><br>Perhaps he had anticipated my answer all along.<br><br>"So, what are your thoughts, Patriarch?"<br><br>"…!"<br><br>A mix of shock and contemplation flickered through Tang Sa-Dok's eyes as he regarded us.<br><br>He paused before his voice, laden with emotion, broke the silence.<br><br>"The Tang Family of Sichuan has received a great mercy from you."<br><br>At that moment, Tang Sa-Dok offered a genuine bow.<br><br>Ding. Ding. Ding.<br><br>\- Acknowledging one's wrongs is daunting, yet granting forgiveness demands even greater bravery.<br><br>\- Hidden quest, \[Confession and Forgiveness\], has been successfully completed!<br><br>\- \[Lv.115 Tang Sa-Dok\] expresses deep gratitude for your kindness. He and the Tang Family of Sichuan will never forget today's kindness and assistance, and the people of the Tang Family of Sichuan will remember you as their Savior!<br><br>\- You have acquired the title \[Savior of the Tang Family\]!<br><br>\- You have received a significant amount of experience and reputation as a reward for completing the hidden quest!<br><br>\- Level up!<br><br>The emergence of a hidden quest caught me off guard.<br><br>Lost in thought over the unexpected system notification, something cold suddenly weaved through my legs.<br><br>Zurik, zuirilik.<br><br>"Mimi, you little rascal."<br><br>Observing the reunion of Mimi and Tang Sa-Dok brought the Ring of All Poisons to mind.<br><br>"Ah, speaking of the Ring of All Poisons. Fortunately, I've been keeping it safe until now…"<br><br>"Is that so?"<br><br>Tang Sa-Dok interjected before I could finish.<br><br>"Then continue to keep it safe."<br><br>"Yes, I'll continue to... What?"<br><br>"I will entrust you with our family's treasure as a token of gratitude towards our Savior. Please do not refuse."<br><br>Ding.<br><br>\- The \[Ring of All Poisons\] has been transferred to you according to its owner's wishes!<br><br>\- A new item is now bound to you!<br><br>\- Currently owned bound items: \[White Flames\], \[Ring of All Poisons\], \[???\].<br><br>\- There is a bound item whose name has not been decided yet. Please assign a new name.<br><br>What day is it today?<br><br>A wave of apprehension washes over me, pondering what twist of fate is coming that would grant such favor now.<br><br>As I stand agape, Tang Sa-Dok offers a gentle smile.<br><br>"If there's anything you all desire, do speak. As long as it's within the capability of our household, we shall accommodate."<br><br>The Divine Doctor, returning the smile, remarked,<br><br>"If there's something I desire, it's merely for the patients to recover quickly."<br><br>"Indeed."<br><br>Such an answer befits the Divine Doctor. Or should I say Dong Bong now?<br><br>No. He was indeed another Divine Doctor.<br><br>"What do you wish for?"<br><br>Cheong Pung, taken aback by the direct question, stammered,<br><br>"Um, me?"<br><br>With a nod from Tang Sa-Dok, Cheong Pung's response came, albeit awkwardly, his body language a mix of hesitation and confusion.<br><br>"Well... um. Nothing."<br><br>"Really?"<br><br>"Yes. Nothing."<br><br>"..."<br><br>"..."<br><br>Hey, you bastard. Take your eyes off Mimi-chan and talk.<br><br>Inwardly, I mused about holding a mirror up to Cheong Pung, whose gaze was undeniably fixed on Mimi-chan with an intensity born of sheer fascination.<br><br>After a very long pause, Tang Sa-Dok shared,<br><br>"This one has been a long-time friend of mine. For decades, she was the only being with whom I could share my deepest joys and sorrows."<br><br>Cheong Pung's expression softened into one of understanding towards Tang Sa-Dok.<br><br>"Grandpa Tang has no other friends."<br><br>"I didn't make any. The position of the Tang Family's Patriarch was such a demanding role for me."<br><br>"So, you have no friends."<br><br>"It's not that I didn't have any. I could have made them..."<br><br>"You had no friends at all. How pitiful."<br><br>"......"<br><br>The Divine Doctor urgently grabbed Tang Sa-Dok's shoulder.<br><br>"Patriarch, please calm down. Your breathing is too rapid!"<br><br>"Huff, huff."<br><br>"Breathe deeply and slowly. Now, follow me. One, two......"<br><br>"Hooooo......"<br><br>His breathing eventually steadied, averting a potential crisis. Then, Tang Sa-Dok turned to Cheong Pung, contemplation in his eyes.<br><br>"But to entrust Mimi to you..."<br><br>Cheong Pung, overwhelmed, clasped his hands over his mouth.<br><br>"No, Grandpa Tang. I cannot take away your only friend."<br><br>"......I haven't said I would entrust her yet."<br><br>"Ah. Oops."<br><br>With a heavy sigh, Tang Sa-Dok briefly pondered Cheong Pung's suitability as Mimi's guardian.<br><br>"Yes, as you guessed. Given the uncertain future of our household, I intend to entrust Mimi to you. Temporarily, of course."<br><br>"Wow!"<br><br>"Did you hear the last part? Temporarily."<br><br>"Wow!"<br><br>I'd bet Hyuk Mu-Jin's right wrist that he didn't hear it.<br><br>Nonetheless, Cheong Pung was ecstatic.<br><br>"Don't worry. I'll take good care of her!"<br><br>"From what I've seen, Mimi seems to like you well enough, but she is naturally finicky and shy around strangers......"<br><br>"Mimi. Spin around, then twirl and greet!"<br><br>Ssss ssss!<br><br>"Oh... damn."<br><br>He even used a new trick here.<br><br>Jin Wi-Kyung, witnessing this novelty, murmured, somewhat spellbound,<br><br>"It seems the Patriarch has nothing to worry about."<br><br>Tang Sa-Dok's gaze wavered as if stirred by inner turmoil.<br><br>He then sought a private word with Jin Wi-Kyung, leaving Cheong Pung and me to exit first.<br><br>We were soon joined by another individual.<br><br>"Young Master Jin, could you spare a moment for this old man?"<br><br>"Me?"<br><br>The Divine Doctor nodded with a gentle smile.<br><br>"There's something I must ask of you before you leave."</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-374.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-376.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

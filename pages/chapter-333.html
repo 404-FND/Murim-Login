@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 333 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 333</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 333</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: February 16, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>"Please wait a moment, Master Ship Lighter Mu-Song."<br><br>I felt compelled to offer a standing ovation to the speaker of those words.<br><br>The boldness required to articulate such a statement amidst such palpable tension was noteworthy.<br><br>Particularly when the person addressed had just transformed over fifty pirates into fish bait within five minutes.<br><br>But who dared to speak?<br><br>'It’s evident from the use of "Master" that they're not one of us.'<br><br>Mu-Song was known to his crew as 'Captain' or 'Fortress Master', ruling them out. None in our group, myself included, had spoken up either.<br><br>That left only one possibility...<br><br>'The passengers who were attacked by the pirates.'<br><br>It became obvious to all present.<br><br>Both my group and the Water Dragon Fortress pirates simultaneously looked in the same direction - towards the twenty passengers who had boarded the fast ship following Hwang Tae-Gu's raid.<br><br>"Who is it? Come forward."<br><br>At Mu-Song's stern command, his men quickly made way. A single figure stood at the end of the clearing.<br><br>"Hello, young man."<br><br>Though the voice hinted at youth, his appearance was surprisingly boyish.<br><br>'He couldn’t be older than twenty.'<br><br>The term 'boy' seemed more fitting than 'young man'. He appeared unnerved by the attention, hesitantly joining his hands in an awkward gesture.<br><br>"Hello. My name is Mun-Kyung."<br><br>"Mun-Kyung?"<br><br>Mu-Song echoed, his brow furrowing.<br><br>"That's a name I've never heard before. You don't seem to be a martial artist either."<br><br>Mu-Song's observation was spot-on.<br><br>Mun-Kyung emitted the aura of a mere civilian, plain and unremarkable.<br><br>Under our intense scrutiny, Mun-Kyung nervously responded,<br><br>"Yes, that's correct. I am just a medical practitioner in training, with no ties to the martial world."<br><br>"Just a medical practitioner? But you seem to know me."<br><br>"How could I not know of the righteous boatman on the Yangtze River of Sichuan, who strictly forbids the unnecesary taking of life?"<br><br>The flattery was blatant.<br><br>Suddenly, Mu-Song, renowned for his ruthless piracy on the Sichuan part of the Yangtze River, struggled to suppress a smirk, his usual ferocity momentarily faltering under the guise of a 'righteous boatman'.<br><br>“Hmm, is that so?”<br><br>“Wealth may come and go, but life is something we only have once. Those who know how many lives have disappeared on the Yangtze River up until a few years ago call Master Mu-Song the 'Master of Benevolence and Righteousness'."<br><br>"Cough. Master of Benevolence and Righteousness, you say. Being the Hero of the Yangtze River is enough for me."<br><br>Such hyperbole...<br><br>While Mu-Song exhibits some sensibility, his core as a pirate remains. Occasional good deeds hardly elevate him to sainthood.<br><br>Yet, the young doctor seemed to view him differently.<br><br>"My parents were tragically killed on the Yangtze River over a decade ago. If it weren't for Master Mu-Song's rescue, I might have followed in their footsteps."<br><br>"That's unfortunate. But if it was over a decade ago then..."<br><br>"Yes."<br><br>Mun-Kyung's voice quivered as he continued.<br><br>"The person kneeling before Master Mu-Song right now is the man who killed my parents."<br><br>"Oh."<br><br>The revelation caused a stir among the pirates and passengers, all hanging on Mun-Kyung's words. Mu-Song, grasping the gravity of the situation, interjected.<br><br>"I see why you asked me to stop. While it goes against the rules of our Alliance, I fully understand your feelings, and I will give you a chance."<br><br>"You mean to grant me the power to decide his life or death?"<br><br>"Of course."<br><br>But Mun-Kyung's ensuing decision took everyone by surprise.<br><br>"Then... please spare him."<br><br>"...!"<br><br>"...!"<br><br>Mu-Song, poised to hand over a weapon, and Hwang Tae-Gu, who had braced for his end, both stared at Mun-Kyung in disbelief.<br><br>"W-what did you say?"<br><br>Mu-Song asked with a puzzled expression as Mun-Kyung bowed.<br><br>"As much as I want to avenge my parents, I am a doctor. How can someone who deals with life commit an act of death? However, I implore you to ensure that he can no longer commit evil deeds by abolishing his martial arts and punishing him severely according to strict laws."<br><br>"If we follow your suggestion, that man will be sent to the main body of our Alliance. He deserves death, but he might escape with his life due to the connections he's made so far. Wouldn't it be better to avenge yourself right here and now?"<br><br>"I may have no ties to Murim, but I understand that losing one's martial arts is akin to death for a martial artist. I may not have killed him, but it's as good as done. And..."<br><br>Mun-Kyung's gaze, steady and clear, locked onto Hwang Tae-Gu.<br><br>"This is not about personal revenge, but a matter of principle. If the Yangtze River Water Route Alliance punishes him directly, it will serve as a warning to others who commit slaughter on the Yangtze."<br><br>In his steady, unflinching voice, Mun-Kyung commanded the respect of all present.<br><br>Impressed by his demeanor, exclamations of admiration flowed from the onlookers.<br><br>“Ha, impressive. Such wisdom in someone so young.”<br><br>“If it were me, I would have immediately thrust a harpoon into that guy's chest.”<br><br>“A unique individual indeed. He will make a fine doctor.”<br><br>Mu-Song appeared genuinely moved by the young doctor's eloquent words, nodding with evident respect. He then approached Hwang Tae-Gu.<br><br>“If you have ears, you must have heard what the young doctor said. What do you think?”<br><br>“I will definitely survive to tear all of you to pieces.”<br><br>The defiance in Hwang Tae-Gu’s eyes was fleeting.<br><br>Thud!<br><br>“Argh!”<br><br>Below Hwang Tae-Gu’s abdomen, precisely at the Dantian, Mu-Song’s foot landed with force.<br><br>Gazing indifferently at Hwang Tae-Gu, who now spat blood and collapsed, Mu-Song declared,<br><br>“Try and survive if you can. Even if you live, without your Dantian, it won’t be much of a life.”<br><br>His foot struck the Dantian again with a thunderous impact.<br><br>Whoosh, crack!<br><br>“No, please!”<br><br>Hwang Tae-Gu's pleas vanished into the void as his fate was sealed. \[Note: while two kicks may seem like its nothing, especially to relatively strong martial artists, if hit properly a person can destroy someone's dantian, which is used for storing and controlling Qi, as we have seen. So damaging or destroying this would prevent another person from practicing martial arts ever again.\]<br><br>Swoosh!<br><br>Qi seeped from the seven holes of Hwang Tae-Gu's face, dissolving seamlessly into the ether. \[Note: the term used here 칠공(七空) means "seven holes" in Korean, but could also mean "Seven Emptinesses", which is a Buddhist concept. The seven holes translation makes more sense here, but I am not sure why the author has used the Chinese term with Buddhist connotations in this line. The seven holes would be the two ears, two eyes, two nostrils, and mouth.\]<br><br>Like water escaping a shattered vessel, his internal energy dissipated with the destruction of his dantian.<br><br>“You all, I will definitely-!”<br><br>The Peak Master who ruled over the Yangtze River in Sichuan no longer existed.<br><br>Reduced to a feeble, powerless man, Hwang Tae-Gu's threats ceased as he became stiff with bloodshot eyes.<br><br>“Enough of your racket. Throw this guy somewhere appropriate, we’ll send him to the main body of the Alliance later.”<br><br>“Aye captain.”<br><br>A pirate, his head gleaming bronze like a Diglett, hauled Hwang Tae-Gu away, bringing the ordeal to an end.<br><br>Mu-Song, scratching his head, surveyed the onlookers.<br><br>“What a scene. I apologize to those who suffered from this ordeal.”<br><br>Was it the lesser of two evils – a rogue pirate overcoming a worse one?<br><br>Regardless, the civilians, owing their lives to the Water Dragon Fortress' intervention, expressed their gratitude with deep bows.<br><br>“Oh no, not at all. We would have been doomed without the heroes of the Yangtze River.”<br><br>“How can I ever repay this kindness…”<br><br>“Thanks to the care of the Primordial Heavenly Lord, not a single life was lost. You needn’t worry.” \[Note: In Taoism and certain East Asian spiritual traditions, the Primordial Heavenly Lord is typically regarded as a supreme deity or a highly revered divine figure. This figure is often associated with the creation or origination of the universe, embodying the essence of the Tao (the Way) or the fundamental principles that govern the cosmos.\]<br><br>What? Not a single death?<br><br>I scanned the group of passengers.<br><br>‘It's true.’<br><br>There were injured people here and there, but no corpses.<br><br>Despite our timely arrival before the full-blown battle, the initial volley of arrows and harpoons should have been lethal...<br><br>‘How did mere civilians, only twenty in number, manage this?’<br><br>My question was soon answered.<br><br>“If it weren’t for the young doctor over there, we might all have been dead.”<br><br>“Yes. How he remained so calm in such a situation… truly remarkable.”<br><br>This was the consensus among the passengers.<br><br>When the pirates appeared, inciting panic, Mun-Kyung had stepped forward, ripping up deck planks to create makeshift shields and even dismantling the mast.<br><br>‘The deck I understand, but breaking the mast?’<br><br>An average person would think of rowing away in desperation, but Mun-Kyung had a different approach.<br><br>He rendered the sail useless, leaving the ship at the mercy of the Yangtze's unpredictable currents.<br><br>‘And he succeeded.’<br><br>I understood the basics of naval combat.<br><br>The usual strategy involved closing in on the enemy after long-range assaults, then engaging directly, either by ramming or boarding.<br><br>But if the target ship is erratically spinning and rocking, it's difficult to execute an attack. Mun-Kyung bought valuable time with this tactic.<br><br>‘Look at this guy.’<br><br>His handling of the Hwang Tae-Gu situation too. He’s no ordinary clever fellow.<br><br>Then, as Mun-Kyung caught my gaze, perhaps sensing the praise in my heart, he looked startled.<br><br>“Y-Young Master, do you need something from me?”<br><br>“Need? It's just that you seem about my sister's age and I was admiring the incredible thing you did.”<br><br>“You flatter me.”<br><br>“From what I heard, it was a bold move. How did you come up with that?”<br><br>“Although I’m currently walking the path of a medical practitioner, before my parents passed away, I read a lot of books on different subjects.”<br><br>“Books?”<br><br>“Yes. My family actually comes from a modest military background. My grandfather was even a military officer receiving stipends from the court.”<br><br>An attempt to hide a faint wariness towards strangers and a subtle sense of pride.<br><br>At first glance, he seemed like any other boy his age, yet something was amiss.<br><br>As I observed Mun-Kyung closely, I whispered under my breath.<br><br>‘Activate skill, Qi Sense.’<br><br>Ding!<br><br>The familiar sound of a bell chimed, revealing insights about him in a floating display.<br><br>\[Lv.6 Mun-Kyung\]<br><br>“I was off the mark.”<br><br>“Pardon?”<br><br>“Nothing. Just stay healthy and keep growing up well.”<br><br>“Yes, y-yes…”<br><br>I clicked my tongue subtly, turning away from a confused Mun-Kyung.<br><br>That's when Mu-Song, who had been observing, inquired quietly.<br><br>“What’s the matter?”<br><br>“Nothing much. I was just curious about him.”<br><br>“Hubae, do you enjoy sodomy?” \[Note: I have checked and checked, hoping that my eyes deceived me, but here is the original Korean so you can see for yourselves... "후배, 혹시 남색(男色)을 즐기나?" Also, Hubae means "junior" in Korean.\]<br><br>What the hell…<br><br>Noticing my reaction, he quickly cleared his throat and shifted the topic.<br><br>“Well, anyway, we should continue on our way. The current is strong, but with this favorable wind, we’ll reach Xi'an in no time.”<br><br>“What about the others? Their original ship also sank.”<br><br>“The others? Ah, my men will move them to a safe place.”<br><br>Mu-Song chuckled and added.<br><br>“Of course, for a modest fee.”<br><br>“…”<br><br>Saving lives and then extorting money. Should I call that smart or stupid?<br><br>I was momentarily speechless at this new model of creative economy when suddenly,<br><br>“Wait a moment.”<br><br>“Hm?”<br><br>It was Mun-Kyung, appearing hesitant and toying with his fingers as he spoke.<br><br>“Did you say you’re heading to Xi'an now?”<br><br>“Yes. Why?”<br><br>Startled, Mun-Kyung quickly blurted out his words.<br><br>“It’s just that, coincidentally, I was also on my way to Xi'an. If you could just give me a ride this one time, I would be eternally grateful, remembering the kindness forever, deeply engraved in my heart, even if I die and die again a thousand times and turn to dust, I will never forget…”<br><br>What is this now?<br><br>I sighed deeply, facing this Jeong Mong-Ju-like character. \[Note: Jeong Mong-Ju is a Korean scholar and diplomat most famous for a poem he wrote that includes the line "Though I die and die again a hundred times, That my bones turn to dust, whether my soul remains or not, Ever loyal to my Lord, how can this heart ever fade away?", which is what is causing the MC to relate Mun-Kyung to him.\]<br><br>“Alright, get on.”<br><br>“Thank you so much!”<br><br>Watching Mun-Kyung hurriedly gather his belongings, Mu-Song muttered quietly.<br><br>“Well, it’s my boat, after all…”<br><br>No, not anymore.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-332.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-334.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

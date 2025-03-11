@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 384 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 384</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 384</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: April 5, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>Qingcheng Mountain.<br><br>It was a revered Taoist sanctuary with a storied past.<br><br>Confronted by its imposing and majestic landscapes, one is rendered speechless, captivated by its grandeur.<br><br>Yet, my sense of wonder stemmed from an entirely different source.<br><br>'It's definitely different but... it's pretty much the same.'<br><br>This was Qingcheng Mountain, both within the realm of Murim and in the 21st century.<br><br>The two worlds I have experienced so far have resembled each other in many aspects, from the geography, the language, to the appearance and lifestyle of its people.<br><br>At one point, I speculated whether Murim was an ancient epoch of our modern times.<br><br>'But it wasn't.'<br><br>The butterfly effect is something you would only see in movies.<br><br>Although the two realms bore resemblance, nuances and divergent histories set them apart.<br><br>Furthermore, Murim's expanse was more confined compared to our modern world, which was as wide as five oceans and six continents.<br><br>Diverse peoples inhabit distant lands, yet only a singular, vast nation dominates the core of that alternate universe.<br><br>Murim may just be the Middle Kingdom that China has always saw itself as. \[Note: while the word "China" doesn't have any other meanings in English, the word for China in Chinese is Zhongguo, which means "Central Kingdom" or "Middle Kingdom". This term historically positions China as the geographical and cultural center of the world, embodying a sense of superiority and centrality in Chinese civilization.\]<br><br>'But I'm looking at the exact same mountain.'<br><br>I returned from the tumultuous Blood History of the Three Great Sects, which bathed Sichuan in blood, only to stand upon Qingcheng Mountain in Sichuan once more.<br><br>I pondered whether this was a mere coincidence or a grim destiny.<br><br>I hope not everything resembles Murim...<br><br>「Mr. Jin?」<br><br>"Jin Tae-Kyung."<br><br>"Ah."<br><br>It was as though I had been roused from a deep slumber.<br><br>Unbeknownst to me, Wei Feng-Hu and Mr. Choi, having disembarked from the business jet, regarded me with curious eyes.<br><br>"My apologies. I was momentarily distracted by the scenery."<br><br>「To be able to see the magnificent view of Qingcheng Mountain in such darkness, Mr. Jin, you must possess a significant amount of mana.」<br><br>While his assumption wasn't wrong, ascending to the Transcendent Realm allows me to perceive much beyond the ordinary, even without relying on mana.<br><br>As I nodded with a slight smile, Wei Feng-Hu exclaimed in admiration.<br><br>「Now I really understand why Korea has been hiding Mr. Jin so carefully. You are truly befitting of an S-rank Hunter and could be the face of the nation.」<br><br>"What? I'm still officially only an A-rank though."<br><br>「There's no need to hide it. Our country has already grasped it to some extent.」<br><br>Before I could formulate a reply, Wei Feng-Hu proceeded.<br><br>「To become an S-rank Hunter, one must achieve enlightenment through ceaseless mental discipline and rigorous training. Our country has also nurtured its hunters through numerous trials and errors... To have reached such a level at a young age like Mr. Jin suggests that there was significant support from the Korean government.」<br><br>"......?"<br><br>"......?"<br><br>「Ah, of course, Mr. Choi next to you is also an excellent hunter. Having such individuals together makes me feel reassured.」<br><br>Is it the same comfort I feel when I drop a rice ball into my soup?<br><br>With a quick exchange of looks, Mr. Choi and I silently concurred.<br><br>'Let's keep quiet.'<br><br>'Let's keep quiet.'<br><br>It might be because my rise to this position feels somewhat surreal, but there's no benefit in disputing the label they've affixed to us.<br><br>Arguing with Wei Feng-Hu here and now would also prove cumbersome.<br><br>"Um, it seems like there's a bit of a misunderstanding, but I'll explain it in time."<br><br>「There is no misunderstanding. We are all aware of each other's circumstances.」<br><br>"......"<br><br>"......"<br><br>「The President is already informed about this matter. So when you meet, don't bother denying it. Just accept it as it is.」<br><br>I couldn't help but smirk internally.<br><br>'The President, huh.'<br><br>A figure commanding the populace, economy, and military of the People's Republic of China single-handedly.<br><br>With the immense power that I wield after having reached the Transcendent Realm, the President feels both within reach and yet incredibly distant.<br><br>I wonder if I'll get to see his face once this is over?<br><br>Regardless, that concern is for a later time.<br><br>Setting aside the raid bonuses, a staggering weekly salary of ten billion won is in itself a boon. At this moment, he represents nothing more than a generous benefactor to me, allowing me to save lives while earning a ton of money.<br><br>"I will do so, when I meet him."<br><br>「Good. Then let's go see him.」<br><br>"Excuse me?"<br><br>「Didn't I tell you? He's waiting in the underground bunker right now.」<br><br>What?<br><br>Following Wei Feng-Hu, I leaned in to whisper to Mr. Choi.<br><br>"Did you just hear that?"<br><br>"Yes, I heard it. I can't believe it either. Why would the President leave the safety of Beijing and come all the way here? It seems the public's opinion holds some truth after all."<br><br>"Public opinion or not. China's General Receptionist!"<br><br>"It's not the General Receptionist, it's the General Secretary! The President!"<br><br>「Hm? What did you just say?」<br><br>「Nothing at all, Minister of National Defense, sir.」<br><br>Mr. Choi, displaying a level of seriousness and earnestness previously unseen, deftly addressed Wei Feng-Hu.<br><br>"Jin Tae-Kyung. You must not make such mistakes in front of the President. Do you understand? Especially do not bring up the General Receptionist. He isn't one of your high school classmates."<br><br>"Eh? What's wrong with that?"<br><br>"......"<br><br>I think Mr. Choi just said "fuck this" under his breath. Must be my imagination.<br><br>I reminded myself quietly.<br><br>'It's not the General Receptionist. It's the General Secretary. The President of China.'<br><br>My background couldn't be more different from Mr. Choi's aristocratic upbringing; I come from humble origins.<br><br>Regardless of my usual stance towards China, the prospect of meeting a global superpower's leader set my heart pounding.<br><br>'Just don't make a mistake. Especially not about the General Receptionist.'<br><br>Then, ten minutes later, I was shaking hands with the President of the People's Republic of China, under the watchful eyes of key figures in the underground bunker.<br><br>「Nice to meet you, Mr. Jin. This old man is Shao Yang, serving as the President of the People's Republic of China.」 \[Note: in previous chapters, I have translated this character's name as "Xiao Yang", but in this chapter, the author writes their name in English as "Shao Yang". I will be using "Shao Yang" from now on instead of the more common Romanization of the name.\]<br><br>Alright, there's no need to bring up the General Receptionist's age. Having passed that hurdle, I relaxed as I started to speak.<br><br>"Welcome."<br><br>「......?」<br><br>"......?"<br><br>Oh, fuck.<br><br>\* \* \*<br><br>The President and General Secretary of the Central Military Commission of the Chinese Communist Party, presiding over a nation of over a billion.<br><br>Shao Yang.<br><br>His tone was soft when addressing the masses, yet his eyes conveyed unyielding resolve.<br><br>「As you all know, I am sadly neither a military expert nor a distinguished general. I am merely a schemer who got involved with politics at an early age and only managed to achieve my modest ambitions at the age of seventy.」<br><br>His candid self-description as a "schemer" was startlingly forthright for the leader of a country that boasts the world's largest population and fourth-largest territory.<br><br>'Was this what Mr. Choi meant by "public opinion"?'<br><br>His demeanor gives insight into his character.<br><br>This could merely be a façade or pretense for public display.<br><br>Yet, the aura emanating from Shao Yang, the President of China, felt distinctively genuine.<br><br>「Please do your best. I hope you can save as many people as possible and quickly prevent this terrible disaster. If you do so, I will express my gratitude to you and your country and remember the help you've given for a long time.」<br><br>In truth, I don't know what kind of life this elderly man has led or what policies he has implemented.<br><br>But I do want to give him a lot of credit for reaching out for help from countries around the world to save his people.<br><br>「This old man's words end here. Please, do not bother with complex issues like politics, and earnestly find the best way to stop this situation with the least sacrifices.」<br><br>The seasoned politician then shifted his gaze towards an individual.<br><br>「Minister Wei Feng-Hu, my old friend.」<br><br>「Yes, President, sir?」<br><br>「Do you want the full authority of the Central Military Commission?」<br><br>Wei Feng-Hu, after a brief pause, gave a weighty nod.<br><br>「Yes.」<br><br>「I think that you would be able to use that power well. However, I must refuse.」<br><br>「...President, sir?」<br><br>「After the meeting, bring me the orders. I will take on all the authority and responsibility.」<br><br>Initially, I puzzled over the Chinese General Receptionist's motivations, only to recognize it as his commitment to shoulder all responsibilities.<br><br>Observing this, Mr. Choi whispered to me.<br><br>"He's a good leader."<br><br>I gave a small shake of my head in response.<br><br>"No. To me, Team Leader Choi is the best leader."<br><br>"Jin Tae-Kyung..."<br><br>"So, please raise the guild settlement ratio." \[Note: this is in reference to the 9 to 1 split of Jin Tae-Kyung's earnings for coming to China.\]<br><br>"Jin Tae-Kyung..."<br><br>The same words, a different feeling.<br><br>Mr. Choi looked at me with an expression that seemed to say, "Of course you would be thinking of the money," as he shook his head.<br><br>「The President is leaving.」<br><br>At the secretary's cue, all present stood as a sign of respect for the nation's leader.<br><br>「I wish you all good luck.」<br><br>The President locked eyes with each attendee, myself included, offering a parting gesture of goodwill.<br><br>And I was the final one he addressed.<br><br>「Mr. Jin.」<br><br>"…Yes."<br><br>A subtle smile appeared on the President's face as he regarded me.<br><br>「My expectations for Mr. Jin are very high. Though we are exchanging what we need from each other through this contract, I hope you will always prioritize human lives, no matter the situation.」<br><br>Was it my imagination, or was his farewell notably more extended for me than for the others? Aware of the focused attention on me, I acknowledged his expectation.<br><br>"I understand."<br><br>「Please, be of great help to us.」<br><br>As the President made to depart, he halted briefly, adding one last comment.<br><br>「Welcome.」<br><br>"…"<br><br>「That is all.」<br><br>With the departure of the Chinese dignitaries and the President, I leaned back in my chair, overwhelmed.<br><br>'Damn.'<br><br>If I were to die, it would be a death of embarrassment. Even if a monster killed me, the death would be documented as being due to embarassment.<br><br>'Ugh, ahhhhh!'<br><br>A sudden pressure on my foot jolted me; unmistakably, it was Mr. Choi next to me applying the force.<br><br>"Why?"<br><br>Mr. Choi cleared his throat with a subtle cough.<br><br>"Ahem."<br><br>"What?"<br><br>"Ahem. People, people."<br><br>"Ah."<br><br>That's when I took a moment to survey my surroundings. The underground bunker housed around a dozen individuals of diverse genders and ethnicities, all with their eyes on me.<br><br>Among them, four figures particularly stood out.<br><br>'Those are…'<br><br>Two Chinese, a man and a woman, along with two Western men, one exuding a green aura, the other blue.<br><br>Locking eyes with them, I sensed it immediately. The formidable power that resided within each of them.<br><br>It wasn't so much surprise as it was acknowledgment. To anyone aware of their identities, this realization would seem inevitable.<br><br>'S-rank Hunters.'<br><br>Individuals who are phenomena in their own right. These were the elite among hunters worldwide.<br><br>The very figures I had grown weary of seeing on media and billboards were now directly before me.<br><br>Then, one of them stood and extended a hand toward me.<br><br>「Pleased to meet you. I am... Oh, do you not speak English well? I could use translation magic if you need.」<br><br>His initiative to engage caught me off guard. Accepting his hand, I responded with a surprised look.<br><br>"No, English is fine."<br><br>「Oh, look at this guy's pronunciation. I would believe you if you said you were American.」<br><br>The towering black man, over two meters in height, inquired with a glint in his vibrant blue eyes.<br><br>「You seem to know who I am, don't you?」<br><br>My response was more jittery than when I had encountered President Shao Yang.<br><br>"Of course, you're Magic Johnson." \[Note: trivia tidbit - the real life Magic Johnson's height is about 6 foot 9 inches, or approximately 2.06 meters.\]<br><br>The title of Grand Mage is bestowed upon only three people worldwide.<br><br>The black man before me, Magic Johnson, is known among those Grand Mages as being particularly specialized in combat and deemed the War Mage.<br><br>'To think I'm conversing with Magic Johnson. I guess there will never be a dull moment for the rest of my life.'<br><br>Convinced that my decision to be here was the right one, the world's foremost War Mage grinned widely and remarked.<br><br>「Haha. Thanks for recognizing me. Truth is, I've known about you for a while too.」<br><br>"Me, really?"<br><br>「Of course. Even my youngest daughter, who just started elementary school this year, knows who Emperor Fuck is.」\[Note: this person uses the Korean word "Shibaljwa" here, instead of the English "Emperor Fuck".\]<br><br>"......"<br><br>Seriously, how far has that damned nickname spread?<br><br>I wonder what "Shibaljwa" translates to in English. King of Fucks? Emperor Fuck?<br><br>Imagining Magic Johnson's daughter knowing me by such a moniker was far from flattering.<br><br>It wasn't just me who found the nickname distasteful.<br><br>「What a vulgar nickname. Well, it suits a nobody A-rank hunter perfectly.」<br><br>A man, appearing in his early thirties and notably youthful among the other Chinese present, cast a disdainful look with his arms folded.<br><br>「Isn't that right, you peninsula bangzi?」<br><br>Before Mr. Choi could intervene, my retort was already escaping me.<br><br>"What are you saying, you mainland jjanggae bastard?"</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-383.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-385.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

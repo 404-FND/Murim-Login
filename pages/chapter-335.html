@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 335 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 335</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 335</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: February 19, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>Just like the real Sichuan province, the Sichuan in this world also boasted a vast area.<br><br>Its expanse was such that Sichuan's landmass rivaled the combined territories of Shanxi, Henan, and Shaanxi. In essence, it was colossal.<br><br>'It's more like a continent.'<br><br>Given its enormity, it wasn't surprising that the province could host three formidable powers.<br><br>'The Emei Sect and Qingcheng Sect, both part of the Nine Great Sects. And…'<br><br>The eminent Tang Family of Sichuan.<br><br>As one of the dominant forces in Sichuan and nearest to Chengdu, their estate was an ideal first destination.<br><br>'If I can gain the cooperation of these three powers and join forces with the Beggar Sect, things will be much easier.'<br><br>While I was lost in these thoughts, Goong Gi-Bang, trailing slightly behind, gestured ahead.<br><br>"We're almost there. It's the Tang Family's gate."<br><br>True to his word, a sprawling plain unfolded before us, its boundaries marked by towering stone walls.<br><br>Although distance made precise measurement tricky, the walls looked to exceed ten meters.<br><br>"What's this? A castle?"<br><br>"It's because of their history."<br><br>"History?"<br><br>"They suffered greatly during the last Great Faction War. When the Demonic Cult occupied Sichuan, many clans were killed, and even the Tang Family's stronghold was burned down."<br><br>"The stronghold was completely devastated?"<br><br>"Not exactly. As they retreated, they released all sorts of deadly poisons, so the clueless Demonic Cult invaders also died en masse. Do you know the motto of the Tang Family of Sichuan?"<br><br>"The North remembers?"<br><br>"…What kind of bullshit is that?"<br><br>"You know nothing, Goong Snow."<br><br>Goong Gi-Bang, giving me a bemused look, replied.<br><br>"Repay kindness twice over. Avenge grudges a thousandfold."<br><br>"Wow, that's intense."<br><br>"Intense indeed. The bastards who sided with the Demonic Cult during the occupation of Sichuan died in droves, soiling themselves."<br><br>"They were all poisoned?"<br><br>"Poisoned, assassinated, and even hunted down by specialized pursuit squads. They died in all sorts of ways. Those who miraculously survived weren't really living, though."<br><br>That made sense.<br><br>As they watched or heard of their comrades dying all around them, they would have been trapped in a psychological prison of their own making.<br><br>They would have spent their lives tormented by the shadows.<br><br>"When it comes to poison and hidden weapons, the Tang Family of Sichuan is second to none. They are secretive and relentless. Did you see anyone from the Tang Family of Sichuan at the Great Celestial Banquet?"<br><br>Racking my brain, I couldn't recall seeing a single representative from them.<br><br>Even the Namgoong Family, who didn't send their disciples to participate in the Banquet, had sent key figures... but there was a conspicuous absence of anyone from the Tang Family of Sichuan.<br><br>"I don't think so?"<br><br>"Right?"<br><br>"Yeah, really none."<br><br>"That's the Tang Family of Sichuan for you."<br><br>Damn, they are unapologetically themselves.<br><br>This revelation gave me pause, seeding a worrisome thought.<br><br>'What if they flat-out reject us?'<br><br>Armed with a letter from Sword Saint Mae Jong-Hak, I sought their alliance, but a gnawing uncertainty lingered.<br><br>Shaking off such doubts and readying myself to employ Qinggong again, Goong Gi-Bang interjected.<br><br>"It's better to walk from here."<br><br>"Why?"<br><br>"They won't like it if we approach too quickly."<br><br>"How do you know?"<br><br>Goong Gi-Bang nodded towards a massive stone just a short distance away.<br><br>Emblazoned in striking, blood-red script on the stone was a foreboding warning:<br><br>\[Those who tread uninvited shall pay in blood.\]<br><br>"Let's walk. I've been wanting to walk for a while now."<br><br>"..."<br><br>"Hey, sometimes it's good to take in the scenery and look up at the sky. That's part of living."<br><br>So, Goong Gi-Bang, Hyuk Mu-Jin, and I refrained from using Qinggong. However, one among us didn't heed this caution. In a sudden whirlwind, a figure dashed ahead.<br><br>Swoosh!<br><br>"Hiiiiiii!"<br><br>"You're a crazy bastard!"<br><br>"No, I'm Cheong Pung!"<br><br>As he zoomed by, waving enthusiastically, a boy clung to his back, jostled about helplessly.<br><br>Cheong Pung called out to Mun-Kyung, who was visibly struggling to hold on.<br><br>"Doctor, say hello!"<br><br>"Hello!"<br><br>Please don't do weird stuff like this...<br><br>...And please don't encourage him.<br><br>As I reached to restrain the overzealous bastard, the Tang Family of Sichuan's reaction was swift and decisive.<br><br>Swoosh! Bang!<br><br>A massive spear, as tall as an adult, rocketed from the stone wall, embedding itself inches from Cheong Pung's feet, quivering violently.<br><br>Almost immediately after.<br><br>"Who goes there!"<br><br>Clatter, clatter, clatter!<br><br>Dozens of crossbows emerged atop the wall, their presence announced by a resounding, authoritative shout.<br><br>Amidst the glinting arrowheads in the sun, a stern-faced middle-aged man called out again.<br><br>"Foreigners, identify yourselves!"<br><br>Cheong Pung cheerfully responded.<br><br>"Hello! I'm Cheong Pung!"<br><br>"And I- I am Mun-Kyung. Please, if you would kindly lower your weapons, I will be forever grateful and will repay this kindness even in death, again and again... uh uh!"<br><br>Enough with the theatrics...<br><br>I quickly covered both Mun-Kyung and Cheong Pung's mouths and bowed repeatedly towards the stone wall.<br><br>"Sorry, so sorry. They are still children. My name is Jin Tae-Kyung from the Jin Family of Taiyuan."<br><br>"Jin Tae-Kyung of the Jin Family of Taiyuan?"<br><br>The man's eyes narrowed, deep in thought.<br><br>"Jin Tae-Kyung? The Sleeping Dragon of Shanxi who is a disciple of the Fire King, Master Jeok Cheon-Gang?"<br><br>"Yes. That's me."<br><br>Nodding towards Goong Gi-Bang, who was maintaining a respectful distance, I added.<br><br>"This person here is the Fifth-Mastery Bast- ah, no, I mean Goong Gi-Bang, the Hugae of the Beggar Sect."<br><br>"A disciple of Jeok Cheon-Gang and the Hugae of the Beggar Sect."<br><br>His tone still carried a hint of suspicion, but the man's expression softened slightly.<br><br>At his subtle signal, the crossbows trained on us were lowered.<br><br>"What brings you to our home?"<br><br>"We wish to meet with the family head."<br><br>"The family head?"<br><br>"Yes, it's an important matter."<br><br>The middle-aged man's frown deepened, clearly not satisfied with my vague explanation. However, this was not a matter to be discussed openly.<br><br>Sword Saint Mae Jong-Hak was a man of strategy; he had his reasons for sending us with a handwritten letter, instead of notifying the Tang Family in advance.<br><br>"The family head is currently occupied with many urgent matters. Currently, our main house is not receiving any outsiders. I suggest you come back another time."<br><br>"Just passing the message would be enough."<br><br>"Impossible. The person who ordered me not to receive any outsiders is the family head himself. And if it was such an important matter, you should have contacted us in advance."<br><br>Why is he being such a pumpkin? This wasn't in my calculations. \[Note: the Korean word for pumpkin is one syllable off from the word for "firm" or "decisive". He is literally calling this guy a pumpkin, but means that he's being too rigid.\]<br><br>Goong Gi-Bang, murmuring barely audibly, appeared to concur.<br><br>"Something's off. Even if the Tang Family of Sichuan is reclusive, it shouldn’t be to this extent..."<br><br>I agreed. Pointing the crossbows at us right away and their initial stern attitude were more suitable for a state of emergency.<br><br>'We're getting quite the welcome as guests.'<br><br>Yet, in our quest for collaboration, voicing complaints wasn't an option. We needed to divulge just enough to gain access to the family head.<br><br>'It can't be helped.'<br><br>After a brief pause, I met the middle-aged man's gaze and declared.<br><br>"I have brought a letter from the Sword Saint, Grandmaster Mae Jong-Hak."<br><br>"…!"<br><br>"Please allow us to meet the family head."<br><br>The mention of the Sword Saint visibly shook him. Mae Jong-Hak was a revered figure in the martial arts world, a potential leader for the new Murim Alliance. He was a Master among Masters.<br><br>And we were just newcomers who had risen to prominence in recent years.<br><br>"…Hmm. Wait here for a moment."<br><br>Muttering to himself, the man vanished behind the stone wall, reappearing shortly after.<br><br>His next words were almost anticipated.<br><br>"The family head has granted permission."<br><br>As soon as the middle-aged man finished speaking...<br><br>Groan, groan, groan.<br><br>The colossal iron gate let out a deep moan, gradually unveiling its entrance.<br><br>\* \* \*<br><br>Stepping through the iron gate, it became clear my initial intuition hadn't been mistaken.<br><br>'Something has clearly happened here.'<br><br>The palpable tension among the Sichuan Tang Family members, their guarded expressions, and the charged atmosphere all hinted at underlying turmoil.<br><br>As we navigated from the Outer Hall to the Inner Hall, the strangeness of the situation only grew more pronounced.<br><br>Clang! Clang! Clang!<br><br>Artisans hammered incessantly, uniformed martial artists moved in synchrony, and boxes brimming with weaponry were shuttled about.<br><br>Goong Gi-Bang and I communicated silently through sound transmission.<br><br>\- Hey, is it just me, or does this feel weird?<br><br>\- I know, right? It looks like they’re preparing for battle.<br><br>\- Maybe they found a Demon Head? Like one of those who set fire to the Tang Family of Sichuan during the Great Faction War.<br><br>\- I’m not sure. Better keep quiet and pretend we don’t notice.<br><br>That was exactly my plan. If they had intended to tell us, they would have done so already.<br><br>But the real problem was that this sound transmission was only heard by me.<br><br>"Wow! This is my first time seeing something like this! Are you preparing for a war?"<br><br>"…!"<br><br>"…!"<br><br>The sudden utterance from Cheong Pung brought everything to a standstill.<br><br>Artisans and martial artists alike ceased their activities, turning their collective gaze upon us.<br><br>Their stares felt like an onslaught of invisible weapons.<br><br>'What sins did I commit in a past life to end up with a bastard like Cheong Pung?'<br><br>One second. Two seconds. Three seconds. Was this a hyperbolic time chamber? \[Note: the direct translation is "room of spirit and time", which is also the direct translation of the Hyperbolic Time Chamber from Dragon Ball, which I think is what the author is referencing here. The phrase is just meant to describe a room in which time flows differently.<br><br>My mouth felt as parched as the deserts surrounding the Sphinx, when finally, the middle-aged guide addressed the room.<br><br>"What are you doing? Continue with your work."<br><br>As if snapped from a trance, activity resumed.<br><br>Catching the eyes of those returning to work, the middle-aged man remarked dryly to us.<br><br>"They all seem tight-lipped. I like that."<br><br>On the surface, it sounded like praise.<br><br>But why did it strike me as a veiled threat to remain silent if I valued my life?<br><br>'Because it was.'<br><br>Could it be the family's reputation for poison and hidden weapons?<br><br>Though I sensed the guide was slightly less adept than myself, the Tang Family members exuded an aura of danger.<br><br>"Hold your breath. That's a poison mist. The smell alone is foul."<br><br>"…Ah, yes."<br><br>Was that the dangerous aura I felt?<br><br>I couldn't help but shoot a glare at the still-oblivious Cheong Pung, who cheerfully trailed behind the middle-aged guide.<br><br>How much time had elapsed during our walk?<br><br>We had bypassed five doors, halting only when we reached the sixth.<br><br>"You cannot enter the family head's chamber with weapons and armor."<br><br>Heeding the guide's directive, we surrendered our arms, followed by a thorough search by the guards stationed at the entrance.<br><br>'This is incredibly strict security.'<br><br>As a guard frisked me for concealed weapons, his expression shifted to one of surprise.<br><br>"There's a hidden weapon here!"<br><br>"It's not a weapon, it's a personal item."<br><br>"Excuse me?"<br><br>"It’s mine. It's a uh... something private."<br><br>"…!"<br><br>The awkwardness of the situation was palpable.<br><br>I would have preferred to unveil a hidden blade over exposing this personal item in front of the family head's guards. It would have been an easier death.<br><br>Reluctantly permitting them to see the item, the middle-aged man's eyes widened.<br><br>"You are remarkable."<br><br>"…Can you just let us through without saying anything?"<br><br>"Understood. But it's still remarkable."<br><br>"Please."<br><br>His expression softened slightly, acknowledging my earnest plea. As he was about to allow us through, his brow furrowed in remembrance.<br><br>"Almost forgot. That one there, step aside."<br><br>Ah, right. There was that guy.<br><br>Mun-Kyung was still here.<br><br>"I hear you’ve come to obtain a medical prescription from our main house?"<br><br>Mun-Kyung, who found himself here unintentionally, replied with a shaky voice.<br><br>"Yes, yes."<br><br>"Normally it would be out of the question… but you’re lucky to have good company. I’ll assign someone to assist you. Go and take care of your business."<br><br>"Th-thank you."<br><br>As Mun-Kyung bowed deeply and disappeared with one of the guards, the middle-aged man gestured for us to follow him.<br><br>"Go ahead and enter."<br><br>Twenty steps made of blue stone.<br><br>And at the end, a single door.<br><br>"Uncle, it's me."<br><br>To the middle-aged man's call, an elderly voice responded.<br><br>"Come in."</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-334.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-336.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

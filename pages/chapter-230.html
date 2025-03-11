@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 230 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 230</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 230</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: Coldbutteredtoast</span>
+                            <span class="published-date">Published: December 4, 2022</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>Luoyang had been the capital of Henan for a thousand years. Famed as a centre of economy, literature and art, the ancient city was always bustling with people from every walk of life.<br><br>As it was for the large, populous province and its dynamic capital, so it was for a small inn on the outskirts of Luoyang.<br><br>"Two bowls of noodle soup!" (烩面 -- Hui Mian)<br><br>"Barkeep, three more bottles of rice wine!"<br><br>It was a busy night: merchants clinking glasses after a long trip; Confucian students engaged in heated discussion; scruffy-looking musicians struggling to be heard over the din. Peasants and traders and shopkeepers, laughing, drinking, shouting, and among them tables of dour, hard-drinking warriors.<br><br>Then the front door shattered and swordsmen rushed inside, followed by a lithe, one-eyed man. He bellowed at a table in the far corner. "There!"<br><br>Rising from behind a forest of empty bottles, several grim-faced bandits faced him, cursing under their breath. "Damn! Dong Tian?" (東天派 -- Chinese: Eastern Sky Faction)<br><br>"Kill them all!" cried One-Eye.<br><br>In an instant, everything turned to chaos. Shouting war cries, groups of warriors drew weapons and hurled themselves into the fray. Blades tangled and sparks flew. Tables were kicked to the side, bottles and plates crashing to the ground.<br><br>Inn patrons dived for cover. "Get back!" "It's the Dong Tian! It's a gang war!"<br><br>Murim were not only made up of fair fighters. Orthodox sects, demonic sects and criminal sects all coexisted, with numerous smaller groups scattered across the thousands of miles of the mainland. Among them, the Dong Tian Faction were notorious gangsters that haunted the nights in Luoyang.<br><br>"Ruined!" cried the innkeeper, crouching behind the bar.<br><br>While not widespread outside the region, the Dong Tian Faction had been influential in Luoyang for more than fifty years. During that time they had forged alliances inside the government, ensuring that anyone making a complaint about the incident would be in serious trouble.<br><br>The innkeeper peered over the bar. "Just please don't kill anyone!"<br><br>The next moment, one of the men gave a hideous gurgle and fell backwards, clutching his throat.<br><br>"Gung-So!" "You bastards!"<br><br>Blind with rage, the other bandits brandished their weapons and rushed at their foes. However, their fury was no match for numerical advantage.<br><br>"One's down!" "Press the attack!"<br><br>The Dong Tian swordsmen were skilled and brutal, flanking their opponents, stabbing and slashing mercilessly. The floor soon grew slippery with blood.<br><br>"Ahhhhhh!" "Ugh!" "Gods save me!"<br><br>One-Eye laughed as the last survivor, a low-ranked officer, begged for his life. "What? Help you?"<br><br>"P-please! If you give me a chance, I'll never do it again!"<br><br>"I'll give you a chance," chuckled One-Eye, "to choose your final resting place!" A dagger blurred from his sleeve, plunging into the man's forehead. "Don't you have any pride?" he asked recovering his knife. "Tch, bastards like these call themselves gangsters... Hey, what are you looking at? Clean this shit up!"<br><br>"Yes boss!"<br><br>The swordsmen of the Dong Tian gathered mangled bodies into a bloody, tangled heap. As they worked, their leader strolled through the carnage. Blocking the entrance of the broken inn, One-Eye turned and glowered at the trembling staff and their customers.<br><br>"Some of you may know who I am and some of you may not. I'll take the trouble to tell you one more time." In the suffocating silence, the audience froze under his terrifying glare. "I am known as the Lone Beast of the Great East Heaven, the dark swordsm..."<br><br>BOOM!<br><br>Unsure what had just happened, the people in the tavern blinked and looked around. The Lone Beast of the Great East Heaven was nowhere to be found. In his place, a short old man was standing in the doorway.<br><br>"Don't stand there blocking the entrance, you punk," he said.<br><br>An invisible tremor passed through the crowd. It was then that someone noticed One-Eye buried through one wall. "Look!" "M-murim!" "Waaaa!" "A master! He's so strong!"<br><br>While everyone was still crying out in shock, a handsome youth followed the old man into the inn. He shook his head. "No matter the reason, you can't just go around hitting people like this. What are you going to do if they die?"<br><br>"Who cares whether these bastards die or not?" said the old man, waving a hand at the remaining gangsters. <br><br>Watching in evident shock and confusion, the Dong Tian swordsmen had paused in the collection of corpses and severed limbs.<br><br>"Look at these punks," he continued. "Can't you see? This is who they are. Criminals. Sadists. Low-life thugs who live to fight and kill. You know... morons."<br><br>"Wow, they deserve to die, actually."<br><br>"Right?"<br><br>"Shall we eat now, then?"<br><br>"Get drinks in first. My throat is dry from all the dust."<br><br>"Sure," said the young man, brightly. He hurried over to the innkeeper. "Hello! Do you have any rooms?"<br><br>The innkeeper spluttered, than rallied. "Uh, yes! Yes, of course!"<br><br>"Then give me your best room. I'd also like three bottles of white wine and something to eat..."<br><br>Behind him, the old man was clearing a table. "Duck meat and braised noodles!" he shouted. "If you come to Luoyang, you have to eat braised noodle soup."<br><br>The youth turned back to the innkeeper. "Did you get all that, sir? How much is it in total?"<br><br>Mercantile habits overcoming his survival instincts, the owner began to calculate the price.<br><br>"This crazy bastard!" "Shit, kill him!" "Gut that bitch!"<br><br>The assembled swordsmen weren't called gangsters for no reason. Born and raised in the back alleys of Luoyang, where life was cheap, they were ferocious and fearless natural killers. Their hate-filled stares turned on the young traveller.<br><br>"Die!"<br><br>Roaring, a bald warrior lunged forward and swung his machete at the youth, a thunderous blow that would split his skull open.<br><br>Instead, the gangster bounced off the bar. His jaw was shattered, eyes rolled up in his head, heavy blade clattering to the ground.<br><br>"No hair and no skills, either," said the young man. Turning his head back to the innkeeper, he smiled. "Sorry. How much was it again?"<br><br>The air inside the room, already chill, froze completely.<br><br>Everyone watched, wide-eyed, as the young man paid, took his change and strolled across to the table where the old man was sitting.<br><br>"Hey!" A shout rang out.<br><br>Pausing, the youth looked around. "Yeah?"<br><br>"Are you talking about us?"<br><br>"Obviously," said the young man. "What are you going to do about it?"<br><br>"Uh... what?"<br><br>"Those blades in your hands. If you want to attack, get on with it. Otherwise, put them away. They're upsetting people."<br><br>All around him, there was a clatter as weapons slid into scabbards.<br><br>"Now," said the youth. "Take care of all these bodies. And while you're at it, tidy up the place... Well? Get on with it!"<br><br>Moving in perfect unison, unified by their fervent desire to live, the swordsmen sprang into action. They quickly gathered the corpses, heaved the bald warrior over their shoulders and, finally, pulled the shattered body of One-Eye from the wall. Their mouths dry, the bloody men stood at attention and waited for the next orders.<br><br>"What are you standing there for? Fuck off!"<br><br>"Thank you!"<br><br>Swift as arrows, the gangsters fled from the inn before he could change his mind.<br><br>A silence settled over the room. The shocked crowd seemed to hold their breath as the young man walked to the table and sat down.<br><br>"Ahhh!"<br><br>Hearing his exclamation, everyone tensed. Had the Dong Tian Faction returned? Eyes flew to the windows and doors, then back to the youth, watching his every move.<br><br>But the young man was staring intently at only one place - the roast duck on display before him.<br><br>"Oh. My. God." Wide-eyed, his happy sigh turned into a shout. "Hey! You can't eat all the legs yourself!"<br><br>***<br><br>Seven days. That's how long it had taken from Taiyuan to Luoyang. The distance would have taken a skilled rider ten days, driving his horse to exhaustion. Even recalling it was painful. Most importantly, Tae-Kyung had endured the whole trip without a word of complaint.<br><br>But this...<br><br>"This isn't right!"<br><br>He was outraged! It was their first proper meal in a week and his grandfather had already eaten both legs!<br><br>"There's only one wing left!" Tae-Kyung exclaimed, then watched in horror as the old man gobbled it. "Not even gangsters behave like this!"<br><br>As Tae-Kyung fumed, angrily shovelling whatever food he could reach into his mouth, Jeok Cheon-Gang grinned through his greasy beard. "Have you ever seen such a spoiled brat? Shouting at an old man for such a little thing!"<br><br>"Am I wrong? Even the Heavenly Demon would only eat one leg!"<br><br>"This bastard..." A gentle heat began to rise from the Flame King's palms.<br><br>"Let me ask you something." All heads turned to the speaker, a scarred giant thumping into the inn, dozens of black-garbed swordsmen at his back. The One-Eyed gangster had been ugly, but he was a catwalk model in comparison to this brute.<br><br>Tae-Kyung opened his mouth on behalf of the Fire King, who didn't even bother to look. "Yes, that's right. That's us."<br><br>"I heard some very interesting news. I was... what?" The giant frowned in confusion. "I haven't asked you, yet."<br><br>"You heard an old man and a kid showed up and made your guys look like assholes. Something like that, right?" He could have guessed it would happen. Either the ones he let go brought reinforcements or one of the bystanders had informed their gang. Ten people or a hundred, it didn't really matter. "Look, it's fine. Come on in and let's get this over with."<br><br>"You motherfucker!" snarled the giant, yet sensing something wasn't right, he stepped back and shook his head. "Kill him."<br><br>At that moment, as dozens of blades were halfway from their sheaths, another voice came from outside.<br><br>"Amitabha, can I pass by for a moment?"</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-229.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-231.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

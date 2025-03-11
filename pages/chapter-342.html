@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 342 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 342</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 342</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: February 19, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>\[Finding the Divine Doctor in Sichuan\] was a top-tier quest. As brutal as its difficulty was, the rewards were substantial.<br><br>Ding. Ding. Ding.<br><br>Massive experience points and a level up. Achievements unlocked.<br><br>I dismissed the barrage of system notifications and holographic displays cluttering my vision. My joy was tempered by the Divine Doctor’s peculiar countenance.<br><br>"Why the face? Don't tell me you've reconsidered and think you can't treat it?"<br><br>"That would be unlikely. Though I may be called an old quack, there is a chance if I do my best."<br><br>"So then why……"<br><br>He paused, exhaling a shallow sigh. The faint smile on his lips now morphed into a crease of concern.<br><br>"There are just too many things to prepare for the treatment."<br><br>"Don't worry about the cost."<br><br>After all, I'm the youngest son of the Jin Family of Taiyuan. Our family’s fortune, built over recent years through northern trade routes, is no secret.<br><br>"If we're in a hurry, we can borrow some money from these guys' house. Hey, isn't there a Hyuk Mu-Jin fabric store in Sichuan?"<br><br>Hyuk Mu-Jin nodded reluctantly with a grim face.<br><br>"It is there. It's a fabric store, how could it not be in Sichuan, famous for its silk?"<br><br>"Then let's draw some urgent funds. If necessary, it's okay to sell the store, right?"<br><br>"Of course, it's not okay."<br><br>"I'll pay a lot of interest."<br><br>"What if I don't want to?"<br><br>"Then I'll give you a lot of money to spend in the afterlife."<br><br>"......Just take it all, everything. Uproot the foundation of our family if you must."<br><br>Problem solved.<br><br>Yet, the Divine Doctor’s demeanor remained shadowed.<br><br>Mun-Kyung, speaking for his tongue-tied master, interjected.<br><br>"Uh, Young Master Jin."<br><br>"Yes?"<br><br>"The biggest problem isn't that. Of course, a tremendous amount of wealth is needed for the treatment, but there are materials that are hard to get right away, no matter how much gold and silver you have."<br><br>"Difficult to get materials... are you talking about elixirs?"<br><br>"Yes. To treat Grandmaster Jeok, we need an elixir that meets certain conditions, but it's very valuable and rare, so it might take years to get it."<br><br>Years?<br><br>Time was of the essence. Jeok Cheon-Gang's life hung by a thread, mere months from its end.<br><br>In that silence, heavy with despair, the Divine Doctor's hushed tone broke through.<br><br>"It seems a detailed explanation is necessary. The reason why the patient has not regained consciousness is due to a disrupted balance."<br><br>"Balance?"<br><br>"Everything in the world contains the energy of the Five Elements, and maintaining the right balance is crucial. This is true for the human body as well. The patient tried to handle a tremendous amount of energy but ended up breaking that balance." \[Note: In ancient China, metal, wood, water, fire, and earth (the Five Element mentioned here) were regarded as Qi, the element that constitutes all things.\]<br><br>Tremendous amount of energy?<br><br>Hearing the Divine Doctor's words, something came to mind.<br><br>The Ghostly Dance of the Fire God, the Scorching Clan’s supreme secret art, designed to extract and intensify a user's inherent power.<br><br>'That was the cause.'<br><br>In the distant past, Jeok Cheon-Gang had earned the name Fire King by defeating a thousand Demonic Cult followers using the Ghostly Dance of the Fire God. But as time passed, his old and ailing body could no longer bear the power and shattered.<br><br>"When a vessel breaks, what's inside starts to leak out. Fortunately, there is a way to reverse it, but it requires a rare and expensive elixir."<br><br>"A rare and expensive elixir......"<br><br>"Among them, only those meeting specific conditions will suffice."<br><br>"Please tell me. I will do whatever it takes to find it."<br><br>With a resigned sigh, the Divine Doctor acquiesced.<br><br>"It will be very difficult, but what choice do we have? We must place our hope in you, Young Master Jin. Now, listen carefully to what I am about to say."<br><br>"Yes."<br><br>He meticulously outlined Jeok Cheon-Gang’s condition, the treatment protocol, and the precise requirements for the elixir.<br><br>"Will you remember everything?"<br><br>"......"<br><br>"Young Master?"<br><br>"Oh, yes."<br><br>"Do you remember everything I said?"<br><br>"Yes. I remember everything. But this is...... oh, hold on."<br><br>"......?"<br><br>"Can you check... no, can you confirm if what I heard is correct?"<br><br>"Of course. Go ahead."<br><br>I cautiously began to speak.<br><br>"So, right now, the balance has been disrupted due to the excessive use of power, and the harmony of Yin and Yang has been broken specifically, right?"<br><br>"Correct."<br><br>"The cause is the use of a tremendous amount of Yang energy."<br><br>"Continue."<br><br>"To correct this broken balance and restore harmony, we need an elixir, an incredibly potent one, which requires..."<br><br>Mun-Kyung quickly interjected.<br><br>"Among the elixirs, it must possess the nature of cold Yin energy. Additionally, it should contain the energy of at least one Gapja."<br><br>"Four months. If we can't find it within four months, everything will be in vain."<br><br>With those words, the Divine Doctor solemnly concluded the briefing.<br><br>Ding.<br><br>\- A linked quest, \[30,000 Leagues in Search of the Elixir\], has been created.<br><br>\- It's something that must be done. You cannot refuse!<br><br>\- Find an elixir that possesses the energy of more than one Gapja and the nature of cold Yin energy!<br><br>I gazed at the hologram window, momentarily lost in thought, before gathering my wits to inquire further.<br><br>"Is that all?"<br><br>"There are many other ingredients required, but this is the key component. So, you must leave immediately to find the elixir..."<br><br>"Oh, sure."<br><br>And so, I set off...<br><br>...Two steps forward towards the Divine Doctor. Then, I pulled something out of my pocket and presented it.<br><br>"Here."<br><br>"......?"<br><br>"......?"<br><br>"Take it."<br><br>Both doctors, visibly perplexed, tentatively accepted the offered item.<br><br>"What is this?"<br><br>"Uh, Master, please open it first."<br><br>"Shall I?"<br><br>Click.<br><br>The Divine Doctor, swallowing nervously, carefully opened the box. 'It' revealed itself, accompanied by a fragrance so pure it seemed like it could purify the coronavirus. \[Note: Yes, I double checked the date. This chapter was released right after the first COVID outbreak in Korea.\]<br><br>"Gasp!"<br><br>"Whoa!"<br><br>"It's Thousand-Year Snow Ginseng. It contains the energy of more than one Gapja and the nature of cold Yin energy. Will this work?"<br><br>The Divine Doctor, eyes aglow with astonishment and hope, oscillated his gaze between me and the Thousand-Year Snow Ginseng, then affirmed with emphatic nods.<br><br>"It will work!"<br><br>Ding.<br><br>\- The quest conditions have been met!<br><br>\- Linked quest, \[30,000 Leagues in Search of the Elixir\], has been successfully completed!<br><br>\- Achievement, \[Simmani\], has been unlocked! \[Note: Simmani is a specific term for a ginseng hunter who searches the mountains for wild ginseng.\]<br><br>\- You have gained a significant amount of experience!<br><br>\- Level up!<br><br>As the system's notification resonated, my thoughts drifted to Ju Hwa-Ran.<br><br>'Thank you, Miss Ju.'<br><br>I chuckled, recalling how she, fearing I might feel burdened and refuse, presented the Thousand-Year Snow Ginseng as a Hundred-Year Snow Ginseng.<br><br>'I now have a reason to stop by Shaanxi on my way back.'<br><br>By then, I hope to be accompanied by a healthy Jeok Cheon-Gang.<br><br>I turned to the Divine Doctor, who was still dazed.<br><br>"So, what's next?"<br><br>With the precious ginseng securely in his grasp, the Divine Doctor gestured for me to follow.<br><br>"Follow me. Mun-Kyung, stay here and take care of the patients."<br><br>"Yes, Master."<br><br>With Mun-Kyung's respectful acknowledgement, we proceeded to follow the Divine Doctor.<br><br>\* \* \*<br><br>Swish!<br><br>Beside me, a figure moves with swift grace, covering a jang with each step. The breeze was the only trace of his presence. \[Note: Quick reminder, 1 jang = 3.03 meters or 9.9 feet\]<br><br>Remarkably, his feet never once mar the ground beneath.<br><br>A soft 'tok' sound accompanies each step, as the grass tips bend ever so slightly, only to upright themselves once passed.<br><br>I observed this with a mix of curiosity and admiration.<br><br>'Ethereal Gliding?' \[Note: the direct translation of the term used here is Above Grass Flight, meaning that the user is moving in a way that they do not disturb the grass beneath their feet. For such an advanced technique, the direct translation sounds too rough, so I changed it.\]<br><br>This technique, a manifestation of near-effortless movement, leaves the grass undisturbed by the practitioner's passage.<br><br>Such finesse is the hallmark of martial artists who have honed their technique to perfection. The Pristine Snow Tread, leaving no footprints in snow, and the Lotus Step, enabling one to tread on water as if on solid earth, are similar in their skill mastery. \[Note: the direct translations are Stepping on Snow Without a Trace and Walking on Water.\]<br><br>And the Void-Trampling Step is only achievable by Transcendent Masters with a lot of internal energy. \[Note: Just as a reminder, in manhwa chapter 173, the Sword Saint used this technique to "run away" from the MC during the final match of the Grand Celestial Banquet.\]<br><br>'Of course, there's nothing I can't do if I put my mind to it.'<br><br>This newfound respect for the Divine Doctor burgeoned because of his adeptness in Ethereal Gliding, a skill not commonly associated with medical practitioners.<br><br>'I knew he had learned martial arts... and his movement techniques are especially impressive.'<br><br>From our initial meeting, it was evident that the Divine Doctor wasn't just any ordinary healer.<br><br>Despite his slight frame, he exuded the vigor and resilience comparable to that of a youthful warrior, and the energy within his Dantian was notably profound.<br><br>'His martial arts are first-rate, and his internal strength seems to be at the Peak Realm.'<br><br>While I mulled over these observations, the Divine Doctor, sensing my scrutiny, glanced back and inquired with a smile.<br><br>"What is it?"<br><br>I answered honestly.<br><br>"Your movement technique is quite impressive."<br><br>"Ha-ha. No matter how hard this old man tries, how can I compare to you, Young Master. I just happened to learn it by chance."<br><br>"To be honest, before I met the Divine Doctor, or rather, Old Man Dong, I never thought you would have learned martial arts."<br><br>"You must have been surprised. It's the same for everyone else."<br><br>Everyone except Cheong Pung looked as though they were dying of curiosity.<br><br>Given the unfolding conversation, directness seemed the best approach.<br><br>"Excuse me for asking, but how did you come to learn martial arts?"<br><br>Martial arts in a doctor. It could be an awkward topic, but the Divine Doctor didn't avoid the question.<br><br>"When I first became a young doctor, my master personally taught me."<br><br>"Then, your master is..."<br><br>"Correct. My master was a martial artist."<br><br>The revelation that the Divine Doctor's master was a person of Murim was unexpected.<br><br>Seeing my expression, he burst into hearty laughter.<br><br>"Ha-ha. There's nothing to be surprised about. When he took me as a disciple, he had already left the martial arts world."<br><br>"Ah, I see."<br><br>"My master achieved great heights both as a martial artist and as a doctor. He became a doctor to erase the blood on his hands."<br><br>Suddenly, I felt like I understood his heart.<br><br>I, too, had blood on my hands. Initially, it was to return home, wielding my spear in what I thought was just a virtual world created by a game.<br><br>'But everything was real. They were all living people.'<br><br>By the time I realized this, it was too late.<br><br>I couldn't stop, and I didn't stop. I killed to survive. I killed because they were my enemies.<br><br>In the martial world, and in the modern world.<br><br>At some point on, my body had become deeply imbued with the scent of blood. It was a stench that no amount of washing could remove.<br><br>"......I see."<br><br>My thoughtful pause elicited a warm, understanding smile from the Divine Doctor.<br><br>"Life is a series of choices. My master chose the path he thought was right, and I did the same. However, many sought after this old man, so I had no choice but to learn martial arts for self-preservation. I was a slow learner and received quite a bit of scolding, haha."<br><br>Everyone carries their own past.<br><br>The Divine Doctor, momentarily lost in his memories, halted in his tracks.<br><br>"Here we are."<br><br>Crunch.<br><br>The sound of frozen leaves underfoot punctuated the silence.<br><br>We found ourselves in a particularly frigid valley, even by the standards of the Qi Entrance Array that surrounded the Divine Doctor's abode.<br><br>"Where exactly are we?"<br><br>"I call this place the Freezing Tundra." \[Note: direct translation: Cold Ice Land.\]<br><br>An appropriate moniker, indeed.<br><br>The thought of naming it after places known for their cold, like Moscow, Yanggu, or Gangwon, crossed my mind.<br><br>Glancing at Hyuk Mu-Jin, who had already started shivering, I asked the most important question.<br><br>"What do we do now?"<br><br>"You'll have quite a task ahead. We need to find and gather various herbs and ingredients needed for the treatment."<br><br>"That sounds simpler than I thought."<br><br>"Let's see... about a hundred roots each should do."<br><br>"Ah, yes. A hundred roots."<br><br>"A hundred roots each."<br><br>"Yes, right. A hundred roots."<br><br>I nodded and then paused. Wait, what did I just hear?<br><br>"A hundred roots 'each'? Not in total?"<br><br>"That's right."<br><br>The Divine Doctor laughed heartily as he continued.<br><br>"A hundred roots of each of the twenty-four types."<br><br>"......!"<br><br>Ding.<br><br>\- A linked quest, \[Herb Slave of Freezing Tundra\], has been created!<br><br>\- It's something that must be done. You cannot refuse!</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-341.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-343.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

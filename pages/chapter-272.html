@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 272 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 272</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 272</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: October 27, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>\- Hello?<br><br>A voice I couldn't quite place resonated from the other end of the line.<br><br>The Park Ji-Hwang I remembered had a boyish voice from our middle school days. Since then, our only conversation had been a fleeting one a few months ago.<br><br>Could this really be him? I was momentarily uncertain.<br><br>\- Is this Jin Tae-Kyung's number?<br><br>"Yes, it's me. You sounded different for a moment."<br><br>\- What? Didn’t you save my number last time?<br><br>"I did, but for a moment I thought I had dialed the wrong number. Your voice isn't familiar."<br><br>\- Well, middle school was a lifetime ago.<br><br>"True. I couldn't even recognize you."<br><br>\- Obviously. Considering the amount of money I've poured into my face.<br><br>His laughter was contagious, and even through the phone, it felt familiar and comforting.<br><br>I chuckled in response, sinking into the plush seats of the VIP limousine provided by the Gate Management Office. The driver nodded in acknowledgement through the rearview mirror, effortlessly shifting gears and setting the car in motion.<br><br>"What's the occasion?"<br><br>\- Nothing much. Just called to have a drink.<br><br>"A drink? All of a sudden?"<br><br>\- Hey, you said you'd contact me after the reunion, but you didn't.<br><br>Had I made such a promise? <br><br>My memories seemed to confirm it. But with the whirlwind of tasks since then, it had slipped my mind.<br><br>\- I had an unexpected business trip abroad at that time. Because of that, I couldn't attend the reunion.<br><br>"A business trip abroad?"<br><br>\- There was a problem at our European branch. I've just returned.<br><br>While I went to Murim, this guy went to Europe.<br><br>I don't know what he did there, but I somehow felt jealous. A tinge of envy crept into my voice,<br><br>"Must be nice, traveling the world."<br><br>\- You're jealous? Of me?<br><br>Over the phone, Park Ji-Hwang laughed out loud.<br><br>\- It feels weird hearing that from you. Were you just trying to deceive me with that comment?<br><br>"No, it's not like that."<br><br>\- Just kidding. So, are you free tonight?<br><br>Checking the car's clock, it was already approaching 8 pm.<br><br>Since I had moved to my new studio apartment in Bucheon, the only person expecting me was my hyung, Jin-Ho. \[Note: I think most of you already know what hyung means, but for the uninitiated, this is the honorific that Korean males use towards their older male acquaintances. It means something like "older brother".\]<br><br>I had the time, but I was hesitant of Ji-Hwang's intentions.<br><br>'I hope he doesn't have any ulterior motives.'<br><br>My hesitation was momentary.<br><br>Seven years had elapsed since I embarked on my Hunter career. The friends from my school days, once inseparable, gradually faded from my life.<br><br>It seems the adage "out of sight, out of mind" wasn't confined just to romantic relationships.<br><br>Yet here I was, doubting a friend who had reached out after such a long time, with seemingly no ulterior motive.<br><br>'Maybe I've become too mistrustful of people.'<br><br>My cautionary stance might be a lingering shadow of the trauma from the Won Myung-Hoon ordeal and the subsequent media scrutiny. It's a scar that still stings. \[Note: Just a quick reminder. Won Myung-Hoon is the celebrity Hunter whom the MC idolized. The MC killed him after the one-eyed dragon raid.\]<br><br>\- You sound busy. Well, it makes sense. Then, next time…<br><br>"No, I'm free now. Where should we meet?"<br><br>The sleek limousine promptly rerouted, slicing smoothly through the streets.<br><br>"You came faster than I thought."<br><br>Park Ji-Hwang was already waiting outside.<br><br>The season was on the cusp of winter. He looked dapper in a pristine white shirt paired with a luxurious cashmere coat, making me feel distinctly underdressed.<br><br>"Why the formal attire?"<br><br>"I had an important engagement earlier. Besides, it's not so much that I dressed up, but more that you... didn’t."<br><br>"What’s wrong with my clothes? A sweatshirt and jeans are perfectly acceptable."<br><br>For me, this was an upgrade from my usual tracksuits. Hayeon never missed an opportunity to chide me about my wardrobe choices.<br><br>"Where did all the money you earned go? Oh right, you donated it."<br><br>"Don't bring that up. It's a sore topic."<br><br>"That's why I called. Alcohol is the best when you're feeling down."<br><br>Ji-Hwang's grin was infectious. He gestured ahead and strode on.<br><br>We passed uniformed security guards and an array of security cameras to finally arrive at an opulent entrance.<br><br>And what unfurled before me was breathtaking.<br><br>'What the hell?'<br><br>The floors, paved in glistening marble, reflected the grandeur of the hall. Age-old paintings reminiscent of the 17th century adorned the walls.<br><br>'Surely, these can't be originals.'<br><br>Overwhelmed, I trailed Ji-Hwang like a lost tourist.<br><br>We halted before a set of five elevators.<br><br>Without visible buttons, I was left pondering their operation. But Ji-Hwang merely placed his hand on a sleek black panel, and an elevator promptly responded.<br><br>Jiying!<br><br>"Aren't you getting in?"<br><br>"…Wow."<br><br>"What's so surprising?"<br><br>"I mean, you said it's just a studio apartment?"<br><br>"It is a studio apartment."<br><br>Our definitions of a 'studio apartment' were worlds apart. I bit back the words threatening to tumble out.<br><br>The place gave off a vibe of affluence, perhaps because it was in Cheongdam-dong.<br><br>"You've really made it, buying a place like this."<br><br>"I bought it when it came up for sale a while ago. I stop by occasionally to clear my head."<br><br>His nonchalance made it sound like a casual purchase—akin to buying a hat.<br><br>The elevator ceased its ascent, revealing not a bleak corridor, but a living room bathed in elegant grey.<br><br>Its sheer size seemed to rival the entirety of my family home.<br><br>"Come in."<br><br>I wasn’t sure if the “bought it to clear my head” bit was true, but it was a place like I'd never seen before.<br><br>The opulent living room furnishings, coupled with the wine cellar, felt straight out of a luxury lounge.<br><br>After removing his coat, Park Ji-Hwang asked,<br><br>"What would you like to drink?"<br><br>"What do you have?"<br><br>"Château Cheval Blanc, Screaming Eagle Cabernet Sauvignon, Royal de Maria..."<br><br>"What are you saying?"<br><br>I blinked in confusion at the alien words pouring out.<br><br>"Sahtto...fuck, what?"<br><br>"Château Cheval Blanc."<br><br>Whether it's "Château" or "Sahtto," all the names sound confusing.<br><br>After a brief pause, I asked,<br><br>"Don't you have soju and beer?"<br><br>Park Ji-Hwang chuckled softly.<br><br>We stacked cases of soju and beer and drank all evening.<br><br>We hadn't been in touch since the third year of middle school - eleven years ago - so there was a lot to catch up on.<br><br>"Do you remember? There was No Jae-Heon in the class next to ours."<br><br>"No Jae-Heon? Who was that?"<br><br>"The tall guy who bragged about working out. Anyway, when he had a fight with Seon Woong-Jae from our class, you...<br><br>"Hold on. Who's Seon Woong-Jae?"<br><br>"...Did you get amnesia or something?"<br><br>From our shared middle school memories to our separate journeys beyond.<br><br>The only interruptions to our chatter were sips from our glasses.<br><br>Amidst the continuous conversation, I realized I'd been smiling for a while.<br><br>'This is fun.'<br><br>Having a drink with someone familiar is always pleasant, but a friend who shares the same memories feels even more special.<br><br>Any skepticism I'd harbored during our earlier conversation melted away, replaced by warmth and camaraderie.<br><br>Our stories unveiled facets of each other we'd never known.<br><br>"Were you born with a silver spoon?"<br><br>"What silver spoon? My father just runs a small business."<br><br>"That business is related to Hunters, isn't it? And he's been running it for over 30 years."<br><br>"Yes."<br><br>"That’s a silver spoon, you deceptive bastard. Guys who talk like you are usually the really rich ones."<br><br>I scrutinized him, trying to reconcile this revelation with my memories.<br><br>He appeared no different, just more enigmatic. The area we'd grown up in was rather nondescript. Were it not for pure luck in multiple-choice questions, students like me, judged mainly by academic scores, might never have secured a school seat.<br><br>But a business catering to Hunters? That's akin to a gold mine.<br><br>Thirty years in such a cutthroat market? I wouldn’t be shocked if he literally had gold bars at home.<br><br>"Why are you looking at me like that?"<br><br>"It's strange. Don't the typical silver spoon kids go to elite schools in Gangnam?"<br><br>"Guess I'm not your typical silver spoon. Also, I transferred schools, remember?"<br><br>"Transferred? This is the first I'm hearing of it."<br><br>"Well, I transferred in the second year of middle school. Didn't think it was important to mention."<br><br>"Is that so?"<br><br>"Yes."<br><br>I tilted my head and took a sip of my drink.<br><br>Anyway, why would transferring in middle school matter now? It's been over a decade.<br><br>"We first met in the third year of middle school. Before that, we never ran into each other."<br><br>"That's not true."<br><br>"Huh?"<br><br>"A week after I transferred, I first saw you in front of the teacher's office. Then in the hallway, and we even bumped into each other in the restroom."<br><br>Park Ji-Hwang's recollections brought to life moments I'd forgotten.<br><br>"Wow... How do you remember all of that?"<br><br>His smooth lips curved into a faint smile.<br><br>"I have a better memory than you might think. Unlike some people."<br><br>I filled his empty glass and laughed.<br><br>"Hey, no matter how bad my memory might be, there's one thing I remember."<br><br>"What's that?"<br><br>"You never did your homework and always guessed on tests, then laid your head down and slept."<br><br>"Oh, that."<br><br>"With such a good memory, why were your grades in memorization subjects so bad? Did you go to college... Ah, is it rude to ask that?"<br><br>"I don't mind being asked."<br><br>"That's good to hear."<br><br>"And I did go to college. Business Administration at Hankuk University. But I haven’t graduated yet because I had a sudden Awakening."<br><br>"Hankuk University?"<br><br>"My parents wanted it."<br><br>"Are you joking? What parents wouldn't dream of their child getting into Hankuk University?"<br><br>Attaining a spot at Hankuk University, the country's most prestigious institution, was no small feat; only the elite could claim such an honor.<br><br>At my incredulous look, Park Ji-Hwang lightly laughed.<br><br>"I managed it. It wasn't as hard as I thought."<br><br>"Huh."<br><br>I blinked in astonishment.<br><br>His life seemed to unfold like a road without obstacles: born to affluence, excelling academically to join an esteemed university, and swiftly awakening as an A-rank Hunter.<br><br>For him, being a Hunter was just one path among many. In contrast, I had to carve my own path, fight my own battles.<br><br>"Why?"<br><br>"Huh?"<br><br>"You're looking at me with a strange gaze."<br><br>"Was it that obvious?"<br><br>"Very. Tae-Kyung, by any chance..."<br><br>Park Ji-Hwang tilted his head slightly. His voice, muffled by the alcohol, continued softly.<br><br>"Are you jealous of me?"<br><br>Jealous?<br><br>I was taken aback by the unexpected word and then burst out laughing.<br><br>"You've hit the nail on the head."<br><br>"...You're candid."<br><br>"It's the truth. Longing for what one doesn't have? Envy, perhaps? Something like that. But I have no regrets. I've lived my life to the fullest."<br><br>Surprisingly, Park Ji-Hwang, with his slightly widened eyes, mumbled as he looked at me.<br><br>"So you do feel envy."<br><br>"Yes. Why wouldn't I?"<br><br>"Look at you now. A Hunter recognized not just nationally, but internationally. Soon, you could be one of the only five S-rank Hunters in the country."<br><br>"That's impressive. Except for being the guy who donates all of his money and then wallows in remorse."<br><br>I chuckled and emptied my drink. As he was watching me, he seemed like he wanted to say something, and just as he was about to speak—<br><br>Vvvv vvvv<br><br>The smartphone on the table vibrated. Park Ji-Hwang, who had been staring intently at the screen, bit his lip.<br><br>"Who's that?"<br><br>"Our guild's team leader."<br><br>"At this hour? Does the Myeongdong Guild have a 24-hour standby or something?"<br><br>"No, it's just for important matters."<br><br>"So..."<br><br>"I'm sorry, I think we should call it a night."<br><br>"No need to apologize. We both understand each other's circumstances."<br><br>I placed my glass on the table and rose. Clapping Park Ji-Hwang, who wore an apologetic expression, on the back, I remarked<br><br>"It was fun after such a long time."<br><br>I meant it. Given that I've already become a public figure, there were few people I could have a sincere conversation with like tonight. I stopped Ji-Hwang from joining me in the elevator.<br><br>"I'm leaving. No need to escort me out. Just handle your business."<br><br>A faint smile appeared on Park Ji-Hwang's face.<br><br>"Yes, let's meet again next time. Definitely."<br><br>With those words, the elevator doors closed.<br><br>Park Ji-Hwang stood by the window, looking down.<br><br>Emerging from the building's shadow was a lone silhouette.<br><br>\- Hello? Mr. Ji-Hwang. Mr. Ji-Hwang?<br><br>"Go ahead."<br><br>\- Finally. I've been trying to get your attention...<br><br>"It seems you're confused."<br><br>His voice, icy and firm, gave the caller pause.<br><br>Replacing the pale-yellow soju from earlier, amber whiskey now shimmered in Ji-Hwang's glass.<br><br>"Next time, wait for me to speak and don't pretend like you're my boss."<br><br>Myeongdong Guild, Team One, Hunter Park Ji-Hwang.<br><br>That's what's written on Park Ji-Hwang's business card.<br><br>However, the voice on the other end, the official team leader of Myeongdong Guild's Team One, remained silent.<br><br>Titles, after all, were but names.<br><br>"No answer?"<br><br>\- ...Understood.<br><br>"Proceed. What's so urgent?"<br><br>Treading carefully, the team leader began.<br><br>\- Do you know Jeong Hyeon-Woo? Leader of Team Eight?<br><br>"Ah yes, competent, but somewhat rigid. It's his Achilles' heel."<br><br>\- It appears he's caught the scent.<br><br>"Interesting. He's sharper than I gave him credit for."<br><br>\- Yes, but how should we proceed...?<br><br>"Let's keep it simple. Organize a raid, A-rank."<br><br>\- Are you suggesting...<br><br>"Do you have any idea how often gate mishaps transpire annually? I don't. Frankly, no one does. Or cares."<br><br>Park Ji-Hwang clicked his tongue.<br><br>"You're not responding again."<br><br>\- Ah, understood.<br><br>"And about the Peace Guild, no, regarding the Jin Tae-Kyung matter..." Park Ji-Hwang's voice trailed off.<br><br>The memory of a man's laughter, a reassuring pat on his shoulder, replayed in his mind.<br><br>'It was fun after such a long time.'<br><br>Those sincere words clung to Ji-Hwang, proving hard to shake off.<br><br>\- Mr. Ji-Hwang?<br><br>Park Ji-Hwang drained the remaining whiskey in one gulp.<br><br>The crystal glass crumpled in his hand like a sheet of paper.<br><br>"I've spoken with the executives. They find that he is ... a bother."<br><br>That's all they said. A fleeting comment, uttered over dinner with 'that individual'. It felt as though that single statement concluded their entire conversation.<br><br>\- But this is the perfect opportunity to...<br><br>Ji-Hwang's voice, cold and unyielding, halted the flustered team leader mid-sentence.<br><br>"Isn't it a gardener's duty to rid the garden of weeds? The guild leader should be informed by now. Let's conclude this." \[Note: this last part of the phone call is very ambiguous. From the context, it sounds like the Myeongdong Guild has some sort of issue with Tae-Kyung and are trying to find an opportunity to take him out.\]<br><br>With a click, the line went dead.<br><br>In the profound silence that followed, Ji-Hwang's eyes lingered on the cityscape beyond the pristine window.<br><br>The silhouette of Jin Tae-Kyung had long vanished.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-271.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-273.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

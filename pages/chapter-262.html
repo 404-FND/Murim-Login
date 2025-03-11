@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 262 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 262</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 262</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: September 23, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>After pushing ourselves to the brink of exhaustion, what lay before us felt like a cruel mockery of our efforts.<br><br>The once serene expanse of the Shaolin Temple was now a nightmarish tableau — disembodied limbs, glistening patches of blood, and the acrid stench of mortality hanging in the air.<br><br>Just a year prior, my memory of the temple was of a tranquil, idyllic landscape, reminiscent of a masterful painting. Today, it reflected the very bowels of hell.<br><br>'These deranged lunatics.'<br><br>The sheer randomness of the slaughter was evident. There was no distinction between the civilians and the martial artists in their slaughter.<br><br>Amid the masked assailants clashing with the Shaolin monks, an elderly man with a blazing red beard drew my attention.<br><br>"Fire King..."<br><br>With eyes locked onto the figure, I inquired,<br><br>"Do you know him?"<br><br>"No."<br><br>"And the monk he's standing over?"<br><br>"That's Hong Tian, the youngest fellow disciple of Hong Dao. He's matured significantly since our last encounter."<br><br>"Seems so."<br><br>He appeared to be well into his seventies.<br><br>Rousing himself from the initial shock of our arrival, the elder's piercing eyes met ours.<br><br>"Is your party limited to just you two?"<br><br>Jeok Cheon-Gang's response was laden with indifference,<br><br>"And if it is?"<br><br>"Hahaha, so the venerable man has chosen his final resting place."<br><br>"Even a fool should pick his words with care. It isn’t our burial ground, but a battleground. And you're part of the body count."<br><br>The old man's eyebrows knit together.<br><br>"Still brimming with that characteristic arrogance, I see. Nothing's changed."<br><br>"Nothing's changed? Have you ever faced off against this old man?"<br><br>"I caught a distant glimpse of you once. Always regretted not crossing paths in combat."<br><br>"And your name is?"<br><br>"I am Yeomho, the Tiger of Nanman!" \[Note: 'Nanman' refers to the ancient tribes of South and Southwest China\]<br><br>"One of the Yin-Yang Twin Demons? Convenient. With another one like you out there, there's no need to keep you alive. Killing you will suffice."<br><br>Jeok Cheon-Gang scoffed audibly.<br><br>"In any case, you're rather fortunate. You came close, but stopped just shy of the Sanzu River." \[Note: the Sanzu River is often likened to the River Styx in Western mythology, a boundary between the living and the afterlife in Buddhist tradition\]<br><br>"Is that so?"<br><br>Yeomho's eyes seemed to blaze with an inner fire. His fist, rugged and as solid as a boulder, hummed with an intense aura.<br><br>It wasn't surprising. This old man was undeniably a transcendent martial artist, and it was clear now that he had trained in the same type of Qi energy as ours.<br><br>"You've arrived faster than I'd heard… but, that changes nothing."<br><br>Heard from whom?<br><br>A fleeting thought crossed my mind: How had Yeomho been alerted so quickly?<br><br>'Surely, even if he used a message transmission technique, we would have had the advantage in speed.'<br><br>Yet, doubt had to take a backseat. Yeomho's grip on Hong Tian's head was threateningly tight.<br><br>Hong Tian's blood-smeared face dripped with fresh crimson.<br><br>"Cough, cough."<br><br>"Do you wish to save this bastard?"<br><br>"..."<br><br>I could sense Jeok Cheon-Gang tensing up.<br><br>The gap between Yeomho and us was a mere thirty paces.<br><br>Even for someone of Jeok Cheon-Gang's caliber, any hasty move might end with Hong Tian's head crushed like an overripe fruit.<br><br>"Release him now."<br><br>Under the seemingly calm demand, I detected a simmering fury. Yeomho responded with a sinister laugh.<br><br>"The Dharma King... They say you and that monk shared a profound bond. Did he beg you to protect this monastery as he drew his last breath?"<br><br>"Hong Dao was a wise monk, more so than anyone. You're not fit to speak his name."<br><br>"Regardless, he's dead now. Perhaps he's crossing the Sanzu River as we speak?"<br><br>Jeok Cheon-Gang, after a long, icy stare at Yeomho, finally responded.<br><br>"Keep going."<br><br>"What did you say?"<br><br>"I said, keep going. Do you think you can shake this old man with only that?"<br><br>"You damn old geezer."<br><br>Enraged, Yeomho jerked Hong Tian's head violently.<br><br>"Are you saying you don't care if this bastard dies!"<br><br>"I don't care."<br><br>"You dare?"<br><br>"It would be a shame if I failed to save him. But what Hong Dao entrusted to me was not just the life of a fellow disciple, but the safeguarding of Shaolin."<br><br>Zzzzt...<br><br>In a heartbeat, Jeok Cheon-Gang channeled his Qi into his palms. It coalesced rapidly, then shot out like a swift arrow.<br><br>But not towards Yeomho — instead, it was aimed at the masked assailants brandishing their swords.<br><br>Crash!<br><br>The surge of Qi from Jeok Cheon-Gang's hand struck their very core. It erupted like a ravenous fire dragon, consuming all in its path.<br><br>Whooosh!<br><br>For the first time, the once stoic eyes hidden behind the masks flickered with unmistakable emotion.<br><br>It was sheer terror and agony.<br><br>"Arghhh!"<br><br>"Aaaaah!"<br><br>Flames rose in tandem with their anguished screams.<br><br>Many of them, alight and aflame, stumbled in a desperate bid to flee, while others were already lifeless on the ground.<br><br>Witnessing this, the momentarily stunned masked men were swiftly overpowered by the monks' coordinated defenses.<br><br>"It's not over yet!"<br><br>"Expel these evildoers!"<br><br>Whoosh, whoosh! Clank!<br><br>Having turned the tide almost single-handedly, Jeok Cheon-Gang fixed a cold gaze on Yeomho.<br><br>"If you want to kill him, kill him. If not, release him graciously. Drop the cunning fox acts, they are ill-suited for a lumbering bear like you."<br><br>"You insufferable old man!"<br><br>Schlekkk!<br><br>Yeomho resorted to his fox-like tricks till the very end.<br><br>He hurled Hong Tian at us, while simultaneously striking from behind Hong Tian's body.<br><br>His intent was clear: to use Hong Tian as a living shield, hoping to find an opening.<br><br>\- Save Hong Tian.<br><br>A whispered command reached my ears.<br><br>Without a second's delay, Jeok Cheon-Gang and I sprang into action, moving in a choreographed dance of defense and attack.<br><br>Mid-leap, I intercepted Hong Tian, while Jeok Cheon-Gang vaulted over him to confront the cunning fox, or rather, the beast-like adversary behind.<br><br>Boom!<br><br>I braced against the gust that followed their ferocious clash.<br><br>After sliding a good twenty strides, I gently settled Hong Tian onto a soft patch of grass nearby. Then, without hesitation, I dove into the tumultuous fray between the two transcendent martial masters.<br><br>Of course, Yeomho wasn't just standing idle amidst the onslaught.<br><br>“You impudent whelp!”<br><br>Shiiik, thud!<br><br>A knee thrust met a kick, robust as a felled tree, and seared with pain.<br><br>Yet, that was the extent of it.<br><br>The chasm between the transcendent realm and the peak realm is vast and nearly insurmountable. For most, luck alone can't bridge it. But my arsenal boasts more than mere fortune.<br><br>I possess the System.<br><br>'He's manageable.'<br><br>In a solo combat, the odds might favor him. However, with Jeok Cheon-Gang pressing him, Yeomho was clearly on the back foot.<br><br>The old man's grievous error was his stark underestimation of me.<br><br>"Guess I’ll confiscate your dentures."<br><br>With a smirk, I watched as Yeomho's face turned beet red.<br><br>"This blue brat!"<br><br>“You yellow-toothed old geezer!” \[Note: MC's Shit Talking Divine Art seems to have finally reached the transcendence realm\]<br><br>"Aaaargh!"<br><br>Brushing Jeok Cheon-Gang aside, Yeomho lunged at me, bellowing with fury.<br><br>“I’ll kill you first!”<br><br>Screeeek!<br><br>His punch, formidable enough to split steel, was a force to reckon with. Meeting it directly would undoubtedly be fatal.<br><br>I took a step back, gripping the White Flames slung over my back, and swung.<br><br>Boom!<br><br>His advance was abruptly arrested, and his eyes reflected sheer astonishment.<br><br>"Ten Thousand Year Tempered Steel?" \[Note: the two translations I have seen for this material are either Tempered Steel (MethodScans) or Cold Steel (AlphaScans and AsuraScans). In this context, I think tempered steel is a better translation. Cold steel refers to the raw, untreated state of the material, it's apt to describe it as such before any forging; however, once this steel is crafted and undergoes heat treatment in the weapon-making process, it emerges as tempered steel, which signifies its enhanced durability and toughness, making 'tempered steel' an appropriate translation for a weapon already forged.\]<br><br>“Indeed, the pricier the weapon, the better it is. Isn’t that right, Grandfather?”<br><br>Jeok Cheon-Gang didn’t respond. Instead, his fist, radiating a ghostly blue energy, was already hurtling towards Yeomho.<br><br>Kwaang!<br><br>The very earth trembled as their fists collided. Both made contact, but one bore the marks of scalding, its knuckles fragmenting.<br><br>Gazing in bewilderment, Yeomho whispered,<br><br>“How...can this be?”<br><br>“Did you believe that mastering the Scorching Yang Energy set us on even ground?”<br><br>Though his voice remained cool, a fiery intensity blazed within Jeok Cheon-Gang's eyes.<br><br>The heat emanating from him, far more potent than the flames engulfing Yeomho, cast a stifling aura across the area.<br><br>Yeomho's response came as a pained murmur.<br><br>“Fire King..."<br><br>“Yes, standing before you is the seventeenth successor of the Scorching Clan, Fire King Jeok Cheon-Gang.” \[Note: in the manhwa, Chapter 29 (by Jo Pil) and Chapter 132 (by Jeok Cheon-Gang) specify Jo Pil as the 19th successor and Jeok Cheon-Gang as the 18th. Yet, the original Korean text here designates Jeok Cheon-Gang as the 17th successor: 그래. 노부가 바로 열화문의 십칠 대 계승자, 화왕 적천강이니라. This could be an author's typo or an indication that Jeok Cheon-Gang, as the 17th successor, is actually the 18th clan leader. This follows the logic that the clan founder is the first leader, the first successor is the second leader, the second successor is the third leader, and so on.\]<br><br>“This is impossible... Cough!”<br><br>I closed in swiftly on Yeomho, who attempted to retreat, blood dribbling from his lips.<br><br>"Where do you think you're going?”<br><br>Crunch!<br><br>I stamped down with force, crushing his foot and anchoring it to the ground. Blood sprayed from Yeomho's mouth as he let out a tormented howl.<br><br>In the next instant, two streaks of lightning buried themselves into Yeomho's reeling upper body.<br><br>Sscheeeaaak!<br><br>Though the potency depended on mastery, the martial technique's moniker remained unchanged.<br><br>'Flame-Extinguishing Divine Fist.'<br><br>Boom!<br><br>The protective aura that enveloped him like armor shattered. Blood gushed from Yeomho’s agape mouth in a torrential spout.<br><br>"Ku-e-eek!"<br><br>Their titles might dub both as grandmasters of the transcendence realm, yet the gap in their prowess was undeniable.<br><br>With steely eyes, Jeok Cheon-Gang stared down at the grievously injured Yeomho.<br><br>"Your luck ends here.”<br><br>"Cough... Just wait a moment."<br><br>“I have neither a reason nor the time.”<br><br>“I'll tell you everything! About Dark Heaven! Everything about Dark Heaven!”<br><br>"Didn’t this old man already warn you? Don't act like a fox.”<br><br>Shiik, crack!<br><br>Without a shred of hesitation, Jeok Cheon-Gang made his move. Yeomho's headless form teetered momentarily before collapsing into a scarlet pool.<br><br>Clearing the blood splashed on my face, I voiced my thoughts.<br><br>"Wouldn't it have been better to spare him?"<br><br>“You don’t tell important secrets to someone as stupid as a bear.” \[Note: I think the implication is that Yeomho probably wasn’t privy to any vital information.\]<br><br>"Still…"<br><br>"The bear has fallen. Now, the fox remains to be caught."<br><br>Jeok Cheon-Gang's gaze shifted as he spoke in riddles. A mere hundred paces away, an elderly figure held ground, eyes fixed upon us.<br><br>In his grasp, a short staff shimmered with a verdant glow.<br><br>"The Green Jade Ruyi!"<br><br>"Yin Ghost Hansu. He's our next target."<br><br>Almost as if he'd caught wind of the declaration, Hansu's form became a blur, accelerating with an astonishing velocity.<br><br>Whizz!<br><br>Summoning his full martial arts prowess, Hansu felt the tightening noose of two energy forms gradually, ever so persistently, closing in.<br><br>'Damn it!'<br><br>He instantly identified one — it was the Fire King Jeok Cheon-Gang.<br><br>Of the Ten Kings, Hansu hadn't anticipated this behemoth, reputed as the mightiest among them, to confront him so soon.<br><br>'But who's this young one?'<br><br>The query flickered briefly in his mind, only to be discarded.<br><br>The youth's identity was secondary. What mattered was that Yeomho, whose skills mirrored Hansu's, had been felled by their combined force.<br><br>'Fool. Not the Thunderbolt Blade King, but the Fire King you've brashly provoked.'<br><br>Though their paths had intertwined during the Great Faction War and they'd shared decades in each other's company, no brotherhood bound them. Hansu had no intention of meeting the same fate as Yeomho.<br><br>'Just a tad further. Almost there!'<br><br>The mission's objective, the Green Jade Ruyi clutched in his hand, was achieved. If only he could rendezvous with 'him,' survival was certain.<br><br>'After all, even the Fire King wouldn’t be a match for 'him'.'<br><br>'Rest easy, Yeomho. If it comes to that, I'll avenge you.'<br><br>Yet, as Hansu tightened his hold on the Green Jade Ruyi, a jolt of realization paralyzed him.<br><br>'What is this?!'<br><br>A new force emerged, not from his trail, but ahead.<br><br>At first, he thought they might be reinforcements from the Murim Alliance. But this energy, though potent, was isolated.<br><br>'Damn it. Things spiral further into chaos.' Any hindrance, even brief, might allow the Fire King to ensnare him.<br><br>In an instant, just as Hansu's lips were trembling, he mustered his resolve, burst through the treeline, and exclaimed,<br><br>"Ah!"<br><br>From a face filled with joy, his voice echoed with relief.<br><br>No emotion could compare to the relief of being spared from death's doorstep.<br><br>With palpable elation, Hansu called out to 'him'.<br><br>"Blood Lord!"<br><br>\* \* \*<br><br>Jeok Cheon-Gang and I, as if on cue, halted simultaneously.<br><br>Hansu, once a desperate fugitive, now faced us with the ferocity of a hunting beast.<br><br>"Behold! The Fire King and his youthful companion, the duo that claimed Yeomho!"<br><br>Yet, it wasn't Hansu who truly exuded danger. He was akin to a fox masquerading as a tiger, drawing strength from another's shadow.<br><br>The real menace was the silent figure beside him. His unnerving calm and near-absence of aura signaled a latent threat.<br><br>However, Jeok Cheon-Gang's approach differed. His features hardening, he questioned,<br><br>"Who are you?"<br><br>"Your nemesis."<br><br>The young man responded with a sly grin.<br><br>"To be precise, the nemesis who killed your dearest friend."<br><br>...What?</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-261.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-263.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

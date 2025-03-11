@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 240 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 240</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 240</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: Coldbutteredtoast</span>
+                            <span class="published-date">Published: January 3, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>The old man sat in the lotus position, emptying his mind. (七空 -- Chinese: Emptying in Seven Ways)<br><br>Smoke rose from his body as he circulated his Qi, the energy so dense that it could be seen with the naked eye. Vapours writhed around his ancient frame to coalesce above his head in rings of blue and red, black and white. Finally, a yellow ring took shape, completing a vivid ring in the five cardinal colours. He had attained Ogijowon (五氣朝元 -- Chinese: combining the energy of the five elements / five internal organs)<br><br>Awakening from the enlightened dream state, Jeok Cheon-Gang opened his eyes. "Come in."<br><br>The door immediately sprang open and a ragged young man burst into the room, relaxed, as if he were entering his own home.<br><br>"Weren't you meditating?" he said.<br><br>"How am I supposed to do that with someone lurking outside my door?"<br><br>"That's true, too. I should have just come in and watched the Olympics."<br><br>"It's not the Olympics! It's called Ogijowon!"<br><br>"Ah, the name doesn't really matter!"<br><br>Cheon-Gang stared at the boy, Jin Tae-Kyung, then shook his head. "Where have you been?"<br><br>"You know. I went to see Lord Namgoong."<br><br>"Oh yes, the Namgoong Family Head," said Cheon-Gang, slowly. "What did he say?"<br><br>Jin Tae-Kyung stretched, as though the answer was unimportant. "Only that the banquet has been cancelled."<br><br>"Huh? Cancelled? What do you mean?"<br><br>"Just that. I heard that the Sword King has gone into isolation. He had a sudden realisation or something, apparently."<br><br>"Enlightenment, ah." Cheon-Gang nodded slightly. "Unfortunate. But strange."<br><br>Tae-Kyung paused. "What?"<br><br>"The Heavenly Sword King has been preparing for this day for twenty years. It's hard to believe that this could be a coincidence."<br><br>"Maybe he was a little nervous about fighting you?"<br><br>"Hmm. Maybe."<br><br>"Aren't you overthinking this, grandfather?"<br><br>"Do you think so?" said Cheon-Gang, watching his student carefully.<br><br>"Absolutely." Tae-Kyung nodded vigorously. "Why worry?"<br><br>"I just do."<br><br>"There has to be a reason!"<br><br>The Fire King frowned. "Do I have to ask permission to see his face again?”<br><br>"Sure, don't you know about portrait rights?"<br><br>"I don't. Now shut up before I stamp your portrait into a tombstone."<br><br>Swallowing his response, the boy sat down quietly. The silence didn't last, however. Moments later, Tae-Kyung said, "Hey grandfather..."<br><br>"What?"<br><br>"This is a good outcome, isn't it?"<br><br>"It's not an outcome at all. Things have just been postponed."<br><br>Tae-Kyung looked up at the old man. "You still bought some time, though."<br><br>"Huh." Brows furrowing, Cheon-Gang felt his hackles rise. "Did you think I would lose?"<br><br>"No, no! That's not what I meant! It's just a no-win situation, right?"<br><br>Winning not meaning winning? In his heart of hearts, Jeok Cheon-Gang knew that the boy was right. If the match had come to pass, he would have suffered regardless of whether it ended in victory or defeat. Most importantly, any internal wounds would shatter the fragile balance he was maintaining in his spirit. And such injuries were very likely in any contest with the Sword King.<br><br>"Grandfather?"<br><br>Roused from his thoughts, Cheon-Gang looked up and found Tae-Kyung looking at him, worried. "Why are you calling me, boy? I'm right here."<br><br>"Oh, no reason. Do I have to ask permission to call you now?"<br><br>"Ha, look at this guy." Normally, Cheon-Gang would have given him a smack on the side of his head, but for some reason he felt in a good mood. Laughing, the old man got to his feet and said, "Let's go."<br><br>"Go where?"<br><br>"Henan." The Convocation of the Stars. At that very moment, some of the best masters in the world would be gathering in nearby Henan Province. Now, after four seasons of training, it was time to join them. "If the Namgoong Family have cancelled their event, it's only natural for us to leave."<br><br>"Well, true, but can't we set off after soaking in a nice hot bath first?"<br><br>"It's too late for that. Don't pretend to be neat now, you punk. Go and get some travelling money. We're guests, so you should be able to persuade them that."<br><br>"Wow, now you're asking me to rip them off!"<br><br>"Oh, this punk..."<br><br>"I'm going, I'm going!"<br><br>Grumbling, Tae-Kyung pushed himself to his feet and set headed out the door, unaware that Cheon-Gang was silently watching. Hastily-tightened shackles and sleeves cut to ribbons by some impossible blade.<br><br>"What did you do, boy?"<br><br>As his student walked away, the old man's grey eyes settled upon a nearby mountain, where light clouds of dust were dispersing on the breeze.<br><br>***<br><br>The sun dipped beneath the mountains and darkness swept across the land. Standing atop the ridge, wind tugging at his robes, the Heavenly Sword King suddenly spoke. "Who is that child?"<br><br>Behind him, Namgoong Ryong stood quietly. "His name is Jin Tae-Kyung. His family are based in Taiyuan in Shanxi Province."<br><br>"The Jin Family of Taiyuan?"<br><br>"Yes."<br><br>"So, there was a Hidden Dragon (潛龍) sleeping in that backwater." <br><br>"And now the Fire King has embraced him."<br><br>"Wrong." The Sword King shook his head. "It's the other way around. The Fire King has become a cintamani (여의주 -- Korean: Yeouiju, like Goku's Dragon Ball) grasped by the Sleeping Dragon."<br><br>Namgoong Ryong could not hide his surprise. He knew very well that his father was a man of few words and very sparing with his praise. Yet the Sword King had reduced Jeok Cheon-Gang, the world-shaking Fire King, to a cintamani empowering the Sleeping Dragon.<br><br>[From a man who has never once complimented his grandson...] But curiosity arose with the resentment. "You mean that much?"<br><br>Instead of answering the cautious question, the Sword King asked a question of his own. "How far have you mastered the Emperor's Sword?"<br><br>"...I still haven't crossed the wall."<br><br>"At your age, your father had learned the Emperor's Sword Form to seven stars. It was probably around that time that the world started calling me the Sword King."<br><br>"I'm sorry, father."<br><br>It was an embarrassing answer, but the Sword King didn't care. His statement hadn't been intended to reprimand his son, an accomplished man of sixty years. "More than twenty years ago, when my mastery reached eight stars, I had a sudden need to test my sword."<br><br>Namgoong Ryong bowed his head silently. Everyone knew what had happened after that. A clash between superstars, with the Fire King emerging victorious.<br><br>"I faced countless walls during the subsequent closed training. After endless attempts, I finally brought down a wall on the road to true mastery." <br><br>"Incredible! Congratulations!" Trembling at the legendary feat, Namgoong bowed deeply to his father.<br><br>The Emperor's Sword Technique was the beginning and the end of all paths in the Namgoong Family. During the entire history of the House, only the founder had achieved absolute mastery. For the Sword King, a consummate warrior, to have reached a comprehensive understanding of the Sword Form in a hundred years was a great achievement. However, the Heavenly Sword King looked calm. Perhaps even depressed.<br><br>"Let me ask you one thing," said the tall old man. "If I were to attack you with the Emperor's Sword, could you survive for three seconds?"<br><br>"What? No! Impossible!" Ryong stared wide-eyed at his father, the Heavenly Sword King, who nodded quietly.<br><br>Did that mean that their guest had endured the sword form at the hands of the Sword King? Even the perpetually stoic Ryong could not stop his voice from shaking. "But, he's only twenty-two now?"<br><br>"Yes, twenty-two. With Jeok Cheon-Gang as his teacher."<br><br>Namgoong Cheon, the Sword King, raised his eyes to the darkening sky. For his whole life, he had lived under the shelter of his House name. He had been blessed with the most excellent training, had worn the symbol of Heaven on his breastplate, had learned the sword from the greatest teachers.<br><br>But today, he had met a dragon, soaring up into the sky.<br><br>[I'd thought a second would be enough.]<br><br>Drawing with the speed and force of a lightning bolt, he had unleashed his sword with a century's worth of expertise. Then came the Three Stars Movement and finally the Strike of the Last Word.<br><br>'That is three seconds, right? Thank you for your attention.'<br><br>With that, the young man had lifted his pile of iron chains and left. Behind him, all that remained was desolation on the mountainside: hundreds of trees felled, rocks and boulders sliced into rubble, and flocks of birds circling above, crying at the sudden loss of their nests.<br><br>[He really is a sleeping dragon.]<br><br>The King of Swords shook his head. "Have they left?"<br><br>"Yes. They set off before five o'clock."<br><br>"Where are they headed?"<br><br>"Henan. They will be attending the Convocation in a month."<br><br>"The Convocation of the Stars?" The Heavenly Sword King laughed. "Tell your son firmly. Do not enter it this time."<br><br>***<br><br>The Black Mountain Clan was a bandit group that claimed one of the main highways between Anhui and Henan. Heuk Jong-Pil, the Clan Leader, was a dark-eyed predator, who had raised his brutal martial arts to the Peak. With three hundred vicious raiders under his command, Jong-Pil ruled his domain with an iron fist. Yet no matter how effective his butchery, no matter how far his reach, he had never been able to overcome the influence of the Green Forest League.<br><br>[No matter what I do, those Green Forest bastards rip us off.]<br><br>The monthly tithe was an enormous forty percent of all profits. Even the thought of it made Jong-Pil angry. At least the Black Mountain Clan had been able to grow, in part, due to the various forms of assistance that the Green Forest League offered in return. Such as information.<br><br>"Boss," said one of his men. "We just received a letter from the Green Forest."<br><br>[Fuck!] "Don't you know that all these bastards are blind? Read it out!"<br><br>"Yes, boss. It's a list of the cargo and routes being used by the Golden Frog Consortium (⾦蛙商團 -- Golden Frog Commercial Group). They say a shipment of precious stones is due in two days."<br><br>"So, what are you waiting for? Call the boys!"<br><br>The Convocation of the Stars was not only an important event for warriors. It was also an important opportunity for bandits. Taking his three hundred men, Heuk Jong-Pil set an ambush on the road where the Golden Frog Consortium were scheduled to pass.<br><br>[Just one big score...]<br><br>A single high-quality cat's-eye opal would be profitable, even after giving the Green Forest their cut. Heuk Jong-Pil needed that money. Feeding and arming three hundred bandits didn't come cheap.<br><br>"They should have arrived by now. Where are the scouts?"<br><br>"I sent them an hour ago," said his grizzled raid leader. "No news."<br><br>"Ugh. It's hard working with these idiots." Heuk Jong-Pil sniffed and rubbed his eyes. In the next moment, he stiffened. Something was approaching swiftly through the darkness. "Hey, what's that?"<br><br>"I-I don't know..."<br><br>Two shapes flew through the night at an unbelievable speed, leaving a red trail in their wake like the burning tails of a meteor shower. Crouching in the grass, Heuk Jong-Pil squinted at the strange sight. [Are they ghosts?] Then, without warning, the shapes came to a sudden stop and two figures now stood on the mountain road. The sound of their whispers carried through the chill night air.<br><br>"Why are you being so nosy?"<br><br>"It doesn't feel right. They look like they're with those two guys who were hanging around earlier."<br><br>"We're going to be late at this rate, you punk."<br><br>"No matter how late it is, if you see trash you should clean it up."<br><br>"Why are you talking back to your elder?"<br><br>"These guys definitely set the mountain on fire..."<br><br>"I'll kill them! Let's go break their limbs!"<br><br>"Yep!"<br><br>Listening quietly in the darkness, Heuk Jong-Pil had heard enough. "Fuck you!" he cried. "Everyone...!"<br><br>But he never finished his shout. Instead, his ears filled with the sound of rushing wind and a large hand settled on his shoulder.<br><br>"Hey," said a friendly voice. "Everyone, what?"</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-239.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-241.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

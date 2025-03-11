@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 318 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 318</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 318</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: January 19, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>"Bitter."<br><br>The old man softly muttered, his senses immersed in the delicate flavors of the Tieguanyin tea.<br><br>Age had not diminished the breadth and strength of his shoulders, and his flowing white beard, cascading to his waist, bestowed upon him the air of an immortal.<br><br>Only the presence of the timeworn sword by his side hinted at his age.<br><br>"I'm sorry, elder. I'm still not as skilled as my father..."<br><br>"It's regrettable, but can't be helped. The tea tastes different when the owner changes. You can go now."<br><br>The teahouse owner, who had been hovering attentively, seized the opportunity to tactfully withdraw.<br><br>Gazing at the receding figure, the elder traced the rim of his teacup, lost in thought. <br><br>"My martial brothers and I used to frequent this place. That was over thirty years ago. Back then, your master wasn't the sect leader yet."<br><br>"I see."<br><br>Hyuk So-Pyung, who had been sitting across the table, responded.<br><br>After silently observing the elderly man drink tea for over an hour, his voice was dry and cracked like the bottom of a drought-stricken field.<br><br>"Would you like to try a cup?"<br><br>The elder's tone was warm and devoid of any imposition.<br><br>Yet, an offer from him was a silent command, a fact known to both Hyuk So-Pyung and the thirty Tai Yi Sword Team members covertly present.<br><br>"Thank you, Sabaek."<br><br>With a respectful gesture, he held out his empty cup, which the elderly man filled, tilting a jade-colored teapot.<br><br>Drip, drip.<br><br>The liquid fell rhythmically, drip by drip. As the tea filled the cup, Hyuk So-Pyung's complexion underwent a startling change.<br><br>"…!"<br><br>"What's the matter?"<br><br>"No... it's nothing."<br><br>Contrary to his words, his hands shook and his face flushed intensely, as if on the brink of eruption.<br><br>It was merely tea, yet each droplet that kissed the cup wielded an inexplicable force.<br><br>'This is insane…!'<br><br>Such tremendous power. This was power beyond measure, even for a man like Hyuk So-Pyung.<br><br>Struggling, he channeled his internal energy into the teacup, but it was too much to contain.<br><br>Tink. Clink.<br><br>With the last droplet, the cup in Hyuk So-Pyung's grasp fractured, tea cascading over its broken edge.<br><br>In that moment, the gaze of Hwang Bo-Eom, revered as the Tai Yi Ruthless Sword, intensified with a discerning sharpness.<br><br>"How old are you now?"<br><br>"...I am twenty-two."<br><br>"When was the last time you saw your master?"<br><br>"Ten years ago."<br><br>"Right, it was then. At the Zhonghua Branch."<br><br>The Zhonghua Branch, also known as the Huazhong Branch, nestled in Shaanxi Province, hosted a decennial convergence of the two formidable powers: Mount Hua and the Southern Edge Sect.<br><br>Young warriors from each sect dueled, ostensibly to foster camaraderie through martial arts.<br><br>Yet, beneath the guise of friendly exchange, it was an arena for rivalry.<br><br>"I remember it well. I saw with my own eyes how you were toyed with by Baek Mu-Seong."<br><br>"...!"<br><br>Hyuk So-Pyung's eyelids fluttered at the memory.<br><br>That day of defeat remained etched in his mind, along with the icy stare from the Southern Edge Sect's paramount swordsman upon his return.<br><br>"When your master was your age, he had achieved eighth mastery of the Tai Yi Divine Technique. What about you?"<br><br>"...I'm sorry."<br><br>"Ten years is enough for landscapes to change, yet you are still stuck in the same place."<br><br>You too, Sabaek.<br><br>He tried to suppress the words bubbling up in anger.<br><br>'You couldn't have forgotten, could you? Everything you said to me that day.'<br><br>Talent without effort cannot bloom.<br><br>Hyuk So-Pyung was hailed as the Southern Edge Sect's most promising talent. His dedication to martial arts, marked by sweat and blood, spoke volumes of his passion.<br><br>However, his decline wasn't solely due to his public defeat by Baek Mu-Seong, the First Crane of Mount Hua.<br><br>"I already know you are tarnishing the name of our sect. I've heard you've been making quite a name for yourself in Xi'an."<br><br>"Sabaek..."<br><br>"I'm speaking. You should keep your mouth shut."<br><br>Hwang Bo-Eom's tone, previously impassive, now carried a chill sharper than the harshest winter.<br><br>"Watching this farce unfold is unbearable. From top to bottom, you are all muddying the reputation of the Southern Edge Sect."<br><br>He was referring to both Tiger Swordsman Song Il at the top and Hyuk So-Pyung at the bottom.<br><br>In the face of Hwang Bo-Eom's rebuke, despite his only Sahyung being injured and unable to intervene, Hyuk So-Pyung and the disciples of the Tai Yi Sword Team were starkly reminded once more.<br><br>'The Tai Yi Ruthless Sword.'<br><br>The 'ruthless' in his title was not reserved solely for his adversaries.<br><br>"Your master, who has led the Southern Edge Sect to this state, is equally disappointing. How could our teacher have passed on the leadership to such a person…"<br><br>It was at this juncture that Hyuk So-Pyung unsealed his lips, which had been pressed together in restraint.<br><br>"That's too harsh."<br><br>"What?"<br><br>Swoosh.<br><br>An abrupt gust seemed to ripple through the air, enveloping Hyuk So-Pyung.<br><br>Yet, it was no mere breeze. It was a formidable surge of energy emanating from Hwang Bo-Eom, the Tai Yi Ruthless Sword, a transcendental figure within the Southern Edge Sect.<br><br>"It seems old age has dimmed my hearing. Say it again."<br><br>Despite the overwhelming aura, Hyuk So-Pyung stood his ground.<br><br>"You are... being too harsh."<br><br>The Storm Sword Supreme, while never overtly warm or affectionate, was his sole and revered Master.<br><br>"He is the leader of the Great Southern Edge Sect. You, as a fellow disciple of the same sect, should show the proper respect to the sect leader."<br><br>"Respect for the sect leader?"<br><br>A spark of energy ignited in Hwang Bo-Eom's eyes.<br><br>He was once the prime candidate for the sect's leadership.<br><br>Among his martial brothers and disciples under the same master, none were his equals. His martial prowess and insidious nature stood unrivaled.<br><br>Leadership was Hwang Bo-Eom's destined right, the natural order of things.<br><br>"What would a wretch like you know to dare..."<br><br>Just as Hwang Bo-Eom was about to roar in anger, he suddenly closed his mouth.<br><br>He noticed Hyuk So-Pyung's unwavering gaze and the strange current flowing among the disciples of the Tai Yi Sword Team.<br><br>'These kids.'<br><br>Hwang Bo-Eom's eyes hardened, and the formidable energy he radiated began to wane.<br><br>His mouth, veiled by his white beard, twitched slightly.<br><br>"The leader of the Great Southern Edge Sect..."<br><br>Hwang Bo-Eom raised his half-drained teacup, downing its contents. Deep furrows creased his aged brow.<br><br>"Indeed, it's bitter. The taste and aroma have changed. It's nothing like before."<br><br>"…!"<br><br>"The Great Southern Edge Sect? What a joke. The current Southern Edge Sect is nothing but a house built on sand. While you wallow in despair and indulge in pleasures, I have been working to raise our sect."<br><br>"What are you talking about…"<br><br>Doubt laced Hyuk So-Pyung's voice.<br><br>Hwang Bo-Eom, a reclusive figure within the sect, was seldom seen outside the main temple. Not even the grave injury of the Tiger Swordsman, his Sahyung, had drawn him forth.<br><br>'But how...'<br><br>His train of thought abruptly derailed.<br><br>A group entered the teahouse, led by a striking young woman, whose very presence seemed to illuminate the space.<br><br>"I am Ju Hwa-Ran, the young leader of the Dragon Phoenix Escort Agency, here to see Hwang Bo-Eom, the Tai Yi Ruthless Sword."<br><br>Ju Hwa-Ran, known as the Flower-Shrouded Blade. Her confident introduction coaxed a smile onto Hwang Bo-Eom's otherwise stoic visage.<br><br>"Ah, did you bring the item I requested?"<br><br>Hwang Bo-Eom's fingers brushed through his thick beard, eyes shimmering with a cryptic intensity.<br><br>\* \* \*<br><br>"Who is the Tai Yi Ruthless Sword, anyway?"<br><br>The response came gruffly from Goong Gi-Bang.<br><br>"Who else but the Tai Yi Ruthless Sword?"<br><br>"Gi-Bang, your fifth mastery 18 Subduing Dragon Palms or my seventh mastery Divine Palm of Fire, which do you think is stronger?"<br><br>"…Tai Yi Ruthless Sword, Hwang Bo-Eom. The Sajae of Tiger Swordsman Song Il and the Sahyung of the current leader of the Southern Edge Sect, the Storm Sword Supreme." \[Note: sajae means younger martial brother. So the Tiger Swordsman is the oldest, followed by the Tai Yi Ruthless Sword, and lastly, the Storm Sword Supreme.\]<br><br>Gi-Bang's knowledge of Murim was vast, making him an invaluable asset on this journey, despite a few shortcomings.<br><br>'If only he didn't smell so bad.'<br><br>Lost in thought, he continued onward.<br><br>We were en route to Dengwang Tower, a renowned teahouse. Goong Gi-Bang, trudging beside me, voiced his concerns with a grimace.<br><br>"I've been thinking, and this doesn't seem like a good idea."<br><br>"Why?"<br><br>"The situation is bigger than I thought. We're dealing with the Tai Yi Ruthless Sword, not just anyone. At least with the Storm Sword Supreme, there's a chance of communication, but him…"<br><br>Goong Gi-Bang trailed off, shaking his head in dismay.<br><br>"How bad can it be? Have you actually met him?"<br><br>"Just once, beside my master. And I thought, 'I never want to meet him again.'"<br><br>Goong Gi-Bang's reaction suggested his initial encounter had been quite jarring.<br><br>He grimaced, a shudder coursing through him, and subtly nodded towards someone.<br><br>"You don't need to ask me. Neighbors know each other's business best."<br><br>Following his glance, my eyes rested on Baek Mu-Seong, who had been silent throughout our journey.<br><br>His typically easygoing face, often adorned with a genial smile, had been set in a rigid, unyielding expression for some time.<br><br>Okay, I'm getting the vibe.<br><br>'The Tai Yi Ruthless Sword.'<br><br>In Murim, the monikers attributed to warriors often mirror a facet of their identity.<br><br>It was usually either their weapon of choice or a distinctive personality trait.<br><br>For Hwang Bo-Eom, christened as the Tai Yi Ruthless Sword, the title embodied both aspects.<br><br>'Ruthless. Just this word gives a pretty good idea of his character.'<br><br>One could wager Hyuk Mu-Jin's arms, perhaps even his legs, that Hwang Bo-Eom was far from the amiable elder one might encounter strolling through the neighborhood.<br><br>At that moment, Goong Gi-Bang interjected, his voice laden with apprehension.<br><br>"It's not too late yet."<br><br>"Huh? Too late for what?"<br><br>"Getting involved in a sect's affairs can lead to complications, especially when it's the Tai Yi Ruthless Sword of the Southern Edge Sect."<br><br>"So?"<br><br>"So? What do you mean, so? We should forget this foolishness and head to Sichuan!"<br><br>I blinked innocently.<br><br>"What are you talking about?"<br><br>"Uh?"<br><br>"What involvement? We're just going to drink tea. Right, Young Master Cheong?"<br><br>Cheong Pung, previously preoccupied with the sweets I had procured to keep him occupied, chimed in with zest.<br><br>"Yes! We're just going to drink tea!"<br><br>Goong Gi-Bang stared at Cheong Pung, his expression a mix of disbelief and exasperation.<br><br>"Didn't you just say you had already tried it?"<br><br>"Uh, well... that..."<br><br>His reply was less than convincing.<br><br>In the meantime, Cheong Pung, having polished off his sweets, was now busily licking his fingers, his gaze flitting between me and Goong Gi-Bang.<br><br>His eyes, brimming with anticipation, darted towards the snack-laden street stalls.<br><br>"Young Master Cheong, you haven't had it before, right?"<br><br>As I spoke, I extended my palm over Goong Gi-Bang's shoulder and waved it. Cheong Pung, now promised five more sweets, nodded excitedly.<br><br>"Right! It's my first time trying it! I'm itching to go to the tea house!"<br><br>"That settles it then."<br><br>A defeated Goong Gi-Bang tugged at his disheveled hair, his frustration palpable.<br><br>"Shit. If I get beaten with a Dog Beating Stick by my Master later, I'll say it's all your fault." \[Note: I know this sounds funny, but this is actually a divine artifact of the Beggar Sect. Just like how the Green Jade Ruyi symbolizes leadership for the Shaolin Temple, the Dog Beating Stick also carries the symbol of leadership and is usually held by the current leader of the Beggar Sect.\]<br><br>"Go ahead. My Master is the Fire King."<br><br>"This dog bastard..."<br><br>"Stop whining and let's go quietly. Do you have any complaints, Mu-Jin?"<br><br>Hyuk Mu-Jin wore a look of mild trepidation.<br><br>"May I speak?"<br><br>"Go ahead. If you want to die."<br><br>"…."<br><br>"Alright, we're almost there."<br><br>The old sign of Dengwang Tower loomed closer.<br><br>I quickened my pace, halting only when we reached the teahouse's entrance.<br><br>'This is more serious than I thought.'<br><br>The Tai Yi Ruthless Sword. The foremost swordsman of the Southern Edge Sect. Even from outside, I could sense the overpowering aura of a Transcendent Master, coupled with the formidable energies of numerous individuals within.<br><br>A weight seemed to settle upon my shoulders.<br><br>"Grandfather, don't worry. Whatever happens, I'll protect you."<br><br>I reassured myself that everything would be fine.<br><br>With a quiet affirmation, I pushed open the teahouse door.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-317.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-319.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 378 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 378</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 378</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: March 29, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>Ding.<br><br>\- \[Logout\] has been successfully completed.<br><br>With the cheerful notification, the sensations I'd temporarily lost came flooding back.<br><br>The bed's softness pressing against my back, the warmth of the air in the private jet cabin.<br><br>Even the sensation and noise of someone vigorously shaking my shoulders.<br><br>"Jin Tae-Kyung! Wake up! Jin Tae-Kyung!"<br><br>\- Wake up, you vile human!<br><br>My eyes fluttered open to the urgent calls of two individuals, one a monster, the other human.<br><br>As clarity returned to my vision, a familiar face appeared.<br><br>"Ah, Team Leader Choi..."<br><br>Slap!<br><br>"Wake up!"<br><br>\- Well done! Slightly less vile human!<br><br>"..."<br><br>What is happening?<br><br>Confused by the unexpected slap, my voice came out bewildered.<br><br>"I am up..."<br><br>"What on earth is wrong with you! We've been trying to wake you up! Why did you only wake up now?"<br><br>\- Just die, die!<br><br>"I-I'm sorry..."<br><br>Such intensity. Never before had I seen Team Leader Choi this explosively angry.<br><br>Team Leader Choi, ever the epitome of calm and a connoisseur of luxury, now glared with fiery eyes.<br><br>'But why is he like this. It looks like we're still on the plane.'<br><br>Though my apology was hurried, confusion reigned. Was this really a slap-worthy offense? Then,<br><br>"This is not the time! Hurry...!"<br><br>"Kyaaaa!"<br><br>The cabin erupted in chaos, Team Leader Choi's voice lost among the stewardesses' screams and the pilots' shouts.<br><br>"Mayday! Mayday! Mayday!"<br><br>"Control tower! Control toweeer!"<br><br>"What the hell."<br><br>What in the world is happening?<br><br>As I frantically looked around, Team Leader Choi made an astonishing declaration.<br><br>"It's a monster attack!"<br><br>"Monster? Attack?"<br><br>What bullshit. We were on a private jet sent by the Central Committee of China and flying at 25,000 feet.<br><br>By now, Chengdu Shuangliu International Airport should be within view...<br><br>"Huh?"<br><br>A casual glance out the window left me speechless.<br><br>From this lofty vantage, I could see an expansive airport engulfed in flames, with figures, large and small, moving amidst them.<br><br>A deadly confrontation between humans and monsters was taking place below.<br><br>And there was more.<br><br>\- Screech!<br><br>A gargantuan monster loomed, swiftly closing in on our jet.<br><br>"That is..."<br><br>I rubbed my eyes to make sure I was seeing correctly, but the Wyvern was still there.<br><br>As an A-rank threat, Wyverns were formidable members of the dragon lineage.<br><br>Encountering them on the ground was daunting enough, let alone at 25,000 feet.<br><br>And there were about a dozen in pursuit!<br><br>'...What kind of shit situation is this.'<br><br>Below, a fierce skirmish encircled Chengdu Shuangliu International Airport, and above, at 25,000 feet, a squadron of Wyverns chased our jet.<br><br>My brain snapped into action, reaching an immediate conclusion.<br><br>"The Lich!"<br><br>The realization struck me like a bolt from the blue.<br><br>A week ago in the modern world, the most formidable undead creature, a harbinger of a deadly monster wave, had arrived here.<br><br>"The control tower is not responding!"<br><br>"The Wyverns, the Wyverns...!"<br><br>"Kyaaaa!"<br><br>\- I knew this would happen! We're all dead now!<br><br>Even amidst the turmoil, I found myself correcting the Skeleton Warlord's grim prognosis.<br><br>"You're right, but aren't you already dead?"<br><br>\- Shut up, you wicked human! This is all your fault! Ah, my legion! Forgive your commander!<br><br>Pandemonium ensued, with both monsters and humans alike voicing their panic.<br><br>In the midst of chaos, one individual remained composed.<br><br>"Everyone, calm down! No one will die here!"<br><br>Indeed, Team Leader Choi's reliability shone through. Clearly, he had a plan to navigate us through this crisis.<br><br>With poised assurance, Team Leader Choi singled me out to dispel the turmoil.<br><br>"Jin Tae-Kyung here will solve it!"<br><br>"......?"<br><br>"Jin Tae-Kyung. What should we do?"<br><br>"Why are you asking me......"<br><br>"I believe in you, Jin Tae-Kyung!"<br><br>"......"<br><br>Why do you believe in me? In situations like this, believing in God, Buddha, or Allah might be more helpful.<br><br>Suddenly, all of their eyes were on me, expecting a breakthrough.<br><br>"Ah, now that I think about it, I've heard about this hunter. Even Chairman Xiao Yang personally requested him, a truly great talent." \[Note: A quick reminder: Chairman Xiao Yang is the current General Secretary of the Central Committee of the Chinese Communist Party. He was briefly introduced at the end of the last Korea arc.\]<br><br>"I've heard the rumors too. Perhaps he is a new S-rank hunter. I heard he took down two named monsters by himself."<br><br>"Ohh, ohhh!"<br><br>"We're saved! We'll survive!"<br><br>\- You, wicked human! I knew you were strong, but this is beyond imagination! Rejoice, my legion. Your commander will survive!<br><br>"......You're already dead."<br><br>This is absurd. They've all lost their grip. My gaze towards Team Leader Choi was one of disbelief.<br><br>"What exactly are you believing in?"<br><br>Team Leader Choi replied with unwavering certainty.<br><br>"I've told you. I believe in Jin Tae-Kyung."<br><br>"But where is this unfounded belief coming from......"<br><br>"It's a well-founded belief."<br><br>"Excuse me?"<br><br>"Your handling of this crisis, your tone, your demeanor. These are the pillars of my belief."<br><br>"......!"<br><br>At that moment, clarity dawned upon me. The surprise of the situation had startled me, but it hadn't instilled fear or terror in my heart.<br><br>The solution was simpler than I thought.<br><br>'Because I'm strong.'<br><br>I am indeed strong. Stronger than before. Capable of avoiding any peril.<br><br>This newfound strength left me unafraid of the monstrous onslaught, ravaging the lands below, nor the Wyverns in hot pursuit.<br><br>"That's right..."<br><br>Whispering to myself, I then voiced a question.<br><br>"Who's the pilot?"<br><br>Instantly, a hand emerged from the cockpit ahead.<br><br>A shaking hand. The other one was likely clenched tight around the controls, maneuvering to dodge the incoming Wyverns.<br><br>"It's me."<br><br>"Can I open the door for a moment?"<br><br>"Excuse me?"<br><br>"Can I open the plane door?"<br><br>The pilot glanced back, bewildered, as though he had just encountered a lunatic.<br><br>"Of course not! It can't be opened because of the air pressure seal. The fuselage could break apart! You won't be able to breathe!"<br><br>Team Leader Choi, idly playing with a ring on his finger, chimed in.<br><br>"I think I can block the air pressure. I don't know what you're thinking, but let's try."<br><br>"Okay."<br><br>"Don't do it! Are you trying to kill us all, you bangzi?" \[Note: bangzi is a Chinese ethnic slur for Koreans. It is originally "Gaoli bangzi" but has been shortened in this sentence. It originated from the word for "helper", as numerous servants would accompany Korean diplomatic missions to China during the Ming and Qing Dynasties. These servants gained a bad reputation for petty crimes during this time period.\]<br><br>"…What, 'bangzi'?"<br><br>How dare he use such derogatory language in front of a proud Korean 'Kimchi Man.' \[Note: I'm not sure what's being referenced here.\]<br><br>The pilot blanched as he realized his verbal slip.<br><br>"No, that's not what I meant."<br><br>"Fucking jjanggae bastard." \[Note: jjanggae is a derogatory term for Chinese people from the word "Jang Gwe", which means a person who manages a store's safe box. During the Imo Military Rebellion, low-status Han Chinese were brought by Qing dynasty's Manchu soldiers to Korea for menial tasks and, left stranded after the soldiers were mobilized for war against France, turned to running small-scale prostitution and restaurants during and after the Japanese colonial period to make a living. With no protections for their identities in Korea, these individuals' reverence for money stored in chests morphed into a term broadly referring to Chinese people and Chinese food establishments.\]<br><br>"…!"<br><br>"Hey, pilot!"<br><br>"Y-yes?"<br><br>"Can I open it?"<br><br>"Ah. Ahh!"<br><br>Before the pilot had a chance to intervene, I opened the door, or rather, I cleaved through it.<br><br>Squeak!<br><br>My Protective Qi, known in the modern world as an Aura Blade, effortlessly carved through the sturdy alloy, fashioning a makeshift door.<br><br>Like the Transcendent Masters of martial arts, this was a mighty power only an S-rank hunter could have.<br><br>Team Leader Choi's expression was one of utter astonishment.<br><br>"Jin Tae-Kyung, this is...!"<br><br>"Team Leader!"<br><br>Kwaah!<br><br>Surprise was a luxury we couldn't afford. The airplane shuddered under the onslaught of fierce winds and air pressure, throwing the cabin into turmoil.<br><br>Prompted by the cacophony of screams and my call, Team Leader Choi swiftly acted, twirling his ring.<br><br>"A tight barrier surrounds us. Barrier!"<br><br>"Oh."<br><br>His incantation conjured a mana barrier, sealing the makeshift entry flawlessly.<br><br>Fascinated by this technique, I leaned forward from the cabin, expressing my awe.<br><br>The barrier, recognizing me as a friendly entity, granted me passage without resistance.<br><br>Koogooogoo!<br><br>The wind's formidable pressure beat down on my upper body, yet I couldn't help but smirk.<br><br>'This is no joke, huh?'<br><br>Nonetheless, it wasn't overwhelming.<br><br>Indeed, it would have been peculiar if I had found it so. Compared to the force exerted by the Western Heavenly Demon Lord, this felt more like a mild spring breeze.<br><br>\- Kuak!<br><br>Into this gentle breeze, the discordant cries of monsters wove themselves.<br><br>Observing the encroaching Wyvern pack, I gauged the distance.<br><br>'About a hundred meters. I've never tried this before... but this distance should be alright.'<br><br>Inventory open. Equip.<br><br>Swoosh.<br><br>A spear, acquired at a bargain from the Hunter's Market, now lay in my grasp.<br><br>Assuming the stance of a javelin thrower, I drew my shoulder back to its limit. The essential muscles and tendons from my waist to my wrist coiled, primed like a bowstring.<br><br>\- Screech!<br><br>Alerted to the impending threat, the Wyvern pack leader tilted its head with a piercing cry.<br><br>A luminescent stream of energy spiraled into its gaping maw.<br><br>"That's..."<br><br>\- Breath! It's a Breath Attack! Dodge it, vile human!<br><br>The Skeleton Warlord's warning was spot on.<br><br>The power belonging only to the dragon class of monsters, the Breath, was visibly accumulating within its agape jaws.<br><br>Goooong.<br><br>A colossal sphere of wind materialized. The Air Breath, with the ferocity to rend metal asunder, was now fully conjured.<br><br>"Hey, Wyvern!"<br><br>\- Kyaa?<br><br>"Take this!"<br><br>My cry echoed like thunder, as I launched the spear with all my might.<br><br>Whoosh, swiiish!<br><br>The spear, cloaked in Scorching Yang Qi, carved through the atmosphere, cleaving the wind in its path.<br><br>In the trajectory of luminous blue and white, the Wyvern's amber eyes dilated in shock.<br><br>\- Kieeek!<br><br>Whoosh!<br><br>A sonic boom erupted from the spear's tip, creating a vortex of compressed air, followed by a cascading white mist.<br><br>Thud! Thump!<br><br>Like a marionette severed from its strings, the colossal form tumbled earthward.<br><br>\* \* \*<br><br>\- Kyaa?<br><br>\- Kieeek?<br><br>A collective confusion spread among the glaring yellow eyes.<br><br>The Wyverns found themselves perplexed, uncertain of their next move.<br><br>\- Screech?<br><br>\- Kieek...<br><br>Is our leader fallen?<br><br>It appears so...<br><br>In their unique manner of communication, the Wyverns expressed their astonishment.<br><br>Their leader, revered as the "Black Star" among them, had been formidable.<br><br>The once formidable Black Star was now but a speck, hurtling towards the earth below.<br><br>\- Kuak?<br><br>\- Kuak.<br><br>None had witnessed its demise firsthand.<br><br>Speculation was all they had, surmising it had been felled by a spear hurled by the diminutive human below.<br><br>Yet, such a thought seemed ludicrous.<br><br>The audacity of a mere human to slay a descendent of the noble dragon lineage...<br><br>"Hey, you, the green Wyvern!"<br><br>\- Kieek?<br><br>"Take this!"<br><br>Thud!<br><br>This instance, the event was unmistakable. Their ally's head obliterated in a burst of light.<br><br>\- Kieek!<br><br>\- Screech!<br><br>Another fell, following the demise of their leader!<br><br>Overwhelmed with fury, the Wyverns pledged vengeance upon that accursed human.<br><br>\- Kuak!<br><br>Of course, not today. They decided to take their revenge later. Much later.<br><br>"Hey, you, the blue Wyvern!"<br><br>Thud!<br><br>...But, could vengeance ever be theirs?<br><br>Dozens of pairs of wings began to flap desperately.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-377.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-379.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

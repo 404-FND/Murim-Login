@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 263 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 263</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 263</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: September 24, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>"To be precise, the nemesis who killed your dearest friend."<br><br>Such a proclamation rendered me motionless.<br><br>I could sense a similar shock emanating from Jeok Cheon-Gang beside me.<br><br>'What did I just hear?'<br><br>The information was too jarring to digest immediately. This stranger's words scrambled my thoughts.<br><br>Could it be...<br><br>'Did he kill Hong Dao? This young man?'<br><br>Memories deeply etched in my mind surfaced and then faded away.<br><br>Hong Dao's labored final breaths, Jong Richu's mysterious disappearance during the martial arts tournament, and the four enigmatic words Hong Dao left behind.<br><br>'Jong Richu, Dark Heaven, Nameless, Buddha's Staff.'<br><br>What had I witnessed until now?<br><br>Where had the path twisted?<br><br>Desperately trying to assemble the pieces, I was interrupted by the grave words from Jeok Cheon-Gang.<br><br>"You... you were the one to kill Hong Dao?"<br><br>His voice quivered, laden with a mix of shock, rage, and disbelief.<br><br>In response, the young man offered a faint smile, nodding.<br><br>"Yes. It was easier than I thought. When I threatened to detonate the Heaven-Shaking Thunder in the audience, he followed willingly."<br><br>"The Heaven-Shaking Thunder? You planted explosives?"<br><br>"That? Merely a deception."<br><br>"...What?"<br><br>"People lie because there exist those naive enough to believe."<br><br>Blood oozed from Jeok Cheon-Gang's clenched fist.<br><br>"He wasn't deceived; he chose to believe. It was in Hong Dao's nature."<br><br>"He chose to believe? It's plausible. As the leader of Shaolin, perhaps he wished to prevent any potential harm."<br><br>"Bastard!"<br><br>"Please, don't be overly harsh. I hadn't intended for such a hasty approach. However, complications arose. Primarily, due to—..." Abruptly, his attention shifted to me.<br><br>"Jin Tae-Kyung, the Sleeping Dragon of Shanxi. You're not without blame."<br><br>Locking eyes with him sent a shiver down my spine.<br><br>Was it the animosity I felt or the palpable gap in our abilities?<br><br>'Maybe it's both.'<br><br>Resisting the urge to falter, I met his gaze fiercely.<br><br>"What the hell are you talking about?"<br><br>"Your unanticipated interference in the martial arts contest forced me to hasten my strategy by a day. The biggest wildcard was the Ever-Victorious Sword, Jong Richu."<br><br>"..."<br><br>It was undeniably clear now: Jong Richu wasn't the mastermind, nor was he an accomplice.<br><br>"Well, in the end, everything has been neatly tied."<br><br>The man smirked, extending his hand in expectation. <br><br>Hansu, recognizing the gesture, quickly proffered an item.<br><br>"The divine artifact of Shaolin, the Green Jade Ruyi."<br><br>"So, this is it..."<br><br>Elegant fingers delicately traced the luminous Green Jade Ruyi.<br><br>However, the very next moment, the young man’s eyes bore into Hansu’s, the latter’s withered hand still gripping the relic.<br><br>"You can let go now."<br><br>Hansu gulped before answering.<br><br>"Blood Lord, might I make a request?"<br><br>"A request, you say? Speak your mind. You've done a great job, so I should certainly hear you out."<br><br>The scene before me was surreal.<br><br>An elderly man deferring to a youth, a potential grandson in age.<br><br>Even more so, when that elder was the architect of Shaolin's massacre.<br><br>'What exactly is his identity?' Two probable answers surfaced: either he's of immense significance within Dark Heaven or his youth belies his true age. Perhaps, both theories held merit.<br><br>Nevertheless, as the Blood Lord's affirmative response reached Hansu's ears, hope illuminated his features.<br><br>"Truly?"<br><br>The Blood Lord clicked his tongue.<br><br>"Have I misled you before? Given your impeccable execution, a reward is only just. However, I'm curious. What has rendered our esteemed elder so hesitant?"<br><br>"My request is simple."<br><br>"Yet beyond your capabilities?"<br><br>"...Regrettably, yes."<br><br>"Aah, I think I can surmise your wish."<br><br>The Blood Lord gestured towards Jeok Cheon-Gang and me.<br><br>"Eradicate those two, correct?"<br><br>With a fervent gleam in his eyes, Hansu confirmed with a nod, eliciting a chuckle from the Blood Lord.<br><br>"Well, that's unexpected. It seems you two had a stronger bond than I thought."<br><br>"We’ve journeyed together for over half our lifetimes. This feels like the rightful closure."<br><br>"Brotherhood... Well, that's admirable."<br><br>"I implore you. Make their end as gruesome as possible. I pledge my aid as well."<br><br>"That's all you want? The righteous ones will soon descend upon us, complicating matters. A swift conclusion might demand some exertion on your part."<br><br>"So be it."<br><br>"The Sleeping Dragon of Shanxi is yours to confront, while I’ll engage the Fire King. By sunset, our task should be complete, yes?"<br><br>"I get the young one? Hahaha! Sounds good!"<br><br>The sheer audacity of their conversation, discussing mine and Jeok Cheon-Gang's fates as if they were trifling playthings, was both astounding and bone-chilling.<br><br>'He's serious about that statement.'<br><br>By sunset. He seemed assured he could finish Jeok Cheon-Gang in the time one might take to enjoy a brief respite.<br><br>Jeok Cheon-Gang's stiffened expression indicated these weren't mere hollow threats.<br><br>\- If the tide turns against you, retreat.<br><br>I subtly nodded at the faint whisper that reached my ears.<br><br>A tumultuous clash already raged above, so expecting help from Shaolin was unlikely.<br><br>Should I retreat, Jeok Cheon-Gang would bear the brunt of two transcendent martial masters.<br><br>'To stay and fight here is the optimal choice.'<br><br>I know Jeok Cheon-Gang recognizes this. Yet his suggestion... is a testament to his concealed warmth and protective nature.<br><br>'This feels precariously dire.'<br><br>Licking my parched lips, I tightly grasped the White Flames. Hansu chuckled at my appearance.<br><br>"Pitiful fool. How will that change anything? Your achievements are commendable, but with that alone, you'll never even scratch me in multiple lifetimes."<br><br>"Screw you."<br><br>In defiance, I spat on the ground.<br><br>"After a few hours here, if I rest and wake up, won't you be dead by my hand?"<br><br>"What nonsense are you spewing?"<br><br>"If you don't believe me, test me."<br><br>"How dare this brat!"<br><br>The frustration was palpable. Were it not for this ongoing battle, if signing off meant halting time rather than merely decelerating it, I'd possess endless opportunities to circumvent this crisis.<br><br>But these thoughts were merely whimsical fantasies.<br><br>Now was the time to face reality, not fantasies.<br><br>"Freeze him alive."<br><br>Thunk. Thunk. Crunch.<br><br>Now I grasped why the old man earned his moniker, the Yin Ghost.<br><br>With every step he took, the ground froze, and frost settled on tree branches.<br><br>"Freezing Yin Energy...I see. However..."<br><br>Jeok Cheon-Gang positioned himself protectively before me.<br><br>"Don't you dare lay a finger on this old man's disciple."<br><br>Hwaaaah!<br><br>If Hansu's Freezing Yin Energy resembled an iceberg, then Jeok Cheon-Gang's Scorching Yang Energy mirrored the blazing sun.<br><br>If we assumed the combat prowess of the now-vanquished Yeomho and Hansu were matched, Jeok Cheon-Gang would naturally hold the upper hand.<br><br>Nonetheless, Hansu appeared nonchalant, undoubtedly emboldened by the formidable presence at his back.<br><br>"It's time for the Blood Lord to intervene."<br><br>"Ah, indeed. Let the dance begin."<br><br>The Blood Lord, cradling the Green Jade Ruyi, moved. Or rather, he seemed to simply disappear.<br><br>And then, in the next heartbeat.<br><br>Swoosh! Thud!<br><br>A chilling sound reverberated as a decapitated head rolled to a stop before me.<br><br>Well-groomed white hair, a refined demeanor, and on his lips, the remnants of a confident smirk.<br><br>"......!"<br><br>"......!"<br><br>Both Jeok Cheon-Gang and I stared, our eyes widening in disbelief.<br><br>The Yin Ghost Hansu, a feared Demon Head and a transcendent expert, was decapitated in but a fleeting moment.<br><br>While the weight of this realization held us, the Blood Lord, the very architect of the act, seemed wholly undisturbed.<br><br>"Worthless old dog. This is why you shouldn't place trust in those without proper lineage."<br><br>He remarked with a trace of disdain, effortlessly toppling Hansu's headless form.<br><br>Splash. Like a felled ancient tree, the gushing blood from Hansu's torso drenched the ground.<br><br>"A tool's value lies in its user's skill. To think he dared..."<br><br>Thud! Thud! Crunch!<br><br>Each stomp he took resonated with weight, the ground yielding beneath his Qi-enhanced boots, grinding flesh and shattering bone.<br><br>The Blood Lord, after repeatedly trampling on the lifeless Hansu, tossed back his hanging hair.<br><br>"Some never grasp their insignificance, ever blind to their boundaries. Sleeping Dragon of Shanxi, wouldn’t you concur?"<br><br>...Me?<br><br>How should I respond? Gathering my thoughts, I spoke candidly.<br><br>"No. To me, you appear nothing more than a deranged lunatic."<br><br>For a split second, the Blood Lord looked genuinely taken aback, but then his expression softened into a smirk.<br><br>"This youngster has spirit."<br><br>"You seem like a youth who's lost his zest early on."<br><br>"It's amusing you perceive me as youthful. I've seen more years than you'd expect."<br><br>"How many, exactly?"<br><br>"Enough that I’ve experienced life at least twice as long as you."<br><br>I assessed him critically.<br><br>Matching my height and possessing a proportionate build.<br><br>His visage, at best, seemed that of someone in his early to mid-twenties.<br><br>Such agelessness went beyond mere 'youthful appearance'. Yet, isn't Murim the place where anything can happen?<br><br>"Ah, are you taken aback that I’ve lived longer than you anticipated?"<br><br>I shook my head.<br><br>"No. If your words hold truth, then it seems you've squandered a good portion of those years."<br><br>"Hahaha!"<br><br>The Blood Lord's laughter echoed, rich and full of genuine mirth.<br><br>Everything about him – from his posture to his tone – was not merely relaxed; it bordered on audacity. It only heightened the palpable aura of danger that surrounded him.<br><br>Even in the throes of his amusement, he showed no openings.<br><br>Jeok Cheon-Gang, eyes like coals of fire, broke the silence.<br><br>"You'll regret this."<br><br>"Regret?"<br><br>Stopping mid-chuckle, the Blood Lord's gaze grew intense.<br><br>"Why would I regret anything?"<br><br>"If you wanted a decisive finish, you shouldn't have killed the Yin Ghost."<br><br>"He was just a rusted blade. Once its use is spent, disposal is natural."<br><br>"And in your eyes, if a transcendence master is just a rusted blade... what does this old man signify?"<br><br>Pausing for a moment, the Blood Lord said with a mock inquisitiveness.<br><br>"Ah, the Fire King. You are a blade of legend. Had the Great Faction War lingered but another year, we might have heralded not Three, but Four Saints."<br><br>"I still draw breath."<br><br>"You're certainly skilled enough to be deemed a legendary sword."<br><br>"What if that legendary sword pierces your heart?"<br><br>"Well... from my perspective, I'm rather resilient. I doubt it'd even draw a drop of blood."<br><br>"When Hong Dao died, this old man swore to the heavens."<br><br>Jeok Cheon-Gang's stare pierced the now-smiling Blood Lord.<br><br>"Be it beast or demon responsible, they would know vengeance."<br><br>"How touching, truly. But..."<br><br>Laughter now silenced, the Blood Lord's fingers traced the hilt of his blade.<br><br>"I suspect today might herald the fall of the Scorching Clan."<br><br>Eyes unwavering from the Blood Lord, Jeok Cheon-Gang sought my opinion.<br><br>"What do you think of his words?"<br><br>"I think he needs a muzzle for his mouth. He's been spewing crap since earlier."<br><br>The smirk vanished from the Blood Lord's face.<br><br>"... You really are amusing."<br><br>Thud. Taking a step towards Jeok Cheon-Gang and me, he suddenly spoke.<br><br>"By the way, how long does that little rat over there intend to hide?"<br><br>Out of the blue, from a distant bush, a figure emerged, scratching the back of his head.<br><br>"Savior. I'm sorry. I've never been this scared in my life..."<br><br>It was the first time I was so relieved to see Cheong Pung.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-262.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-264.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

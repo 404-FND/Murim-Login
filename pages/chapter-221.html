@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 221 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 221</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 221</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: Coldbutteredtoast</span>
+                            <span class="published-date">Published: November 16, 2022</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>Ding!<br>-You have obtained the achievement [Qi Mastery]!<br>-This is a truly outstanding achievement! You will receive special rewards!<br>-You can now use [Lance]!<br>-Your body is affected by [Hundred Poison Immunity]!<br>-You've earned a lot of experience!<br>-Level up!<br>-Level up!<br>-You've earned 100 extra bonus points!<br><br>System notifications rang in his ears, but his eyes were fixed on the holographic window.<br><br>A shiver of exhilaration ran down his spine and blue flames danced along the blade of his spear.<br><br>[I've done it!]<br><br>Tae-Kyung had taken a step towards a higher realm, conquering one of the great peaks on the path to transcendence. In the pure joy of that realisation, he also came to know another truth.<br><br>[I can kill it.]<br><br>No more thoughts were needed, no more words. Only action.<br><br>He was not the only one that had waited for this reunion.<br><br>The one-eyed kaiju screamed in anger. No, it wasn't a scream. It was a roar: a noise so loud that one could think of nothing else. Hurricane winds blew from a maw large enough to swallow a car whole. The air blast bore down on him like a boulder, crushing him into the ground.<br><br>[Air breath!] An ability unique to draconic races, it would have driven most hunters to their knees and ruptured their eardrums.<br><br>But not Tae-Kyung. Cursing, he rounded his shoulders and pushed forward. With each step, the pressure seemed to increase, his feet sinking up to his ankles in the dead earth.<br><br>Everything about the nightmare surpassed the limits of normal monsters.<br><br>[But it's the same for me.]<br><br>At least in terms of his physical abilities, Tae-Kyung could already be considered superhuman. Speed, stamina, strength. In all aspects related to battle, he exceeded A-rank hunters, the peak of his class.<br><br>Raising his head, he squinted into the gale and grinned. "You look cool."<br><br>The beast towered over him like a Japanese kaiju, a monster the size of a building. Malevolent eyes glared down at him. The titan shook with rage at his insolence.<br><br>"Turn off the fan, you bastard!" As he shouted, Tae-Kyung drew back his fist. "You're getting dust everywhere!"<br><br>He swung the spear, as though cutting the sky. The moment the blue flames seared the air, the pressure disappeared. Suddenly, his body felt as light as a feather; he sprang forwards like an arrow.<br><br>The great wyvern turned its head, tracking him with its breath, but Tae-Kyung was too swift.<br><br>Clad only in leather armour and a simple iron spear, he was impossibly quick.<br><br>The beast spread wings as wide as football pitches and reared up, a giant horror of armoured claws and spines.<br><br>Before it could act, Tae-Kyung was there. Hair whipping in the wind, he lunged at the gleaming black wall. The wyvern's scales and skin were said to be invulnerable to both steel and spells. Yet his spear, bright with blue flames, smashed into the enormous knee and pierced the cruciate ligament.<br><br>"You're exempted from military service, you bastard!" he yelled.<br><br>As though hammering a nail, Tae-Kyung took a step back and kicked the spear haft, plunging the tip deep into its flesh. A fountain of blood erupted from the wound.<br><br>Its wings spread to take flight, the mighty black wyvern instead screamed in agony and collapsed, shifting weight off its injured leg.<br><br>Tae-Kyung didn't stop. Stepping up onto the haft, he used it as a springboard to launch himself into the air.<br><br>As he soared, Tae-Kyung drew a dagger from the inventory.<br><br>He'd always said, if you don't have it, you can't use it.<br><br>The inventory didn't transfer between reality and Murim, so a few days before he'd gone shopping for weapons and useful items. The cost had been eye-watering, but he'd use it all and ten times that much to turn the wyvern into a handbag.<br><br>At the height of his leap, Tae-Kyung hammered the dagger into wyvern flesh and sprang upwards again, drawing a replacement from the infinite inventory space.<br><br>Suddenly, he remembered learning the Gecko Wall Climbing Technique (壁虎功). That cliff was much higher and there was nothing to step on. A crazy guy made it harder by dropping rocks, too. Compared to that, this wasn't too difficult.<br><br>The monstrous wyvern twisted and screamed as he climbed, stabbing blades into its huge body for leverage.<br><br>Its outer shell was harder than steel plate armour. Yet, the titan squirmed. Something smaller than its palm was climbing swiftly up its body, piercing it over and over. For a human, it would be like a huge cockroach scurrying up their legs, thrusting nails wherever it went.<br><br>Unable to bear the constant pain, the wyvern convulsed and hurled Tae-Kyung skywards.<br><br>The sensation of floating was quite enjoyable.<br><br>[Open inventory. Equip lance.]<br><br>A mighty leaf-bladed polearm materialised in his fist.<br><br>His ascent slowed. Cascading Flame Qi flowed through his open meridians to infuse the blade, wreathing it in fierce blue light.<br><br>That blazing spear became the tail of a comet, brilliant in the darkening sky. The comet was Tae-Kyung himself.<br><br>"You can't run from me!" he cried, dropping from the heavens.<br><br>One with his spear, he fell like a shooting star.<br><br>The titanic wyvern was almost blind with pain. Its wings were vast, an easy target.<br><br>Shining like a small sun, the lance split skin and scales, cutting one of the great winged forelimbs almost in half.<br><br>Perhaps for the first time in its life, the predator knew real pain. Bellowing, it writhed on the ground, throwing up clouds of dust.<br><br>Tae-Kyung landed lightly nearby. "Does it hurt?"<br><br>Compared to what it'd done three years before, this was nothing. His friends' bodies had been pulverised by its wings. Heads grasped in its claws had been pulped. Those swallowed in its toothy maw hadn't even left behind bodies for their funerals. The beast had taught Tae-Kyung the true volume of blood and organs in a body; it taught him how cruel death could be.<br><br>"An eye for an eye, a tooth for a tooth," said Tae-Kyung. The wyvern would die today, by his hand, and before it died it would know desperation. "This is only the beginning. Get up."<br><br>One swing of his spear swept the dust cloud away to reveal the beast. It was hunched, gasping, covered in blood and dust. Blood ran from dozens of wounds crisscrossing its great body. One of its wings, the very symbol of its race, lay limp, half-severed. Vast and terrifying, yet now it seemed unworthy of being called dragon-kin.<br><br>The huge eye of the dark wyvern stared at him in anger, hate and suffering. The complexity of emotion was beyond anything Tae-Kyung had seen in other gate entities.<br><br>"Keep looking at me like that and I'll pluck out your eyes."<br><br>-HUMAN.<br><br>His feet stopped. The word made him doubt his ears. Had they been damaged by the hurricane breath?<br><br>Its fangs parted again and this time the words were clearer. Impossibly deep, grating, but recognisable.<br><br>-YOU WANT TO KILL ME, DON'T YOU?<br><br>The monster was speaking!<br><br>Tae-Kyung's jaw dropped. An involuntary groan escaped his lips. "This is fucking crazy..."<br><br>-IT WILL BE DIFFERENT THIS TIME.<br><br>The wyvern narrowed its eyes, one bone white and one blood red. They shone with an alien intelligence.<br><br>-HEAL.<br><br>An incredible vortex of magical energy began to gather around the beast.<br><br>***<br><br>'One Eye' Karus the Black.<br><br>That was his name. He had earned it in countless challenges, fought for it, killing monsters and humans alike.<br><br>If you win, you get food; if you lose, you are food. Again and again and again. Hundreds of times.<br><br>Each hunt was like the one before. A slow climb to greatness.<br><br>Until that day. Until a lowly human took his eye. His eye! Lost to a bug, a worm!<br><br>His fury was incalculable. He vowed to slay the wretch, to persecute all of humanity until he had his vengeance!<br><br>So he killed and he killed, until one day, he looked upon himself and found that he had grown vast and powerful.<br><br>Why had this prey made him strong?<br><br>Eventually, he came to realise that the changes weren't because of killing humans, but rather because he was eating them. Every time he ate a hunter, something grew within him. It was a Spirit Stone.<br><br>What did humans call them? Magic gems. They prized them. Carried them. Made gear with them.<br><br>These were what he needed, not human flesh. So these became his target. And the more he absorbed, the more his strength grew and the greater his intellect. Finally, he inherited the gifts due to him as a relative of the dragons.<br><br>Magic.<br><br>Stepping into this new realm, he built a nest in a remote wasteland. There, he killed everything in the area and then, once he had peace, devoted himself to study.<br><br>How to properly unlock the magic of the digested gems?<br><br>Even when humans dared to roam his lands, he ignored them. Mastery was more important.<br><br>Until the day he smelled him. The one who had taken his eye!<br><br>Tiny scurrying humans found him, so he restrained himself and did not eat all of them. Let one go, instead, and followed it across the wasteland.<br><br>There he found his hated foe!<br><br>But the bug had grown stronger, too. Even Karus, who had eaten hundreds of gems, was pushed back and gravely wounded.<br><br>Still, Karus would not be beaten.<br><br>-HEAL.<br><br>The bleeding stopped and wounds healed. It was insufficient to repair his wing, but that could come later.<br><br>-I'LL KILL YOU, HUMAN!<br><br>Having experienced the speed of the tiny creature first hand, Karus quickly barked a second spell. The traces of draconic energy in his blood flickered with power.<br><br>-SLOW.<br><br>Layer after layer of temporal magic smothered the human, slowing it again and again until Karus could only laugh at his helpless foe.<br><br>-GOOD! HA HA HA!<br><br>Delighted, he gathered himself up to devour the hated bug.<br><br>It was then that that the human uttered the strangest spell.<br><br>"100 points to Agility!"<br><br>Karus blinked and his vision filled with a spear blade, shining in blue fire.<br><br>"What are you looking at, motherfucker!"</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-220.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-222.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

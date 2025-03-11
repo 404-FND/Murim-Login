@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 289 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 289</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 289</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: December 1, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>“Huh?”<br><br>A tempest of untamed emotion, alien and raw, swept across Mr. Choi’s face — a spectacle I had never witnessed before.<br><br>Equally uncharacteristic was Butler Kim’s expression, which shed its usual cloak of calm and mirrored the storm of confusion and vexation that clouded Mr. Choi's features.<br><br>Their faces portrayed the lingering anger and bewilderment from Lee Jeong-Ryong's presence, along with worry and doubt about what I had said.<br><br>'Could they even make such faces?’<br><br>When I charged ahead without hesitation, they were always the ones to maintain order and clean up my messes.<br><br>But in this singular moment, our roles seemed to align on the same plane of chaotic instability.<br><br>A peculiar exhilaration surged within me as I found my voice.<br><br>“The answer is simple. If our enemies are strong, we just have to be stronger."<br><br>“Mr. Jin Tae-Kyung.”<br><br>The murmured address from Mr. Choi sliced through the tension, his tone once again the epitome of measured control, the emotional whirlpool subdued into familiar stoicism.<br><br>“This isn't a math problem where knowing the answer solves everything. To reach the correct solution, we have to go through a process that’s unimaginably hard.”<br><br>“That’s alright then. If I take on the role of a tutor, we might be able to solve it, even if it takes time. Oh, but let's change the subject. I’m terrible at math.”<br><br>“Have you forgotten? We’re up against the Ares Guild. You don't know it, Mr. Jin Tae-Kyung, but I do. I know how strong they are."<br><br>“Regretfully, the young master is right."<br><br>With those words, Mr. Choi and Butler Kim closed their mouths.<br><br>One is the grandson of the Ares Guild Master, Cheon Tae-Min, and the other had been a key figure serving Cheon Tae-Min for a long time.<br><br>Given their positions, they must have borne witness to more than could be recounted. Despite the tumult within their hearts, their minds, cool and calculating, had already calculated the answer.<br><br>"Mr. Choi."<br><br>With deliberate intent, I held his gaze — prematurely resigned to defeat — and inquired with solemnity.<br><br>“Do you remember what you said to me before I went to the Myeongdong Guild?”<br><br>"Of course."<br><br>“What did you say?"<br><br>After a moment’s hesitation, Mr. Choi replied.<br><br>“You, Jin Tae-Kyung, might appear reckless at a glance...”<br><br>“But I always act with the worst-case scenario in mind. And?”<br><br>"You always produce the best results."<br><br>“Didn’t you say you trusted me more than you trust yourself? Was that just flattery?"<br><br>“That's absolutely not the case."<br><br>“Even though I wasn’t good at studying, I’m not stupid enough to risk my life on a game with zero chance of winning. This is doable.”<br><br>"Doable…”<br><br>"If you can't trust yourself, Mr. Choi, trust me."<br><br>In the wake of my words, a subtle luster sparked within Mr. Choi’s eyes. It was slight, scarcely more than a flicker, but unmistakably, it was the glimmer of hope.<br><br>Hope is like an ember. It can either burst into flame or be snuffed out in an instant. You have to fan the flames before the ember goes out.<br><br>"Now that it's been brought up, if I leave the guild, will you give up as well, Mr. Choi? Well, retiring from the guild and farming with Butler Kim isn’t a bad idea either. If that happens, Lee Jeong-Ryong will probably supply the fertilizer.”<br><br>“Hunter Jin Tae-Kyung!”<br><br>Butler Kim’s protest drowned in the current of my conviction. Undeterred, I pressed on.<br><br>“Didn’t you say you wanted to create the world’s greatest guild? Are you sending me away, along with Mr. Rough Guy and Song Song, and even the new recruits who just joined? Do you two plan to fight the Ares Guild alone?"<br><br>"..."<br><br>"Mr. Choi."<br><br>A hush fell, thick and unbroken.<br><br>Yet, within Mr. Choi's eyes, the nascent spark held its flicker.<br><br>At length, a voice, soft yet laden with gravity, escaped his lips.<br><br>“The Ares Guild is an empire. It's so powerful that even if the top 10 domestic guilds combined their strength, they wouldn't stand a chance."<br><br>“Wow, we’d better start moving if we want to catch up with those guys."<br><br>“I have seen a large part of the Ares Guild, but not everything. That's why I think they're dangerous.”<br><br>“Then the likelihood of success has increased. Since it means that you understand the enemy well. 'If you know the enemy and know yourself, you need not fear the result of a hundred battles'? Right?" \[Note: this quote is from "Art of War" by Sun Tzu.\]<br><br>“I’ve thought it over many times, but my calculation always came out as impossible."<br><br>"Then calculate it again."<br><br>“Is it really…… possible?”<br><br>“Yes.”<br><br>“Where did my calculation go wrong? What exactly gives you such confidence in your answer, Mr. Jin Tae-Kyung?”<br><br>He wasn’t asking because he didn’t understand. Mr. Choi hoped more than anyone that his answer was wrong. He longed for that slim chance to stand up against Lee Jeong-Ryong.<br><br>I gladly reaffirmed his hope.<br><br>“The person talking to you right now."<br><br>"......!"<br><br>“Your calculation was accurate, Mr. Choi. Except for one thing.”<br><br>Slowly, I raised a finger to point at my chest.<br><br>“Me."<br><br>In that breathless moment, I observed a tremor in Mr. Choi's gaze.<br><br>The spark I had fanned was being smothered, supplanted now by the shadow of defeat.<br><br>“My calculations included you, Mr. Jin Tae-Kyung.”<br><br>“That figures. The Mr. Choi I know wouldn't have forgotten a single thing in his calculations."<br><br>Mr. Choi possesses a brilliance that cannot be understated. His leadership is innate, complemented by an acute sense for strategy and an unyielding determination.<br><br>With a stoic heart, he had measured the might of both the Peace Guild and the Ares Guild, and I had been factored into the equation as part of the Peace Guild’s assets.<br><br>"Your past feats, Mr. Jin Tae-Kyung, were not just remarkable — they bordered on the miraculous."<br><br>The resignation in his voice heralded the words yet unspoken.<br><br>“But it's not enough?"<br><br>Mr. Choi nodded heavily.<br><br>“Formally, there are over a hundred A-rank Hunters in the Ares Guild, excluding S-rank Hunter Lee Jeong-Ryong, and there are countless mid and low-rank Hunters.”<br><br>The particular emphasis Mr. Choi placed on the word "formally" indicated there were more forces unaccounted for.<br><br>'And yet, there are over a hundred A-rank Hunters.'<br><br>The figure, though previously whispered in rumors, became dauntingly concrete when uttered by Mr. Choi.<br><br>Even with my abilities, I am but one against a multitude; his conclusion was stark and dispassionately logical.<br><br>Yet...<br><br>“Then maybe you should recalculate?"<br><br>“Excuse me?”<br><br>“The formula is correct but the numbers are wrong. I don’t know how much value you’ve assigned to me, but you should multiply it by at least a few times.”<br><br>At my assertion, an array of expressions flitted across the faces of Mr. Choi, Butler Kim, Mr. Rough Guy, and Song Song — each one a tableau of surprise and skepticism.<br><br>It made sense considering what I had achieved so far.<br><br>I had defeated a Named Monster single-handedly, taken down nearly thirty Black Hunters, and faced off against the large Myeongdong Guild.<br><br>Pivoting from my audience of petrified figures, I fixed my gaze squarely on Team Leader Choi.<br><br>"I feel like I've mentioned this before, but I’m someone with more secrets than you think, Mr. Choi."<br><br>Murim is Murim, and the modern world is the modern world.<br><br>There was a clear boundary in my mind separating the two worlds. However, Lee Jeong-Ryong and the Ares Guild had erased that line.<br><br>If it hadn't been for this incident, I would have kept those secrets to myself for life.<br><br>'Was it too greedy of me to want to live quietly?'<br><br>Perhaps this is the path I am destined to walk, entwined irrevocably with the powers I wield. I must accept it. I can’t keep running away forever.<br><br>To shield what I hold dear, to rise above the adversaries that threaten our peace, I have to become stronger.<br><br>"Alright, so what's our next move?"<br><br>There was still a trace of incredulity in Mr. Choi's gaze as it held mine.<br><br>"Mr. Jin Tae-Kyung, you always surprise me."<br><br>"Save it. There will be more of that to come."<br><br>"It will be a dangerous path."<br><br>"I'm quite the specialist when it comes to dangerous paths."<br><br>"What lies ahead can't even compare to what we’ve faced so far."<br><br>"Can't compare? You don’t know because you haven't walked my path, but trust me, I have already been through hell..."<br><br>He seemed to take my words as a joke.<br><br>I watched Mr. Choi finally crack a smile.<br><br>"Mr. Choi."<br><br>"Yes?"<br><br>"It’s okay to be honest sometimes."<br><br>The smile waned, a sober clarity returning to his eyes, his mouth a tight line.<br><br>Silence hung betwen us, the forthcoming words hanging in the balance. There were words that we needed to hear now that could only come from Mr. Choi.<br><br>Fortunately, the wait wasn’t long.<br><br>"Would you please continue to be with the Peace Guild?"<br><br>There it was.<br><br>I responded with an easy grin and a reassuring pat on Mr. Choi's shoulder. Behind his polished exterior lies a tender heart.<br><br>He wanted me to stay but considered sending me away because he was worried I might get hurt.<br><br>"Let’s do our best."<br><br>"……Thank you."<br><br>With that brief acknowledgment, his smile flickered once more, and he turned to address the rest.<br><br>Butler Kim, as loyal as a family member, was the first to speak.<br><br>"I believe you already know my answer."<br><br>"Thank you, Butler Kim."<br><br>Next was Song Song. She, having received the same question from Mr. Choi as me, sighed deeply before speaking.<br><br>"The Ares Guild, huh? Ah, this doesn’t seem to add up right."<br><br>Her reaction was the most reasonable. Facing the Ares Guild was not going to be easy.<br><br>"Make the numbers work by doubling my salary. And include a life risk allowance, please."<br><br>"........"<br><br>Ah, so Song Song really isn't normal either.<br><br>My gaze must have betrayed my astonishment, for she met it with a nonplussed shrug.<br><br>"What?"<br><br>"Nothing, it's just that in this kind of situation, don't people usually just leave?"<br><br>"You want me to go?"<br><br>"Ah, that’s absolutely not what I want."<br><br>"Do you know why I moved from the Ares Guild to the Peace Guild? Even under someone like Mr. Choi, who is scrutinized by everyone."<br><br>"I have no idea.”<br><br>"He said he’d double my salary."<br><br>"......"<br><br>"My goal is to retire at thirty. If I work hard for the next two years, I’ll be able to live comfortably for the rest of my life."<br><br>She spoke casually, but it was just a roundabout way of affirming her commitment. We all knew that Song Song had already amassed a fortune.<br><br>"And you seem to have a strategy. I’ll place my bet on that. Not to mention, it’s rare to find a leader as capable — and as visually pleasing — as Mr. Choi."<br><br>With Song Song’s wry endorsement, her allegiance was sealed. Our collective attention then shifted to the final member of our ensemble.<br><br>"Mr. Rough Guy."<br><br>The silence that followed was telling, but eventually, he gave voice to his thoughts.<br><br>"Tae-Kyung, will I be of any help?"<br><br>"Definitely."<br><br>"Even though I'm just a D-rank Hunter?"<br><br>"People related to 'D' are the real protagonists. How about we change your name to fit a protagonist? Mr. Rough D. Guy, how does that sound?" \[Note: for the uninitiated, this is a One Piece reference.\]<br><br>Amidst the laughter that his new title invoked, Mr. Rough Guy turned a serious eye toward Mr. Choi.<br><br>"My injury isn’t your fault, Mr. Choi. So don’t blame yourself."<br><br>"It is my fault. Please focus on your recovery and rehabilitation, and take your time to think. You have a family, don’t you, Hunter Im?"<br><br>"Mr. Choi."<br><br>"Yes?"<br><br>"Do you know what I thought of first when my arm was severed?"<br><br>"Your family?"<br><br>He is a family man, a provider and protector.<br><br>Yet Mr. Rough Guy simply shook his head, the gesture radiating a quiet strength.<br><br>"Sigh... I thought I wouldn't be able to be a Hunter anymore."<br><br>".....…"<br><br>"I love this job. For 20 years, I went through gates not for a living but because of a Hunter’s sense of duty. But..."<br><br>The words trailed off as Mr. Rough Guy pressed his lips together, his gaze lingering on the bandages that swathed his arms.<br><br>"Can I recover?"<br><br>"You will. Definitely."<br><br>The assurance in my voice seemed to ignite a glimmer of hope in him, as a subtle smile graced Mr. Rough Guy's features.<br><br>"Then I'll join in too. I can't give up what a Hunter is supposed to do just because of this."<br><br>A wave of respect washed over me.<br><br>To many, he may be merely a low-ranking Hunter in name, but to me, Mr. Rough Guy is among the last of a dying breed — a true Hunter.<br><br>'They're all too valuable to lose.'<br><br>Alright, they say strike while the iron is hot.<br><br>Having made up my mind, for the first time in a long while, I opened the Skill Window.<br><br>And in the hologram window, I found what I was looking for.<br><br>Skill: \[Scroll Crafting\]<br><br>Right. This is the start.<br><br>With determination, my finger reached towards the luminescent display.<br><br>Ding!<br><br>\-To create the secret technique, a minimum of 300 sheets of A4 paper are required! \[Note: I don't know about you guys, but I had no idea that Ancient China used the same paper-size system that we use now.\]<br><br>".....…"<br><br>What the fuck is this?</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-288.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-290.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,2076 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Murim Login Novel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Main content */
+        main {
+            flex: 1;
+            flex-direction: column;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .intro-section {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .intro-section h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--accent-color);
+        }
+
+        .intro-section p {
+            font-size: 1.2rem;
+            opacity: 0.8;
+        }
+
+        .chapter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            width: 100%;
+        }
+
+        .chapter-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+            text-decoration: none;
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chapter-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .chapter-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: var(--accent-color);
+        }
+
+        .chapter-card .chapter-info {
+            margin-top: auto;
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        .chapter-card .translator {
+            margin-bottom: 0.3rem;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .chapter-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .intro-section h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container home-container">
+        <header>
+            <h1>MURIM LOGIN</h1>
+            <div class="controls">
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="intro-section">
+                <h2>Welcome to the Murim Login Novel Reader</h2>
+                <p>Select a chapter below to start reading</p>
+            </div>
+
+            <div class="chapter-grid">
+                
+                <a href="pages/chapter-191.html" class="chapter-card">
+                    <h3>Chapter 191</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-10-09T01:09:36+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-192.html" class="chapter-card">
+                    <h3>Chapter 192</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-10-09T10:12:51+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-193.html" class="chapter-card">
+                    <h3>Chapter 193</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-10-09T17:33:08+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-194.html" class="chapter-card">
+                    <h3>Chapter 194</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-10-12T00:08:07+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-195.html" class="chapter-card">
+                    <h3>Chapter 195</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-10-12T00:10:35+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-196.html" class="chapter-card">
+                    <h3>Chapter 196</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-10-12T21:01:07+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-197.html" class="chapter-card">
+                    <h3>Chapter 197</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-10-12T21:19:51+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-198.html" class="chapter-card">
+                    <h3>Chapter 198</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-10-13T20:42:43+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-199.html" class="chapter-card">
+                    <h3>Chapter 199</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-10-14T20:22:13+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-200.html" class="chapter-card">
+                    <h3>Chapter 200</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-10-14T20:24:15+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-201.html" class="chapter-card">
+                    <h3>Chapter 201</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-10-16T21:12:59+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-202.html" class="chapter-card">
+                    <h3>Chapter 202</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-10-17T17:40:07+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-203.html" class="chapter-card">
+                    <h3>Chapter 203</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-10-20T00:56:16+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-204.html" class="chapter-card">
+                    <h3>Chapter 204</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-10-20T16:53:32+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-205.html" class="chapter-card">
+                    <h3>Chapter 205</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-10-21T15:42:26+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-206.html" class="chapter-card">
+                    <h3>Chapter 206</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-10-22T16:08:05+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-207.html" class="chapter-card">
+                    <h3>Chapter 207</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-10-23T16:52:22+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-208.html" class="chapter-card">
+                    <h3>Chapter 208</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-10-24T17:09:07+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-209.html" class="chapter-card">
+                    <h3>Chapter 209</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-10-25T12:23:40+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-210.html" class="chapter-card">
+                    <h3>Chapter 210</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-10-27T10:46:49+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-211.html" class="chapter-card">
+                    <h3>Chapter 211</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-10-29T22:52:01+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-212.html" class="chapter-card">
+                    <h3>Chapter 212</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-10-30T19:50:47+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-213.html" class="chapter-card">
+                    <h3>Chapter 213</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-11-01T23:24:17+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-214.html" class="chapter-card">
+                    <h3>Chapter 214</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-11-02T19:00:10+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-215.html" class="chapter-card">
+                    <h3>Chapter 215</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-11-04T03:53:17+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-216.html" class="chapter-card">
+                    <h3>Chapter 216</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-11-06T00:55:42+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-217.html" class="chapter-card">
+                    <h3>Chapter 217</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-11-09T01:11:47+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-218.html" class="chapter-card">
+                    <h3>Chapter 218</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-11-10T00:50:30+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-219.html" class="chapter-card">
+                    <h3>Chapter 219</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-11-11T09:29:00+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-220.html" class="chapter-card">
+                    <h3>Chapter 220</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-11-12T22:30:29+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-221.html" class="chapter-card">
+                    <h3>Chapter 221</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-11-16T21:37:33+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-222.html" class="chapter-card">
+                    <h3>Chapter 222</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-11-17T23:07:55+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-223.html" class="chapter-card">
+                    <h3>Chapter 223</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-11-20T17:43:09+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-224.html" class="chapter-card">
+                    <h3>Chapter 224</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-11-22T10:01:30+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-225.html" class="chapter-card">
+                    <h3>Chapter 225</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-11-24T21:18:22+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-226.html" class="chapter-card">
+                    <h3>Chapter 226</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-11-27T03:30:24+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-227.html" class="chapter-card">
+                    <h3>Chapter 227</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-11-29T16:39:54+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-228.html" class="chapter-card">
+                    <h3>Chapter 228</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-12-01T04:06:56+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-229.html" class="chapter-card">
+                    <h3>Chapter 229</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-12-04T05:56:01+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-230.html" class="chapter-card">
+                    <h3>Chapter 230</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-12-05T04:18:34+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-231.html" class="chapter-card">
+                    <h3>Chapter 231</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-12-14T07:50:59+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-232.html" class="chapter-card">
+                    <h3>Chapter 232</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-12-16T13:19:10+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-233.html" class="chapter-card">
+                    <h3>Chapter 233</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-12-19T00:18:37+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-234.html" class="chapter-card">
+                    <h3>Chapter 234</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-12-21T13:47:14+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-235.html" class="chapter-card">
+                    <h3>Chapter 235</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-12-25T02:41:39+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-236.html" class="chapter-card">
+                    <h3>Chapter 236</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-12-27T12:43:55+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-237.html" class="chapter-card">
+                    <h3>Chapter 237</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-12-29T20:59:48+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-238.html" class="chapter-card">
+                    <h3>Chapter 238</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2022-12-31T12:19:19+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-239.html" class="chapter-card">
+                    <h3>Chapter 239</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2023-01-01T20:59:49+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-240.html" class="chapter-card">
+                    <h3>Chapter 240</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2023-01-03T17:52:33+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-241.html" class="chapter-card">
+                    <h3>Chapter 241</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2023-01-06T20:44:11+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-242.html" class="chapter-card">
+                    <h3>Chapter 242</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2023-01-08T15:46:00+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-243.html" class="chapter-card">
+                    <h3>Chapter 243</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2023-01-10T16:22:16+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-244.html" class="chapter-card">
+                    <h3>Chapter 244</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2023-01-12T22:02:05+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-245.html" class="chapter-card">
+                    <h3>Chapter 245</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2023-01-14T21:00:34+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-246.html" class="chapter-card">
+                    <h3>Chapter 246</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2023-01-17T17:36:37+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-247.html" class="chapter-card">
+                    <h3>Chapter 247</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2023-01-19T17:05:28+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-248.html" class="chapter-card">
+                    <h3>Chapter 248</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2023-01-21T14:56:53+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-249.html" class="chapter-card">
+                    <h3>Chapter 249</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2023-01-23T15:42:36+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-250.html" class="chapter-card">
+                    <h3>Chapter 250</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: Coldbutteredtoast</div>
+                        <div class="published">Published: 2023-01-23T15:43:44+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-251.html" class="chapter-card">
+                    <h3>Chapter 251</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: No_End_9483</div>
+                        <div class="published">Published: 2023-02-17T10:04:56+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-252.html" class="chapter-card">
+                    <h3>Chapter 252</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: No_End_9483</div>
+                        <div class="published">Published: 2023-02-17T10:06:06+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-253.html" class="chapter-card">
+                    <h3>Chapter 253</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: No_End_9483</div>
+                        <div class="published">Published: 2023-02-18T23:43:24+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-254.html" class="chapter-card">
+                    <h3>Chapter 254</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: No_End_9483</div>
+                        <div class="published">Published: 2023-02-24T14:40:19+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-255.html" class="chapter-card">
+                    <h3>Chapter 255</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: No_End_9483</div>
+                        <div class="published">Published: 2023-02-24T14:41:04+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-256.html" class="chapter-card">
+                    <h3>Chapter 256</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: No_End_9483</div>
+                        <div class="published">Published: 2023-02-26T17:27:33+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-257.html" class="chapter-card">
+                    <h3>Chapter 257</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: No_End_9483</div>
+                        <div class="published">Published: 2023-02-26T17:30:32+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-258.html" class="chapter-card">
+                    <h3>Chapter 258</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: No_End_9483</div>
+                        <div class="published">Published: 2023-03-15T02:23:36+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-259.html" class="chapter-card">
+                    <h3>Chapter 259</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-09-17T03:31:42+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-260.html" class="chapter-card">
+                    <h3>Chapter 260</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-09-17T19:04:38+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-261.html" class="chapter-card">
+                    <h3>Chapter 261</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-09-22T22:50:57+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-262.html" class="chapter-card">
+                    <h3>Chapter 262</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-09-23T22:20:35+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-263.html" class="chapter-card">
+                    <h3>Chapter 263</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-09-24T19:28:22+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-264.html" class="chapter-card">
+                    <h3>Chapter 264</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-10-01T23:29:42+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-265.html" class="chapter-card">
+                    <h3>Chapter 265</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-10-01T23:31:32+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-266.html" class="chapter-card">
+                    <h3>Chapter 266</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-10-06T15:36:44+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-267.html" class="chapter-card">
+                    <h3>Chapter 267</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-10-08T01:35:15+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-268.html" class="chapter-card">
+                    <h3>Chapter 268</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-10-08T01:36:53+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-269.html" class="chapter-card">
+                    <h3>Chapter 269</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-10-08T22:39:05+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-270.html" class="chapter-card">
+                    <h3>Chapter 270</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-10-20T15:26:13+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-271.html" class="chapter-card">
+                    <h3>Chapter 271</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-10-20T15:26:51+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-272.html" class="chapter-card">
+                    <h3>Chapter 272</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-10-27T14:14:55+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-273.html" class="chapter-card">
+                    <h3>Chapter 273</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-10-27T14:16:00+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-274.html" class="chapter-card">
+                    <h3>Chapter 274</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-10-27T14:17:05+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-275.html" class="chapter-card">
+                    <h3>Chapter 275</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-10-27T14:18:16+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-276.html" class="chapter-card">
+                    <h3>Chapter 276</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-11-03T14:27:44+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-277.html" class="chapter-card">
+                    <h3>Chapter 277</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-11-03T14:28:50+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-278.html" class="chapter-card">
+                    <h3>Chapter 278</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-11-03T14:29:46+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-279.html" class="chapter-card">
+                    <h3>Chapter 279</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-11-10T15:33:13+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-280.html" class="chapter-card">
+                    <h3>Chapter 280</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-11-10T15:34:08+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-281.html" class="chapter-card">
+                    <h3>Chapter 281</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-11-10T15:35:25+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-282.html" class="chapter-card">
+                    <h3>Chapter 282</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-11-17T15:07:02+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-283.html" class="chapter-card">
+                    <h3>Chapter 283</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-11-17T15:07:50+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-284.html" class="chapter-card">
+                    <h3>Chapter 284</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-11-17T15:09:07+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-285.html" class="chapter-card">
+                    <h3>Chapter 285</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-11-24T14:57:44+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-286.html" class="chapter-card">
+                    <h3>Chapter 286</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-11-24T14:58:32+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-287.html" class="chapter-card">
+                    <h3>Chapter 287</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-11-24T15:00:29+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-288.html" class="chapter-card">
+                    <h3>Chapter 288</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-12-01T15:21:13+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-289.html" class="chapter-card">
+                    <h3>Chapter 289</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-12-01T15:22:28+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-290.html" class="chapter-card">
+                    <h3>Chapter 290</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-12-01T15:23:24+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-291.html" class="chapter-card">
+                    <h3>Chapter 291</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-12-08T14:58:12+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-292.html" class="chapter-card">
+                    <h3>Chapter 292</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-12-08T14:58:58+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-293.html" class="chapter-card">
+                    <h3>Chapter 293</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-12-08T14:59:49+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-294.html" class="chapter-card">
+                    <h3>Chapter 294</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-12-09T17:42:24+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-295.html" class="chapter-card">
+                    <h3>Chapter 295</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-12-09T17:43:01+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-296.html" class="chapter-card">
+                    <h3>Chapter 296</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-12-09T17:43:35+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-297.html" class="chapter-card">
+                    <h3>Chapter 297</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-12-15T16:15:27+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-298.html" class="chapter-card">
+                    <h3>Chapter 298</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-12-15T16:16:13+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-299.html" class="chapter-card">
+                    <h3>Chapter 299</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-12-15T16:16:50+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-300.html" class="chapter-card">
+                    <h3>Chapter 300</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-12-22T15:52:46+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-301.html" class="chapter-card">
+                    <h3>Chapter 301</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-12-22T15:53:36+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-302.html" class="chapter-card">
+                    <h3>Chapter 302</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-12-22T15:54:12+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-303.html" class="chapter-card">
+                    <h3>Chapter 303</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-12-26T00:22:32+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-304.html" class="chapter-card">
+                    <h3>Chapter 304</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-12-26T00:23:14+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-305.html" class="chapter-card">
+                    <h3>Chapter 305</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-12-26T00:23:47+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-306.html" class="chapter-card">
+                    <h3>Chapter 306</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-12-26T00:24:26+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-307.html" class="chapter-card">
+                    <h3>Chapter 307</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-12-29T16:06:30+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-308.html" class="chapter-card">
+                    <h3>Chapter 308</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-12-29T16:07:13+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-309.html" class="chapter-card">
+                    <h3>Chapter 309</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2023-12-29T16:08:19+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-310.html" class="chapter-card">
+                    <h3>Chapter 310</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-01-05T16:18:31+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-311.html" class="chapter-card">
+                    <h3>Chapter 311</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-01-05T16:19:13+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-312.html" class="chapter-card">
+                    <h3>Chapter 312</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-01-05T16:20:21+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-313.html" class="chapter-card">
+                    <h3>Chapter 313</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-01-05T16:21:12+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-314.html" class="chapter-card">
+                    <h3>Chapter 314</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-01-12T16:25:17+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-315.html" class="chapter-card">
+                    <h3>Chapter 315</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-01-12T16:26:07+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-316.html" class="chapter-card">
+                    <h3>Chapter 316</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-01-12T16:26:45+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-317.html" class="chapter-card">
+                    <h3>Chapter 317</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-01-19T15:44:55+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-318.html" class="chapter-card">
+                    <h3>Chapter 318</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-01-19T15:46:20+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-319.html" class="chapter-card">
+                    <h3>Chapter 319</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-01-19T15:46:59+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-320.html" class="chapter-card">
+                    <h3>Chapter 320</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-01-19T15:47:47+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-321.html" class="chapter-card">
+                    <h3>Chapter 321</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-01-26T18:38:11+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-322.html" class="chapter-card">
+                    <h3>Chapter 322</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-01-26T18:39:03+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-323.html" class="chapter-card">
+                    <h3>Chapter 323</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-01-26T18:40:00+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-324.html" class="chapter-card">
+                    <h3>Chapter 324</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-02-02T16:19:44+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-325.html" class="chapter-card">
+                    <h3>Chapter 325</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-02-02T16:20:25+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-326.html" class="chapter-card">
+                    <h3>Chapter 326</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-02-02T16:21:03+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-327.html" class="chapter-card">
+                    <h3>Chapter 327</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-02-02T16:21:54+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-328.html" class="chapter-card">
+                    <h3>Chapter 328</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-02-09T16:57:37+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-329.html" class="chapter-card">
+                    <h3>Chapter 329</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-02-09T16:58:51+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-330.html" class="chapter-card">
+                    <h3>Chapter 330</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-02-09T16:59:50+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-331.html" class="chapter-card">
+                    <h3>Chapter 331</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-02-09T17:01:47+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-332.html" class="chapter-card">
+                    <h3>Chapter 332</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-02-16T14:45:43+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-333.html" class="chapter-card">
+                    <h3>Chapter 333</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-02-16T14:46:40+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-334.html" class="chapter-card">
+                    <h3>Chapter 334</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-02-16T14:47:50+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-335.html" class="chapter-card">
+                    <h3>Chapter 335</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-02-19T13:02:45+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-336.html" class="chapter-card">
+                    <h3>Chapter 336</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-02-19T13:03:57+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-337.html" class="chapter-card">
+                    <h3>Chapter 337</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-02-19T13:05:36+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-338.html" class="chapter-card">
+                    <h3>Chapter 338</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-02-19T13:06:39+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-339.html" class="chapter-card">
+                    <h3>Chapter 339</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-02-19T13:08:28+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-340.html" class="chapter-card">
+                    <h3>Chapter 340</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-02-19T13:09:49+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-341.html" class="chapter-card">
+                    <h3>Chapter 341</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-02-19T13:11:03+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-342.html" class="chapter-card">
+                    <h3>Chapter 342</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-02-19T13:12:14+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-343.html" class="chapter-card">
+                    <h3>Chapter 343</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-02-19T13:15:08+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-344.html" class="chapter-card">
+                    <h3>Chapter 344</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-02-19T13:16:51+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-345.html" class="chapter-card">
+                    <h3>Chapter 345</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-02-19T13:17:34+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-346.html" class="chapter-card">
+                    <h3>Chapter 346</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-02-19T13:18:32+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-347.html" class="chapter-card">
+                    <h3>Chapter 347</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-02-19T13:20:05+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-348.html" class="chapter-card">
+                    <h3>Chapter 348</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-02-19T13:20:56+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-349.html" class="chapter-card">
+                    <h3>Chapter 349</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-02-19T13:21:46+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-350.html" class="chapter-card">
+                    <h3>Chapter 350</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-02-19T14:03:49+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-351.html" class="chapter-card">
+                    <h3>Chapter 351</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-02-19T14:04:33+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-352.html" class="chapter-card">
+                    <h3>Chapter 352</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-02-19T14:05:09+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-353.html" class="chapter-card">
+                    <h3>Chapter 353</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-02-19T14:06:13+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-354.html" class="chapter-card">
+                    <h3>Chapter 354</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-02-19T14:06:59+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-355.html" class="chapter-card">
+                    <h3>Chapter 355</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-02-23T15:40:37+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-356.html" class="chapter-card">
+                    <h3>Chapter 356</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-02-23T15:41:26+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-357.html" class="chapter-card">
+                    <h3>Chapter 357</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-02-23T15:43:33+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-358.html" class="chapter-card">
+                    <h3>Chapter 358</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-03-01T15:18:44+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-359.html" class="chapter-card">
+                    <h3>Chapter 359</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-03-01T15:19:44+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-360.html" class="chapter-card">
+                    <h3>Chapter 360</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-03-01T15:22:17+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-361.html" class="chapter-card">
+                    <h3>Chapter 361</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-03-01T15:23:35+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-362.html" class="chapter-card">
+                    <h3>Chapter 362</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-03-08T15:32:33+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-363.html" class="chapter-card">
+                    <h3>Chapter 363</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-03-08T15:33:24+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-364.html" class="chapter-card">
+                    <h3>Chapter 364</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-03-08T15:34:41+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-365.html" class="chapter-card">
+                    <h3>Chapter 365</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-03-08T15:35:42+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-366.html" class="chapter-card">
+                    <h3>Chapter 366</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-03-15T14:40:51+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-367.html" class="chapter-card">
+                    <h3>Chapter 367</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-03-15T14:41:50+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-368.html" class="chapter-card">
+                    <h3>Chapter 368</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-03-15T14:42:39+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-369.html" class="chapter-card">
+                    <h3>Chapter 369</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-03-15T14:43:20+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-370.html" class="chapter-card">
+                    <h3>Chapter 370</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-03-15T14:43:57+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-371.html" class="chapter-card">
+                    <h3>Chapter 371</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-03-22T13:21:35+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-372.html" class="chapter-card">
+                    <h3>Chapter 372</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-03-22T13:22:16+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-373.html" class="chapter-card">
+                    <h3>Chapter 373</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-03-22T13:22:50+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-374.html" class="chapter-card">
+                    <h3>Chapter 374</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-03-22T13:23:28+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-375.html" class="chapter-card">
+                    <h3>Chapter 375</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-03-22T13:24:06+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-376.html" class="chapter-card">
+                    <h3>Chapter 376</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-03-22T13:24:44+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-377.html" class="chapter-card">
+                    <h3>Chapter 377</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-03-22T13:25:22+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-378.html" class="chapter-card">
+                    <h3>Chapter 378</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-03-29T14:18:15+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-379.html" class="chapter-card">
+                    <h3>Chapter 379</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-03-29T14:18:55+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-380.html" class="chapter-card">
+                    <h3>Chapter 380</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-03-29T14:20:06+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-381.html" class="chapter-card">
+                    <h3>Chapter 381</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-03-29T14:21:06+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-382.html" class="chapter-card">
+                    <h3>Chapter 382</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-03-29T14:21:58+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-383.html" class="chapter-card">
+                    <h3>Chapter 383</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-04-06T03:40:34+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-384.html" class="chapter-card">
+                    <h3>Chapter 384</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-04-06T03:41:15+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-385.html" class="chapter-card">
+                    <h3>Chapter 385</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-04-06T03:42:13+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-386.html" class="chapter-card">
+                    <h3>Chapter 386</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-04-06T03:42:57+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-387.html" class="chapter-card">
+                    <h3>Chapter 387</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-04-06T03:43:27+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-388.html" class="chapter-card">
+                    <h3>Chapter 388</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-04-13T14:07:05+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-389.html" class="chapter-card">
+                    <h3>Chapter 389</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-04-13T14:07:52+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-390.html" class="chapter-card">
+                    <h3>Chapter 390</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-04-13T14:08:30+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-391.html" class="chapter-card">
+                    <h3>Chapter 391</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-04-13T14:09:06+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-392.html" class="chapter-card">
+                    <h3>Chapter 392</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-04-20T13:06:44+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-393.html" class="chapter-card">
+                    <h3>Chapter 393</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-04-20T13:07:21+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-394.html" class="chapter-card">
+                    <h3>Chapter 394</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-04-20T13:07:59+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-395.html" class="chapter-card">
+                    <h3>Chapter 395</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-04-20T13:08:43+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-396.html" class="chapter-card">
+                    <h3>Chapter 396</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-04-27T13:27:02+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-397.html" class="chapter-card">
+                    <h3>Chapter 397</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-04-27T13:27:44+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-398.html" class="chapter-card">
+                    <h3>Chapter 398</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-04-27T13:28:31+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-399.html" class="chapter-card">
+                    <h3>Chapter 399</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-04-27T13:29:35+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-400.html" class="chapter-card">
+                    <h3>Chapter 400</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-04-27T13:30:10+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-401.html" class="chapter-card">
+                    <h3>Chapter 401</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-05-04T14:29:20+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-402.html" class="chapter-card">
+                    <h3>Chapter 402</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-05-04T14:30:20+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-403.html" class="chapter-card">
+                    <h3>Chapter 403</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-05-04T14:31:00+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-404.html" class="chapter-card">
+                    <h3>Chapter 404</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-05-04T14:31:49+00:00</div>
+                    </div>
+                </a>
+                
+                <a href="pages/chapter-405.html" class="chapter-card">
+                    <h3>Chapter 405</h3>
+                    <div class="chapter-info">
+                        <div class="translator">Translator: kenUdigitt</div>
+                        <div class="published">Published: 2024-05-04T14:32:28+00:00</div>
+                    </div>
+                </a>
+                
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+        
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+    </script>
+</body>
+</html>

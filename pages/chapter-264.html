@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 264 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 264</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 264</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: October 1, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>The unexpected appearance of Cheong Pung felt like a fortuitous turn of events. In our precarious situation, every ally mattered, and the presence of this dumpling ghost might just tilt the balance. A sigh of relief escaped me.<br><br>"Cheong Pung!"<br><br>"Yes, savior."<br><br>He responded, though his voice wavered. The Blood Lord feigned sudden realization. <br><br>"Ah! I was wondering which rat it was. Isn't that the esteemed Invincible Divine Sword from the Mount Hua Sect?"<br><br>I had a suspicion that he recognized Cheong Pung.<br><br>During the Grand Celestial Banquet ceremony, it was revealed that Cheong Pung was a disciple of the Mount Hua Sect. However, no one could have possibly known that Sword Saint Mae Jong-Hak cherished him as his youngest disciple and raised Cheong Pung as his own flesh and blood.<br><br>In such precarious scenarios, even a moment of his underestimation would be beneficial...<br><br>"Or perhaps I should address him as the Sword Saint's disciple? Or even better, his cherished grandson?"<br><br>That bastard. There's nothing he doesn't know.<br><br>Then again, for decades, Dark Heaven has maintained a practice of embedding informants, with spies reaching as high as the head elder and others within the council of elders.<br><br>This proves that the Blood Lord occupied an eminent position within their echelons.<br><br>'It would be odd if he didn't know.'<br><br>The Blood Lord's chuckle, perhaps noting my disappointment, broke the silence.<br><br>"No need for that expression. Adding one more friend to your side won't make a difference."<br><br>Look at this guy...<br><br>Even though we're currently still only on the verge of transcending the peak realm, both myself and Cheong Pung stand as beings incomparable to the typical masters of the peak realm.<br><br>I possess overwhelming stats coupled with an extensive combat history, while Cheong Pung, gifted with intrinsic martial prowess and an uncanny battle acumen, seamlessly weaves an arsenal of martial techniques into his encounters.<br><br>Furthermore, accompanying us is Jeok Cheon-Gang, the crowning jewel among the Ten Kings.<br><br>Yet, in the Blood Lord's eyes, we seemed mere pawns.<br><br>"You seem to be underestimating us."<br><br>"Because it's true."<br><br>"Excuse me?"<br><br>"If you wanted to kill me, you should've brought the Sword Saint, not his disciple."<br><br>"...This bastard."<br><br>"There's only one thing left."<br><br>With a voice dripping with composure, the Blood Lord snapped his fingers towards us.<br><br>"Prove it, with martial arts."<br><br>For once, he had spoken the truth.<br><br>Yes. The mettle of a martial artist is vindicated through martial arts.<br><br>Triumph signifies might, while defeat betrays vulnerability.<br><br>“When you meet Yama, tell him that the Fire King sent you.” \[Note: in Buddhism, Yama is the King of Hell similar to Hades in Greek mythology.\]<br><br>Swish!<br><br>With a voice reminiscent of parched ash, Jeok Cheon-Gang lunged forward. Simultaneously, a familiar, ominous alert resonated.<br><br>Ding.<br><br>\- An unexpected quest, \[Life or Death\] has been generated! \[Note: The quest title here literally translates to something similar to "cut off from body and life" or "between life and death".\]<br><br>\- You have no choice but to accept this quest. The quest shall be forcefully accepted.<br><br>Damn it. The title of the quest alone is intimidating.<br><br>Cursing my luck silently, I propelled off the earth, instinctively calling out a trusted name.<br><br>"Cheong Pung! Now!"<br><br>Cheong Pung clenched his teeth and dived into action. His Blue River Sword twirled with finesse, etching out plum blossoms in its wake. \[Note: The phrase "청강검이" can be loosely translated to the Blue River Sword or the Sword of the Blue River.\]<br><br>Whooosh! Shhhhh!<br><br>On this quiet path in the woods, my Scorching Yang energy is tempered by the tranquil breeze of Mount Hua's techniques as our spear and sword dance.<br><br>As we flit between advance and retreat, a hungry anticipation gleamed in the Blood Lord's eyes.<br><br>“Let's see what you've got.”<br><br>Pop-pop-pop!<br><br>With a swift motion, Jeok Cheon-Gang recoiled. The Scorching Yang energy, having combined with the intense heat of the summer, rushed out through his wrinkled palm.<br><br>The perfected Divine Palm of Fire, a pinnacle technique rumored to consume even souls, was on the brink of engulfing the Blood Lord.<br><br>Shhh!<br><br>A gust of wind blew.<br><br>Suddenly, in the Blood Lord's hand was a blazing red blade. In front of this blade, the force of the Divine Palm of Fire was cleaved in two.<br><br>Whoosh, kwaaang!<br><br>The ancient willows lining the path exploded.<br><br>With a defeaning roar, a pillar of flame shot towards the heavens while soil, roots, and timber descended like a torrential storm.<br><br>Amidst the chaos, two streaks of lightning cut through.<br><br>Zzzzap! Shhhhh!<br><br>The two weapons, a spear and a sword, shot forward, attacking from both front and back.<br><br>With a wolfish grin, the Blood Lord relinquished his blade, allowing his fists to dance through the air.<br><br>Boom!<br><br>Compressed air burst, creating a fierce whirlwind. The spear's menacing point and the delicate plum blossoms rising from the tip of the sword were scattered by the overwhelming gust.<br><br>Both my and Cheong Pung's eyes widened as our bodies were pushed back by the gale.<br><br>"…Damn. He's insanely strong."<br><br>"How... How can this be?”<br><br>Thud.<br><br>Effortlessly, the Blood Lord summoned his previously reliquished blade to his hand with Psychokinesis, all while parrying the attacks from the duo. \[Note: The phrase 虛空攝物 can be roughly translated as "Grasping Objects from the Void" or "Capturing Things from Empty Space". However, since AsuraScans already translated this as "Psychokinesis" in Chapter 114, I'm using the same translation to keep things consistent.\]<br><br>"Is that all you've got?"<br><br>"......!"<br><br>A momentary flinch crossed Jeok Cheon-Gang's face.<br><br>He hadn't expected the masterfully executed Divine Palm of Fire technique to be neutralized so effortlessly.<br><br>Rather than evading or merely blocking, he'd cleaved through it.<br><br>A chilling realization dawned upon Jeok Cheon-Gang: the Blood Lord was not just another adversary, but a formidable fatal threat.<br><br>'The remark about bringing the Sword Saint if I want him dead... wasn't an empty threat.'<br><br>This foe was comparable, perhaps even superior, to the venerable Three Saints.<br><br>Both in martial knowledge and Qi mastery, he matched, if not outclassed, Jeok Cheon-Gang.<br><br>What's more, he possessed the vigor of youth, flawlessly unleashing his techniques.<br><br>Today, the weight of years bore heavily on Jeok Cheon-Gang's aged hands.<br><br>'If I were thirty, no, even twenty years younger...'<br><br>When his body was in its prime, his enlightenment was lacking. But now, as enlightenment dawned, his body had waned.<br><br>Just as a timeworn pot seeps its contents, so did Jeok Cheon-Gang feel his energy wane.<br><br>'Perhaps this place could be my final resting place.'<br><br>The Blood Lord didn't miss the subdued look in Jeok Cheon-Gang's eyes.<br><br>With a twisted smirk, he chuckled.<br><br>"Old man, have you finally come to grips? Do you understand the situation now?"<br><br>Jeok Cheon-Gang casually lowered his head.<br><br>He noted Jin Tae-Kyung and Cheong Pung intently observing his every move. <br><br>He couldn't demoralize them with any careless words.<br><br>"You sure talk a lot. We've only just begun."<br><br>"You might think so. But for me, I haven't even truly started yet."<br><br>"What did you say?"<br><br>"I've heard that the righteous sects, in their so-called courtesy, grant three breaths to an opponent who is less skilled. I thought I'd honor this tradition."<br><br>"......!"<br><br>The Blood Lord pointed one by one.<br><br>The three of us each took a breath, totaling three. True to his words, we had been given the courtesy of three breaths while standing our ground.<br><br>"Now it's my turn to make the first move. Try and keep up."<br><br>His eyes ignited with a crimson fervor, and an overwhelming, blood-tinted aura billowed from him, casting a sinister pall over all in its wake.<br><br>And then...<br><br>Googoogung!<br><br>The very foundations of Mount Song trembled.<br><br>Shhshhshh! Kwaang!<br><br>Lightning tore through the skies, its brilliance and thunderclaps so intense it felt as though it would sear one's very soul.<br><br>At the heart of this electric tempest stood a blade, exuding an eerie crimson aura.<br><br>Kwaaah!<br><br>This formidable blade, glowing with a ghostly luminescence, arced through the air.<br><br>Its path of destruction, annihilating everything in its wake, deflected every onslaught directed at the Blood Lord.<br><br>Including mine.<br><br>Bang!<br><br>White Flames resonated, its tip quivering. In my grasp, the spear's shaft shuddered with force.<br><br>Such overwhelming might was almost inconceivable for a mere mortal.<br><br>'This monstrous guy.'<br><br>I gritted my teeth, ducking just in time. Swish!<br><br>The edge of the crimson blade just barely clipped a strand of my hair.<br><br>But the force it generated was so fierce, minor cuts appeared on my skin, causing blood to ooze.<br><br>I caught the blood droplets running down my nose with my tongue and swung the spear again.<br><br>"One Strike!"<br><br>Whoosh! Whoosh! Whoosh!<br><br>The rapidly rotating spearhead aimed directly at the Blood Lord's chest.<br><br>Perhaps because I had poured all the points I won from the Victory Reward of the Great Celestial Banquet into it, its movement and power felt elevated.<br><br>But then...<br><br>Thunk!<br><br>In what seemed like a barehanded feat, he snatched the spear's tip.<br><br>But it wasn't merely a hand; it was a hand cloaked in a fiery crimson aura.<br><br>"That won't be enough."<br><br>Murmuring, he exerted an incredible force, pulling the spearhead towards him.<br><br>And in the next moment, the Blood Lord's eyebrows shot up.<br><br>The spearhead he had just gripped was gone.<br><br>As if it never existed.<br><br>"You...!"<br><br>Even before the gasp of surprise could emerge, I found myself enveloped in his grasp.<br><br>'Open inventory. Summon.'<br><br>Swiftly channeling the Scorching Yang Energy, the White Flames roared to life, once more under my command.<br><br>Forged from the Ten Thousand Year Tempered Steel, the sharpest and most resilient metal known, my blade effortlessly breached the Blood Lord's armor, sinking into the flesh below.<br><br>Thud!<br><br>With a swift gesture, a powerful force collided with my abdomen.<br><br>Recoiling nearly ten paces, I beheld the visage of the Blood Lord, eyes awash with disbelief, his chest spewing a crimson geyser.<br><br>'It worked.'<br><br>A maneuver uniquely mine. Executed to perfection.<br><br>An unpredictable strike, using a System beyond the Blood Lord's comprehension, had found its mark.<br><br>'Now's the chance.'<br><br>A fleeting opportunity, potentially the only one. A critical juncture that could not be squandered.<br><br>Swallowing the rising taste of blood in my throat, I shouted.<br><br>"Grandfather!”<br><br>My cry echoed across the scorched trail. Riding the wind, it sought a particular ear.<br><br>A fervent voice broke through his lips.<br><br>“Well done.”<br><br>Jeok Cheon-Gang, invoking his Fire King's might, stormed towards the Blood Lord.<br><br>Whoooosh!<br><br>From his slight frame erupted a towering inferno, its intensity rivaling that of a sun, making the very atmosphere quiver.<br><br>If the Blood Lord's aura felt ominously fiery to merely observe, Jeok Cheon-Gang's was an all-consuming blaze, threatening to engulf the world.<br><br>"This damn dog..."<br><br>The Blood Lord mumbled, almost like a groan.<br><br>But it was already too late. He might not know, but I do. I know what Jeok Cheon-Gang is doing, the power he wields.<br><br>He'd unleashed this martial technique just once prior, ascending to legend by decimating a thousand followers of the demonic path.<br><br>'The Ghostly Dance of the Fire God.' \[Note: this technique has not been mentioned before in the manhwa, so this is just my personal translation. The direct translation is roughly "Fire God's Demon/Ghost Dance".\]<br><br>In an ephemeral blink, Jeok Cheon-Gang's silhouette vanished.<br><br>Moving with the ethereal grace of a dancer, his spectral limbs honed in on the Blood Lord.<br><br>A breathtaking confluence of scarlet and azure flames illuminated the heavens. It was a spectacle of awe, teetering on the edge of annihilation.<br><br>"Fire King!”<br><br>Zzzzap!<br><br>Responding to the Blood Lord's guttural cry, a crimson blade emerged, dancing amidst the flames. A thunderous noise, as if cliffs were crumbling and the skies splitting, resonated.<br><br>"This is..."<br><br>A formidable battle too rapid for even the eyes to follow. Though it spanned a mere heartbeat, its tale was evident to me.<br><br>In that fleeting moment, hundreds of powerful attacks were exchanged, their aftermath revealing a clear victor.<br><br>Whooosh!<br><br>An inferno engulfed the crimson blade. A gleaming shard rocketed skyward, lodging itself firmly within a disrupted mound of earth.<br><br>A solitary blade lay abandoned. Its rightful owner now faced an impending doom.<br><br>"Grandfather once said, 'Be it man or god, if it stands against me, it shall fall.'" \[Note: I surprised myself with this translation. I'm not sure if it hit this hard in the original Korean to a Korean speaker, but when I wrote this sentence I had to sit there for 30 minutes thinking about life.\]<br><br>With those serene words, a fiery lance pierced the adversary's heart.<br><br>Sizzle. Flesh blackened, and the very bones of his chest disintegrated. The Blood Lord, spewing blood, crumpled to his knees, his gaze dimming.<br><br>And that was it.<br><br>Jeok Cheon-Gang, looking down at the motionless Blood Lord's head, wavered.<br><br>"Grandfather!"<br><br>"Elder Jeok!"<br><br>Quickly rushing forward, Cheong Pung and I supported Jeok Cheon-Gang, moving him to a relatively untouched patch of grass.<br><br>The Ghostly Dance of the Fire God.<br><br>No flame rages indefinitely. Once the dance concludes, the fire is quelled, and its warmth ebbs.<br><br>The venerable Jeok Cheon-Gang had unleashed this power only once in his storied existence. This aftermath bore testimony to that.<br><br>"How was it, just as this old man said?"<br><br>"What are you talking about?"<br><br>"The Ghostly Dance of the Fire God. Wasn’t it spectacular?"<br><br>With a faint smile, Jeok Cheon-Gang asked. I let out a sigh of relief.<br><br>And soon, I too smiled.<br><br>"It was amazing."<br><br>That sentiment was genuine. Every facet was exceptional.<br><br>Except, perhaps, for the voice that resonated from behind us shortly after.<br><br>"The Ghostly Dance of the Fire God. What a cool name." \[Note: A great villain once said "You should've gone for the head."\]<br><br>Slowly turning our heads, our view was filled with the Blood Lord, seemingly unscathed and upright.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-263.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-265.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

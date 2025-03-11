@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 301 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 301</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 301</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: December 22, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>Seok Go-Jun was brimming with resolve.<br><br>'I can do it.' \[Note: We are still referring to the last conversation of the previous chapter. Most likely Seok Go-Jun is thinking about how he can definitively beat the MC in a fight.\]<br><br>It had been nearly 30 years since the Great Cataclysm tore his life apart, orphaning him in its wake. It was during these tumultuous times that he first encountered Lee Jeong-Ryong.<br><br>'I've been watching you for a while. Would you like to join me?'<br><br>'Me?'<br><br>'Yes. You have exceptional talent.'<br><br>It was then that he understood.<br><br>He realized how he, an orphan with no prospects, had managed to receive top-tier education in an environment conducive to growth. The identity of the mysterious benefactor, whom he had never once seen, finally made sense.<br><br>This benefactor wasn't the archetypal figure from fairy tales, yet that was all the more reason for Seok Go-Jun to accept his offer.<br><br>'Yes, sir.'<br><br>'From now on, call me Master.'<br><br>And so began a new chapter in Seok Go-Jun's life.<br><br>He diligently learned unfamiliar techniques and breathing exercises alongside other children, cherishing every moment. His youthful hands bore the marks of his labor—blisters that burst and healed into calluses.<br><br>In many ways, Seok Go-Jun's life mirrored this transformation: enduring pain, healing, and emerging stronger.<br><br>As he grew more resilient, he eventually earned his place beside Lee Jeong-Ryong.<br><br>'From today, you are the head of the security team.'<br><br>'Please tell me what I should and shouldn't do.'<br><br>'Follow my orders, and don't go against them. That's all.'<br><br>Lee Jeong-Ryong's words resonated deeply within Seok Go-Jun.<br><br>He devoted himself to fulfilling the objectives set by his Master.<br><br>Whether in the shadows or under the spotlight, Seok Go-Jun executed his duties flawlessly.<br><br>Contrary to the hunters who basked in their prowess and led lives of ostentation, he quietly tackled the tasks assigned by Lee Jeong-Ryong, concealing his true capabilities.<br><br>Within the Ares Guild, his true power was a subject of speculation. The only person privy to the extent of his abilities was Lee Jeong-Ryong himself.<br><br>'Don't you feel suffocated?'<br><br>'What do you mean?'<br><br>'Staying only by my side.'<br><br>'I've never thought about it.'<br><br>'With your skills, you could make a name for yourself anywhere right now.'<br><br>'I'm not interested in that. I will always protect you, Master.'<br><br>'Haha, you seem even more reliable today.'<br><br>It was sincere. Among all the members of the security team trained by Lee Jeong-Ryong, none displayed the level of blind worship and respect as Seok Go-Jun did.<br><br>His extraordinary abilities combined with his unwavering devotion were unparalleled.<br><br>Yet, paradoxically, these very virtues - his skill and loyalty - were what drove Seok Go-Jun to eventually defy an order from Lee Jeong-Ryong.<br><br>"If it wasn’t for the special instruction from my Master... you would be dead here."<br><br>"Your Master? Ah, Jeong-Ryong?"<br><br>"…!"<br><br>"How’s Jeong-Ryong doing? Isn't it about time to look for a place in Silver Town?"<br><br>Mentioning Lee Jeong-Ryong in such a manner was beyond an insult. To Seok Go-Jun, Lee Jeong-Ryong was more than a mentor; he was akin to a parent, a guide, and to some extent, a deity.<br><br>For a devout follower like Seok Go-Jun, blasphemy against his 'god' was intolerable.<br><br>'I will kill this bastard...'<br><br>As the command to avoid conflict with the Peace Guild faded from his consciousness, a fierce aura began to swirl around his clenched fist.<br><br>"If you think it will be the same as last time... I'll make you regret it."<br><br>Seok Go-Jun recalled his brief skirmish with Jin Tae-Kyung at the hospital a week earlier.<br><br>That encounter had been restricted by his Master's orders, his true strength barely revealed.<br><br>But now, Jin Tae-Kyung was about to face the full force of his pent-up fury.<br><br>'I'll use all my strength and finish it in one blow.'<br><br>Consequences were irrelevant. His sole focus was on delivering retribution for the insult to his Master.<br><br>And in Seok Go-Jun's mind, his victory was certain.<br><br>"Die!"<br><br>Whoosh!<br><br>With a sound akin to the air itself being torn asunder, his fist rocketed forward at blinding speed.<br><br>Jin Tae-Kyung was only three steps away, standing with a broad smile and arms wide open.<br><br>He was defenseless.<br><br>In slow-motion, Seok Go-Jun's fist was aimed with lethal intent, yet Jin Tae-Kyung stood unmoved.<br><br>'It's over, kid.'<br><br>A smug smile crept across Jin Tae-Kyung’s face.<br><br>Kwang-!<br><br>The air erupted with a sound like the heavens splitting apart.<br><br>But Seok Go-Jun was oblivious to it, engulfed by the intense recoil and the scorching heat radiating from his fist.<br><br>'This is…'<br><br>The world around Seok Go-Jun fractured into blinding whiteness, a searing agony slicing through him, reminiscent of a red-hot blade carving through his insides.<br><br>A guttural cry, raw and involuntary, tore from his gaping mouth.<br><br>“Kueeek!”<br><br>Whoosh.<br><br>Doubled over, Seok Go-Jun's eyes bulged in shock as he coughed out his insides.<br><br>Blood - a relentless, dark red tide - pooled around him.<br><br>Amidst the crimson flood, pale fragments floated, their true nature horrifyingly apparent. Pieces of his own intestines.<br><br>"What in the world is this…"<br><br>His bewildered gaze fixated on the pool of his lifeblood, his view abruptly eclipsed by a pair of feet.<br><br>"Didn't I say I would make you regret it?"<br><br>"…!"<br><br>"It's strange. It doesn't seem like much."<br><br>He knew without having to lift his head.<br><br>He knew whose feet were stepping in his blood, whose voice echoed in his ears as his brain rapidly fogged over.<br><br>'How could I... how could I be defeated by a single strike…'<br><br>One clash. It was a pillar of fire that turned the tower Seok Go-Jun had built over the last 30 years into ashes.<br><br>'Is this even possible?'<br><br>Tremors wracked Seok Go-Jun's form.<br><br>Pain?<br><br>No, it was fear, a terror he had only ever reserved for one person - his Master, Lee Jeong-Ryong.<br><br>"Lift your head."<br><br>That same fear seemed to clench his hair, coercing his head upwards.<br><br>Feet, steeped in the bloodbath. Ascending past legs, firm and unyielding like steel, to a torso echoing the lithe strength of a wild beast, and then…<br><br>Those eyes.<br><br>They were dark forests veiled in shadows. Two burning coals gazed at Seok Go-Jun.<br><br>"Tell your Master."<br><br>The hot breath brushed his ear, a whisper meant solely for him.<br><br>"As long as I am here, no one can touch the Peace Guild."<br><br>"…!"<br><br>Seok Go-Jun's eyelids fluttered weakly, a raspy whisper escaping his blood-drenched lips.<br><br>"What in the world... are you?"<br><br>"Me?"<br><br>The response didn't reach his ears but echoed ominously in his mind.<br><br>\- I am the successor of the Fire King, the heir to the Scorching Clan.<br><br>It was like an auditory hallucination.<br><br>Seok Go-Jun, quickly fading, didn't recognize the Sound Transmission, nor could he fathom the significance of those words.<br><br>Only one word came to his mind.<br><br>'Monster…'<br><br>With a mischievous smile, Jin Tae-Kyung's face was the last thing Seok Go-Jun saw before his body crumbled like a rotten tree.<br><br>\* \* \*<br><br>Swoosh. Thud!<br><br>A heavy, suffocating silence engulfed the area. Nobody dared to utter a word or make a move. Hundreds of eyes, wide with trepidation, flicked towards me.<br><br>I gazed down at the unconscious Seok Go-Jun and delivered my verdict in a low murmur.<br><br>"Why mess around and cause such a fuss? You're nothing special."<br><br>"…!"<br><br>"…!"<br><br>The air seemed to solidify with tension. As I diverted my gaze from Seok Go-Jun, a wave of gasps and murmurs broke the silence.<br><br>Among the crowd, one reaction stood out sharply.<br><br>"Association President."<br><br>"Oh!"<br><br>Lee Woo-Jung, the President of the Seoul Association, jerked in surprise, hastily averting his eyes.<br><br>"Did you call me?"<br><br>"Why are you suddenly speaking formally? You were speaking casually just a moment ago."<br><br>The Association President faltered, his complexion draining of color.<br><br>"Are you talking to me?"<br><br>"Don't you remember?"<br><br>"Recently, my memory hasn't been so good, I keep forgetting…"<br><br>"Oh, I see. Then you must have already forgotten what happened between us today?"<br><br>"…!"<br><br>"Your expression suggests you haven't forgotten."<br><br>He wouldn't be in such a high position if he didn't understand what needed to happen now. \[Note: MC is suggesting that deals made to "forget what you saw" between Lee Woo-Jung and the Ares Guild were what pushed him to his President position in the first place.\]<br><br>At my question, the Association President hastily shook his head.<br><br>"No, I have. I will take care of keeping everyone's mouth shut."<br><br>"Keeping their mouths shut?"<br><br>"Ah, no, not that."<br><br>"Everyone who came with you also has poor memory, right?"<br><br>"Yes, yes. That's right. These folks all suffer from short-term memory loss. Isn't that so?"<br><br>About two hundred association hunters, who had accompanied him, nodded vehemently in agreement.<br><br>"That's right."<br><br>"Of course. I don't even remember my name."<br><br>"Wait, where is this? Who am I?"<br><br>Who was the last guy to speak?<br><br>I barely restrained myself from turning in his direction.<br><br>"Well, that's good."<br><br>My broad smile was mirrored by the Association President and the other hunters, though theirs seemed forced.<br><br>With this many onlookers, I doubted this would be sufficient to ensure their silence.<br><br>Now, for the next move...<br><br>"Who's the person in charge here?"<br><br>"I am."<br><br>A middle-aged man with sharp eyes, an A-rank hunter and a team leader of the Ares Guild, stepped forward.<br><br>His gaze oscillated between me and the fallen Seok Go-Jun, a mix of disbelief and concern etched on his face. He bit his lip, pondering the situation.<br><br>"I don't know what business you had with Team Leader Seok, but... you've made a serious mistake."<br><br>His words betrayed his ignorance of the full scope of internal affairs.<br><br>My response came with a smirk.<br><br>"In life, there are all sorts of situations like this, right?"<br><br>"Aren't you worried about how the Vice Guild Master will react when he hears about today's incident?"<br><br>"Not worried, but I am looking forward to it. Make sure to report to Jeong-Ryong."<br><br>My reply seemed to shock not only the middle-aged man but also the other members of the Ares Guild behind him.<br><br>Whether it was my casual reference to Lee Jeong-Ryong or my apparent indifference, I couldn't discern.<br><br>My thoughts were preoccupied not with their reactions, but with how Lee Jeong-Ryong would respond to the report.<br><br>'Poor Jeong-Ryong. He's going to have a headache.'<br><br>In this unfolding drama, Lee Jeong-Ryong played the role of a cleaner.<br><br>He seemed to always be meticulously working to ensure no ripple of these incidents disturbed the surface.<br><br>'But to show his teeth again so soon after the first incident... Impressive, really.'<br><br>The swift aggression shown by Lee Jeong-Ryong, despite the recent conclusion of our delicate negotiations, sent a chill through me.<br><br>'What if I had really died here?'<br><br>The implications were clear. Without me, the Peace Guild would crumble against the colossal might of Ares.<br><br>This realization struck me anew.<br><br>'If I let my guard down even for a moment, this battle is over.'<br><br>In this relentless war, there was no pause for breath. The enemies were ever-vigilant, always ready to strike.<br><br>"Phew."<br><br>At least the immediate crisis was contained.<br><br>Or not...<br><br>"..."<br><br>"..."<br><br>"..."<br><br>"..."<br><br>Four pairs of eyes bore into me with intensity, accompanied by dozens of others filled with questions, demanding explanations.<br><br>'Ah, I forgot about our guild.'<br><br>I had overlooked a crucial aspect amidst the chaos. But how to even begin explaining this?<br><br>After a brief internal debate, I chose my words.<br><br>"I went to pee."<br><br>"..."<br><br>A moment of silence.<br><br>Song Song suddenly spoke in a tone I hadn't heard before.<br><br>"Tae-Kyung."<br><br>"Yeah?"<br><br>"Is it okay if I kill you?"<br><br>"...Let's go outside, and I'll explain."<br><br>Yes, let's go outside first.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-300.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-302.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

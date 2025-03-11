@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 204 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 204</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 204</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: Coldbutteredtoast</span>
+                            <span class="published-date">Published: October 20, 2022</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>A roaring torrent of burning Qi rushed through his body. In martial arts novels, the main characters needed to unlock all of their blood vessel meridians to achieve true power. Of these, the two most difficult boundaries to cross were located in the governing and conception veins.<br><br>The problem was that to unlock the conception vessel meridian it was necessary to first penetrate the perineum acupoint (會陰穴 -- Chinese: meeting yin [perineum]), located in the sacred tract of land between balls and anus.<br><br>[Oh no!] Tae-Kyung could not react as energy charged like a herd of enraged bulls.<br><br>THUD!<br><br>The feeling was indescribable. His eyes rolled back into his head; all his senses merged into one screaming channel of purest agony.<br><br>Unbidden, a succession of faces floated before his eyes. His mother, then Ha-Yeon, then even a tiny baby with bright eyes. The child began to wail and, at that moment, Tae-Kyung realised who he saw: [My baby! My son!] Tae-Kyung Junior, the child that he'd yet to meet! He was gripped with a sudden fear that the boy would never have a chance to be born.<br><br>Innocent eyes begged him, "Daddy, can I come out?"<br><br>THUD!<br><br>The next moment, his vision returned and, with it, excruciating pain.<br><br>[Fuc..uhgh..ahhhhh!]<br><br>As Tae-Kyung screamed from the depths of his soul, a voice reached him. It sounded strong, urgent. "Rise up! Withstand this! Don't die!"<br><br>[Death? That'd be a hassle... No!] Swimming up from the depths of a great, cold lake, his senses came alive to an ocean of suffering. It felt as though a knife had been plunged into his vitals; all he wanted was curl into a ball and let death take him, but no! He had always survived, even as a weak hunter. [I can't die like this! I'm still too low level!]<br><br>Steeling himself, he braced against the energy as it burning along all twenty-four primary veins, blazed through the perineum meridian and crashed into the insurmountable barrier (任脈 -- Chinese: dutiful vein) that blocked the conception vein.<br><br>THUD!<br><br>Vibrations resonated through his body like thunder. The pain was a wickedness unlike anything he had ever experienced. Pushed beyond its limits, his whole body thrashed as though mortally injured, only held in place by the thick rope.<br><br>Again, the energy roared.<br><br>THUD!<br><br>Maybe he could die? Just for a bit.<br><br>One of the vessels in his eye burst, painting the world in blood and fire.<br><br>As though from a great distance, he saw a wrinkled face. The old man was screaming, "Endure! This is the end!"<br><br>[The end? Really?]<br><br>Truth or lie, the words gave him strength. Gathering his remaining willpower, Tae-Kyung unleashed the energy circulating in his dantian.<br><br>[One more try!]<br><br>Forty-five years of Qi sparked into life, rushing alongside the elixir and the blazing soul of the Fire King. Together, three spirits struck the gates of the conception vein. Like fire and sharp-edged blades, they became an unstoppable force.<br><br>CRASH!<br><br>Suddenly, the gate blew open and his struggle was over. The long imprisonment of the conception meridian had ended. An impossible amount of energy rushed through his body, as though a huge dam had burst its banks.<br><br>For a moment, Tae-Kyung felt so dizzy that he thought he might faint. The agony subsided, replaced by peace and lightness that swept through every fibre of his being.<br><br>*Ding!<br><br>-You have successfully opened the [Conception Vessel Meridian]! -Your abilities have increased! -Aptitude for circulation and accumulation of Qi has dramatically increased! -You have gained the achievement [Opened the Conception Gate!] -As a reward...<br><br>Tae-Kyung trembled in joy. Everything had changed, he could feel it. The difference was as great as the gulf between First-Class and the Peak. Despite the unimaginable pain, this made his sacrifices worthwhile.<br><br>Beside him, the Fire King was staring in wonder and delight. "Well done!"<br><br>Had he been able to move, Tae-Kyung would have bowed deeply. Instead, the two men looked at one another, eyes full of admiration. Smiling in his heart, Tae-Kyung felt tears welling and blinked them away.<br><br>"What?" asked the Fire King in a quiet voice. "Oh... it's true... the governing vein remains."<br><br>[Shit! No! I'd forgotten about that!]<br><br>"You want to do it one more time? You want to finish this?"<br><br>[No! Please, no! At least take a break! Say, a hundred years?]<br><br>Laughing at the desperate blinks, the Fire King said, "Ha, you're keen to press on? I... I'd really thought that we should rest, but... OK! You're right! Let's seize the moment! Yes, boy, yes!"<br><br>[Shit.]<br><br>Screaming, Tae-Kyung rode the express train to Hell.<br><br>Almost delirious, he fell into a pit of burning fire, dropping into a whole new world of pain.<br><br>[Ahhhhh!]<br><br>The voice of the Fire King echoed inside his skull, urging him on.<br><br>[Ahhhhh-fuckkkk-ahhhhh!]<br><br>An inferno flowed through his meridians, accelerating through the conception gate and rising to smash into his skull. Tae-Kyung threatened to black out, but the pain kept him anchored.<br><br>"Again, boy!"<br><br>Time had no meaning now. Only the pain, the inspiring shouts, the incandescent fire of Qi rising like a phoenix.<br><br>[Ahhhhh!]<br><br>*Ding!<br><br>-[Venom] has ended. -You have successfully completed the quest, [Breaking the Balls Barrier]! -You have opened the [Governing Vessel Meridian]! -You have completed a rare achievement! -As a reward...<br><br>[A rare achievement. I... I'm done.]<br><br>As exhaustion overcame him and the ropes were loosened, Tae-Kyung fell into invisible darkness.<br><br>A small figure lifted the limp body from the stone and embraced him. His skin stank with sweat and turbid discharge, but these were the traces of victory and Cheon-Gang did not mind them in the least.<br><br>[The more I learn about you, the more impressed I am.]<br><br>When he had first met Jin Tae-Kyung, the Fire King hadn't understood why he was so favoured. He was grey and ordinary, the kind of soul that could be found anywhere: neither burning with justice, nor evil and ruthless enough to accomplish any goal. He didn't even seem passionate about martial arts. Yet, from the moment he arrived in Taiyuan, all he heard were stories about the Third Son, even unasked. In stark contrast to his older brothers, both respected for their outstanding talents, Tae-Kyung was famed for his limited martial skills and poor character. 'The shame of his family,' they called him. When Cheon-Gang heard that, he had asked why Heaven would choose to bless such a man with celestial power. After all, a masterwork sword should be held by a swordsman, not a farmer. But this youth didn't even have the honesty of a farmer and a man without integrity was no man at all.<br><br>[But I was wrong. An old fool, I let my ego cloud my judgement.]<br><br>Humans are imperfect beings. Why should they be divided into white and black? Maybe grey is the true path (善⼈ -- Chinese: kind people).<br><br>Morally, the young man was no saint, but he was good enough. And he had the excellent mental fortitude to match his physical attributes. After all, breaking his blood would have been unbearably hard and painful, such that it would be literal torture. Yet, Tae-Kyung had endured a single marathon session simply to become stronger.<br><br>[The owner of the Divine Body has been chosen well.]<br><br>Cheon-Gang smiled. "There could be great things ahead of you." As he sighed with happiness, an unexpected shudder passed through his body. His fingers spasmed. He had expended an enormous amount of energy, mentally and physically, and the effort had taken its toll. "I'm still in trouble, boy," he muttered, bitterly. "A few more years, though. I'll try to hold on that long."<br><br>With that, he pushed himself to his feet and lifted Tae-Kyung over one shoulder. They had crossed a mountain together, the old man and the young, and now both needed to rest.<br><br>***<br><br>Around noon, Akbulgun, the spear instructor from the Heaven's Gate Temple, arrived at Jin Wi-Kyung's office. As he knocked and entered, Wi-Kyung sat up as though startled.<br><br>"Welcome," said the Lesser Family Head. "Thank you for accepting my invitation. You must be busy."<br><br>"I have time and you don't, so it's my pleasure." Akbulgun came from a great family in Shandong province, but his immediate line was not prestigious and he was straightforward by nature, so didn't stand on ceremony. "Why did you call me here?"<br><br>Wi-Kyung smiled. "Unfortunately, it's not about Mu-Kyung."<br><br>"I see." The guest nodded his broad, bulldog head. "Lord, please know that the rules of Heaven's Gate are strict." The Academy at the Temple was famed across the world as a hub of learning that would accept the most talented candidates, irrespective of their origin. Their strict rules treated all cadets as equals, whether they came from small families or the greatest schools and sects. "Failure to return by the specified date results in dismissal. Even the Ten Dragons and Phoenixes are no exception."<br><br>Wi-Kyung had gone to see his brother, who had isolated himself in the training hall. Although Mu-Kyung denied access to all visitors, sustaining himself through Qi meditation, he did pause to give a single response: 'I will not return until I have achieved enlightenment.'<br><br>When Wi-Kyung told him this, Akbulgun laughed ruefully. He had taught the young genius many times and knew his character. "That's just who he is."<br><br>"Yes. I don't think I can make him change his mind."<br><br>"We'll all be sorry to lose him," said the stout man. He paused, then added, "I don't think I've heard why you've asked me here."<br><br>In reply, Jin Wi-Kyung produced a small bamboo container and handed it across.<br><br>Distinctive characters were engraved on the surface. "Heaven's Gate?"<br><br>Wi-Kyung nodded. "It just arrived. I thought you should see it."<br><br>Akbulgun raised an eyebrow and removed the scroll inside. His face darkened as he read, then read again.<br><br>"Lord," he said, looking up. "I need your help."</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-203.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-205.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

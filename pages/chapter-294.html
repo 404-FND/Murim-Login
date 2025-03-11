@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 294 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 294</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 294</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: December 9, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>A week prior, Mr. Choi had finally clinched his hard-won deal with Lee Jeong-Ryong's faction after days of relentless negotiations.<br><br>The bounty was immense: over twenty exclusive rights to Gates, a portfolio of prime real estate, and a cash sum so colossal its exact figure was shrouded in mystery.<br><br>After all, we had ten captive Black Hunters. But we never could have acquired these valuable spoils without the aides sent by Myeongdong Guild Leader Park Tae-Seop, who were also in our hands.<br><br>'This place is no different from Murim.'<br><br>With a surge of energy, I spearheaded the chant, stepping first into the magical barrier.<br><br>Swoosh. A slightly viscous, somewhat unsettling sensation of magic engulfed me, transforming the world around us in an instant.<br><br>Ding.<br><br>\- Entered A-rank Gate, \[Black Forest of the Necromancer\]!<br><br>\- Quest, \[Conquering the Gate\] has been automatically generated!<br><br>"Left, left! One, two, three, four! Hold your positions!"<br><br>"One, two! Align!"<br><br>As the human convoy halted in precise unison, nearly fifty of us had crossed into the Gate.<br><br>The dim moonlight filtering through sparse tree canopies cast eerie shadows in the forest depths.<br><br>The new recruits, freshly confronted with this daunting reality, gazed around in a mix of bewilderment and terror.<br><br>"Gasp!"<br><br>"We're doomed."<br><br>"Wait, what rank is this Gate? It's massive!"<br><br>In stark contrast, the third-week veterans, the 'mastiffs,' remained undaunted.<br><br>"Again, the Black Forest of the Necromancer?"<br><br>"Ugh, I'm gonna throw up."<br><br>"Glad I brought my war hammer."<br><br>Their composure, compared to the newcomers who had joined mere weeks apart, was markedly apparent.<br><br>The first-day 'pomeranians,' overhearing the mastiffs, blanched.<br><br>"The, the Black Forest of the Necromancer?"<br><br>"It's an A-rank Gate!"<br><br>A-rank Gate, Black Forest of the Necromancer.<br><br>Even those unfamiliar with its legend could sense its ominous nature from the name alone.<br><br>The foreboding air, the sinister forest view, all spoke of the dominion of the Necromancer, a master of dark magic.<br><br>"Damn it! Sunbae Jin Tae-Kyung!"<br><br>A jittery member of the pomeranians approached, his face etched with desperation.<br><br>"Please, can you let me out?"<br><br>"Why?"<br><br>"I'm really scared of ghosts. Regular monsters are okay, but I just can't handle ghouls, skeletons, and such."<br><br>"Is it trauma?"<br><br>"It's not that severe, but I'm just scared."<br><br>"That's even better. Consider this your live, immersive therapy session. They're all just monsters after all."<br><br>"But, that’s……."<br><br>"And on our guild application, you wrote that this wouldn't be a problem, right?"<br><br>"That was just to get in…… Please. I can't even watch horror movies with my girlfriend."<br><br>"Ah, girlfriend. I see. Here!"<br><br>With a snap of my fingers, a mastiff, who had been smirking in my direction, bolted forward.<br><br>"Did you call me?"<br><br>"Yes."<br><br>This was Kim Jin-Soo, the unofficial leader among the mastiffs.<br><br>His combat prowess and leadership qualities had made him an indispensable lieutenant in our raids.<br><br>This had been planned already.<br><br>"You know what to do. I have a special instruction regarding this person here."<br><br>"Yes."<br><br>"Put him in the front."<br><br>The pomeranian's brief sigh of relief turned into a gasp of shock.<br><br>"Di- did you just say to put me in the front?"<br><br>"Why? Is there a problem? You're holding a tower shield, looks like the perfect tank position to me."<br><br>"But……."<br><br>"If you want to drop out, then drop out. But be prepared to be fired."<br><br>"Fired?"<br><br>"Why should I employ someone who's afraid of ghosts and refuses to raid? And are there ghosts in the Gate? They're all monsters. Jin-Soo, am I wrong?"<br><br>Kim Jin-Soo quickly responded.<br><br>"You're absolutely right, a hundred, a thousand times over."<br><br>"If these things were all ghosts, why would I bring hunters? I'd bring an exorcist. Right?"<br><br>"You're absolutely right, as always."<br><br>"As expected, Jin-Soo, you always say the nicest things."<br><br>"Thank you."<br><br>"So, do you want to continue being a hunter at the Peace Guild, or do you want to be fired and switch to being an exorcist?"<br><br>The pomeranian replied, his voice rigid with resolve.<br><br>"I will be a hunter."<br><br>"Then if you run away during combat, I'll personally send you to the afterlife. Okay?"<br><br>"Okay."<br><br>"Great. To the frontline! Afterlife!" \[Note: it appears that this is the new nickname of this recruit.\]<br><br>With a flick of my hand, Kim Jin-Soo firmly grasped the pomeranian's arm, guiding him away.<br><br>Despite our careful selection process, it seems there's always one in every group.<br><br>'What? You can't even watch horror movies with your girlfriend because you're so scared of ghosts?'<br><br>I mused, half-amused, half-exasperated.<br><br>It's not the girlfriend part that irks me. Not at all.<br><br>"...."<br><br>Whoosh.<br><br>A cold gust swept through the forest, nipping at my cheeks.<br><br>Shuddering slightly, I made my way deeper into the woods, leaving the echoes of our conversation behind.<br><br>"Um, excuse me. Mister."<br><br>The pomeranian's anxious voice overlapped with a mastiff's blunt inquiry.<br><br>"What is it?"<br><br>"Hunter Jin Tae-Kyung, where are we headed now?"<br><br>"We're going herding."<br><br>"Herding?"<br><br>"That guy's known as the Pied Piper."<br><br>The mastiff chimed in, a hint of mischief in his voice.<br><br>"I can't be the only one working hard. Let's all do well together."<br><br>"..."<br><br>\*\*\*<br><br>As I trudged through the forest, making my presence known with every step, the desired effect was immediate.<br><br>Crunch! Boom.<br><br>\- Grrrrr!<br><br>\- Gr, gr, grrr...<br><br>Clack clack, clatter!<br><br>Amidst their grotesque howling, the corpses that lay dormant beneath the earth and in graves began to stir to life.<br><br>Ghouls dripping with rotten flesh and skeletons revealing stark white bones emerged.<br><br>These cursed beings, known as Undead Monsters, rapidly swarmed the forest and hills.<br><br>"Alright, everyone, stay close and follow my lead! Understand?"<br><br>\- Grrrrr!<br><br>Patter patter!<br><br>Gone are the days when zombies were portrayed as mere limping figures.<br><br>These creatures, when they sprint, make me wonder if they've been training at the Taereung National Training Center. \[Note: Korea National Training Center, also known as the Taereung Training Center, located in Gongneung-dong, Nowon-gu, in the northeast part of Seoul, is the first national athletic training center established in South Korea.\]<br><br>Despite their speed, they're no match for me.<br><br>'Today's a bit different with new recruits on board. Time to ease off slightly.'<br><br>As I darted through the forest, I occasionally glanced back to keep a count.<br><br>Around one hundred and fifty, maybe?<br><br>While this was threefold our team's size, it was modest by our usual standards.<br><br>Ghouls and skeletons, though not particularly formidable as monsters, were still a challenge, but we had come prepared and steeled ourselves for this encounter.<br><br>'These mastiffs are living up to their name.'<br><br>Typically, the hordes I lure are three to ten times larger than our team. After a few close brushes with danger, I've seen the fire of resolve ignite in the eyes of these recruits.<br><br>Naturally, I intervene when the threat becomes too real. Thanks to this, we've had injuries but fortunately, no casualties.<br><br>This repeated drill has earned me a reputation – part menace, part mentor.<br><br>'I wish it didn’t have to be this harsh... but it's necessary.'<br><br>This is intensive training. My goal is to cultivate resilient warriors for the Peace Guild, capable of thriving in the most arduous conditions.<br><br>In less than a month, some have already opted out, transferring to other teams. I didn’t persuade them to stay, nor do I harbor any regrets.<br><br>'It's their decision.'<br><br>Everyone charts their own path. I'm just a fleeting presence in their journey.<br><br>I can present options, but the decision is theirs to make.<br><br>Swoosh!<br><br>The \[Black Forest of the Necromancer\], living up to its A-rank Gate status, sprawled vast and foreboding.<br><br>Yet, the expanse I had traversed was merely a sliver of the Gate's vastness. As I adjusted my speed and ran, the entrance to the Gate gradually came into view.<br><br>"Here they come!"<br><br>"That damn Jin Tae-Kyung..."<br><br>"Seems like a lighter batch for the first timers."<br><br>"Ugh, skeletons!"<br><br>The reactions varied - from those booming out warnings of the advancing monsters, to others cursing under their breath, and some calmly estimating the enemy numbers.<br><br>The rookies, still green in battle, visibly tensed with apprehension.<br><br>Naturally, my seasoned mastiffs weren't ones to remain passive.<br><br>"Damn it, what are you doing! The line is being pushed back!"<br><br>"Don't step back. Hold your shield tight. What? Need to pee? Then just do it!"<br><br>"Newcomers, stay alert. Don’t expect Jin Tae-Kyung to bail you out. He even created a charity foundation just in case someone dies here, you know?"<br><br>"....."<br><br>Such remarks could damage my reputation, but I held my tongue.<br><br>This was part of toughening them up mentally, letting them vent to stay focused.<br><br>'Even the king gets cursed behind his back.'<br><br>I made a mental note of each face.<br><br>Approaching the hunters, who were already in formation, I swiftly scaled the tallest tree and bellowed.<br><br>"Tighten the shield wall!"<br><br>Boom!<br><br>In unison, the undead horde, their grotesque faces turning upwards, spotted me in the tree.<br><br>One skeleton, distinct from the rest, stood atop a hill near the Gate entrance. It raised its bone sword, sheathed in an aura of dark energy, high into the air while emitting a piercing shriek.<br><br>\- Grrrrr!<br><br>This was no ordinary skeleton.<br><br>Clad in ancient armor, its ominous black aura flaring around the bone sword, this was a Skeleton Knight - a being far superior to the common undead.<br><br>"Skeleton Knight?"<br><br>Skeletons come in various ranks.<br><br>Soldiers, Mages, Warriors.<br><br>Each had their own unique abilities and strengths. A Skeleton Knight, a truly formidable A-rank monster, is a force to be reckoned with.<br><br>'I have encountered them frequently in the Black Forest... but this one seems different.'<br><br>Encountering an A-rank adversary like a Skeleton Knight in an A-rank Gate is expected. These knights often lead the lesser Warriors and Mages, strategically positioned throughout the Black Forest.<br><br>In that moment, as I scrutinized the figure more closely, a guttural growl pierced the air.<br><br>\- Grrr!<br><br>\- Gwoooh!<br><br>Tsststs!<br><br>A chorus of chilling shrieks erupted, accompanied by the emergence of two more Skeleton Knights.<br><br>Under my breath, a mix of surprise and disbelief colored my words.<br><br>"………Three Skeleton Knights in a single group?"<br><br>This was unprecedented.<br><br>A skeleton cohort typically mirrors an army, with the Knight as its commanding general. It was rare to find more than one general in an independent unit.<br><br>'Could it be an alliance of multiple groups?'<br><br>Yet, this theory seemed implausible.<br><br>The two newly emerged Knights, their bones clattering in an eerie symphony, moved towards the first Skeleton Knight. In a symbolic gesture of fealty, they knelt on one knee, their bone swords thrust into the ground.<br><br>This was an unmistakable display of allegiance. A purple light flickered in the hollows of their skull, where eyes once resided.<br><br>Whooosh!<br><br>An intense light exploded from the abyssal darkness.<br><br>As our gazes locked onto the fiercely blazing flame, the transformation began.<br><br>\- Grrrrr!<br><br>Crack-crack-crack!<br><br>The armored Knight morphed before our eyes. Its bones thickened and elongated, coated in a mysterious black sheen.<br><br>But the transformation didn't end there.<br><br>Sssshhh!<br><br>The once-rusted armor seemed to reverse the ravages of time, healing its fractures and rust. Broken chains reassembled themselves, and the faded skull emblem on its chest pulsed with renewed vibrancy.<br><br>A dark green cloak billowed dramatically in the wind.<br><br>Upon completing its metamorphosis, the entity studied its own palm, now encased in a sturdy gauntlet.<br><br>Then, unexpectedly.<br><br>\- Not bad.<br><br>“.....!”<br><br>The air in the forest quivered with tension.<br><br>We all, myself included, were rendered speechless, captivated by the transformed being before us.<br><br>Skeleton Knight – once a valorous knight, now an undead creature of fallen grace.<br><br>But not just any undead anymore.<br><br>\[Lv.105 Skeleton Warlord\]<br><br>\- Come. Down. Hu. Man.<br><br>The purple glow burning in its eyes locked onto me with unnerving intensity. \[Note: as mentioned in the manwha, monsters do not usually speak. The last time we saw a monster who could speak was the Named monster, One-Eyed Carus, who also glowed purple. I think that this establishes that glowing purple monsters are meant to indicate significant threats.\]</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-293.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-295.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 315 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 315</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 315</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: January 12, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>Thud, thud.<br><br>The footsteps of Hyuk So-Pyung of the Southern Edge Sect echoed with a steady pace.<br><br>Each step drew whispers and watchful eyes.<br><br>“Tsk, tsk, causing such a commotion in broad daylight.”<br><br>“For someone who's supposed to be the top disciple of his sect, this behavior really shows the level of the Southern Edge Sect. No wonder the Mount Hua Sect always leads in Shaanxi.”<br><br>“Why is his cheek so swollen? I heard that the First Crane of Mount Hua arrived, maybe…”<br><br>Unconsciously, Hyuk So-Pyung touched his cheek.<br><br>Pain flared, not just from the stinging glares but from the memory of three harsh slaps. A voice echoed in his mind.<br><br>‘I think I mentioned this. Think carefully before you swing that sword.’<br><br>The successor chosen by Jeok Cheon-Gang, the Fire King of the Scorching Clan. A sleeping dragon that rose from a small stream in Shanxi Province.<br><br>He was fed up with hearing stories about that guy.<br><br>But still...<br><br>‘How can he be so strong?’<br><br>He couldn't understand it.<br><br>Hyuk So-Pyung, pampered with elite training, martial arts, and elixirs, was destined for the Ten Dragons and Phoenixes.<br><br>Now, his world seemed to crumble.<br><br>The Xi'an Tower's Chief Manager's icy greeting was a clear sign.<br><br>“I heard you caused another disturbance.”<br><br>“A disturbance? There was a bit of a commotion, but it’s nothing. Let's move on.”<br><br>Hyuk So-Pyung tried to walk past, but halted at the Chief Manager’s words.<br><br>“I mentioned this last time. If such an incident happens again, I will formally report you to the Southern Edge Sect.”<br><br>“Report me?”<br><br>Hyuk So-Pyung, eyes flashing, retorted.<br><br>“Our Chief Manager Song has grown bold.”<br><br>“Young Master Hyuk!”<br><br>“Don’t be insolent.”<br><br>A growling sound came from between Hyuk So-Pyung’s teeth.<br><br>“Seems like putting the son of the tower master in the Mount Hua Sect has gotten to your head… Does the great Southern Edge Sect seem like a joke to you?”<br><br>“You are speaking too harshly.”<br><br>The Chief Manager's face hardened, and Hyuk So-Pyung’s lips curled in disdain.<br><br>“It's you who are being excessive. You're just some people who sell liquor, daring to look down on the main branch. Your guts are spilling over.”<br><br>“Shall I relay those words exactly as you said them to the Tower Master?”<br><br>“Don’t forget to do so. See you next time.”<br><br>Thump, thump.<br><br>Hyuk So-Pyung patted the Chief Manager's shoulder, departing with a smirk.<br><br>‘To think that even these kinds of people would dare to ignore me now.’<br><br>The Tower Master of Xi'an was no ordinary merchant, wielding significant sway in Shaanxi's capital's vibrant entertainment district.<br><br>Yet, even the most influential commercial figures paled against the might of the Nine Great Sects, akin to fireflies before the sun.<br><br>And Hyuk So-Pyung, insulted not by the Tower Master, but a mere tavern's Chief Manager, found it a bitter pill to swallow.<br><br>‘Things are getting worse and worse.’<br><br>The Southern Edge Sect's prestige had been waning.<br><br>It started with Jeok Cheon-Gang, the Fire King, humiliating the Tiger Swordsman, followed by the resurgence of Sword Saint Mae Jong-Hak and the Divine Dragon of Mount Hua.<br><br>How could there be two tigers on the same mountain?<br><br>If one was to become strong, then the other must become weak. For now, the role of the Southern Edge Sect was the latter.<br><br>‘It won’t always be like this.’<br><br>Drip, drip.<br><br>Blood seeped from his clenched fist.<br><br>The aftereffects of last night's indulgence had faded. Looking skyward, a hardened resolve in his gaze, Hyuk So-Pyung heard a voice.<br><br>“Huff, huff. Daesahyung, you are here.” \[Note: daesahyung means "eldest martial senior brother".\]<br><br>“You are… Bong-Soo, aren’t you?”<br><br>Surprise flickered in Hyuk So-Pyung's eyes at the familiar face.<br><br>The panting young man was a fellow disciple from the Southern Edge Sect, though they trained under different masters.<br><br>“What brings you here, when you should be at the main mountain?”<br><br>The 'main mountain' being Zhongnan Mountain, a two-day trek from Xi'an. Bong-Soo replied.<br><br>“I’m on a mission. Not just me, but the entire Tai Yi Sword Team is here.” \[Note: There are several different ways to interpret this translation. The characters used here are "Tai Yi", which is the ancient Chinese name for Mount Taibai in Shaanxi Province or could be another way of writing "Zhongnan Mountain", which would be the main mountain of the Southern Edge Sect. This could also refer to a Taoist principle. While TaiJi refers to a balance of Yin and Yang, TaiYi refers to a separation of or distinction between Yin and Yang.\]<br><br>“A mission? And with the Tai Yi Sword Team?”<br><br>This team of second-generation disciples, while not as renowned as Mount Hua's Plum Swordsmen, were the pride of the Southern Edge Sect.<br><br>The Tai Yi Sword Team's appearance far from Zhongnan Mountain was extraordinary.<br><br>Puzzled, Hyuk So-Pyung listened as the disciple continued.<br><br>“I was ordered to escort you back.”<br><br>“Ordered? Who’s looking for me?”<br><br>“Sabaek is currently in Xi'an.” \[Note: sabaek refers to the older martial brother of your Master, i.e. older martial uncle.\]<br><br>“...!”<br><br>Hyuk So-Pyung's eyes widened. There were only two people that a disciple the same rank as him would refer to as Sabaek.<br><br>With the Tiger Swordsman Song Il confined due to injuries from the Fire King, only one other name came to mind.<br><br>‘But why would he be in Xi'an...’<br><br>He pushed aside the whirlwind of questions.<br><br>The presence of the second Sabaek, a figure more daunting than his own master, the Storm Sword Supreme, demanded immediate attention.<br><br>This fear was universal among Southern Edge Sect disciples, evident in his junior's anxious demeanor.<br><br>“Daesahyung, we have no time.”<br><br>“Lead me to Sabaek at once.”<br><br>Swiftly, Hyuk So-Pyung sped off using Qinggong, one thought echoing in his mind.<br><br>‘What on earth is happening?’<br><br>One thing was certain.<br><br>If the second Sabaek, the Tai Yi Ruthless Sword, was involved, it was definitely not a trivial matter.<br><br>\* \* \* \*<br><br>True Qi Guidance is perilous and complex.<br><br>Even solo energy cultivation harbors risks of Qi deviation. Guiding another's Qi, as True Qi Guidance necessitates, compounds these challenges.<br><br>‘And to think that the subject is the Fire King.’<br><br>The tension of guiding Qi for the members of the Peace Guild was nothing compared to this.<br><br>Cautiously, I maneuvered the Scorching Yang Qi, as if walking on fragile ice.<br><br>‘Slowly. Carefully.’<br><br>I focused, devoid of distractions, channeling Jeok Cheon-Gang's formidable Qi.<br><br>Whoosh.<br><br>Our energies converged.<br><br>Contrary to my experiences with the Peace Guild, there was no resistance, no clash. Our energies melded seamlessly.<br><br>It felt like a reunion of long-lost twins, naturally harmonious and intertwined.<br><br>‘Because we grew from the same root.’<br><br>Jeok Cheon-Gang and I share the same root of the Scorching Clan.<br><br>For those unversed in the Scorching Sun Divine Arts, attempting True Qi Guidance with Jeok Cheon-Gang's formidable power would be a perilous endeavor, risking Qi deviation.<br><br>‘Lucky me.’<br><br>Despite previous experiences, the task never ceased to be challenging.<br><br>With a tense heart, I commenced the True Qi Guidance, adhering to the tenets of the Scorching Sun Divine Arts.<br><br>The Scorching Yang energy, now unified, flowed in a continuous cycle.<br><br>Hours seemed to meld together, the concept of time blurring as I immersed in the intricate process.<br><br>The extensive session of True Qi Guidance eventually concluded, the energy returning to the dantian with a resonant sound.<br><br>Ding.<br><br>\- \[True Qi Guidance\] successfully completed!<br><br>\- The target's condition has marginally improved!<br><br>\- Your \[Scorching Yang Qi\] has increased slightly!<br><br>“Huff…”<br><br>Exhaling deeply, I centered my breath.<br><br>It wasn’t over yet. For a moment, I had become one with the immense energy of the Transcendent Master, Jeok Cheon-Gang, and experienced it as my own.<br><br>The Scorching Clan's legacy, a myriad of paths stemming from a single source, was vividly apparent to me.<br><br>Such moments of profound insight often lead to enlightenment.<br><br>Just like now.<br><br>‘Finally, I'm getting a hold of it.’<br><br>There it was. The staircase to a higher realm.<br><br>It was a small epiphany that couldn’t be taught.<br><br>Ding.<br><br>\- \[Scorching Sun Divine Arts\] has reached seventh mastery!<br><br>\- The manipulation and deployment of Qi has become more fluid!<br><br>\- All of the martial arts of the Scorching Clan have become stronger and more precise!<br><br>\- As a reward for your enlightenment, you've gained a large amount of experience points and bonus points!<br><br>\- Level up!<br><br>This was the breakthrough.<br><br>My eyes opened to the sound of a jubilant bell. Although just a single step forward, the transformation was profound.<br><br>A heightened perception enveloped me, revealing the minutiae of my surroundings.<br><br>The sweat-soaked skin, the pungent scent of expelled impurities, and the faint, struggling breaths from someone nearby.<br><br>“......”<br><br>What the fuck is this?<br><br>There was Cheong Pung, wrapped around Hyuk Mu-Jin like a python, hands clamped over his nose and mouth.<br><br>“What are you doing there?”<br><br>Cheong Pung cheerfully replied.<br><br>“I was stopping Young Master Hyuk from snoring!”<br><br>“Ah, good job. I was so annoyed by that guy I almost fell into Qi deviation.”<br><br>That damn Hyuk Mu-Jin was supposed to be on guard duty but instead he’s dreaming of butterflies.<br><br>Observing the asphyxiating Hyuk Mu-Jin, I inquired curiously.<br><br>“Isn’t it enough to just cover the nose? Why the mouth too?”<br><br>“When I covered the nose, he started making noise from his mouth!”<br><br>“Ah.”<br><br>“So I just covered both!”<br><br>“Hmm, wouldn’t that suffocate him to death?”<br><br>“He can use the Turtle Breathing Technique!”<br><br>“And what the hell is that Turtle Breathing Technique exactly?”<br><br>“You hold your breath, stop your heartbeat, and lower your body temperature!”<br><br>“Amazing. Is that even possible?”<br><br>“Of course. That’s what Young Master Hyuk is doing right now with the Turtle Breathing Technique!”<br><br>“Hyuk Mu-Jin is?”<br><br>“Yes! His heartbeat has already stopped.”<br><br>“……?”<br><br>I froze, gazing at Hyuk Mu-Jin.<br><br>In our conversation's span, his struggles had ceased; his limbs dangled lifelessly.<br><br>“Oh my god, Mu-Jin!”<br><br>“He’s going to get cold soon!” \[Note: Cheong Pung is still waiting for the "lower body temperature" part of the Turtle Breathing Technique, and still does not understand that he has committed involuntary manslaughter.\]<br><br>“Get your hands off him, you crazy idiot!”<br><br>“Wait, isn’t this the Turtle Breathing Technique? Young Master Hyuk. Can’t you hear me? Young Master Hyuk?”<br><br>I’m not sure about the Turtle Breathing Technique, but it seemed like some kind of ghost technique.<br><br>I aimed a palm strike at the chest of Hyuk Mu-Jin, who was on the verge of mastering this ghostly technique.<br><br>“Cardiopulmonary Resuscitation Fist!”<br><br>Thump!<br><br>With a solid impact, Hyuk Mu-Jin gasped for air, his body jolting to life.<br><br>“Cough!”<br><br>“Ah, Mu-Jin! My left pinky finger!”<br><br>“Cough, cough! Sq-squad Leader?”<br><br>“Are you okay? Can you breathe properly?”<br><br>“Huh?”<br><br>Hyuk Mu-Jin looked around with a bewildered face, seemed unable to grasp the situation, as he had been attacked in his sleep.<br><br>“What just happened? I was in the clouds just a moment ago.”<br><br>“In the clouds?”<br><br>This guy really almost went to heaven.<br><br>As I sighed in relief, Hyuk Mu-Jin continued.<br><br>“A man in white clothes came and started saying weird things. Something about a lamb coming, and so on.”<br><br>“A lamb?”<br><br>“Yes, a lamb. And he tried to hug me, but he had holes this big in his palms. I was about to slash him down when I woke up.” \[Note: My boy got to meet Jesus and almost got to exchange martial knowledge to reach that realm beyond the One God.\]<br><br>“......”<br><br>Why would he dream about that person?<br><br>In this contemplative silence, the door slid open, revealing a disheveled face.<br><br>Cheong Pung looking gloomy, Hyuk Mu-Jin who had just come back from the dead, and then me, who was still recovering from the shock. Goong Gi-Bang, having surveyed each of us, muttered.<br><br>“What a mess.”<br><br>This beggar is treating us like dogs.<br><br>Having barely collected my thoughts, I asked Goong Gi-Bang.<br><br>“Did you come begging?”<br><br>Goong Gi-Bang retorted, his face a mix of offense and indignation.<br><br>“What are you talking about! I was just visiting our Xi'an branch on my way back!”<br><br>Last night, I had decided to recuperate at Xi'an Tower. Goong Gi-Bang, tasked with gathering intel, likely stopped by the Xi'an branch for that purpose.<br><br>With beggars rampant everywhere, the Beggar Sect's branches are found on every corner.<br><br>In terms of sheer numbers, they are arguably the greatest sect in the world.<br><br>“So, did you find any useful information? Like, for instance, the whereabouts of the Divine Doctor?”<br><br>“I did. Not about the Divine Doctor, though.”<br><br>Goong Gi-Bang, after a moment of thought, continued.<br><br>“This information, it reeks of fishiness.”<br><br>“More than you?”<br><br>“......”<br><br>“Sorry. Go ahead and tell me.”<br><br>Offended, Goong Gi-Bang only started to speak after receiving a donation of five silver coins.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-314.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-316.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 345 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 345</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 345</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: February 19, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>Even though Murim is a place rampant with murder and violence, there's a rule that once you reach the upper echelons of any faction, you're expected to maintain a certain decorum and receive that same decorum in return.<br><br>'Especially if you're the head of a house within the Five Great Families, like the Tang Family of Sichuan.'<br><br>Tang Sa-Dok, for instance, was known for his forthrightness, but was unaccustomed to receiving it in kind.<br><br>Like now.<br><br>"Please lend us the Ring of All Poisons."<br><br>"......!"<br><br>A completely unexpected request.<br><br>As his eyelid twitched momentarily, Tang Sa-Dok retorted.<br><br>"Do you believe in such nonsensical stories? I knew you were young, but to be this naive..."<br><br>"I just saw your eyelid twitch."<br><br>"Nonsense!"<br><br>"Your voice gets louder because you're flustered, right?"<br><br>"Didn't I say no!"<br><br>"Oh, clenching your fist now?"<br><br>"It doesn't exist!"<br><br>"If I rummage through your pockets and find it, may I keep it?"<br><br>"Go ahead! Search! If you don't find it, I'll take your neck instead!"<br><br>"Ah, so you've hidden it somewhere else. Then, I will cancel."<br><br>"This...!" \[Note: the character used here is 이익 and is most probably the start of another word or sentence from Tang Sa-Dok, but can also be directly translated on its own as "Profit".\]<br><br>"Loss...!"<br><br>"How dare this damned brat!"<br><br>Ah, I should have held back on the last part.<br><br>Tang Sa-Dok's eyes rolled back in his head after being hit by a fantastic combo.<br><br>Before he could resort to concealed weapons, I interjected hastily.<br><br>"Just once! Just lend it to me once!"<br><br>"Didn't I say it doesn't exist!"<br><br>"Let's assume it doesn't. Just listen to what I have to say."<br><br>"Whatever you say, it won't change anything."<br><br>"Even if I tell you that I will kill the beast for you?"<br><br>"What?"<br><br>"I will kill the monster that harmed the Poison King, Grandmaster Tang Sa-Mun."<br><br>A beat passed.<br><br>"This bloody bastard dares to provoke me...!"<br><br>Swoosh.<br><br>Energy, green and shimmering like a desert mirage, cascaded over Tang Sa-Dok. His blazing eyes fixed on me as he spoke with measured calm,<br><br>"Do you really wish to die?"<br><br>"I have a bright future ahead of me, so no."<br><br>"Punishing that bastard is the responsibility of our family. Yet, you, an outsider, dare to take it from us!"<br><br>Whooosh!<br><br>A powerful gust of energy burst forth, rattling the chamber. Shielding the quaking Divine Doctor and Mun-Kyung, I countered,<br><br>"Have you had any success?"<br><br>"......!"<br><br>"The beast is a master strong enough to defeat the Poison King. Moreover, they caused a bloodbath in the Emei Sect, right under the Tang Family of Sichuan's watch, indicating that their strength isn't just in martial arts."<br><br>No matter how vast the lands of Sichuan are, it's where the Tang Family has been rooted for ages.<br><br>It's like letting the family's sworn enemy escape from the front yard. Tang Sa-Dok's face hardened as he had to return empty-handed despite leading most of the family on the chase.<br><br>"Are you blaming our family's incompetence now?"<br><br>"Of course not."<br><br>If the Tang Family of Sichuan were incompetent, then most of the martial sects scattered across the world should be barred and shut down.<br><br>The Nine Great Sects and the Five Great Families are the pillars of Murim. The issue at hand is the monstrous nature of the beast, not a shortfall on the part of the Tangs or the Emei Sect.<br><br>"I'm talking about probabilities."<br><br>"Probabilities?"<br><br>"The beast has martial arts comparable to the Ten Kings and is skilled in evasion. Wouldn't the likelihood of capturing them increase with more helping hands?"<br><br>"Our family's Green Shadow Squad are already pursuing them. I have returned temporarily to prepare for any emergencies, but it won't be long before we surely annihilate the creature."<br><br>Tang Sa-Dok's gaze pierced me and Cheong Pung.<br><br>"Our family is the great Tang Family of Sichuan. We do not need the help of outsiders, especially not from novice scum like you."<br><br>"......Sure."<br><br>I thought I had already far surpassed the level of a novice.<br><br>'And surely that guy has.'<br><br>Casting a side glance at Cheong Pung's dumbstruck expression, I idly scratched my head.<br><br>"Hmm, I figured it might go something like this."<br><br>Given the Tang Family of Sichuan's penchant for autonomy, their reaction was somewhat predictable.<br><br>That's why, while en route to the Tang estate, I devised a more enticing strategy.<br><br>"Then instead of help from novice scum, what about help from the Fire King?"<br><br>"......!"<br><br>"Let's say we manage to track down the monster. It's not going to willingly offer its arm for a quick injection of poison needles, will it?"<br><br>Those who wish to live versus those who wish to kill. A fierce battle is inevitable.<br><br>Deploying their full might, the Tangs could seek vengeance for the Poison King but at the cost of significant bloodshed.<br><br>Be they from the branches or the main family, numerous Tang descendants would fall.<br><br>"Grandfather, no, Master and I will help you. We'll minimize the Tang Family of Sichuan's losses and leave the monster's disposal to you, Patriarch."<br><br>"......Impossible. No matter the cost, our family must resolve this with our own power."<br><br>"Your response was a bit delayed."<br><br>"This is the path our ancestors have walked, the path that made the Tang Family of Sichuan what it is!"<br><br>"I am aware of the path the Tang Family of Sichuan has walked."<br><br>The family's bond is tight, a vendetta once sworn is pursued relentlessly, and justice is executed without mercy.<br><br>This resilience has earned the Tangs both reverence and fear.<br><br>I softly added,<br><br>"But sometimes, taking a shortcut doesn't necessarily mean people will point fingers. Especially if the reason for choosing that shortcut is to reduce the sacrifices of one's family members."<br><br>Tang Sa-Dok clenched his jaw.<br><br>Perhaps he isn't as cold-hearted as he appears.<br><br>Even if he was as cold-hearted as he appeared, he wouldn't be a ruthless Partriarch who prioritized revenge over their family.<br><br>'Otherwise, he wouldn't have returned to the family.'<br><br>But Tang Sa-Dok did come back, likely to defend the family from potential threats and protect those who would be vulnerable in his absence.<br><br>"What will you do?"<br><br>After a lengthy silence, he finally responded.<br><br>"......If - hypothetically - the Ring of All Poisons exists, could it heal Grandmaster Jeok?"<br><br>"According to someone I know, it could."<br><br>Prompted by my look, the Divine Doctor spoke up.<br><br>"We're almost ready. With the addition of the Ring of All Poisons, there shouldn't be any issue with the treatment."<br><br>"How long will it take?"<br><br>"Fifteen days. Fifteen days should be sufficient."<br><br>"Fifteen days..."<br><br>Tang Sa-Dok regarded the Divine Doctor, lowering his tone.<br><br>"I also examined Grandmaster Jeok's condition. Although my knowledge of poison far exceeds my medical skills, I couldn't determine the nature of his illness. Do you really think it's possible?"<br><br>"It is possible."<br><br>A confident affirmation cut through the room.<br><br>Mun-Kyung advanced, asserting,<br><br>"If it's the Divine Doctor, it's possible."<br><br>"A foolish boy. Is he your disciple?"<br><br>The Divine Doctor responded with a faint smile.<br><br>"The patient's revival necessitates the Ring of All Poisons. I understand the desire to conceal such a treasure, but I implore you to offer your help with benevolence and righteousness."<br><br>"Benevolence and righteousness, huh? Do you think the same?"<br><br>"Me?"<br><br>"Speak. I wish to hear your thoughts."<br><br>"If you insist."<br><br>I offered a nonchalant shrug,<br><br>"Rather than benevolence and righteousness, let's call it a matter of gratitudes and grudges."<br><br>"Why is that?"<br><br>"Because it's the Murim. If someone offers help, it's only right to repay them, according to the laws of our society."<br><br>Tang Sa-Dok's weathered face briefly softened with amusement.<br><br>"That sounds much better."<br><br>"It's not just lip service."<br><br>"What if, while Grandmaster Jeok is being treated, the monster escapes far away?"<br><br>"I'll chase them down and capture them myself. Ah, but not right away, of course. I won't move an inch until my Master awakens."<br><br>"You're a funny man. Even if the monster is someone that you would enjoying tearing to shreds, they are a formidable Master. And you, a mere novice, think you can capture such a being?"<br><br>"If I cannot capture it, then I will kill it."<br><br>"Ha, haha!"<br><br>His laughter erupted, then ceased abruptly.<br><br>"The Ring of All Poisons does not exist."<br><br>"......Excuse me?"<br><br>No way, what is this bullshit?<br><br>Has this old man been playing me this whole time?<br><br>Just as I was feeling a dull ache in the back of my head, Tang Sa-Dok continued speaking.<br><br>"The Ring of All Poisons is nothing but an old legend. Even among our family, it's considered an ancient tale."<br><br>"What, it doesn't exist? Really?"<br><br>"Nobody knows, and nobody should know."<br><br>"Fuck. Then you should have said that from the beginning! Now you're just fucking with me......"<br><br>Ssss.<br><br>I silenced myself, taken aback.<br><br>From Tang Sa-Dok's garments, a white serpent emerged, its gaze piercing mine.<br><br>'What's this now?'<br><br>Not Voldemort for sure, but why is there suddenly a snake here?<br><br>And it even has horns, unlike any snake I've ever seen. As I glared back into the black eyes of the snake, the Divine Doctor murmured,<br><br>"The Thousand-Year Venomous Horned Serpent...?"<br><br>Merely the name evoked dread.<br><br>Tang Sa-Dok, noticing my retreat, laughed softly, caressing the serpent's distinctive head.<br><br>"There's no need to be afraid. It's not a dangerous creature."<br><br>"The name sounds pretty dangerous, though."<br><br>"The Thousand-Year Venomous Horned Serpent?"<br><br>"Yes. What kind of name is that? It's not a friendly Golden Retriever... Anyway, does the Ring of All Poisons really not exist?"<br><br>"It's not the Thousand-Year Venomous Horned Serpent; it's Mimi."<br><br>"Excuse me?"<br><br>"Tang Mimi. That's the name I gave it."<br><br>A chill ran down my spine...<br><br>As Tang Sa-Dok tenderly patted Mimi, his gaze shifted to the Divine Doctor.<br><br>"You would know. This creature is not an ordinary Thousand-Year Venomous Horned Serpent."<br><br>The Divine Doctor nodded.<br><br>"The Thousand-Year Venomous Horned Serpent is known to be a highly toxic and rare creature, entirely black and with a fierce nature. It is impossible to tame. But..."<br><br>"As you can see. This one not only looks different, but its temperament is also very gentle."<br><br>"But who knows when it might turn. A single drop of its venom could kill a hundred cows, couldn't it?"<br><br>"No need to worry. This one has no poison."<br><br>"Excuse me?"<br><br>"To be precise... it has lost its poison."<br><br>After finishing his sentence, Tang Sa-Dok locked eyes with Mimi-chan, no, the Thousand-Year Venomous Horned Serpent.<br><br>It was but a brief moment, but there was clearly a connection, and the intelligent snake understood its master's intent.<br><br>Shush, shush!<br><br>Lowering its head and emitting a soft, metallic hiss, the serpent delicately ejected an object into Tang Sa-Dok's outstretched hand.<br><br>With a gentle thud, an item, coated in a viscous sheen, came into view.<br><br>'That is...'<br><br>A ring.<br><br>The ring, crowned with a dark gem that seemed to swallow the light around it, pulsated with a sinister yet captivating glow.<br><br>Having neutralized the potent venom of the Thousand-Year Venomous Horned Serpent, it radiated a foreboding beauty.<br><br>"Could it be?"<br><br>My voice was a whisper, disbelief mingling with awe, as I fixed my gaze on the ring, entranced. Tang Sa-Dok, with a tone of quiet assurance, broke the spell.<br><br>"Remember. Nobody knows, and nobody should know."<br><br>"Understood."<br><br>"Then take it."<br><br>He offered the ring, his gesture laden with gravity.<br><br>"It is my family's most sacred treasure."<br><br>As my hands, unsteady with anticipation, accepted the ring, a chime resounded.<br><br>Ding.<br><br>\- Quest Condition, \[Acquisition of the Ring of All Poisons\] completed!<br><br>\- Linked Quest, \[Ring of All Poisons\] successfully completed!</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-344.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-346.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

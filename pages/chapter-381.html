@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 381 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 381</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 381</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: March 29, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>Swoosh.<br><br>It was invisible, but I could sense it. Inside my inventory, a sticky aura emanated from the Skeleton Warlord, enveloped me, and radiated outward.<br><br>The transformation was instantaneous.<br><br>\- Creak?<br><br>\- Roar?<br><br>The monsters' savage movements ceased abruptly.<br><br>Along with vanquished hunters, there were orcs, trolls, goblins, werewolves, and a myriad of creatures one might discover in a bestiary.<br><br>A singular trait unified them: they had perished and been revived as the undead.<br><br>Gulp.<br><br>I swallowed hard, whispering,<br><br>"It works."<br><br>\- Wow, it really does work.<br><br>"……?"<br><br>\- ……?<br><br>What did you just say?<br><br>Overcome with astonishment, I murmured,<br><br>"What kind of boneheaded nonsense is that? Didn't you do it because you knew it would work?"<br><br>The Skeleton Warlord replied with hesitation,<br><br>\- The truth is... I didn't know it would be this easy.<br><br>"You said your control was much stronger, didn't you?"<br><br>\- Ah, that was just something I said out of anger.<br><br>"What?"<br><br>\- It hurt my pride to watch...<br><br>"……."<br><br>Is this guy completely insane?<br><br>Despite the incredulity, the evidence was irrefutable.<br><br>As the undead creatures within our proximity halted, the intense conflict around us momentarily subsided.<br><br>「The monsters have stopped moving!」<br><br>「What in the world is going on here?」<br><br>「Don't let your guard down! Some are still active!」<br><br>The last warning was true; it was still too early to relax.<br><br>Only a fraction of the undead near us had succumbed to the Skeleton Warlord's influence. Those at a distance or not resurrected remained unaffected.<br><br>\- Ughhhhh!<br><br>\- Squeak!<br><br>"Hyaaaah!"<br><br>Clang! Thud!<br><br>Momentarily disoriented by the abrupt shift, the unaffected monsters resumed their chaos, reigniting the conflict.<br><br>Our side was outnumbered. Yet, from this point forward, the tide was shifted.<br><br>I whispered with urgency,<br><br>"Go, Warlordmon!"<br><br>The vexed Warlordmon, or rather, the Skeleton Warlord, retorted,<br><br>\- You cunning human! Do not call me by that name!<br><br>"So, you want to be obliterated, Warlordmon?"<br><br>\- ...Damn it.<br><br>Despite lacking breath, the skeleton seemed to sigh, then commenced a spell.<br><br>\- Fight, skeleton skeleton.<br><br>The skeleton legion incantation, though seemingly trivial, had an undeniable impact.<br><br>\- Roar?<br><br>Under the Skeleton Warlord's order, a fierce gleam returned to the bewildered undead's eyes. In the next instant.<br><br>Crack!<br><br>An undead ogre's club crushing a troll's skull marked the beginning. Undead, now loyal to a new leader, assailed their former comrades.<br><br>\- Kuwoooooo!<br><br>\- S-squeak?<br><br>Crack! Slice! Pop!<br><br>An unexpected assault from what used to be the monsters' allies left a segment of the encircling horde in disarray. They went down in droves.<br><br>\- Squeeeek!<br><br>「W-what's going on?」<br><br>「Why are those guys suddenly...?」<br><br>The betrayal left not only the monsters in turmoil.<br><br>The unexpected turn of events confused the Chinese hunters. I called out to a young hunter energetically wielding his spear in the vanguard.<br><br>"Shao Shen!"<br><br>「M-mr. Jin?」<br><br>His eyes widened in surprise.<br><br>「How do you know my name?」<br><br>I had gleaned his name through a quick glance at his level window via \[Qi Sense\], but that detail was inconsequential at the moment.<br><br>"What are you doing! Why aren't you switching to an aggressive offense?"<br><br>「But what in the world is this situation...」<br><br>"Are you really that curious right now? Do you want to grab an undead monster and ask it to explain why it's helping us?"<br><br>「No, not really!」<br><br>"So, what should we do now?"<br><br>Revitalized, Shao Shen waved his spear.<br><br>「Attack formation! All members of the Public Security Forces, from now on, target everything except the undead monsters!」<br><br>「Yes!」<br><br>It was perfectly sound judgement.<br><br>As they rallied together, the spirit of the encircled five hundred hunters transformed.<br><br>「Kill them!」<br><br>「Avenge our comrades!」<br><br>Swish-swish-swish-swish, slice!<br><br>\- Roaaar!<br><br>A werewolf lunged at a hunter who had just beheaded an orc.<br><br>A massive fist intercepted the beast attempting to clamp down on the hunter's neck.<br><br>Crack!<br><br>\- Growwwwl!<br><br>An ogre, having smashed the werewolf's head, bellowed. In that instant, a griffin swooped, its talons gleaming menacingly.<br><br>\- Screeeeech!<br><br>A piercing cry. Just as the A-ranked creature's magic-imbued talons neared the ogre's eyes,<br><br>「Ice Ball!」<br><br>「Lightning Bolt!」<br><br>Awaiting ranged mages unleashed spells, jolting the griffin mid-flight with electricity.<br><br>At that moment, a figure catapulted from a troll's shoulder, his weapon arching towards the griffin.<br><br>"Custom-made by Company J, renowned as Germany's finest weapons forge…!"<br><br>Slice!<br><br>The griffin's head was cleanly severed.<br><br>Team Leader Choi, upon a flawless landing, admired his sword's transparent blade and displayed a contented smile.<br><br>"A longsword auctioned off for 5.2 billion won. It's indeed worth its price."<br><br>"……."<br><br>How does this bastard sound so cool when he's being an asshole?<br><br>Observing the scene, the Skeleton Warlord inquired with a hint of disdain,<br><br>\- Vile human, did you say that man is your superior?<br><br>"Well, in terms of guild hierarchy, yes…"<br><br>\- For a human, he seemed quite smart. I see all sorts of bizarre humans indeed. He is truly fitting to be your superior.<br><br>"Do you want to risk death by wagging your tongue the wrong way, Skeleton Warlord?"<br><br>After a pause, the Skeleton Warlord initiated a spell,<br><br>\- Grow, my skeleton minions!<br><br>As the saying goes: a dog can recite a poem if it spends three years at the village school; it seems he now knows what to do without being told. \[Note: this is a Korean proverb that means "practice makes perfect".\]<br><br>Clatter, clatter-clatter.<br><br>The griffin slain by Team Leader Choi, together with the monsters defeated by the hunters and undead, was resurrected, swelling our ranks.<br><br>The undead numbers now boasted two hundred. The Skeleton Warlord's influence seemed to have widened, commanding even distant undead to join the fray under his banner.<br><br>"Wow. You were capable of this?"<br><br>\- Wow. Was I really capable of this?<br><br>"……."<br><br>\- ……To be honest, not to this extent. But for some reason, since arriving here, I feel a surge of tremendous magical power!<br><br>"Oh, is that so."<br><br>I gave up trying to understand this bizarre creature.<br><br>After all, with favorable results at hand, dwelling on the mechanics seemed unnecessary.<br><br>\- Give me more - many more - for my legion!<br><br>Though it was hidden away in my inventory, the palpable quiver of the skull was evident.<br><br>I exhaled deeply and tightened my grip on my spear.<br><br>"That's exactly what I was planning to do."<br><br>\- Is there a way?<br><br>"Of course."<br><br>A way to bolster our undead ranks? It's simple.<br><br>"Just kill them all."<br><br>\- Hahaha! You truly are a vile and ignorant human!<br><br>Arrogant creature. But I find myself partly agreeing with him this time.<br><br>As the Skeleton Warlord's derisive cackle reverberates in my head, I advance.<br><br>'Brilliant Path of Fire'<br><br>Whoosh!<br><br>With each step, a fiery trail blazed forth.<br><br>\* \* \*<br><br>They wore black robes and held a staff adorned with dangling skeletons. Where their eyes should have been, there was only emptiness, and flesh not yet rotted clung to their bodies.<br><br>The three ominous figures exchanged wary glances.<br><br>\- We have a problem.<br><br>\- The undead monsters are breaking free from our control. They're assisting humans and attacking our forces.<br><br>\- Why?<br><br>The mechanics of their emancipation wasn't the puzzle. The trio were aware of the answer.<br><br>\- It's a higher-level undead. Stronger than us.<br><br>In the realm of the undead, authority is fiercely hierarchical.<br><br>Such a defection could only imply the intervention of a more dominant force.<br><br>\- But...<br><br>\- How is that possible?<br><br>None of the three could answer that.<br><br>What force could possibly command the undead against them and side with humanity?<br><br>\- Could it be 'Him'?<br><br>\- Nonsense. Have you forgotten the command He gave us as He sent us out?<br><br>\- Kill the humans. Create more undead and forces, and kill even more humans.<br><br>Recalling the mandate, confusion beset the trio.<br><br>If not the Arch Lich, then what entity could possibly outmatch their control?<br><br>\- Was there a necromancer among the humans?<br><br>\- I sensed nothing of the sort.<br><br>\- Humans shun and loathe death. It's unlikely. Even if there were, they couldn't compare to us.<br><br>Their inability to conceal their contempt stemmed from their own pasts as necromancers, once spurned and vilified by their kind.<br><br>Yet, that era was long gone, belonging now to a different realm.<br><br>Navigating the endless expanse of death, they met the Arch Lich, who bestowed upon them newfound powers and the chance to achieve the Lichdom they had always coveted.<br><br>However...<br><br>\- It's regrettable.<br><br>\- If the transformation had been complete. If there had been more death in this land.<br><br>\- Then, we wouldn't have lost control like this.<br><br>This revelation brought them unease.<br><br>In their previous lives, they were formidable necromancers, yet their transition into Liches remained incomplete.<br><br>Reborn through the vessels of deceased mages, a mere week proved insufficient for them to assimilate the requisite death energy for Lich transformation.<br><br>\- That's why He sent all three of us.<br><br>\- If this mission fails, He will be disappointed.<br><br>\- He might even take back the power He gave us.<br><br>This prospect filled them with dread.<br><br>To earn the Arch Lich's approval, they faced the necessity of surmounting this challenge, even at the cost of significant energy expenditure.<br><br>\- We have no choice.<br><br>\- Are you suggesting we combine our powers?<br><br>\- Yes. If the three of us unite our strengths, not even an unknown superior undead could wrest control from us.<br><br>\- Hmm. Agreed.<br><br>\- Do you consent?<br><br>\- I consent.<br><br>The three entities, who had been competing for the Arch Lich's favor, finally reached a consensus.<br><br>With no delay, they commenced their necromantic incantation.<br><br>\- Valencia. Madrid.<br><br>\- Bayern. Munich.<br><br>\- Stoch. Siri. \[Note: I'm at a bit of a loss. I'm pretty sure this is some sort of joke from the author, but I can't decipher all of it. The three necromancers are essentially spouting out names of soccer teams for the first two lines. Valencia CF and Real Madrid are teams from Spain, and FC Bayern Munich is a team from Germany. Which brings us to the last line. The first word "Stoch" could be referring to a team in Stockholm, Sweden, and if that's the case, I'm not sure what "Siri" is referring to. Here is the original Korean, for those interested: "바렌시아. 마드릿.", "바이엘른. 뮌헨.", "스토흐. 시리."\]<br><br>The aura of death radiated from them, permeating the atmosphere.<br><br>The green grass blackened, and soldiers of the People's Liberation Army closest to them gasped for air and fell.<br><br>"Gah!"<br><br>"Argh!"<br><br>Whoosh.<br><br>As the dying humans exhaled their last, the death energy they released infused the monsters.<br><br>\- Kyaaahhh!<br><br>\- Growwwwl!<br><br>The air vibrated with their mighty roars, which were charged with potent magic and far surpassed that of average beasts.<br><br>Sensing their dominion strengthen and their minions' power surge, the trio ceased their chant.<br><br>\- Hehehehe.<br><br>\- A success.<br><br>\- Though it cost a tremendous amount of power... this is more than sufficient.<br><br>Gazing at their now more formidable forces with contentment, an explosion echoed from afar.<br><br>Boom!<br><br>Monster limbs were catapulted into the sky in the distance.<br><br>As they witnessed the billowing smoke, the three entities conversed.<br><br>\- Seems there's a fire mage. Quite skilled, huh?<br><br>\- But still, it's just a human. Let's deploy the skeleton mages in large numbers.<br><br>\- Good idea.<br><br>Moments later, amidst another flare-up, they exchanged glances once more.<br><br>\- What was that just now?<br><br>\- Control was cut off. Not taken away.<br><br>\- He destroyed them? Impressive.<br><br>\- But, is that really a mage? The movements seem too fast...<br><br>\- Hmm. Let's send in the ogre troops.<br><br>\- Add Dullahans.<br><br>\- Dullahans too? Then who will guard us?<br><br>\- He's right. Dullahans are too much. Enhanced ogres should suffice.<br><br>\- Alright.<br><br>Three minutes passed.<br><br>A grave tension pervaded the air around the trio.<br><br>\- It's cut off.<br><br>\- Again?<br><br>\- That's why I said to send the Dullahans.<br><br>\- What on earth is it? I don't think it's a mage.<br><br>\- Send the Dullahans!<br><br>\- Yes, let's do that.<br><br>As they observed roughly twenty of their Dullahan bodyguards leave, the trio quietly converged on a new consensus.<br><br>\- Hmm. It probably won't happen, but just in case...<br><br>\- I was thinking the same.<br><br>\- Should we create a Death Knight?<br><br>\- We've already spent so much energy, and now a Death Knight? We don't have the right materials, and it would take too long.<br><br>\- If we're in a hurry, we can choose the most useful one to make. If the three of us combine our powers, it's possible.<br><br>\- Then, shall we try?<br><br>Yet, within less than ten minutes, their strategy to summon a Death Knight disintegrated.<br><br>Whoosh, boom!<br><br>The sweltering heat was palpable even to their skeletal forms.<br><br>"Damn bastards. There are so many of them."<br><br>Crack-crack!<br><br>As they beheld a figure ravaging the monster ranks with a spear shrouded in lethal flames, the trio rapidly recited their incantation.<br><br>Their once measured tones accelerated to a frenetic pace.<br><br>\- Feel the power...summon the creature!<br><br>\- Rise above...go now!<br><br>However, before their incantation could culminate, a youth had already approached them.<br><br>"Ah, nice to meet you."<br><br>\- Feel the power...summon the creature!<br><br>\- Rise above...go now!<br><br>The youth, Jin Tae-Kyung, cocked his head with a puzzled expression.<br><br>"Hello. Summon? Is it time to duel?" \[Note: I'm taking quite a lot of creative liberties here. The original nonsensical incantation phonetically sounds familiar to "entertainment broadcast", so the direct translation for this line is "Hello. Entertainment broadcast? Are you idiots?" However, given that I have changed the incantation to something that has actual meaning, I decided to change this line accordingly. So here's a little Yu-gi-oh reference for you guys.\]</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-380.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-382.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

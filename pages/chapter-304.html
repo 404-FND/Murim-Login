@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 304 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 304</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 304</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: December 25, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>In the lightless office, the hologram flickered to life, enveloping me in its scene, making it feel startlingly real.<br><br>'This place is…….'<br><br>An ashen grey shroud hung over everything, visibility reduced to mere inches.<br><br>It was only after I saw the huge wings of an eagle narrowly passing by that I realized where the footage had started.<br><br>'The sky.'<br><br>The drone capturing the entire scene quickly descended.<br><br>Whoosh.<br><br>After some time, the subject of the video was finally revealed – a city engulfed in flames.<br><br>Boom! Rumble!<br><br>「Ahhh!!」<br><br>「Argh!!」<br><br>Smoke-spewing factories erupted in a chain of explosions. Enormous buildings toppled like dominoes, while minuscule figures – people – scattered in a frenzy of screams<br><br>Avīci. \[Note: Avīci is the lowest level of "hell" in Buddhism. This realm contains the most suffering and is reserved for only those who have committed grave misdeeds.\]<br><br>The number of fleeing people was too great to count.<br><br>Easily thousands were visible to the naked eye. Including those the camera couldn't capture, the number would probably be tens of thousands.<br><br>"What in the world is this..."<br><br>A sigh escaped me involuntarily. Were the factory explosions to blame?<br><br>No. It was the beings rampaging through the complex cityscape, wreaking havoc and slaughter.<br><br>「Growls!」<br><br>「Roars!」<br><br>Colossal figures loomed, their monstrous strength and agility a terrifying spectacle.<br><br>Their eyes, shimmering with murderous intent, scanned their surroundings before they let out wild cries and began to hunt their prey.<br><br>'Why are monsters there?'<br><br>I momentarily questioned, but soon realized the answer.<br><br>There could only be one reason.<br><br>'Monster Wave.'<br><br>During the Great Cataclysm, the gates were portals linking Earth to another world known as the Demon World.<br><br>However, after the demise of the Demon King Asmodeus, the power of the monsters weakened, and the gates became a pathway only humans could freely traverse.<br><br>If the magical energy inside the gate exceeds its capacity, however, the story is different.<br><br>'When a dam breaks, the water floods out.'<br><br>That was precisely what a Monster Wave was, now horrifyingly depicted in the hologram.<br><br>「Ahhh!!」<br><br>「Save me……!」<br><br>Crack!<br><br>A zoomed-in view revealed the massacre in the city center:<br><br>Monsters rampaged, slaughtering and destroying, while humans died in helplessness.<br><br>Some humans were impaled on monster claws; others were crushed under the stampede of the panicked crowd.<br><br>Amidst this chaos, a mother and daughter, in their frantic escape, drew my attention.<br><br>「Keep holding Mom's hand tightly, Bingbing!」<br><br>The woman urgently shouted.<br><br>Swoosh! Thud!<br><br>A spear, hurled from a shadowy alley, struck the woman's chest, pinning her to the ground.<br><br>Blood gushed as her body collapsed, lifeless.<br><br>Her daughter, witnessing this tragedy, erupted in tears.<br><br>「Mommy!」<br><br>But the horror escalated. About a hundred orcs emerged from the alley, advancing towards the child.<br><br>They strategically blocked the civilians' escape path.<br><br>The orc leader, axe in hand, lunged at the weeping child.<br><br>Slice! Slash!<br><br>「Huh?」<br><br>The leader gazed in shock at his severed arm, cut cleanly below the elbow.<br><br>Before him stood a man.<br><br>「How dare you monsters touch the people of China?」<br><br>Zoom! Slash!<br><br>With a radiant aura, the man decapitated the orc leader. His thunderous cry rang out before the creature's head even touched the ground.<br><br>「Public Security Force!」<br><br>「Yes!」<br><br>A resounding response.<br><br>The man was not alone. Hunters belonging to the Ministry of Public Security and Armed Forces, adorned with China's national flag, the Five-star Red Flag, on their armor, were continuously joined the fray.<br><br>The man's eyes blazed with fervor as he bellowed.<br><br>「Kill all those foul-smelling creatures!」<br><br>「For the people!」<br><br>Swoosh swoosh swoosh!<br><br>A thunderous battle cry rose as roughly a thousand hunters surged forward.<br><br>Despite the devastation of the Great Cataclysm, China's billion-strong population remained a formidable force.<br><br>The individual prowess of each hunter varied, but their numbers were unmatched globally.<br><br>「Wipe them all out!」<br><br>「Long live the People's Republic of China!」<br><br>In unison, a thousand hunters advanced.<br><br>But the monsters would not simply yield. A myriad of creatures, swarming through the city, converged, their numbers dwarfing the hunters.<br><br>「Roar!」<br><br>「Screech!」<br><br>Thud thud thud!<br><br>Human and monster.<br><br>Monster and human.<br><br>Two opposing forces hurtled towards each other.<br><br>Their eyes were ablaze with resolve and lethal intent.<br><br>The hologram's realism was staggering, capturing the impending clash from above.<br><br>500 meters, 300 meters, 100 meters...<br><br>As the imminent collision loomed, a cacophony of sounds filled the air.<br><br>「Be annihilated by the flames of terror. Fire Rain.」<br><br>A chilling, emotionless proclamation. Above, the ashen sky cracked open.<br><br>Screeching.<br><br>A spectacle never witnessed before unfolded.<br><br>Around 30 meters above the drone, the very air seemed to be cleaved by an unseen force.<br><br>From a swirling black vortex, a colossal fireball erupted.<br><br>Blaze!<br><br>The advancing Chinese hunters, struck by awe, halted and stared in disbelief.<br><br>「This can't be.」<br><br>「This is... just a dream.」<br><br>But tragically, the unfolding horror was all too real.<br><br>Crackle. A giant flame sphere, spanning several tens of meters, divided into four segments. Each fragment further split into dozens, then hundreds.<br><br>A fiery rain descended upon the earth.<br><br>Whoosh! Boom!<br><br>Crash!<br><br>A deafening explosion bathed the surroundings in a crimson hue.<br><br>When the drone, reeling from the shockwave, stabilized, it captured the orchestrator of this devastation.<br><br>「A human device, I see.」<br><br>The voice was flat, lifeless.<br><br>Clad in a robe adorned with cryptic patterns, a hood obscuring the face, the figure pointed at the drone.<br><br>「Kill them all, seize everything. Those who dare step into my domain shall pay with their lives.」<br><br>Crackle!<br><br>As the finger, gnarled like an ancient root, moved, the feed abruptly filled with static.<br><br>The ashen sky, laden with dust, and the ravaged earth faded away.<br><br>The office, now devoid of the hologram, was enveloped in heavy silence.<br><br>I was the first to break it.<br><br>"What the hell is that thing?"<br><br>"It's the main person behind this Monster Wave. Though, saying 'person' seems inappropriate."<br><br>Mr. Choi's voice was hushed, somber.<br><br>"A Named Monster Lich. That's what it is."<br><br>\* \* \*<br><br>Lich.<br><br>A corrupt archmage, the pinnacle of the undead hierarchy.<br><br>This Lich, unseen since the Great Cataclysm, had now emerged, heralding its return with a disaster of epic proportions.<br><br>Mr. Choi spoke while disconnecting the USB.<br><br>"November 5th. This footage was taken by a reconnaissance drone of the Chinese Intelligence Agency, ten days ago, near a small town in Nanchong, Sacheon Province. The estimated casualties so far are about 300,000. The exact count is still unknown."<br><br>Sacheon Province.<br><br>To me, it's more familiar as the Sichuan Province, where the Qingcheng Sect and the Emei Sect of the Nine Great Sects, and the Tang Family, one of the Five Great Families, are located. \[Note: Sacheon and Sichuan refer to the same Province in China, with Sichuan being how it is written in Chinese and Sacheon being how it is written in Korean.\]<br><br>Of course, Murim is a completely different world disguised as China.<br><br>"300,000?"<br><br>"Yes."<br><br>"This is insane…"<br><br>"That's the count within the first 24 hours after the Wave started."<br><br>A shiver coursed through me.<br><br>A single day's toll at 300,000. Had a Monster Wave ever wreaked such havoc since the Great Cataclysm?<br><br>"Is a Lich usually this powerful?"<br><br>My question was directed not at Mr. Choi, but at Butler Kim, the only one among us who had witnessed the Great Cataclysm.<br><br>His eyes betrayed his unease.<br><br>"Of course not. The Liches I saw during the Great Cataclysm were indeed powerful, but… this one is on a different level. Its flame magic was enough to give one the chills just by looking."<br><br>Butler Kim, an A-rank fire mage, had seen it all, including the Cataclysm.<br><br>His words underscored the Lich's exceptional might.<br><br>'Where did such a creature come from?'<br><br>Visions of the burning city, of people dying, flitted through my mind. The earth-devouring inferno was a cataclysm in itself.<br><br>I remembered the creature's final proclamation.<br><br>'Kill them all and seize everything. Those who dare step into my domain shall pay with their lives.'<br><br>No one else would have understood, but I was different.<br><br>Thanks to the \[Integrated Language Pack\], a part of the System, I clearly heard what it said and understood its meaning.<br><br>This merciless undead wouldn't stop at a small town.<br><br>300,000 in one day? Given its displayed might, the death toll might have surged tenfold by now.<br><br>"Holy shit…"<br><br>My dislike for China aside, no sane soul would gloat over such a calamity.<br><br>Images of the dying, of a child's tears for a lost mother, left a bitter taste.<br><br>'Wait a minute.'<br><br>As the initial shock ebbed, a question arose.<br><br>This catastrophe unfolded ten days ago, yet the world remained oblivious.<br><br>And more importantly…<br><br>'Where did Mr. Choi get this information?'<br><br>Perhaps the Ares Guild or Lee Jeong-Ryong, global guild powerhouses with extensive intel networks, might know.<br><br>But Mr. Choi? A mid-tier guild leader? If he was privy to this, the Sichuan disaster should have been global news by now.<br><br>"There's something more to this."<br><br>I wasn't alone in this suspicion.<br><br>Everyone's gaze turned to Mr. Choi, their eyes silently pressing for clarity.<br><br>Sensing the mood, Mr. Choi began.<br><br>"A week ago, I received an unexpected contact."<br><br>It was the day Ha-Yeon's college entrance exam ended.<br><br>That day, after a prolonged stare at his phone, Mr. Choi abruptly excused himself, citing an important matter.<br><br>"It must have been a contact from China."<br><br>Mr. Choi nodded.<br><br>"Yes. Specifically, it was a love call directed at one person. They wanted you to participate in this situation." \[Note: a "love call", despite how it sounds, just means an invitation or a call for participation.\]<br><br>"…They specifically requested me? From China?"<br><br>"Yes. 'He' wanted it."<br><br>"Who is 'he'?"<br><br>Mr. Choi hesitated, then revealed.<br><br>"Xiao Yang."<br><br>"Ugh!"<br><br>"Xiao Yang?"<br><br>"Sir, is that true?"<br><br>At the mention of the name, everyone's eyes widened, mine included.<br><br>I managed to find my voice while disbelief was painted on my face.<br><br>"Xiao Yang wants me?"<br><br>"Yes."<br><br>"But who is Xiao Yang?"<br><br>"…!"<br><br>Why that expression? It's possible not to know.<br><br>After several incredulous blinks, Mr. Choi finally spoke.<br><br>"Xiao Yang is the General Secretary of the Central Committee of the Chinese Communist Party."<br><br>"The principal?"<br><br>"General Secretary! The President, the President of the country!"<br><br>Oh, fuck.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-303.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-305.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

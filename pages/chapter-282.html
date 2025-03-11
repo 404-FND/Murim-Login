@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 282 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 282</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 282</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: November 17, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>Boom!<br><br>The door slammed open, making a sound like thunder as it ricocheted off the wall behind it. Two figures entered the room.<br><br>I waved at the familiar person glaring at me.<br><br>"Hey look, the fucking bastard is here."<br><br>"…You."<br><br>The urge to punch him was overwhelming, but his contorted face only made me chuckle.<br><br>Noticing the empty, clenched fist of Park Ji-Hwang, I asked disappointedly:<br><br>"Didn't you buy it?"<br><br>"What?"<br><br>"The Melona."<br><br>"You asshole..."<br><br>As Park Ji-Hwang began to flush red with anger, a large, powerful hand descended onto his shoulder.<br><br>"We're being watched."<br><br>Park Ji-Hwang, biting his lip, took a step back.<br><br>With a look of amusement, the middle-aged man, who was revered by everyone else in the room, turned to face me.<br><br>"Do you recognize me?"<br><br>I nodded.<br><br>Given the weight his name carried, and frequent appearances in newspapers and magazines, it was a face one couldn't forget.<br><br>'Park Tae-Seop, the Guild Leader of Myeongdong.'<br><br>He was a war hero who made his mark during the Great Cataclysm and was now one of the top-ranked Hunters in the country.<br><br>His journey from the frontlines to the head of a premier guild made him an aspirational figure for all Hunters.<br><br>'I used to admire him too.'<br><br>But not anymore.<br><br>My fond memories of dreaming to become like Park Tae-Seop expired two days ago.<br><br>The underlying tension between us was palpable. Sensing the venom in my stare, Park Tae-Seop took the initiative.<br><br>"You see me as an enemy, don’t you?"<br><br>"After all that I've learned, I can't think otherwise."<br><br>"Don’t jump to conclusions. In life, you'll realize there's no such thing as an eternal friend, or foe."<br><br>"Well, I’m not so sure about the 'no eternal foes' part."<br><br>Looking at Park Ji-Hwang standing beside him, he continued.<br><br>"Indeed, the saying that 'there's no such thing as an eternal friend' might have a point."<br><br>Park Ji-Hwang shot back.<br><br>"The premise itself is wrong. We were never friends."<br><br>"We were never friends."<br><br>Sinking deeply into the chair, I pondered over his words.<br><br>One of the things I couldn't understand even now was the sudden change in Park Ji-Hwang's attitude from the night that we drank together.<br><br>But then again...<br><br>"Anyway, why should I care if we were friends now? It all ended when you sent the Black Hunters."<br><br>At the words "Black Hunters," Park Tae-Seop waved his hand, like he was shooing away a fly.<br><br>All the Hunters in the corridor started to back off.<br><br>I smirked as their footsteps faded.<br><br>"You don't seem very confident."<br><br>"Because it's shameful."<br><br>"You're surprisingly honest. It makes me uncomfortable."<br><br>"Personally, I feel ashamed."<br><br>"Considering you find it shameful, you gave quite a shitty order."<br><br>"..."<br><br>"So why did you do it?"<br><br>A hint of discomfort crossed Park Tae-Seop's face. But it wasn’t directed at me.<br><br>For a split second, his eyes darted to Park Ji-Hwang, then back.<br><br>Look at that...<br><br>The action Park Tae-Seop just displayed wasn't deliberate.<br><br>He was hiding something, no doubt.<br><br>Connecting the dots, I thought,<br><br>'Something's up. Something big.'<br><br>Hearing me mutter under my breath, Park Ji-Hwang suddenly spoke.<br><br>"To keep you and the Peace Guild in check."<br><br>"In check?"<br><br>"Look, when someone new steps up, someone else loses out. The other guilds probably think the same, right?"<br><br>At first glance, that seems to be right.<br><br>The domestic guild market is already saturated. There are established classes and hierarchies. The old guilds wouldn't want new competitors to emerge.<br><br>"The Peace Guild is a threat. They're limited to Bucheon for now, but they'll grow at an alarming rate, increasing their influence."<br><br>"So, you sent the Black Hunters?"<br><br>"I did send them. But didn't I already say it was just a warning?"<br><br>"Didn't I already mention too? Because of that petty warning, someone got crippled."<br><br>"Crippled? The two severed arms would've been perfectly reattached, and it wouldn’t interfere with his daily life. Do they call that being crippled these days?"<br><br>"It's no different from being crippled. A Hunter's career was ended."<br><br>"Better him than your entire guild."<br><br>"What?"<br><br>Park Ji-Hwang chuckled.<br><br>"We're just getting started. All the higher-ranked gates suitable for your guild have been reserved, and the neighboring guilds are giving you the cold shoulder. You'll slowly wither away."<br><br>Suddenly, I remembered something from a few days ago. Team Leader Choi had mentioned that other guilds had monopolized the A-rank gates.<br><br>Because of that, I had no choice but to lead the rookies and hop from C-rank, or occasionally B-rank gates, gaining little to no experience.<br><br>"You set that up?"<br><br>"You're slow. You thought it was a coincidence?"<br><br>Park Ji-Hwang's lips curled upward. Not only did he regain his composure, but he also leaned against the sofa, showing complete relaxation.<br><br>"You've recruited a lot of new guild members recently. What are you going to do? At this rate, you'll have to let them all go within a year. It'd be fortunate if they don't sue for not paying them."<br><br>"..."<br><br>I relaxed my arms from the folded position.<br><br>"You're good at this. No wonder you're a large-scale guild."<br><br>"Well, something like that."<br><br>"But... we have a good hand, too. I think it would be interesting if it were revealed that the Myeongdong guild has been training criminals and hiding behind their backs. What do you think?"<br><br>Without waiting for Park Ji-Hwang's reaction, I continued.<br><br>"From the looks of things, if we hand you over to the police, you guys would swiftly take control. So, I thought a live-streamed expose on YouTube might be better."<br><br>"…YouTube? Live stream?"<br><br>"Yep. Didn't you know our guild created a channel? Subscribe and hit the like button. And don't forget to turn on notifications."<br><br>"..."<br><br>"Wow, we have 300,000 subscribers now. If this blows up, we'll easily reach 10 million. In the end, half of Korea will probably watch."<br><br>The smile on Park Ji-Hwang's lips vanished as if washed away.<br><br>"It's best not to start something you can't handle."<br><br>"What's there to handle?"<br><br>"Do you want to make enemies of all the major guilds?"<br><br>"If I make a mess here, would you be able to clean it up?" \[Note: Another way to interpret this sentence would be something like, "If I tell the world about what you've done, would your guild be able to recover?"\]<br><br>"………"<br><br>Park Ji-Hwang’s lips pressed intto a thin line, as if trying to suppress annoyance.<br><br>After glaring at me with smoldering eyes for a while, he finally spoke.<br><br>"Tell me what you want."<br><br>"What I want?"<br><br>"Name your price, I'll do my best to accommodate. Let's not escalate things further and negotiate now."<br><br>"You want to negotiate?"<br><br>"If we go all the way, it's a lose-lose situation. You know that, too."<br><br>He's right. If it was something I could handle alone, I would've gone all the way. But the Peace Guild's lives were at stake here.<br><br>Someone's friend, lover, family... and the Hunters themselves.<br><br>I took a deep breath, feeling the dryness of my throat.<br><br>"What can you offer?"<br><br>"Money and power. And various privileges for the growth of the Peace Guild."<br><br>"Didn't you say you sent the Black Hunters because the growth of the Peace Guild bothered you?"<br><br>"That's why there must be a limit."<br><br>"So, stay within the boundaries you set?"<br><br>"Yes."<br><br>The more I listened to Park Ji-Hwang's words, the clearer the picture became in my mind.<br><br>Surrender the detainees the Peace Guild holds and, in return, reap considerable rewards. <br><br>Possibly monumental rewards.<br><br>Buildings, land, and even the higher-ranked gates monopolized by the Myeongdong Guild, plus a huge sum of cash.<br><br>The proposal was enticing. However…<br><br>"You're missing the most important part."<br><br>"With all this, the conditions are more than generous... What?"<br><br>Park Ji-Hwang frowned.<br><br>"What did you just say?"<br><br>"I said the most important thing is missing."<br><br>"Are you crazy? You want more than this?"<br><br>"To be honest, I don't understand this negotiation well. I only know that you're offering something significant. Our guild leader or Mr. Choi would know better whether this is enough or not."<br><br>"Then what the hell are you saying is missing?"<br><br>I met Park Ji-Hwang's gaze without flinching.<br><br>"An apology."<br><br>"…What?"<br><br>"When you make a mistake, you should apologize. But the apology is missing."<br><br>In his proposal, he offered ample tangible compensations, but no apologies.<br><br>The thing that should be prioritized above all else was missing.<br><br>"Ha."<br><br>Park Ji-Hwang let out a sarcastic laugh. His eyes, flickering between scorn and fury, scrutinized me.<br><br>"Alright. I'm sorry. Is that good?"<br><br>"That's not how you apologize."<br><br>Crack.<br><br>From Park Ji-Hwang's clenched fist, a sound of bones cracking could be heard.<br><br>Ji-Hwang collected himself. Drawing a steadying breath, he met my gaze head-on, and said in a grave tone:<br><br>"I'm sorry."<br><br>"That's somewhat better."<br><br>"Is it settled now?"<br><br>I gave a slight nod.<br><br>"But next time, when you do it directly, make sure it's more heartfelt. Bow your head politely."<br><br>"…What kind of bullshit is this?"<br><br>"Why would I want an apology from you? You should apologize to the victim and his family."<br><br>Park Ji-Hwang's eyelids twitched.<br><br>"You want me to apologize to that D-rank Hunter?"<br><br>"Why, can't you do it?"<br><br>"I've already offered them compensation. It's an amount most Hunters can't even dream of touching in their lifetimes."<br><br>"That's great. Delivering a sincere apology along with a substantial compensation as a sign of remorse will be even more effective."<br><br>"You…"<br><br>I spoke my next words in a gentle voice.<br><br>"If your pride is hurt, you could bring one more person and apologize together."<br><br>Park Tae-Seop, the Myeongdong guild leader who had been silently listening to our conversation, licked his lips.<br><br>"I will personally go and apologize, with all my sincerity."<br><br>"At least, Guild Leader, you have the basic decency. Should we call you the cleanest piece of shit?"<br><br>Clean shit. At this moment, I can't think of a more fitting and paradoxical phrase.<br><br>However, the other person I had in mind wasn't Park Tae-Seop.<br><br>Pushing back from the table, I fixed my gaze on Park Ji-Hwang, probing deeper.<br><br>"The one who gave you the order. Bring that person and have them apologize as well."<br><br>"...!"<br><br>A tumultuous storm flickered in Park Ji-Hwang's eyes.<br><br>It was a storm that, in its brief intensity, turned my suspicions into certainties.<br><br>"Fine. Since Guild Leader Park Tae-Seop agreed just now."<br><br>Park Ji-Hwang tried to sound as calm as possible.<br><br>"We'll go together to apologize."<br><br>"Cut the bullshit. Bring the person who actually gave the order."<br><br>"I don't understand what you're saying."<br><br>With a silent laugh, I got up and moved towards the couch where Park Ji-Hwang was sitting.<br><br>"No matter how much I think about it, it just doesn't make sense."<br><br>I slouched down opposite him.<br><br>Across the large wooden table, I slowly scrutinized the imposing figure before me.<br><br>His sturdy build, muscles visible through his shirt, and the energy contained within.<br><br>He radiated strength.<br><br>Even without checking his level, I could tell that the gap between him and the Team One Leader was massive.<br><br>"What doesn't make sense?"<br><br>"The fact that someone as strong as you, who could easily overpower the team leader with one hand, is just lingering as a regular Hunter and not even a vice-team leader."<br><br>"…!"<br><br>"Moreover, you show up to work maybe once a month, and from what I heard from your conversation with the Team One Leader, you seemed to be the one ordering him around."<br><br>There weren’t just one or two suspicious points.<br><br>And my suspicions turned into convictions as we continued our conversation.<br><br>"Such huge promises are being made to me, yet the actual top decision-maker remains silent, and the one promising things doesn't hold any position. He's just a regular team member... How should I interpret this, Guild Leader Park Tae-Seop?"<br><br>Meeting my gaze, Myeongdong Guild Leader Park Tae-Seop slowly closed his eyes. That in itself was a perfect answer.<br><br>I chuckled and looked at Park Ji-Hwang.<br><br>"So, bring 'them'. I don't know who it is, but bring them and start with an apology."<br><br>Park Ji-Hwang, whose lips had been tightly closed, finally spoke.<br><br>"And if I refuse?"<br><br>"Then we'll see this through to the end."<br><br>"Crazy bastard. Do you even know who you're talking about?”<br><br>"I don't. And I frankly don't care to know. But I need to see that person come and hang their head in apology to be satisfied."<br><br>Shush!<br><br>Simultaneously, we both lunged for each other at a blinding speed.<br><br>Park Ji-Hwang shouted a warning.<br><br>"You bastard!"<br><br>Papad!<br><br>In an instant, our hands clashed and tangled. In the blink of an eye, five moves were exchanged.<br><br>With a snap, I broke his wrist.<br><br>Then I grabbed his waxy, well-coifed hair and slammed it towards the table.<br><br>Bang!<br><br>"Like that."</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-281.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-283.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

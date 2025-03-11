@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 404 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 404</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 404</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: May 4, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>「Sigh.」</p><p>The night was pitch-dark.</p><p>Upon his return, the young man shed his equipment and collapsed in his usual spot, gasping for air. A middle-aged man approached, offering him a drink.</p><p>「You look exhausted. Drink this.」</p><p>The pair, both Hunters drafted from Shanxi Province, had forged a considerable bond.</p><p>Recognizing the familiar face and the can in his hand, the young man spoke hesitantly.</p><p>「Is this from the supplies? I've never seen this drink before.」</p><p>「It came as part of international aid. It's not from our country.」</p><p>「Um, is it non-carbonated?」</p><p>「If you don't like it, then never mind.」</p><p>Snatch!</p><p>Grasping the hand of the departing middle-aged man, the young man declared earnestly,</p><p>「Mister, did I ever tell you that my favorite thing in the world is soft drinks?」</p><p>「No.」</p><p>「Well, now you know.」</p><p>「Good, that's the spirit.」</p><p>「I'll enjoy it, then.」</p><p>Clink, ssshh.</p><p>The young man popped the can open and took a sip, his face subtly shifting. Before he could comment, the middle-aged man inquired,</p><p>「You're coming back from a search in Zone 3, right?」</p><p>「...Ugh, yes.」</p><p>「It must have been tough.」</p><p>The young man simply shrugged, his torso bare and slick with cold sweat, his cheek smeared with greenish monster blood.</p><p>「Monster blood, huh? Was there a fight?」</p><p>「No, I was just passing by a building when a fucking gargoyle corpse fell down. It must have been lying on the roof.」</p><p>「What a mess it must have been.」</p><p>「Are you kidding? The rookies in their first and second year vomited and pissed themselves the moment they got covered in blood.」</p><p>「And you?」</p><p>「Well, I am a seven-year Hunter, after all. I didn't even blink.」</p><p>The middle-aged man's eyes trailed down to a specific area on the young man's body. He fixed his gaze on a faintly discolored patch on the young man's navy blue pants and nodded.</p><p>「Ah, I see.」</p><p>「…It's sweat.」</p><p>「I didn't say anything. But when I look at you, I feel like my eyes are sweating.」</p><p>「…Actually, I peed a little. Can you tell?」</p><p>「Yes.」</p><p>「Shit.」</p><p>As the young man muttered a curse and tipped his can to drink, the middle-aged man watched in silence before suddenly asking,</p><p>「Did you find any survivors?」</p><p>「…!」</p><p>「It was the same for you, then.」</p><p>As the young man's expression suddenly hardened, the middle-aged man sighed.</p><p>He too had participated in a search before. It was truly a nightmarish experience.</p><p>Everywhere he looked, there were corpses torn to shreds by monsters, and the dreadful stench was enough to split his head.</p><p>Both of them would probably never forget the horrific scenes they witnessed today.</p><p>「…It's unimaginable. How fierce the battle must have been.」</p><p>「No need to imagine. Whatever you're thinking, it was worse.」</p><p>Under the command of Minister of National Defense Wei Feng-Hu, four thousand Hunters scoured the small town. All their search equipment consistently returned the same bleak outcome.</p><p>No survivors.</p><p>Aside from the three thousand members of the People's Liberation Army who had fled at the battle’s onset, all others were found lifeless and cold. The fate of those who fled remained uncertain.</p><p>「We can't even use the term 'casualty count'. 'Death count' would be more accurate…」</p><p>「Watch your words. We still don't have all the facts.」</p><p>「Uh, sorry. I misspoke.」</p><p>「That's enough. And…」</p><p>Interrupting the young man's impulsive comments, the middle-aged man clarified.</p><p>「The 'casualty count' is correct. There are survivors.」</p><p>「…Ah.」</p><p>A sudden recollection flashed across the young man's mind — the memory of three individuals who had endured through this horrific setting.</p><p>「Was it the commander of the Public Security Forces? That young guy.」</p><p>「Yes. A young Hunter from Korea also survived.」</p><p>「And ...」</p><p>While the two previously mentioned also demonstrated bravery, their deeds paled in comparison to the last survivor, who shone like the sun beside mere fireflies.</p><p>Noticing the young man's nervous swallow, the middle-aged man continued on his behalf.</p><p>「Yes, that person. No, that incredible hero.」</p><p>His tone carried a profound reverence. His unwavering respect for the much younger man stemmed from his exceptional accomplishments.</p><p>「Do you believe that a single Hunter can be that powerful?」</p><p>As a seasoned Hunter, he had a fair understanding of what an S-rank Hunter could achieve.</p><p>Yet, the feats accomplished by Jin Tae-Kyung seemed almost mythical, surpassing any expectations of what a Hunter — or any human — could do.</p><p>「A legion of monsters numbering in the tens of thousands. There were two Death Knights, and even a Death Knight Lord who is said to be as strong as, or stronger than, an S-rank Hunter.」</p><p>The middle-aged man's voice surged with excitement.</p><p>「And in comparison, how many of our Hunters were there? Merely a thousand. There were members of the People's Liberation Army, but even they...」</p><p>「When the front lines collapsed, nearly half ran away. The rest fought bravely but were massacred by the monsters. I've heard about it too.」</p><p>「How many Hunters do you think were left when Jin Tae-Kyung arrived? A thousand? No, not even half of that, I'd bet my life on it!」</p><p>Had he been there when Jin Tae-Kyung arrived, the shock might have been enough to cause a heart attack.</p><p>Even he, full of admiration, struggled to imagine Jin Tae-Kyung facing the monstrous legion alone.</p><p>「He led hundreds of weary and wounded Hunters and annihilated a monster legion more than ten times their number! Do you think that makes any sense?」</p><p>The young man, observing him, wore a skeptical expression.</p><p>「I don't think it's possible.」</p><p>「But, he did it!」</p><p>「Uh, sir. Sorry to throw cold water on this, but aren't these facts not fully confirmed yet?」</p><p>「What?」</p><p>「I think Jin Tae-Kyung...」</p><p>「It's Mr. Jin, not Jin Tae-Kyung!」</p><p>Taken aback by the middle-aged man's sudden outburst, the young man cleared his throat awkwardly.</p><p>「Ahem. So, I do acknowledge that Mr. Jin is an exceptional warrior, but don't you think there might be some exaggeration mixed in?」</p><p>「Exaggeration? Even after seeing the traces left on the battlefield, you say that? If not Mr. Jin, then who...」</p><p>「Come on, don't get so heated and try to look at it more calmly. If everything you're saying is true, then you're claiming that Mr. Jin is stronger than Fei Chen or Wu Hei-Xing.」</p><p>「I don't want to rank them, but based on the feats shown in this monster wave, Mr. Jin is the best. So what?」</p><p>「Fei Chen is a hero from Hong Kong who has achieved numerous feats during the Great Cataclysm, and Wu Hei-Xing, despite his mishaps, is considered a true genius born of China. To say that Jin Tae-Kyung surpasses these two? That crosses a line.」</p><p>The middle-aged man fixed the young man with a look of disappointment and disdain.</p><p>「You're the one crossing the line.」</p><p>「What?」</p><p>「Is that all you wanted to say? Shouting about how China is the best, claiming a great victory, and then belittling a hero who saved the people?」</p><p>The young man's expression contorted sharply.</p><p>「Since you mentioned it, the people Jin Tae-Kyung saved today amount to just two. Actually, one of them is Korean, so really just one. And that one was completely unharmed. Jin Tae-Kyung pretty much only fought to protect his own countrymen. There are rumors that he wasted a Top-grade Potion too.」</p><p>「I should stop talking. I have nothing good to say to you, but I at least shouldn't treat you poorly. I wonder what Mr. Jin would say if he heard this...」</p><p>The middle-aged man sighed deeply and stood.</p><p>"Well, in my opinion, he probably would've called that young man a son of a bitch."</p><p>「…!」</p><p>「…!」</p><p>Caught off guard by the unexpected voice, both men whirled around in surprise.</p><p>They were now facing someone they usually saw on TV or in the media.</p><p>「…Hiccup.」</p><p>The young man, looking up at the taller figure, started hiccupping.</p><p>「Ji, ji, ji, ji, Ji-jin!!」</p><p>The middle-aged man stuttered, as if his words were stuck.</p><p>Jin Tae-Kyung, observing them, cracked a congenial smile.</p><p>"If the young man over there wants to be a good Chinese person, he should stop hiccuping. And sir, please stop your trembling unless you plan to take down the Arch Lich with an earthquake."</p><p>「Hic, gulp.」</p><p>「I-i-is it really you?」</p><p>Jin Tae-Kyung nodded slightly.</p><p>"I was just passing by, but then I heard something quite irritating."</p><p>「…Th-that's…」</p><p>The young man, now ceasing his hiccups but trembling like a leaf, was scrutinized by Jin Tae-Kyung.</p><p>"How old are you?"</p><p>「T-twenty-nine.」</p><p>"You're older than me. I'll speak informally anyway."</p><p>「…What?」</p><p>"Whatever."</p><p>「Oh?」</p><p>He wouldn’t be able to retort even if Jin Tae-Kyung cursed him rather than merely using informal speech.</p><p>The realization that Jin Tae-Kyung, whom he had only seen from afar, had overheard every word sent a shiver down the young man's spine and caused his vision to whiten.</p><p>「I-I’m sorry.」</p><p>“There’s nothing to apologize for. That's what gossiping behind people's backs is all about. I understand.”</p><p>「Th-thank you.」</p><p>Just as Jin Tae-Kyung’s kind smile was warming his heart.</p><p>“There’s nothing to thank me for. Gossip is fine until you get caught; then it screws you over.”</p><p>「…!」</p><p>“There’s someone behind me right now. Can you see?”</p><p>The young man slowly, very cautiously, shifted his gaze.</p><p>Sure enough, a middle-aged man with a sinister look was emanating an intimidating presence from about ten meters away.</p><p>“He’s an A-rank Hunter affiliated with the Central Military Commission. He seemed quite taken with your tale and kept bowing to me. Why don’t you go and apply a medicated patch on him?”</p><p>「Yes, sir!」</p><p>The young man responded as if he were yelling and dashed off, his scream echoing as his mana-infused joints throbbed.</p><p>Jin Tae-Kyung, ready to depart with a light chuckle, paused.</p><p>“Ah, there’s one thing you’re mistaken about.”</p><p>「M-me?」</p><p>The middle-aged man, momentarily disoriented, snapped back to attention.</p><p>「Sorry, but what is it?」</p><p>“It wasn’t just me.”</p><p>「Really?」</p><p>“Everyone fought to the death. By the time I got there, it was almost all over. Please let the others know that too.”</p><p>「I-is that really true?」</p><p>“Of course. Oh, do you have a family?”</p><p>「Yes. Three daughters and five sons…」</p><p>“You’re a patriot. You could start a soccer team in a few years.”</p><p>Jin Tae-Kyung, contemplating, suddenly inquired.</p><p>“You’re not part of the combat troops, are you?”</p><p>「…You can tell right away.」</p><p>The middle-aged man lowered his head, slightly embarrassed.</p><p>「As you can see, I'm an E-rank Hunter, so I was excluded from combat. I will probably only be used to count casualties.」</p><p>"Then, may I ask you for one favor?"</p><p>「It would be an honor, Mr. Jin.」</p><p>"Please include one person in the list of the deceased. I'd like to ask you a special request since we won't be able to find the body."</p><p>「What is the person's name…?」</p><p>"Lei Fei. His name is Lei Fei."</p><p>That was the last thing he said.</p><p>The middle-aged man stood frozen, watching Jin Tae-Kyung walk away, before he finally released a breath he hadn’t realized he was holding.</p><p>The final look on Jin Tae-Kyung’s face seemed destined to linger in his memory for years.</p><p>'The intensity in his gaze...'</p><p>A determination to fulfill his mission.</p><p>The middle-aged man, having earlier voiced his respect for Jin Tae-Kyung, took a swig from the can the young man had abandoned and immediately regretted it.</p><p>"Ptooey!"</p><p>Birdian? \[Note: Birdian is a beverage supplied to the Republic of Korea National Military from 2000 to 2017. The drink has a different flavor profile depending on who makes it and when, but the core of the beverage is always onion juice. You will always get a hit of onion flavor, especially when it is room temperature.\]</p><p>It seemed like a Korean drink, but it was disgusting.</p><p>\* \* \*</p><p>「Mr. Jin, you've arrived.」</p><p>Wei Feng-Hu wasn't the only one waiting.</p><p>Five monitors flickered to life in the conference room, each displaying an S-rank Hunter.</p><p>I initiated the discussion with a steady tone.</p><p>"Let's go end this war."</p><p>It was time to confront and eradicate the root of all this chaos.<br></p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-403.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-405.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

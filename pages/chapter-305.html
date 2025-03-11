@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 305 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 305</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 305</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: December 25, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>"Are you feeling alright? You haven't fully recovered yet."<br><br>"…No, I'm fine."<br><br>"If you feel tired, take a rest. Team Leader Seok, you may be young, but continually pushing yourself will wear you down."<br><br>"I'm ashamed."<br><br>Lee Jeong-Ryong cast a glance at Seok Go-Jun, whose face was ashen, and inwardly tutted.<br><br>'To think he'd be defeated so easily.'<br><br>Seok Go-Jun was Lee Jeong-Ryong's sharpest 'weapon.'<br><br>He believed that, in secret, fewer than five in the country could rival Seok Go-Jun's prowess.<br><br>Naturally, this included Cheon Tae-Min and himself.<br><br>'To bring down such a guy with a single move... It's far beyond what I had anticipated.'<br><br>He had to concede. He had underestimated Jin Tae-Kyung and the Peace Guild.<br><br>The disparity in strength was almost comical, and yet, he was the one repeatedly outmaneuvered.<br><br>Lee Jeong-Ryong's gaze settled on Seok Go-Jun, who had lowered his head.<br><br>"Go-Jun."<br><br>Upon hearing his name, Seok Go-Jun looked up. Being addressed by name indicated a master-disciple dialogue, not that of a Vice Guild Master to a security team leader.<br><br>"Yes, Master."<br><br>"You are my disciple, whom I've trained with all my heart. Never forget that."<br><br>"I have never forgotten, not for a moment. Master, you are more than a parent to me."<br><br>Lee Jeong-Ryong acknowledged his unwavering loyalty with a nod.<br><br>There were flaws in this disciple, but his allegiance was unparalleled.<br><br>His hesitation to take Go-Jun to the next level stemmed from a possibly unwarranted worry… but it was time to hone him further.<br><br>"It's not that you were defeated, but that you stumbled. I will give you the strength to rise again."<br><br>"Strength, you say?"<br><br>"For now, just know that. I will make you capable of bringing down Jin Tae-Kyung with your own hands."<br><br>"…!"<br><br>Seok Go-Jun trembled and bowed deeply.<br><br>"Thank you, Master."<br><br>"Always remember that this master believes in you."<br><br>Though his voice was gentle, Lee Jeong-Ryong's eyes held an inscrutable expression.<br><br>Seok Go-Jun, oblivious to these inner musings, lifted his head, his face tinged with color. The subtle sound of approaching footsteps neared the door.<br><br>"They're finally here."<br><br>Lee Jeong-Ryong's soft utterance caused Seok Go-Jun to knit his brows.<br><br>"They're late."<br><br>"Let it be. It's only their first year in office. They're trying to enjoy it before the lame-duck period sets in." \[Note: A president is a lame duck after a successor has been elected, during which time the outgoing president and president-elect usually embark on a transition of power.\]<br><br>"But still, to make Master wait…"<br><br>"Team Leader Seok. Remember your duty."<br><br>"Understood."<br><br>Seok Go-Jun transitioned from disciple back to the Ares Guild's security team leader, silencing himself. Shortly, a delegation of about half a dozen entered.<br><br>The front man, middle-aged, advanced and extended his hand to Lee Jeong-Ryong.<br><br>"I apologize for making you wait. Traffic was heavier than usual today. I realized again the importance of having a security vehicle. Haha."<br><br>His demeanor was courteous yet exuded self-assurance. Only someone of his stature could confidently approach Lee Jeong-Ryong, the unofficial chief of the Ares Guild.<br><br>Adorned with a Taegukgi badge, this middle-aged man was someone who could afford such a gesture. \[Note: a Taegukgi badge is just a badge or pin with the South Korean national flag. Their national flag is called the Taegukgi.\]<br><br>Lee Jeong-Ryong, with a slight smile, accepted the handshake.<br><br>"No worries. Thank you for coming here, Mr. President."<br><br>President Baek Han-Seong, the 27th President of South Korea and the youngest ever elected at 40, nodded.<br><br>"It's been a while, Vice Guild Master, Lee Jeong-Ryong. Is this our first meeting since the inauguration oath at the beginning of the year?"<br><br>"Yes, it is. We meet more often than I thought."<br><br>"Really? Haha."<br><br>Baek Han-Seong's laughter echoed in response to Lee Jeong-Ryong's remark.<br><br>He too recognized the magnitude of Lee Jeong-Ryong's influence.<br><br>A saying went around that South Korea had two presidents, and the Ares Guild House was akin to another Blue House.<br><br>'During the previous president's term, he never visited the Blue House even once.'<br><br>A major guild is a fortress built on power and wealth.<br><br>Lee Jeong-Ryong's position, controlling the Ares Guild, overshadowed former conglomerate leaders.<br><br>Baek Han-Seong's informal meeting with Lee Jeong-Ryong was possible due to two factors:<br><br>His status as an early-term president with substantial public backing, and the existence of mutually beneficial agendas for discussion.<br><br>"People say you gain more leisure as you age, but it seems not in my case."<br><br>"You are indeed straightforward."<br><br>Baek Han-Seong, understanding the subtle implication in Lee Jeong-Ryong's words, presented a white envelope.<br><br>"Here's an unofficial diplomatic letter from President Xiao Yang of China."<br><br>"As expected, it's unofficial."<br><br>"Yes, as you know."<br><br>The People's Republic of China remains a staunchly communist nation, as its official title implies.<br><br>The Communist Party leadership strives to maintain public calm and steadfast faith in the Party.<br><br>"They've managed to hide damage of that scale. I'm not sure whether to call it impressive."<br><br>"If this gets out, it will throw the whole of China into chaos. There would be no turning back."<br><br>Yet, a select few were privy to the reality, already dubbing it the 'Sichuan Province Catastrophe.'<br><br>The Chinese Communist Party had declared it a severe earthquake, deploying the People’s Liberation Army to seal the area.<br><br>"A Lich, was it? That Named Monster inadvertently helped the Central Committee of China. Even U.S. satellites can't get a clear view inside."<br><br>"It's a spatial distortion spell. A very powerful one."<br><br>"I see. I'm still a complete novice when it comes to magic."<br><br>"It might have helped the Central Committee, but it's having a negative impact on the military situation. We don't know what's happening inside."<br><br>With a casual expression on his face, Lee Jeong-Ryong's eyes swiftly perused the document's text.<br><br>After a brief review, he quietly commented on its contents.<br><br>"Thirty A-rank hunters, two hundred B-rank hunters..."<br><br>This document from China was essentially a mercenary contract, addressing the current crisis.<br><br>A particular detail stood out sharply.<br><br>"They've named me."<br><br>President Baek Han-Seong nodded.<br><br>"The Central Military Commission insisted strongly. They said that the Ares Guild and Vice Guild Master Lee Jeong-Ryong's role would be crucial in this matter."<br><br>"That makes sense. The situation is spiraling out of control."<br><br>"As you know, despite the number of hunters China possesses, their elite forces are not well-developed."<br><br>"That's a chronic problem for China."<br><br>Tap. Tap. Tap.<br><br>Lee Jeong-Ryong's fingers rhythmically tapped on the paper, his mind rapidly calculating.<br><br>The manpower China sought constituted about 20% of the Ares Guild's total capacity.<br><br>Including Lee Jeong-Ryong, that figure could jump to 50%. S-rank hunters are formidable, their global count under twenty.<br><br>'They must be quite desperate.'<br><br>This wasn't the first time China had made such a proposal.<br><br>Three days prior, Lee Jeong-Ryong held a clandestine meeting with the Chinese ambassador. The footage accompanying the proposal was astonishing.<br><br>'It was an incredible spell.'<br><br>Command over legions of monsters. The raw, destructive power of the magic.<br><br>It was a level of threat far surpassing any Lich encountered in the Great Cataclysm. A singular spell, yet its peril was unmistakable.<br><br>But...<br><br>'With great risk comes great reward.'<br><br>Gaining influence in a dictatorial regime is notoriously challenging.<br><br>The 'Sichuan Province Catastrophe' spelled disaster for some but presented a unique chance for others. The incentives offered by China were irresistibly enticing, raising concerns about competition snapping them up.<br><br>'As long as I am involved, this operation will not fail.'<br><br>Concluding his reflections, Lee Jeong-Ryong finally declared his decision.<br><br>"I will accept China's proposal."<br><br>"A wise decision."<br><br>President Baek Han-Seong's expression lightened with a smile.<br><br>If the Ares Guild significantly impacted this situation, the diplomatic advantages would be substantial. For a president keen on marking a notable achievement in his tenure, this was an unmissable chance.<br><br>"I'm rather grateful that I can be of help to the country and to you, Mr. President. But…"<br><br>The next words from Lee Jeong-Ryong made Baek Han-Seong's smile fade.<br><br>"I've heard rumors that similar proposals have been made to a few of the top 10 guilds in the country, not just to our Ares Guild."<br><br>"…"<br><br>"I know it's probably just a rumor, but I thought I should ask, just in case."<br><br>After a moment of silence, Baek Han-Seong replied.<br><br>"That's an unfounded rumor that has leaked. There's no way such a thing would happen."<br><br>At that moment, the Chief of Staff, standing behind Baek Han-Seong, contemplated internally.<br><br>He needed to cancel the informal meeting with leaders of the top 10 domestic guilds planned for the next day.<br><br>With the unnecessary branches trimmed, Lee Jeong-Ryong's smile grew wider.<br><br>"I see. Understood. I'll start selecting the necessary personnel immediately."<br><br>But Baek Han-Seong's words did not end there.<br><br>"While the talk about the top 10 guilds is a rumor, it's not entirely baseless."<br><br>Lee Jeong-Ryong, in the midst of paperwork, paused briefly.<br><br>"What do you mean?"<br><br>"Among the guilds that received China's proposal, there is one that is not part of the top 10 guilds."<br><br>"Surely not..."<br><br>A fleeting notion crossed Lee Jeong-Ryong's mind.<br><br>Simultaneously, Baek Han-Seong began to speak.<br><br>"It's the Peace Guild, to which Hunter Jin Tae-Kyung belongs."<br><br>"…!"<br><br>Lee Jeong-Ryong's expression tensed.<br><br>Again, that man was intersecting his path.<br><br>Jin Tae-Kyung's name now irked him more than Choi Min-Woo's.<br><br>"That's troublesome."<br><br>Lee Jeong-Ryong's tone was gruff, edged with frustration.<br><br>The young president seemed to be allowing this development.<br><br>Lee Jeong-Ryong was cognizant of the new president's anti-Ares stance, but this felt like blatant antagonism.<br><br>He checked his rising irritation and remarked,<br><br>"Too many cooks spoil the broth."<br><br>"I am aware."<br><br>"Your Excellency. This is not a matter to be taken lightly…"<br><br>Lee Jeong-Ryong was interrupted by Baek Han-Seong's composed reply.<br><br>"The helmsman was personally summoned by the ship owner. There was nothing I could do."<br><br>"The ship owner? Surely not?"<br><br>"Yes. President Xiao Yang himself requested it. He specifically named Vice Guild Master Lee Jeong-Ryong and the Ares. And insisted on the participation of Hunter Jin Tae-Kyung."<br><br>"…!"<br><br>Lee Jeong-Ryong's eyes flickered with surprise.<br><br>In that instant, Baek Han-Seong experienced the exhilaration he felt when he defied expectations and secured his election victory. He stifled a burgeoning laugh and glanced at his watch.<br><br>"The Peace Guild is relatively small, so they're quick to prepare. By now, they should have already boarded their flight."<br><br>\* \* \*<br><br>\- You, deceitful human.<br><br>"Wow. This is first class."<br><br>\- I, the Commander, thought of you as a deceitful and foolish human. I was wrong. I apologize sincerely.<br><br>"Wow, these cushions are amazing. What kind of drinks do you have?"<br><br>\- You are a madman. A crazy person. A lunatic. A madman!<br><br>"Look at how spacious these seats are. I could live here."<br><br>\- You madman! I told you not to go!<br><br>He is annoyingly loud.<br><br>Ignoring the Skeleton Warlord’s howls emanating from my inventory, I turned to Mr. Choi.<br><br>"How much does one of these cost?"<br><br>Mr. Choi, always ready to share, began enthusiastically.<br><br>"The new model from the renowned German aircraft manufacturer Focke-Wulf, known for its exceptional technology..." \[Note: Focke-Wulf was a German manufacturer of civil and military aircraft before and during World War II. It is one of the predecessor companies of today's Airbus.\]<br><br>Here we go again.<br><br>I interjected before he could delve into the history of Focke-Wulf's founder.<br><br>"No, I don't care if it's Focke-Wulf or Pokemon Black Friday. How much does a plane like this usually cost?" \[Note: it sounds ridiculous here, but this is another case where "Focke-Wulf" and "Pokemon Black Friday" are phentically similar to each other in Korean. In Korean, the Focke-Wulf would be pronounced as PokeWulf.\]<br><br>"For an aircraft like the one we're currently on, it would be just over 100 billion."<br><br>"Hmm. I should buy one."<br><br>Anyone overhearing this would label me as delusional.<br><br>But it wasn't a far-fetched idea.<br><br>I recalled a discussion with Mr. Choi a few hours earlier.<br><br>'I'm sorry, but please tell Jong-Seok I can't make it.'<br><br>'It's not Jong-Seok, it's President Xiao Yang. It's really a pity, though.'<br><br>'I feel the same. It's good to make a name for myself and raise the guild's status, but that place...'<br><br>'They offered 10 billion.'<br><br>'How much?'<br><br>'10 billion. If you stay beyond the promised week, they'll calculate it as 10 billion per week.'<br><br>'Weekly? A weekly salary of 10 billion?'<br><br>'It's unavoidable.'<br><br>'But I still won't go. With thousands of monsters and a crazy skeleton magician, even for me, that's too much. I'm not obsessed with money.'<br><br>'They said they would pay 50 trillion to whoever catches the Lich.'<br><br>'Oh, suddenly I'm craving something spicy. Sichuan cuisine is known to be spicy and flavorful...'<br><br>'...'<br><br>'Fuck it, let's go.'<br><br>The preparations were made in an instant. It was just Mr. Choi and me en route to China.<br><br>After all, President Xiao Yang had originally requested only my presence.<br><br>'This isn't about the money.'<br><br>This is about aiding China's distressed populace and boosting the guild's prestige.<br><br>Carrying this sense of purpose, I faced Mr. Choi.<br><br>"But, Mr. Choi."<br><br>"Yes?"<br><br>"If I make 50 trillion, do we split that with the guild too?"<br><br>"..."<br><br>"Let's be clear before we go. Money matters should be neat and tidy."<br><br>Mr. Choi, looking incredulous, replied.<br><br>"We'll split it nine to one."<br><br>This bastard.<br><br>While we were viewing each other as human garbage, the announcement echoed through the cabin, and the Chinese private jet commenced its climb.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-304.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-306.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 280 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 280</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 280</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: November 10, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>“Park Ji-Hwang. You fucking bastard.”<br><br>\- ......<br><br>The voice on the other side remained silent.<br><br>While unseen, the emotion was palpable: the deep turmoil and shock Park Ji-Hwang must be feeling.<br><br>"Why the silence? Speak when you're spoken to."<br><br>A brief pause, then an answer.<br><br>\- Hello? Who is this?<br><br>"It's me. You bastard."<br><br>Rage simmered in my voice. Adrenaline surged through my veins, my heart thudding heavily.<br><br>Yet, my thoughts remained chillingly clear, as if doused in icy water.<br><br>Had I, somewhere deep down, anticipated this confrontation?<br><br>'I can't believe this.'<br><br>The number 'twenty-eight' that sprung from his mouth was enough to turn my suspicion into a certainty.<br><br>Now I was only curious about who masterminded this and to what extent he was involved.<br><br>"Did you send those men after me?"<br><br>A voice, as deep as the abyss, responded.<br><br>\- Well, if you suspect it, then probably. Why? You thought I’d dodge the question?<br><br>The audacity.<br><br>He had no shame, as if he could look up to the heavens and laugh at the gods. A snort of disdain broke free.<br><br>\- Was it Im Young-Jun who talked? I thought he was a tight-lipped guy. Seems I was wrong about him.<br><br>He scoffed, a hint of amusement in his voice.<br><br>\- Such an idiot. I shouldn't have trusted him.<br><br>"Why blame the poop? It's the guy who pulls down his pants and strains in public that's wrong. But you..."<br><br>Crack.<br><br>The face of Team One Leader, who was struggling in my grip around his neck, turned blue.<br><br>"Did you think about how to handle the aftermath of your mess?"<br><br>\- I didn’t expect things to turn out this way... but do you think I acted without considering the aftermath?<br><br>"Well, I'm just saying because, from where I'm standing, it appears that way."<br><br>\- What?<br><br>"Do you think you can handle me?"<br><br>Tension hung in the air. One second, two, three, and then, piercing the thick silence, Park Ji-Hwang murmed a warning in a voice colder and sharper than any blade.<br><br>\- If you take one more step, it's the end for both you and the Peace Guild.<br><br>"Why should I care?"<br><br>\- It's not too late. Stop escalating the situation and come down. Let's put an end to this.<br><br>In this moment, I realized that the rules of the world weren't much different from those of war.<br><br>The one with the upper hand aggressively pushes forward, while the one who fears steps back first.<br><br>And I knew the true nature of his fear.<br><br>'The Black Hunters.'<br><br>The existence of the Black Hunters, who were essentially illegal mercenaries of the large guilds.<br><br>Believing that this secret was the noose around Ji-Hwang's neck, a sardonic grin crept across my face.<br><br>"You want to end this?"<br><br>\- Yes.<br><br>"On whose terms? You started this. You don't get to decide how this ends."<br><br>From the other end of the phone, Park Ji-Hwang's voice wavered.<br><br>\- Really. I knew you were a fool, but this is beyond what I expected.<br><br>"The result will also be beyond what you expected. Look forward to it, you bastard."<br><br>Then, in that moment...<br><br>Ding.<br><br>The elevator stopped on the 19th floor.<br><br>With a mechanical whisper, the sealed elevator doors parted.<br><br>I could see a lofty ceiling and dozens of people milling around a spacious corridor.<br><br>Several glanced our way, eyes widening in astonishment.<br><br>"Is that... Team Leader?"<br><br>"Hey, you! Who on earth..."<br><br>Instead of replying, I flung the Team One Leader forward. An oncoming Hunter, who'd bolted toward us, was pinned to the wall under the weight of the Team Leader.<br><br>Simultaneously, an employee at a nearby station shrieked, slamming the emergency alarm.<br><br>Wiiiiiiiing!<br><br>"Emergency! Emergency!"<br><br>"Intruder! All Team One members, arm yourselves!"<br><br>Amidst the ensuing cacophony, Park Ji-Hwang's voice, cold and defiant, echoed in my ears.<br><br>\- Go on, make your move. I'll look forward to it.<br><br>Ddu Ddu Ddu...<br><br>I swiftly pocketed the Team One Leader's disconnected phone.<br><br>When my hand emerged again, the phone had been replaced by twin daggers gleaming menacingly in the fluorescent lights.<br><br>'You want me to make a move?'<br><br>That's exactly what I was thinking.<br><br>"Who are you?!"<br><br>"Disarm! If you don't want to die, do it now!"<br><br>Elite Hunters from the Myeongdong Guild, armed to the teeth, started to circle me.<br><br>Behind me stood the elevator and a trembling voice murmuring,<br><br>"This is a dream. It must be a dream."<br><br>I cast a fleeting glance at the man, his eyes wide and lost.<br><br>"What phone do you use?"<br><br>"Gasp!"<br><br>"Your cellphone."<br><br>"Oh, uh...AdulPhone25." \[Note: the literal translation is "Adult Phone 25" but I think the point here is to use a character phonetically to make it sound like "Apple Phone".\]<br><br>"Ah, the one that looks like biting an apple and spitting it out." \[Note: Murim Login, brought to you by Apple products.\]<br><br>"Yes, yes, that's right."<br><br>"Take it out and record."<br><br>"Okay!"<br><br>He, who had just responded confidently, hesitated as he was pulling out his phone.<br><br>"Wait, what did you just say?"<br><br>"You said you use the AdulPhone25. Its quality is much better than mine, so I thought it'd be better to record with yours."<br><br>"What are you talking about?"<br><br>"Record this."<br><br>Interrupting our exchange, the Team One Leader, seemingly rejuvenated, sprang up and roared:<br><br>"What are you doing, you idiots! Subdue that bastard now!"<br><br>"Team Leader, isn't that Hunter Jin Tae-Kyung? Why is he so hostile..."<br><br>"I'll take responsibility."<br><br>Within any guild, Team One represents the guild and its power. They are the elite team.<br><br>Team One of the Myeongdong Guild, a guild consistently ranked in the top ten in the country, was undoubtedly the elite among elites. They were no different from living war machines.<br><br>"I have orders from the top. Think of him not as a person, but as a monster when you engage."<br><br>With the Team Leader's unwavering directive, numerous eyes sharpened with resolve.<br><br>Five tower shields in the front line simultaneously struck the marble floor without missing a beat.<br><br>Thud!<br><br>"Formation-!”<br><br>In the heart of a tranquil city.<br><br>A corporate office was abruptly transformed into a battleground.<br><br>\*\*\* \[Note: at this point in the chapter, the author has switched from the MC's first-person narration to a third-person-limited narration focused on the security guard in the elevator.\]<br><br>'What am I witnessing?'<br><br>Lee Min-Soo, a C-rank Hunter of the Myeongdong Guild's security detail, blinked in sheer disbelief.<br><br>The spectacle before him verged on the fantastical.<br><br>Crash! Bang!<br><br>The tower shield, touted to be as sturdy as an armored vehicle, shattered. A massive tanker, as if hit by a giant's hammer, was flung far away.<br><br>A tiny gap, just enough for a person to squeeze through, was breached by a slender silhouette in a fleeting moment.<br><br>And in the very next breath...<br><br>Zzzzip! Slice! Slash!<br><br>"Arghh!”<br><br>"Huh!”<br><br>With a blinding flash, the shield wall crumbled.<br><br>The Achilles tendons of the foremost defenders, who pitched forward in a daunting charge, were sliced with the precision of a surgeon.<br><br>'How on earth...'<br><br>A strike too swift for the naked eye.<br><br>In the span of a heartbeat, two fell. In another, three or even four more succumbed.<br><br>Every stride taken by the young warrior clad in a muted-gray hoodie, Jin Tae-Kyung, was marked by a gush of crimson and a chorus of wails.<br><br>"Block him!"<br><br>"Damage dealers!"<br><br>The frontline's defenses had been compromised almost immediately. Five gleaming blades, with ruthless intent, lunged at Jin Tae-Kyung as he continued his relentless march.<br><br>Sss! Sss! Sss! Sss!<br><br>Two blades were directed at the shoulders, one at the chest, while the remaining two targeted the legs.<br><br>Three rained from above, two lunged from below. A barrage conceived to be inescapable without retreating.<br><br>"He's ours!"<br><br>Yet, just as a cry of imminent victory pierced the air, the dagger in Jin Tae-Kyung's grip blurred, mirroring a misty mirage.<br><br>Chink!<br><br>The quintet of blades, which everyone believed would not miss, veered off course, slicing through nothing but void.<br><br>The warriors, eyes brimming with bewilderment, stared at Jin Tae-Kyung. Their handgrips, unable to bear the redirected momentum, exploded in a grotesque spray of gore.<br><br>"What... what is this...?"<br><br>"It's impossible!"<br><br>To the outcry that erupted like a scream, Jin Tae-Kyung replied with a bored tone.<br><br>"Is it?"<br><br>Swoosh!<br><br>His blade described a swift arc.<br><br>An onslaught too swift to predict, much less evade.<br><br>Directly within its path were the five Hunters who had previously ventured an attack.<br><br>Ssslice!<br><br>As the Hunters collapsed, blood blossoming from their torsos, a streak of light hurtled through the air.<br><br>Thwick. Whizz!<br><br>The arrowhead came to an abrupt stop, mere inches from Jin Tae-Kyung's chest.<br><br>An arrow, suffused with mana, released by an A-rank Hunter.<br><br>Yet, what halted its lethal course wasn't a mystically imbued shield or a gleaming sword.<br><br>Snap.<br><br>In a deft move, Jin Tae-Kyung broke the arrow mid-flight with just two fingers and sent it flying.<br><br>The arrow, now charged with only strength, shattered three defensive enchantments and found its mark in its shooter's shoulder.<br><br>Thunk.<br><br>"Cough!"<br><br>"If you fire another arrow, I'll make sure you have an odd number of testicles. If the rest of you don't want mismatched balls, step back. Controlling my strength is annoying." \[Note: not only is he a loving son and a caring brother, but this righteous man has also embarked on a medical education journey to become a urologist with a specific discipline in testicular surgery.\]<br><br>He was restraining himself?<br><br>The Hunters from Team One felt as if they were in a trance. They couldn't believe that he incapacitated dozens in the time it took to sip cold water, all while supposedly holding back.<br><br>A unanimous realization dawned upon them.<br><br>'What kind of monster is this?'<br><br>Who were they? They were the elite of the Myeongdong Guild, seasoned veteran Hunters. Their tenure varied, with some having given as few as 8 years of service, while others wore the scars and accolades of over two decades.<br><br>Their standing was testament to their prowess, skills that outstripped many, and they bore their pride as a badge of honor.<br><br>That was until today, until this encounter with Jin Tae-Kyung.<br><br>"Please move aside when I'm asking nicely, sunbaes. Honestly, I'd love to crush all of you, but since it seems you're not directly involved, I'd really rather not."<br><br>Clad in relaxed track pants and a nondescript gray hoodie, as if he'd just ambled out for a leisurely stroll, none dared dismiss Jin Tae-Kyung's statement.<br><br>He had imprinted his enormous power in the minds of the entire team.<br><br>"Now, if you'd be so kind as to step aside."<br><br>Even the seasoned veterans, who had waged countless wars within the Gates, felt a palpable tension strangling the atmosphere.<br><br>This was a raw, visceral dread, something far more potent than any terror wrought by the monsters they had squared off against in the past.<br><br>'This is a real monster.'<br><br>Thump, thump.<br><br>The monster was approaching them.<br><br>Almost instinctively, the Hunters shifted, creating an unobstructed path before him.<br><br>"Burning Hands!"<br><br>Whoosh!<br><br>Radiating an oppressive heat, a hand cloaked in fire lunged at Jin Tae-Kyung.<br><br>Despite the potency of the flame magic, touted to liquefy even the most steadfast of boulders, the monumental hand, woven of mana, dissipated into nothingness upon clashing with Jin Tae-Kyung's own hand.<br><br>"Is that... magic?"<br><br>"It's called the Divine Palm of Fire. Handy, right?" \[Note: pun intended.\]<br><br>The Team One Leader, witnessing the palm engulfed in blue flame, widened his eyes in disbelief.<br><br>Jin Tae-Kyung moistened his parched lips, his gaze piercing through the Team One Leader with an icy chill.<br><br>He bore the likeness of a Hunter that had just locked onto an elusive quarry.<br><br>"Oh, by the way, you're the exception from what I said earlier. I'll still crush you."<br><br>Swoosh!<br><br>Jin Tae-Kyung disappeared like a ghost.<br><br>But the Team One Leader wasn't just another rank and file mage; he was the chosen commander of Myeongdong Guild's elite. Stunned though he was, he reacted with admirable alacrity.<br><br>"Blink!"<br><br>A spell granting its caster the ability to instantaneously shift to any visible point within a 10-meter radius.<br><br>'If I attack him from behind with a barrage of magic, even if he's as nimble as they say...'<br><br>Yet, after invoking Blink to reposition himself behind Jin Tae-Kyung, the team leader felt as though reality itself had screeched to a halt.<br><br>There they were: Jin Tae-Kyung's profound, obsidian eyes, mere inches from his face. \[Note: picture the scene in manhwa chapter 114 when MC tries to use Qi sense on the Fire King.\]<br><br>A searing palm clamped down on his shoulder.<br><br>"Why are you so surprised?"<br><br>"......!"<br><br>"You roll your eyes too much."<br><br>He predicted the direction just by the movement of the eyes?<br><br>No, it wasn't just that.<br><br>The Team One Leader trembled as if he had been struck by lightning.<br><br>'This guy's speed... It's faster than my Blink magic.'<br><br>Just who the hell is this guy?<br><br>And what kind of monster had Park Ji-Hwang from Myeongdong Guild provoked?<br><br>With a trembling voice, he recited the last spell he had prepared.<br><br>"Poi- Poison.”<br><br>Whoosh.<br><br>A green poisonous mist spewed out, wrapping around Jin Tae-Kyung’s face.<br><br>Yet, as dread churned within the team leader, the formidable entity before him reaffirmed his monstrous nature.<br><br>"Ugh, it smells like a fart."<br><br>His chiseled brow furrowed.<br><br>That was the sum total of his response to the Poison spell.<br><br>Jin Tae-Kyung, a veritable fortress against venoms, directed a gust at the petrified Hunter.<br><br>“Huff.”<br><br>“Gasp.”<br><br>The team leader's hue shifted to a ghastly cyan as he inhaled the poisonous haze.<br><br>Seizing the man by the scruff, Jin Tae-Kyung scanned the surroundings, querying,<br><br>"Park Ji-Hwang. Where's that bastard's office?”<br><br>Whish!<br><br>A chorus of fingers all pointed towards a single door.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-279.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-281.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

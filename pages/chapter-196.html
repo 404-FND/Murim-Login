@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 196 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 196</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 196</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: Coldbutteredtoast</span>
+                            <span class="published-date">Published: October 12, 2022</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>"What's happened?"<br><br>His face pale with shock, the middle-aged merchant stared aghast into his prestigious clothing store in the centre of Taiyuan. Inside, the once glorious interior had been devastated: the crates of tightly packed silks had vanished without a trace, many of the shelves were empty and the few items that remained were damaged. The manager was leaning against the back wall, soaked in sweat.<br><br>"Speak man! Was there a thief?"<br><br>Feeling his legs grow weak, the merchant steadied himself against the door frame. Although he already owned several fabric stores, the Taiyuan branch was the largest by far and had been handed down to him from his grandfather. To think that thieves could rob such a place!<br><br>"I should never have left..."<br><br>For the past four months, he had been travelling across Shanxi and beyond, attempting to grow his family business and win bigger contracts. Now, he had returned and found his flagship store ransacked. Thoughts spiralling around his mind, he slumped to the ground in disbelief.<br><br>It was only then that the manager seemed to notice him. "Oh, when did you arrive, sir? You've returned earlier than expected!"<br><br>Reinvigorated, the owner sprang to his feet and grabbed the sweaty manager by the collar. "What happened? Was it horsemen? Who could have done this? Was our stock requisitioned by the government because of the war? Talk to me, man! Tell me now or I swear you'll die!"<br><br>"It's all sold out, sir."<br><br>The merchant shook him vigorously "Are you crazy? That doesn't even make sense! Just the silk alone would have been thousands of nyang! Who could have bought it all? Make sense, man!"<br><br>"Aristocrats, sir. And merchants. And Murim warriors. They've bought literally everything we have."<br><br>"...W-what? Why?"<br><br>"Because everyone is trying to win over the Jin Family, sir."<br><br>"The Jin Family? The Jin Family of Taiyuan? Did something happen?"<br><br>"Haven't you heard, sir?"<br><br>"I haven't heard anything! I've been away for four months and haven't even seen my wife's face, yet! I've come here directly and found this mess! What a disaster!"<br><br>"Wait, sir, please calm down! Let me explain!" said the manager, and he told him of the events that had transpired over the past months, outlining the war between the Jin Family and the Mount Heng Sword Sect, and all of the news since. "So now, the Fire King has reappeared. Here! And Shanxi Province is full of foreigners, who have come to meet him. In the twenty years since I've been working in Taiyuan, I've never seen anything like it."<br><br>The merchant glanced back at the doorway, anxiously rubbing the back of his neck with one hand. "The streets don't seem that busy, though..."<br><br>"Well, the sun's up, sir. Everyone will have packed up gifts and run to the Jin Family estate."<br><br>"I find it all very hard to believe..."<br><br>"Just look around you, sir. They've bought all the stock. It's a very big deal, sir." The manager dropped his voice to add, "The New Year festival was supposed to last three days, sir, but I think they will extend it. Rumours are spreading quickly now and they say that some really big players are moving."<br><br>"Big players? Just how big are we talking here?"<br><br>"The great clans and sects of Murim are involved, sir. And, early this morning, the King of Shanxi arrived to visit."<br><br>"H-his Majesty, the King of Shanxi? The Emperor's brother?!"<br><br>"Yes, sir. So you can see why things are selling out, sir. Even though Taiyuan is not Zhongyuan, it's still the largest commercial city in Shanxi Province. People come here to buy the things that they need. And as more people come to buy, the more things sell out and so the higher prices have risen."<br><br>His eyes sparkling, the merchant knew then that this opportunity was too great for him to rest. His embarrassment and despair evaporated and was replaced by clouds of nyang floating before his eyes. Quickly making calculations in his head, he said to his manager, "I have filled some warehouses that you won't know. We'll route some of that stock through here, so let's stay calm and move swiftly. Who should I go to?"<br><br>With a sly grin, the manager, who received a share of the profits, said, "You only need to remember three names, sir: Jin Wi-Kyung, Jeok Cheon-Gang and Jin Tae-Kyung, the Sleeping Dragon of Shanxi."<br><br>"The Jin Patriarch and the Fire Lord, I know, but Jin Tae-Kyung? The fool is a womaniser and a drunkard."<br><br>"No, no, he's the Sleeping Dragon now. In the near future, they say that he will spread his wings and rise to dominate the world."<br><br>"What does that mean?"<br><br>"Haha," the manager chuckled. "It seems like you've been kept totally of the loop, sir! The Fire King has made the Sleeping Dragon his disciple!" Then as the merchant spluttered and coughed, he continued, "I'd guess at least half of the people going to the Jin estate now will be trying to impress the Sleeping Dragon and not the Fire King."<br><br>The merchant rubbed his chin. The Fire King was certainly one of the best in the world, but he was truly ancient. Jin Tae-Kyung would be a different matter entirely - a man of twenty-one, an outstanding warrior and a scion of the Jin Family of Taiyuan. What an incredible coup for the family and for Taiyuan as a whole! They had not only befriended a transcendent master, they now had the chance for one of their own to rise to those lofty heights.<br><br>"I have to meet the Sleeping Dragon right now."<br><br>"Of course, sir. But it will be hard to meet him, even if you offer a thousand gold coins. I heard this morning that the Jin Family estate has started turning people away. Nobody knows if it's for training or because of the honoured visitors, but their influence has suddenly exploded and you will need contacts to even get near now."<br><br>"Hmm... didn't you have a good relationship with the seneschal of the Jin estate? He even accepted a bribe here and there, as I recall."<br><br>"He's dead. In the last war."<br><br>"Damn!" the merchant slammed his fist into his palm. It would not be easy for a small family firm to gain influence when even provincial powers had started to get involved. "Oh... yes... now that I think of it, I do know one person over there."<br><br>"Oh, do you know him well?"<br><br>"Well enough. My wife gave birth to him."<br><br>The manager frowned. "Oh, you mean your eldest son?"<br><br>"Hmm yes. He's an idiot who messes up everything he touches, but my wife hasn't said anything so I presume that he's still alive."<br><br>"Well, in that case you should contact him. You never know, he might actually be doing well as a Murim warrior by now!"<br><br>Both men laughed at the notion. "The son of a clothing store owner becoming a martial warrior," chuckled the merchant. "Yes, I can see it now, haha! That will never happen or my name isn't Hyuk!"<br><br>ACHOOOOOO!<br><br>Tae-Kyung felt the droplets from the sneeze settling on his upper back. He quietly opened his mouth. "Everything alright there, Mu-Jin?"<br><br>Hyuk Mu-Jin wrung out a damp cloth and carefully wiped the snot off his back. "Sorry, Captain. My nose suddenly got itchy."<br><br>"I see. Well, do that again and it will be the last sneeze of your life... Ah! Ow!" Every time the cold cloth rubbed down his back, Tae-Kyung felt another stab of pain. His whole upper body was covered with dark blue and black bruises.<br><br>"It's been two days and you'll still like this. Normally, you heal much faster."<br><br>Indeed, this was the first time that Tae-Kyung had been unable to recuperate with either sleep or Qi meditation. The blows had penetrated deep beneath the skin, sending shockwaves through his entire body. It had been so unexpected. All of a sudden, the transcendent master had appeared and then, with no warning at all, he had delivered a comprehensive thrashing. At least Tae-Kyung's flesh and bones had only been hammered by bare fists, rather than Flame Qi, he supposed.<br><br>After waking up in the hospital, Tae-Kyung had been transferred to his hall, where he had been in bed since.<br><br>"That damn old man."<br><br>"Captain, are you crazy? Mind your tongue or you'll really die next time. Even your brother won't be able to save you. You know, when he first heard the report he was really angry and went to confront the Fire King..."<br><br>"He went there?"<br><br>"He did. Then, after seeing the Manual of the Divine Palm of Fire he apologised many times and left."<br><br>"What? What's he sorry for? I didn't set it on fire! At best, it was a little bit singed. Why would you beat someone for that?"<br><br>"Well I got a glimpse of it and it wasn't 'just a bit singed', Captain. The cover was so burned you could barely read the title. The technique of the Flame Clan was so close to burning up completely... Ah, I think it's better to stop talking about this, honestly. I'm shaking just thinking about it. If the great warrior were to come in now, wouldn't we both be dead?"<br><br>"...I suppose you're right."<br><br>Hyuk Mu-Jin had shown great foresight, as the door suddenly slammed open.<br><br>The men inside screamed.<br><br>"What's with that reaction?" asked the small man in the doorway, narrowing his eyes.<br><br>"Ah, ah, it's nothing!"<br><br>Jeok Cheon-Gang snorted and entered the room. "Good. I didn't hear anything, so I'll overlook it this time." Walking up to the table, he glanced at Mu-Jin. "You. Out."<br><br>Ignoring the desperate gaze from his Captain, Mu-Jin bowed quickly, "Yes, sir, I'm going!"<br><br>Tae-Kyung watched the door close and then looked up anxiously at the Fire King, whose eyes were flashing with some unknown heat.<br><br>"Take off your pants," said the old man.<br><br>"Uhh... what do you mean?"<br><br>"Everything off. Now. Take it all off."<br><br>Tae-Kyung modestly covered his chest, voice trembling with shame. "But I have someone I like!"<br><br>"What does that matter?" The Fire King frowned in irritation. "I'm going to wash your hair, so take off your clothes and lie down!"<br><br>[Oh. You should have said that earlier.]</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-195.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-197.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

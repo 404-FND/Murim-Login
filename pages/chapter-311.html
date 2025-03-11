@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 311 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 311</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 311</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: January 5, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>"Accept quest."<br><br>Ding.<br><br>\- You have accepted the emergency quest, \[Crisis of the Dragon Phoenix Armed Escort Agency\]!<br><br>You've grown up, Jin Tae-Kyung. Now you even know how to create your own quests.<br><br>A satisfied smile crossed my face as I extended my right hand. My palm, glowing with the searing heat of the Divine Palm of Fire, collided with the axe's side at a blistering pace.<br><br>Bang!<br><br>The hefty frame of Thousand Strength Axe recoiled from the impact. He staggered back three yards, his expression a mix of bewilderment and fury.<br><br>"What, what is this……."<br><br>"What do you mean? You just picked the wrong fight."<br><br>My grin widened as I sized up Thousand Strength Axe.<br><br>This was no imposter like the one I encountered at level 10, but the genuine, imposing level 90 version.<br><br>'Wow, the real one is definitely different.'<br><br>He loomed larger, his features so menacing he'd be mistaken for a bandit, and his martial prowess was on a whole different scale.<br><br>The sight of Thousand Strength Axe conjured up old memories.<br><br>'Capturing him back then really gave my reputation a boost, albeit based on a misconception.'<br><br>That was when my standing within the Jin Family of Taiyuan began to shift.<br><br>People confused the imposter with the real Thousand Strength Axe, inadvertently washing away the family's disgrace.<br><br>'Ah, feels like just yesterday.'<br><br>As I reminisced, Thousand Strength Axe eyed me cautiously.<br><br>"Who are you, exactly?"<br><br>"Me? The person who will kill you twice."<br><br>"What, what did you say?"<br><br>"It's a real thing."<br><br>"Kill me twice, what nonsense is that... Wait. Could it be?"<br><br>Thousand Strength Axe's words halted mid-sentence.<br><br>His expression turned to stone as he stared at me, recognition dawning, and he exclaimed.<br><br>"Sleeping Dragon of Shanxi!"<br><br>"Huh? Yes, that’s me?"<br><br>"I heard such a rumor about a year ago... No, that's not it."<br><br>Thousand Strength Axe hesitated, then with a newfound respect, addressed me.<br><br>"Are you really Jin Tae-Kyung, the Young Master of the Jin Family of Taiyuan?"<br><br>"I'm not 'the' Young Master, but I am Jin Tae-Kyung."<br><br>Acknowledging this, murmurs of disbelief rippled through the crowd.<br><br>Both bandits and escorts alike stared, their eyes wide with shock, particularly one piercing gaze from the sidelines.<br><br>\[Lv.88 Ju Hwa-Ran\]<br><br>Her lips parted delicately, and she spoke in a crystalline tone.<br><br>"Are you... the Sleeping Dragon of Shanxi?"<br><br>"Uh-huh. People do call me that."<br><br>Her large, dark eyes lifted to mine, and she bowed in a martial salute.<br><br>"I am Ju Hwa-Ran, the young leader of the Dragon Phoenix Armed Escort Agency. It's an honor to meet you, Mr. Jin."<br><br>"Ah, yes. Nice to meet you too."<br><br>Was my renown greater than I realized?<br><br>To encounter so many who recognized me on a mountain path, miles from Shanxi, was unexpected.<br><br>It was also unexpected that the most stunning woman I'd ever seen recognized me.<br><br>'People can be astonishingly beautiful.'<br><br>Ju Hwa-Ran transcended mere descriptions of prettiness or beauty.<br><br>As I pondered my limited vocabulary, the crowd began to stir.<br><br>"Cough. You know, now that I think about it, don't we have to do some fortress maintenance work today?"<br><br>"Ri- right. The fortress leader is correct. I completely forgot."<br><br>With an awkward cough, the sounds of hundreds of people cautiously retreating began.<br><br>Turning my head, I caught sight of Thousand Strength Axe and his men from Black Stone Fortress and Green Forest Alliance attempting to slink away.<br><br>I called out to Thousand Strength Axe.<br><br>"Hey, Strength Axe."<br><br>He froze.<br><br>"...Strength Axe?"<br><br>"Yeah, our Strength Axe. Where are you going now?"<br><br>His face was a canvas of emotions – frustration mingled with resignation.<br><br>He managed a strained reply.<br><br>"I have some business at the fortress, so I think I should go there."<br><br>"So, why are you leaving without permission?"<br><br>"…!"<br><br>A cold silence fell over the clearing. Thousand Strength Axe's grip on his axe whitened, but he remained motionless.<br><br>A single exchange had been enough.<br><br>Thousand Strength Axe, along with everyone else, must have realized the gap between us. I was leagues beyond his level.<br><br>However, it wasn't just my prowess that held him back.<br><br>"Where is the Fire King?"<br><br>Where, indeed. The Fire King was sound asleep on an A frame carrier.<br><br>Ensconced in furs to protect against any contingencies, no one would suspect the formidable Fire King was there, lying unconscious.<br><br>'And the fact that Grandfather is incapacitated must remain a secret.'<br><br>Revealing it would invite vultures like Dark Heaven.<br><br>I masked my concerns with a casual smile.<br><br>"Why ask about my master?"<br><br>"I- I just wanted to meet him."<br><br>"Why, are you close with my master?"<br><br>"Well, I've always respected him..."<br><br>"If by any chance you do meet him, don't say that. A bandit like you pretending to be close will only annoy him. That's when you'll start losing ribs."<br><br>"…Your joke is a bit much."<br><br>"Does it sound like a joke?"<br><br>Thousand Strength Axe chewed his lip, his eyes darting. His glance flitted between me, Ju Hwa-Ran, the Dragon Phoenix Armed Escort Agency, and the Bermuda Triangle descending. His gaze settled back on me.<br><br>"So, he's not here?"<br><br>"What if he isn't?"<br><br>"If that's the case…"<br><br>Swoosh. Thud.<br><br>Thousand Strength Axe hoisted his axe onto his shoulder.<br><br>"The situation changes quite a bit."<br><br>"Like your tone now?"<br><br>"It's been tough catering to a young one's whims."<br><br>"Strange, whether my master is here or not, I don't see what changes."<br><br>"That's because you're a greenhorn who doesn't know the ways of the world."<br><br>"In what way?"<br><br>"I acknowledge your martial arts are beyond what I expected. But it's a problem if you consider yourself equal to your master."<br><br>Thousand Strength Axe, his expression a mix of derision, gestured commandingly. Simultaneously, about five hundred Green Forest Alliance warriors advanced, brandishing their arms.<br><br>His assurance seemed bolstered by the Fire King's absence.<br><br>"Fire King Jeok Cheon-Gang is undoubtedly an extraordinary master. But can you alone turn the tide of this battle?"<br><br>"Hmm."<br><br>I surveyed the scene. The Dragon Phoenix Armed Escort Agency's forces barely numbered over seventy.<br><br>Half were mere porters, ignorant of combat, while the remaining escorts appeared fatigued.<br><br>Contrastingly, Thousand Strength Axe's Green Forest Alliance boasted nearly five hundred.<br><br>Their numerical superiority was evident, granting Thousand Strength Axe a certain bravado.<br><br>Yet...<br><br>"Let's try turning it around, shall we?"<br><br>"Ha ha ha! Go ahead and try."<br><br>"That's the plan."<br><br>In a blink, the smirk vanished from Thousand Strength Axe's face.<br><br>I had bridged a five-yard gap in a single stride and launched a punch.<br><br>'Flame-Extinguishing Divine Fist.'<br><br>Woosh.<br><br>The air burst apart, scattering intense heat.<br><br>A strike that once shattered an unnamed cliff in Mount Song now hurtled towards the encroaching Green Forest Alliance.<br><br>Thousand Strength Axe was at their vanguard.<br><br>Boom!<br><br>A thunderous crash echoed, raising a maelstrom of dust and steam.<br><br>Ding. Ding. Ding.<br><br>System alerts chimed incessantly. These foes were of such caliber that their defeat granted no experience. My spear remained unused.<br><br>In the midst of the swirling mist, I unleashed a torrent of martial arts techniques.<br><br>Bang!<br><br>Tearing, hitting, smashing everything in my path.<br><br>Destruction reigned as the earth upheaved, blood and screams intermingling in the chaos.<br><br>"Arrrrgh!" <br><br>"Kill him!"<br><br>"He's over there!"<br><br>Swoosh! Thud!<br><br>A barrage of thrown weapons soared my way, only to land harmlessly in the earth.<br><br>Their movements were ponderous, almost sluggish. The trajectories of their attacks were blatantly clear to me.<br><br>'This is almost too easy.'<br><br>Crack!<br><br>In stark contrast, my own movements were swift, each imbued with devastating force. With every unerring step, cries of agony echoed.<br><br>Confusion reigned among the bandits, unable to differentiate ally from enemy, their weapons lashing out indiscriminately.<br><br>Swish! Slash!<br><br>"Ahh! You crazy bastard!"<br><br>"Is that, Wang Pal?"<br><br>"No, it's me! Me, you damned fool!"<br><br>"Sorry, I thought you were him..."<br><br>I whispered in the ear of the flustered bandit.<br><br>"This time, it's really me."<br><br>"…!"<br><br>Crack!<br><br>With precise force, I snapped his neck. His body crumpled silently.<br><br>Before he even touched the ground, I was already in motion.<br><br>'Brilliant Path of Fire.' \[Note: this is a new move that we have not seen before. The direct translation is Blazing Fire Single Path or Path of the Intense Flames.\]<br><br>The unique mental method of the Scorching Clan.<br><br>I darted forward, igniting the air. A fiery trail sliced through the fog, illuminating a towering figure – eight feet tall.<br><br>Our eyes locked in a fleeting moment.<br><br>"There you are."<br><br>"Jin Tae-Kyung, you bastard..."<br><br>Thousand Strength Axe, his teeth clenched in fury, advanced towards me.<br><br>The Divine Palm of Fire, now fully energized.<br><br>His axe, radiating with red energy, swung down in a formidable arc.<br><br>A lion-like roar erupted from him.<br><br>"Die!"<br><br>Swoosh! Bang!<br><br>Our clash unleashed an immense wave of energy.<br><br>So close, our breaths nearly mingled. Thousand Strength Axe's widened eyes mirrored my icy visage.<br><br>My fist, having shattered his axe, now pierced through his chest and emerged from his back.<br><br>Whoosh!<br><br>"Argh… Huk."<br><br>Blood was absent; the searing heat from my Divine Palm of Fire had vaporized any fluids.<br><br>Thousand Strength Axe's lips trembled.<br><br>"You, what are you…"<br><br>"You said to turn it around."<br><br>Swoosh.<br><br>I retracted my fist from his chest. His body, ravaged by burns, unable to endure the initial impact of the Flame-Extinguishing Divine Fist.<br><br>Thousand Strength Axe, gazing at his charred chest, uttered in a faltering voice.<br><br>"This is, beyond words…"<br><br>His voice trailed off, marking his final words.<br><br>Thud. The towering giant fell, triggering a system alert.<br><br>Ding.<br><br>\- \[Lv.93 Bang Yeol\] has been defeated!<br><br>\- \[Defeat Thousand Strength Axe\] completed!<br><br>\- A significant amount of experience has been gained!<br><br>Whoosh.<br><br>A gust then swept across Black Stone Mountain, clearing the mist.<br><br>The scene unveiled left everyone in shock.<br><br>"This can't be!"<br><br>Thousand Strength Axe Bang Yeol, a top twenty figure in the Green Forest Alliance, a Peak Master among many, now lay defeated.<br><br>The battlefield was strewn with the bodies of about a hundred fallen bandits.<br><br>The surviving four hundred, their eyes wide with terror, gazed at me.<br><br>In fact, everyone who bore witness to this spectacle was in disbelief.<br><br>"The Fire King...!" <br><br>Fire King Jeok Cheon-Gang.<br><br>Half a century ago, he was the warrior who single-handedly decimated a thousand members of the Demon Cult in a nameless wasteland, epitomizing the adage, "one man against a thousand."<br><br>The lore of the Scorching Clan was solidified by the Fire King's legend, a legacy now bestowed upon me.<br><br>"Make your choice. Die here, or…"<br><br>Intensity surged through me, my body radiating intense heat. Wisps of white steam escaped, weaving through the air.<br><br>My eyes, ablaze with fire, locked onto those who opposed me.<br><br>"Kneel, all of you."<br><br>Clang.<br><br>The first sword clattered to the ground, powerless, soon followed by nearly four hundred others.<br><br>Ding.<br><br>\- \[Suppression of Black Stone Fortress\] completed!<br><br>\- Quest, \[Crisis of the Dragon Phoenix Armed Escort Agency\] successfully completed!<br><br>\- A significant amount of experience gained!<br><br>\- Level Up!<br><br>The system's melodic chime signaled the conclusion of the skirmish.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-310.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-312.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

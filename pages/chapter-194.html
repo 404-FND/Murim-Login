@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 194 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 194</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 194</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: Coldbutteredtoast</span>
+                            <span class="published-date">Published: October 11, 2022</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>After some time, the Fire King returned to the feast. Tae-Kyung was there, waiting for him, watching suspiciously.<br><br>"Why are you looking at me like that? I told you I was just going to the toilet shed."<br><br>"Really? You took a long time."<br><br>"I have a lot of energy."<br><br>[How much would you need to urinate for 15 minutes? Are you packing a fire hose?]<br><br>"Do you have any complaints?" continued the old man.<br><br>"Of course not." Tae-Kyung shook his head. [Indeed, bowing a hundred times would not be a fraction of the gratitude he deserves for the help he has given to us today.]<br><br>While they talked, the other guests watched with curiosity and disbelief. Tae-Kyung could hear them whispering to one another, "Why would the Fire King take him as a disciple? It makes no sense."<br><br>[I agree. Why would you teach a man who killed someone you loved like a son?]<br><br>While Tae-Kyung was pondering this, Wi-Kyung moved over to stand beside him. The Jin Patriarch bowed and offered a formal, polite introduction. "As the representative of my family, I, Jin Wi-Kyung, offer my greetings and sincere gratitude to Jeok Cheong-Gang, the world-renowned Fire King."<br><br>"Ah," replied Cheon-Gang. "Are you the one who is responsible for this kid?"<br><br>"I am, sir."<br><br>"Then you need to educate your child properly. He lacks manners and he's always getting into trouble."<br><br>Wi-Kyung darkened and said, "This is my brother."<br><br>"Huh?"<br><br>"I am Tae-Kyung's older brother, not his father. The Lesser Family Head of the Jin Family of Taiyuan."<br><br>Cheon-Gang flushed. "Don't joke. How old are you?"<br><br>"The new year has begun, so I'm now thirty-six."<br><br>"Wow. You look forty-six... but it's OK, never mind. Age is unimportant for a man when you have a pretty bride and cute children."<br><br>"I'm single."<br><br>"Ah..."<br><br>While that may be a suitable age to get married in modern times, early marriages were common in Murim and many would expect to have grandchildren by thirty-six. The silence stretched out for a little while, until the Fire King sighed.<br><br>"Enough of this! Would you like a drink?" asked Tae-Kyung, laughing.<br><br>"Are you kidding? Bring it on!"<br><br>The raucous atmosphere of the New Year celebrations rekindled like a glowing ember. Putting the visit by the Southern Edge Sect behind them, the crowd cheered in excitement at the presence of a real celebrity. "Drink!" they cried. "Cheers!" "To think that I have seen the Fire King in my lifetime!" "Ahhhh!" As the feast began again in earnest, guests offered greetings and praise from all sides. "Grand master, it is a lifetime honour to see you like this!" "If you visit our estate in future, we will honour you!" "Teach me, great master!"<br><br>The Fire King was a legend. After decades of living in isolation, most had presumed that he was dead. But now, he had reappeared, in the flesh, and not in a huge city or the headquarters of a great sect, but in Taiyuan in Shanxi. Perhaps only the sudden return of Michael Jackson, the Emperor of Pop, would have received similar adulation.<br><br>"Tae-Kyung," said Wi-Kyung, transmitting the words into his mind. "Do you think the great master looks uncomfortable?"<br><br>His eldest brother was right. This was something that he needed to handle. While Cheong Pung was able to trade words comfortably with the old man, Tae-Kyung knew that he was too socially inexperienced and unpredictable to rely upon.<br><br>The nobility of Shanxi still continued to swarm around the Fire King. Some begged to become his disciple; some wanted to serve as his gatekeeper. Merchant princes sought to curry favour by offering gifts or invitations to stay at luxurious estates. One pregnant lady even asked the Fire King whether he would touch her nose, in the hope that he would bless her baby with great health and abundant Qi.<br><br>Bemused, Tae-Kyung had to wonder why the Fire King endured without leaving. Despite only knowing the old man for a short time, Tae-Kyung was already sure that he was someone who disliked noise and fuss, which is why he had chosen to live in isolation in the sacred mountains of his clan.<br><br>As they watched, a lavishly dressed man, the leader of a Shanxi merchant board, crouched before the Fire King. "Lord Jeok Cheong-Gang, oh illustrious great master! You are famed and respected around the world! Because of my deep admiration for you and your clan, I have prepared a small gift." From his sleeves, he produced a small box and opened it to reveal a ring of transparent jade.<br><br>"That's a pretty valuable item," said the Fire King. "Wouldn't it have been difficult for you to acquire?"<br><br>The merchant waved his hand dismissively. "It would only cost about 1000 nyang. That is a small price to pay for the opportunity to show my respect to this great master, hahaha."<br><br>A ring of 1000 nyang, it was the most expensive gift presented at the New Year festival so far.<br><br>The Fire King looked unmoved. "Well, I'll be grateful to receive it. Who do you represent?"<br><br>"The Yangcheon Chamber of Commerce. We are trying to make a deal with the Peng Clan of Hebei, but it has been more challenging than anticipated..."<br><br>"The Peng Clan, huh? Who is their leader these days?"<br><br>"Grand Master Peng Cheol-Young, the Unyielding Blade (鐵⾎⼑ -- Chinese: Iron Blood Knife)."<br><br>"This is the first time I've heard the name. Is he the son of the Thundering Sword King (霹靂⼑王 -- Chinese: Thunderous Dao King)?"<br><br>"Yes, yes, ever since the Thundering Sword King stepped back and took an advisory role in the family."<br><br>"Ah yes, I shared a drink with him in the past."<br><br>Bowing and beaming with delight, the merchant withdrew. Beneath the box was a bundle of slips.<br><br>Tae-Kyung leaned in to whisper, "Do you really know the Thundering Sword King?"<br><br>Cheon-Gang puffed up a little at the tone. "I told you, I shared a drink with him. As I recall, I was drinking with Mae Jong-Hak at the time, but he came over and picked a fight and I taught him a lesson."<br><br>"Huh? Weren't you friends?"<br><br>"Me? With him?" Cheon-Gang frowned. "Not with that ignorant guy. There were some rumours afterwards, though. It was said that me and that Peng guy fought for a hundred seconds before calling it a draw. His clan did well there."<br><br>"But in that case," said Tae-Kyung, stunned, "if the Yangcheon merchants use your name with the Peng, won't it hurt their chances of striking a deal?"<br><br>"Why would I care about that?" The Fire King shrugged. "It's true that I drank with the Thundering Sword King. What the merchant does with that knowledge is up to him."<br><br>Tae-Kyung gaped. [It's like he's running a scam! And no one will be brave enough to try to reclaim any gift they've offered to the Fire King.]<br><br>In the meantime, another petitioner had come forward. "Please visit our lands, we would be honoured to welcome you. Here is a small gift to show our appreciation."<br><br>"I receive it gladly."<br><br>Beside the old man, treasures, prizes and slips were beginning to pile up like a mountain.<br><br>"This is a pretty good haul," the Fire King stretched and turned his face to Tae-Kyung. "Why are you looking at me like that?"<br><br>"Nothing. I respect your achievements. There is nothing bad about being rich."<br><br>At that, the Fire King laughed and stood up, stretching his back. "Then you have it. It's of little use to me and it seems to be important to you, so take it and do what you like with it."<br><br>"What? Why all of a sudden?" [I have already received too much help. Why is he helping us so much?]<br><br>Jeon Cheon-Gang yawned and said, "Oh, it looks like I've drunk a bit too much. I think I'd better go and sleep it off. See you all in the morning."<br><br>Tae-Kyung looked at the back of the old man as he walked away, then turned his gaze back to the feast. Moonlight reflected in the cups and glasses, still half full of potent spirits; the festival looked likely to continue well into the night.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-193.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-195.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

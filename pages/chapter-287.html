@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 287 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 287</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 287</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: November 24, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>Im Hyuk-Jun, Song Song, Butler Kim, and I all stood in the hospital room.<br><br>Yet, when Lee Jeong-Ryong entered the room, his eyes settled with piercing intent on a singular figure.<br><br>Mr. Choi.<br><br>"You've grown a lot."<br><br>"...!"<br><br>The air seemed to still as Lee Jeong-Ryong's voice cut through the silence.<br><br>This was it. The secret Mr. Choi had been hiding.<br><br>Their relationship seemed closer than mere professional acquaintances.<br><br>'From what I know, Mr. Choi was part of the Ares Guild for roughly three or four years.'<br><br>At best, his earliest encounter with Lee Jeong-Ryong would have been in his early twenties. Such a remark, suggesting substantial growth, was more apt for a child, not a man of his age.<br><br>It's the kind of remark you'd hear from your parents' friends or relatives during holidays.<br><br>"It's been a while. Vice Guild Master Lee Jeong-Ryong."<br><br>With his stiff title and tone, Lee Jeong-Ryong eyes glimmered with a curious light,<br><br>"Vice Guild Master, huh? When you were little, you used to call me 'grandfather'." \[Note: the term "grandfather" here is purely an affectionate term and does not signify an actual familial bond. It is similar to how Im Hyuk-Jun's children call the MC "Uncle Tae-Kyung" even though the MC and Im Hyuk-Jun are not brothers.\]<br><br>Grandfather?<br><br>It was the second shock. For a moment, I wondered if perhaps this really was his relative? But I quickly dismissed the thought.<br><br>It must be a term of endearment from a bygone era. Surely, Lee Jeong-Ryong was not his actual grandfather.<br><br>'Looks like they had a close relationship since Mr. Choi was young.'<br><br>Their relationship was evidently deep and intricate.<br><br>As astonishment rippled through the room, only Butler Kim and the ever-poised Mr. Choi remained unaffected by the currents.<br><br>"That was twenty years ago."<br><br>"How time flies. Who would've thought that the affectionate little boy would change this much."<br><br>"As time passes, I see things I didn't see before."<br><br>"I did receive a report last year that you had resigned. Come to think of it, I haven't seen you since you joined the guild. I kind of missed you."<br><br>Lee Jeong-Ryong mused, though his features betrayed no hint of the sentimentality his words might imply. Mr. Choi's reply mirrored the same detachment,<br><br>"I feel the same. If you hadn't given me only overseas assignments, we could have seen each other more often.”<br><br>"Didn't you like the overseas branch?"<br><br>“I felt it wasn't where I belonged. That's all."<br><br>"Not where you belong…"<br><br>"Isn't that the outcome you wanted, Vice Guild Master?"<br><br>"Are you saying that I sent you on those assignments to get rid of you?"<br><br>Lee Jeong-Ryong chuckled, a glint of amusement in his eyes.<br><br>"So, did you start a new nest? Even going as far as borrowing someone else's name?"<br><br>"I apologize for interrupting, but..."<br><br>Butler Kim, who had been a silent observer, suddenly spoke up. His voice was as calm as ever.<br><br>"Young master and I left together."<br><br>"What? Who is this?"<br><br>Lee Jeong-Ryong feigned astonishment, his eyes widening theatrically.<br><br>The charade was transparent. If he recognized Mr. Choi, he surely would recognize Butler Kim, who was Mr. Choi's closest confidant.<br><br>"Kim Hwa-Jong? Is it Hwa-Jong?"<br><br>"It's been a while, Sunbae."<br><br>With no hint of reticence, Butler Kim accepted the proffered hand. Their handshake, paired with muted smiles, was a silent testament to their shared history.<br><br>'Informal speech? And calling him Sunbae?'<br><br>Putting aside the nature of their connection, it was clear that their rapport was more intimate than I first guessed.<br><br>"It's good you came. The last time we met was... about 20 years ago?"<br><br>"Exactly 18 years. Eighteen."<br><br>Was it my imagination, or did he seem to emphasize certain words?<br><br>A quick glance at Song Song and Im Hyuk-Jun confirmed they were visibly shaken, as if they had seen a ghost. \[Note: Butler Kim is usually the epitome of composure and decorum, but his demeanor undergoes a stark transformation in this chapter. His angry and borderline rude manner of dealing with Lee Jeong-Ryong deviates sharply with his usual conduct. This is why Song Song and Mr. Rough Guy look so shaken here.\]<br><br>'Ah, it wasn't just my imagination.'<br><br>They were closer than I thought. I must be blind.<br><br>To be exact, Butler Kim didn't just have a close relationship with Lee Jeong-Ryong; he seemed to dislike him.<br><br>Yet, Lee Jeong-Ryong maintained his amiable facade as he spoke.<br><br>"Hwa-Jong, I thought you had become wiser while we were parted, but it seems your guts have grown stronger too."<br><br>It was a loaded statement. Despite the weight of Lee Jeong-Ryong's insinuations, however, Butler Kim's gaze did not waver.<br><br>"When one finds peace of mind, they become wiser."<br><br>"Peace of mind?"<br><br>"After rescuing Young Master from the tiger's jaws, I felt relieved. As for my guts, they have always been strong."<br><br>"Hahaha! That's right. Once you set your mind to something, you never cared about the consequences. Thanks to that fearless nature, I too had a brush with death."<br><br>"I remember. The Han River."<br><br>"Yes, the Han River. The day Mapo Bridge collapsed. You still remember it, Hwa-Jong."<br><br>"I think about and regret it whenever I get a chance. If I hadn't saved you back then, this situation wouldn't have arisen."<br><br>Let me correct myself again. It isn't mere dislike that Butler Kim harbors for Lee Jeong-Ryong.<br><br>It is a profound loathing, deep-seated enough to fantasize about his death.<br><br>Though he doesn't wield a sword, his tongue is sharp as a blade.<br><br>At the sting of his words, Seok Go-Jun, who had thus far stood rigidly behind Lee Jeong-Ryong, edged forward with a steely resolve.<br><br>"Mind your tongue."<br><br>"Mind my tongue?"<br><br>"He's not someone you can address so carelessly."<br><br>Butler Kim's eyes scrutinized Seok Go-Jun with a peculiar look.<br><br>"From a brief look, you seem quite skilled. Hunter, what's your name?"<br><br>"I'm Seok Go-Jun, in charge of the Vice Guild Master's security."<br><br>"I see. Team Leader Seok Go-Jun."<br><br>Butler Kim acknowledged, his rich baritone tapering off into a murmur.<br><br>"If you've said your piece, then shut up and stand back. It's not your place to intervene."<br><br>"......!"<br><br>Seok Go-Jun's typically impassive features calcified further, a telltale vein throbbing on his temple in silent indignation.<br><br>Amidst the tension, a soft laugh from Lee Jeong-Ryong coaxed him to recede.<br><br>"I thought you'd become gentler with age... but that temper of yours remains. Indeed, this is the Kim Hwa-Jong I know."<br><br>"If we're talking about having a nasty temper, I'd say I have to fold a few hands against you, wouldn't I?" \[Note: "Fold a few hands against you" is a poker term used here metaphorically.\]<br><br>Mr. Choi's voice sliced through the mounting tension with icy precision.<br><br>"Let's cease the pointless chatter and get to the main point."<br><br>Who among the throngs of Korea, or the broader world, could address Lee Jeong-Ryong with such audacious candor?<br><br>The tumult of their exchange left Mr. Rough Guy and Song Song slack-jawed.<br><br>Particularly striking was the way that Butler Kim acted now. Even I, who had witnessed his curt dismissal of Sangdong Guild Master Im Chun-Soo as if swatting away a stray dog, was taken aback.<br><br>'What on earth happened?'<br><br>Both Mr. Choi and Butler Kim were not their usual selves.<br><br>"One is young and hasty, and the other still hasn't let go of his youthful temper. Well, it's not bad to get to the main point now. It's a pity, as I was invited here to begin with."<br><br>"You say you were invited?"<br><br>"You're mistaken. No one among us invited the Vice Guild Master."<br><br>"Think about it. There should be one person, right?"<br><br>Lee Jeong-Ryong's gaze, having mirthfully danced between the two previous speakers, abruptly shifted to me.<br><br>"That friend there."<br><br>An immediate silence fell over the room.<br><br>With the weight of the room's attention bearing down, I opened my mouth.<br><br>"What bullshit is this?"<br><br>No sooner had I finished speaking than Seok Go-Jun growled threateningly. He seemed poised to charge like a hunting dog if Lee Jeong-Ryong hadn't given a dismissive shake of his head.<br><br>Lee Jeong-Ryong addressed me, his tone laden with both a challenge and a charm.<br><br>"Weren't you the one? You came forward and said you wanted me to apologize to the victim."<br><br>"Ah."<br><br>I had indeed uttered those words, but directed towards Park Ji-Hwang and Park Tae-Seop.<br><br>"You look as if you never expected me to come."<br><br>"That's true, to be honest. What's your game in coming all the way here?"<br><br>"You have a tendency to speak without thinking. Shouldn't you be thanking me for accepting the invitation?"<br><br>Thanking you?<br><br>A hollow laugh escaped me, bitter and tinged with irony. The proposition seemed so absurd that I didn't even consider a response.<br><br>"Even if your words are twisted, speak straight. It wasn't an invitation; it was a demand for an apology."<br><br>"Wrong. If I hadn't wanted to come here, could you or the Peace Guild have made me move even an inch?"<br><br>"That's…"<br><br>"Didn't you think the same? You never thought I'd come."<br><br>It felt like a bucket of cold water had been thrown over me. I was at a loss for words.<br><br>Everything he said was true.<br><br>Even though my heart was crying out in anger and seeking revenge, I hadn't truly expected Lee Jeong-Ryong to show up. The realistic part of my brain had come to a compromise.<br><br>Lee Jeong-Ryong, the de facto leader of the Ares Guild, was still beyond my reach.<br><br>"Demanding is the right of the powerful. The weak can never 'demand' from the strong. It's all requests and invitations."<br><br>"......!"<br><br>"That's why I accepted the invitation. No matter what weakness of mine you grab and shake, that fact won't change. Because I am Lee Jeong-Ryong. I am the Ares Guild, and the Ares Guild is me."<br><br>At his steady yet powerful voice, we were left speechless.<br><br>One thing became clear. Lee Jeong-Ryong's presence was not an act of contrition.<br><br>With the chasm of power lying stark and unbridgeable, his smile unfurled, a clear signal of victory as he savored the influence he held.<br><br>"A guest should be welcomed with due respect, particularly one who arrives bearing gifts for the patient, wouldn't you agree, Team Leader Seok?"<br><br>"Yes, Vice Guild Master."<br><br>Seok Go-Jun, his voice a hollow echo of obedience, swung the door open. A hulking bodyguard from the security entourage who had been biding time outside stepped in and deposited an offering upon the table.<br><br>A vase bursting with the soft brilliance of countless lilies, accompanied by an envelope.<br><br>"It's a consolation gift. If the amount is insufficient, tell me how much more you need."<br><br>My eyes lingered on the lilies, their ivory petals gleaming with an unsettling purity. While I was never particularly fond of flowers, I never disliked them either.<br><br>This was the first time I ever felt dirty looking at a gift of flowers.<br><br>'A condolence gift of lilies.' \[Note: lilies, specifically, are a symbol of innocence and rebirth. In my opinion, this could be taken as either Lee Jeong-Ryong is trying to say that he is sorry and innocent of being involved in the attack, or he is mocking the reattachment of Im Hyuk-Jun's arms as a "rebirth".\]<br><br>A forgotten anger began to seethe within me.<br><br>Massaging the mounting tension at the nape of my neck, I could not help but mutter,<br><br>"I've never seen such a damned old man..."<br><br>For the first time, Seok Go-Jun's facade cracked. His fist, unleashed with a roar of indignation, sliced through the air towards me at a blinding speed.<br><br>Smack!<br><br>With a chilling sound, blood splattered.<br><br>I slowly cranked my head back to its rightful place, the tang of blood painting my tongue.<br><br>"Shit. I bit my tongue."<br><br>Seok Go-Jun's eyes bulged, his gaze ricocheting from his fist to my face in bewilderment.<br><br>"How?"<br><br>"I'm quite resilient. I drank a lot of milk when I was a kid."<br><br>"But I was sure I infused it with mana..."<br><br>Had his fist been covered with Qi, I wouldn't even be able stand. \[Note: It seems that infusing a physical attack with mana/Qi serves only as an internal boost. External Qi auras, like Sword Qi, require specific martial techniques. Therefore, it appears Seok Go-Jun's fist wasn't enveloped in a Qi aura.\]<br><br>Of course, if that were the case, I wouldn't have deliberately taken the hit.<br><br>I smirked at him.<br><br>"You should've given it your all. So it could end in one hit."<br><br>Whoosh!<br><br>"Huff!"<br><br>Drawing a short breath, Seok Go-Jun reached out to deflect my arm with a speed incomparable to that of an average A-rank Hunter.<br><br>His hand arched like a hook, aiming for my wrist.<br><br>'This really is Geumnasu.' \[Note: Geumnasu is a Chinese grabbing technique used to break joints. This is the same technique that Park Ji-Hwang used in novel chapter 282 when he grabbed the MC's wrist at the beginning of their fight.\]<br><br>Recalling the surprise I felt when facing Park Ji-Hwang, I smoothly twisted my wrist, evading his grasp.<br><br>The air hissed as I deftly captured his wrist mid-flight, and with the same fluidity, I invoked the Thousand-Catty Press, anchoring my heel atop his foot.<br><br>Crunch!<br><br>“Kuk!”<br><br>Seok Go-Jun's foot was driven deep into the unyielding concrete. Clutching his arm in agony, he instinctively raised it to guard his face.<br><br>What a weak defense.<br><br>"Do you think that's enough?"<br><br>One thing was certain. While I had chosen not to dodge, Seok Go-Jun could not dodge.<br><br>Smash!<br><br>The fist I planted squarely in the middle of his face broke his nose instantly and sent him reeling back.<br><br>Blood splattered and a white tooth flew out of his gaping mouth.<br><br>Thud.<br><br>"You damn bastard, where did you learn to sucker punch like that?" \[Note: this line of dialogue is from the MC.\]<br><br>"......!"<br><br>The rapid turn of events left everyone in the room stunned.<br><br>“You bastard...”<br><br>Lee Jeong-Ryong's voice, always serene, was now laced with a tremor of unrest. A storm brewed in his eyes.<br><br>Seizing control of the situation, I spoke with pointed clarity.<br><br>"I should mention, it was self-defense."<br><br>But what followed was a question loaded with implications no one saw coming.<br><br>"What is your relationship with my Hyung?"<br><br>"Excuse me? Who are you talking about?"<br><br>"The one who taught you that move."<br><br>"The one who taught me that move......”<br><br>My eyes widened. Was this old man referring to the martial arts?<br><br>Yet my revelation was lost to the void, as Lee Jeong-Ryong's attention was ensnared by an emotion-laden gaze towards Team Leader Choi.<br><br>"Did So-Young have another man?"<br><br>I didn't know who this 'So-Young' was.<br><br>The name 'So-Young' hung in the air, a silent detonator in the midst of a powder keg.<br><br>Team Leader Choi’s fist tensed, a tempest of emotion brewing, while from Butler Kim’s eyes sparked an inferno of azure fire.<br><br>"Sunbae, do you want to die?"<br><br>"Answer me."<br><br>"You bastard, Lee Jeong-Ryong!"<br><br>"Give me an answer. Now."<br><br>In this moment, the sealed lips of Mr. Choi parted, a taut string of silence finally snapping.<br><br>"Don't you know better than me what kind of relationship they had?"<br><br>"If that's the case, how did that brat…"<br><br>"You must've already looked into Jin Tae-Kyung."<br><br>"So, you're saying everything is true?"<br><br>"It's exactly as you know. Not a single falsehood."<br><br>A flicker of unrest danced in Lee Jeong-Ryong's eyes.<br><br>His gaze ping-ponged between myself and Mr. Choi, before he swiveled, pacing toward the exit. At the threshold, he paused, his departure punctuated with a clipped order.<br><br>"I'll send someone soon. Hand over the guys you have once the negotiation ends." \[Note: "the guys you have" are the Black Hunters and the Myeongdong Guild employee that Mr. Choi detained earlier.\]<br><br>With a clang, the door closed, with the last person being the security team Hunter carrying Seok Go-Jun. The tempest of Lee Jeong-Ryong's presence had swept through and beyond, leaving a deceptive calm.<br><br>My gaze lingered on the steadfast door before I ventured a query to Mr. Choi.<br><br>"Who is So-Young?"<br><br>"She is my mother."<br><br>"......Excuse me?"<br><br>"The mother who gave birth to me and raised me. She passed away a long time ago."<br><br>A breath hitched in my throat involuntarily.<br><br>Lee Jeong-Ryong, this mad old man. Asking a child if his deceased mother had an affair while she was alive.<br><br>"That's crazy. Why would he... ah, never mind. You don't have to answer."<br><br>"It seems that Vice Guild Master Lee Jeong-Ryong was deeply shocked. I never thought he would be so direct."<br><br>Shocked wouldn't quite capture it. I motioned dismissively with my hand.<br><br>"Look, Team Leader, it's really okay. I don't need to know."<br><br>"Sometimes, I wonder. What if my mother wasn't born as Cheon Tae-Min's daughter but as someone else?"<br><br>"I get it, so let's drop it now..."<br><br>Suddenly, I froze.<br><br>'What did he just say?'<br><br>Rooted in place, my mind spun, ensnared by a trio of words that reverberated with significance.<br><br>Cheon Tae-Min. Cheon Tae-Min. Cheon Tae-Min...<br><br>"Did you just say Cheon Tae-Min?"<br><br>"If I pronounced it correctly, then you heard right."<br><br>"Could it be... the Cheon Tae-Min I know of?"<br><br>"Yes."<br><br>Mr. Choi nodded, continuing.<br><br>"He's my maternal grandfather."<br><br>For a moment, my vision blurred and my legs wobbled.<br><br>'Cheon Tae-Min. He said Cheon Tae-Min.'<br><br>There was a time I had wondered about Mr. Choi's true identity.<br><br>His immeasurable talent, the esteem with which the A-rank mage referred to him as 'Young Master,' his obscured yet pivotal role in the Great Cataclysm.<br><br>Now I understand how all those feats were possible.<br><br>It's because his maternal grandfather was Cheon Tae-Min.<br><br>'The great hero produced by humanity. The world's top Hunter...’<br><br>Among the descriptors for Cheon Tae-Min, the title 'Ares Guild Master' is just a small piece.<br><br>His true acclaim was etched in a feat of unparalleled valor, a legacy undimmed by time.<br><br>'The vanquisher of the Demon King. The Slayer.'<br><br>The grandson of Cheon Tae-Min stood before me.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-286.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-288.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

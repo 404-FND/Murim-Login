@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 241 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 241</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 241</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: Coldbutteredtoast</span>
+                            <span class="published-date">Published: January 6, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>"The Convocation of the Stars. A martial arts tournament with some of the greatest masters in the world," said the wrinkled old man, packing tobacco carefully into his pipe. "Some also call it a victory celebration of sorts."<br><br>Around him, the inn was bustling, every table full of rowdy travellers. It was the most exciting of times to be in southern Henan Province. Hundreds of voices mingled into a deep hum, interspersed with laughter and shouted orders and chatter in dozens of exotic accents.<br><br>From among those customers nearest the old man, a speaker raised her voice to ask, "Victory? Why's that?"<br><br>"Why? If the Murim of the Central Plains had been defeated, would the stars have been able to gather here?"<br><br>"Ah, yes, true. That makes sense."<br><br>"But, since we won, the Convocation can be held here and the best in the world can come to strengthen their skills and build their reputations. By the way..." The old man waved his pipe, "anyone got a light?"<br><br>"Here," said a grey-bearded man on the next table. Producing a flint from his ornately-patterned tunic, he leaned across and struck sparks into the pipe bowl.<br><br>"Much obliged." With a sigh of happiness, the old man reclined in his chair and blew a few puffs of smoke. "If you have questions, ask and I'll tell you everything I know."<br><br>Eyes shining, several nearby travellers raised their hands.<br><br>"May I ask you first...?" "Lord Song, by any chance do you...?"<br><br>"Hey, didn't you hear me go first?" "No, I didn't. Don't interrupt me, you bastard!"<br><br>In an instant, fists were flying and tables were overturned. Some of the onlookers cheered at the sudden fight, others grabbed their drinks to ensure they weren't spilled. Nearby, two merchants in luxurious blue silk garb shook their heads.<br><br>"Tsk tsk," said one, shaking his head. "What about the murim warriors?"<br><br>"It's not like this is the first or second time this has happened, is it?" replied his associate.<br><br>"It's a problem because there's no time for things to quieten down. Maybe it's because the Convocation is just around the corner, but all sorts of people are flocking to Henan.”<br><br>"Most of the matters seems to have been concluded, anyway. Let's just watch them getting the stress out of their systems. Pass me a rice cake."<br><br>As one of the traders was offering the plate to his companion, a voice suddenly interrupted. "Is that the Red Daughter rice wine from Shaoxing?" (여아홍 / 女兒紅)<br><br>"Pardon?" Puzzled, the merchants looked at the speaker, a young man standing beside their table and staring at their glasses. "Red Daughter? Yes, it is..."<br><br>"I knew it was." The youth slapped his knee in satisfaction and pulled up an empty chair. "Still," he said, peering into the bottle, "the colour looks a bit muted. How much did you pay for this?"<br><br>Bewildered at his easy familiarity, one of the merchants found himself saying, "Uh... two silver nyang."<br><br>"Oh. Too bad."<br><br>"Sorry, what do you mean?"<br><br>"It's been diluted with water. Can't you see? Looks like the owner's played a bit of a trick on you."<br><br>"What!" The two merchants recoiled in shock. Red Daughter was an extremely expensive drink; diluting it was practically criminal. Two nyang was enough money to buy two islands full of rice and enough wine to drink it like water for months.<br><br>One of the merchants pushed back his chair to stand. "This needs to be resolved immedi..."<br><br>"Sit down, sit down," said his friend, taking hold of his sleeve. "Nothing good will come from kicking up a fuss. So, he's had his little... joke. Isn't it the same for us?"<br><br>"Ugh." The first man dropped back down into his seat with a groan.<br><br>It was then that the two merchants noticed that the young man at their table had poured himself a generous glass of wine. "Ah, this is great!"<br><br>"What... hey! What are you doing?" "That's our drink!"<br><br>"My throat was so dry," said the youth. "Surely that's not a problem?"<br><br>Speechless at his boundless confidence, the merchants only spoke once their guest had finished his third glass. "I'm sorry... do we know you?"<br><br>"Of course!" he replied, wiping his lips with the back of his sleeve.<br><br>"Really? When from? Where?"<br><br>"Today," he said, smiling, "here. Let's just say that fate has brought us together. Let's all be friends."<br><br>"Friends?"<br><br>The merchants glared at the young man. He was a pale, soft-looking youth, who could not have been older than his mid-twenties. To their seasoned eyes, he looked like a liability more than anything. However, just when they were about to make their feelings known, they spotted an iron sword at his waist. Maybe he was murim! The difference between murim and gangsters had been clear since ancient times. Few would risk confrontation with such individuals without the support of trained soldiers.<br><br>Swallowing his anger, one of the merchants said, "Look, little brother..."<br><br>"Oh, little brother! I like the sound of that!"<br><br>"Then we'll use it from now on."<br><br>"You will? That's great."<br><br>For some reason, their guest looked totally at ease. Forcing a smile, one of the merchants asked, "Is our young friend a warrior?"<br><br>"Hmm. I have learned a little of the martial arts."<br><br>A little? Something about the way he said it made it seem like their uninvited guest was showing off. Cursing him under his breath, one of the merchants said, "I'm sure you're a mighty warrior. May I ask to which sect do you belong?"<br><br>"What does that matter?" said the youth, with a cheeky grin. "We're all friends here."<br><br>"Well, there should be no secrets between friends. We're merchants affiliated with the Golden Frog Consortium. Not to brag, but it's one of the top three merchant houses in Zhejiang Province. We've travelled a long way with deliveries for the Convocation of the Stars, which will be held in three days."<br><br>His companion nodded, adding, "We've travelled here with one hundred skilled soldiers."<br><br>"Yes, they're as brave as tigers."<br><br>The words contained an implicit threat that the merchants were not alone and should be respected, but the young man didn't seem to be listening. "Golden Frog Consortium," he said. "I think I heard that name this morni... Oh! Wait! You captured hundreds of bandits, right?"<br><br>"That's right." The merchant paused, then mumbled, "Well, to be precise, we didn't actually capture them. We picked them up..."<br><br>"Picked them up? What do you mean?"<br><br>The Golden Frog merchants exchanged an uneasy glance. "Well," said one, "it was on our route. Our caravan came across dozens and dozens of brigands, screaming and moaning because their legs had been shattered. As it turned out, they were all members of a bandit group called the Black Mountain Clan."<br><br>"And their boss, a bloody-handed killer called Heuk Jong-Pil, had been decapitated."<br><br>"Oh." The young man rubbed his hairless chin. "So what did you do?"<br><br>"What could we do? Killing them would have been like leaving money in the street, so we tied them up and brought them here." The Golden Frog Consortium had handed over the remnants of the Black Mountain Clan to the local government in exchange for a huge bounty. Rumours about the incident had spread quickly. "There's been a lot of talk about it, how they must have provoked a reclusive master. How common is it to meet someone who can kill a Peak Master in a single blow?"<br><br>"A Peak Master in just one strike?"<br><br>"Exactly." The merchants nodded together. "You're a warrior, little brother, so you know how great that is. When we questioned the bandits, they said that a figure appeared in the middle of the night, so they couldn't see his face properly. But he was wrapped in metal and their leader collapsed as soon as he appeared."<br><br>"Hmm." The youth was listening intently. "The master sounds young."<br><br>"Huh, do you have any idea who it might be?"<br><br>"Perhaps. Someone shabby, with messy hair... but I don't know his name. Well, we can get to know each other gradually... Thanks for the drink, friends!"<br><br>With that, the young warrior pushed back his chair and disappeared into the crowd.<br><br>The traders looked at each other in surprise. "What just happened?"<br><br>"He left just like that? After drinking all the wine?"<br><br>"He said he was a friend. Shit."<br><br>It was then that a shadow fell across the table.<br><br>"Honoured guests," said a rasping voice. The merchants looked up and saw a massive steward (점소이 -- Korean: jeomsoi) looming over them. His flat, scarred face was twisted into the semblance of a smile, but all it did was make him look more threatening. While he was holding a wooden board and wearing an apron, he had to be a gangster of some sort. "Your friend just left without paying his bill. From what I heard, you sounded close, so I'll need you to settle up for him."<br><br>"H-huh?"<br><br>"Two roast ducks and five more bottles of Red Daughter, plus a few other bits and pieces. Comes to twenty nyang in total."<br><br>The mouths of the merchants fell open at this betrayal. [That bastard!] [Five fucking bottles!] But looking up at the steward, they knew that their fate lay in the hands of the huge gangster.<br><br>Even as the tearful merchants were rummaging through their pockets, a silken bag of coins landed on the table. "I'll cover that."<br><br>Tap, tap, tap.<br><br>Conversations dried up and the inn fell quiet. The crowd parted and an old man limped through, his wooden leg tapping a rhythm on the floorboards.<br><br>"Twenty nyang for the bill. I'll want a quiet room, too."<br><br>The steward glanced down at the silk pouch and then up at the newcomer, before bowing his head in recognition. "Yes, Lord Song."<br><br>"That's one thing sorted," said Song, placing his callused hands on the shoulders of the two merchants. There was a colossal strength in his fingers that belied his seventy years. "In return, I'd like to have a chat about your friend who just left."<br><br>"What? Why are you doing this?" "We don't even know him!"<br><br>The sunken eyes of the old man twinkled at their evident distress. "Isn't that for me to decide?"<br><br>At the words of Song Ho-Eui, the Thousand-Faced Fox (千面狐狸), the merchants gulped helplessly.<br><br>With the Convocation only three days away, the streets and guesthouses of Henan were full of people.<br><br>"There is no room at the inn."<br><br>Tae-Kyung had already heard it more than twenty times. With nowhere else to go, he stared at the ugly steward. "There really aren't any?"<br><br>"There really aren't."<br><br>"I have money, though." Tae-Kyung produced a grubby nyang. It was his entire fortune and last hope. The single coin had been hidden in advance and it was a good thing, too, because Jeok Cheon-Gang had taken the pouch containing all of their cash.<br><br>In the first inn, the angry old bastard had felt insulted by the staff. While struggling to decide whether to burn the steward or the inn, Cheon-Gang had a sudden epiphany. His peaceful solution was simple:<br><br>'I'm going to the Shaolin Temple.'<br><br>'Wow. Is dementia the source of this genius idea?'<br><br>'Sorry, I'm getting old. Did you say something about needing an ass-kicking?'<br><br>'I haven't said a word. That's how I heard you come up with the awesome plan of going to the Shaolin Temple for a hot bath and some vegetable bibimbap.'<br><br>'I'm going alone.'<br><br>'Pardon?'<br><br>'For the last year, thanks to your decision to attend the Convocation, your master has had a really hard time. Don't you think he needs a break? The screening will take place at the opening ceremony, so we can see each other again then. Now, give me the money pouch."<br><br>'But what about me?'<br><br>'The King of Fire has a reputation to uphold. Do you expect me to eat like a beggar? Besides, I have to make some small donations... Oh, and if you come to the Shaolin Temple, you'll die. Understood?'<br><br>[He's not the Fire King; he's a highwayman!]<br><br>After being robbed at fistpoint, Tae-Kyung wandered in search of somewhere to rest. Now he stood before the last inn remaining in the neighbourhood.<br><br>"It's a real silver nyang," he told the large, scarred steward who stood in the doorway. "One bite and you'll see."<br><br>"...Didn't you just take it out of your underwear?"<br><br>"Ah, uh, I was only hiding it there." Tae-Kyung hurriedly rubbed the coin on his sleeve and held it out again. "It's silver. Take a bite!"<br><br>"Fuck off, beggar!"<br><br>[Fucking bastard!] Tae-Kyung was about to slug him in the face, but the gangster steward turned away and slammed the door.<br><br>His last hope dashed, Tae-Kyung turned and saw a group of children nearby, playing a game of stones. "Hey, guys, do you know anyone running a guesthouse?"<br><br>Grubby faces looked up from the huddle. "Uh, no..." "My family do, but we're already full." "Mother said not to bring beggars home."<br><br>[The cheek!] Tae-Kyung wanted to storm into that young bastard's house and yell at his parents about proper home education, but instead he shook his head and wandered away along one of the narrow streets. [What the fuck do I do now?]<br><br>As he was walking along a pebbled lane, contemplating whether to find a nearby stream to wash himself, he heard a voice.<br><br>"Hey, sir!"<br><br>At first, Tae-Kyung could not imagine someone was calling to him. The street was run down and dirty. His clothes were little more than rags, his hair a tangled nest, and lengths of iron chains around his body made him look like a beggar at best and an escaped convict at worst. Who would call him 'sir'?<br><br>"Me?"<br><br>When he turned around, there was a young sad-eyed man standing there, smiling broadly. "That's right," he said, brightly. "You."</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-240.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-242.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

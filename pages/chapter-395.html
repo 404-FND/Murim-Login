@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 395 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 395</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 395</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: April 20, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>「Follow me.」</p><p>Magic Johnson ushered us towards the hospital rooftop.</p><p>Peering across the barren helipad, absent of any aircraft, I questioned,</p><p>"Is there nothing here?"</p><p>「I'm here.」</p><p>Magic Johnson's reply was brief and to the point, but the meaning behind it was anything but simple.</p><p>Mirroring my bewilderment, Mr. Choi's eyes slightly widened.</p><p>"Mr. Johnson, will you...?"</p><p>「Yes, we're going to move using Teleportation magic.」</p><p>Teleportation — essentially, instantaneous travel.</p><p>Magic Johnson broached the topic of teleportation magic with the nonchalance of discussing a bicycle ride, despite its infamous difficulty.</p><p>Several stringent conditions were required to execute the spell, and even a minor miscalculation could prove catastrophic.</p><p>A misplaced step might fuse someone with a tree or embed them in stone.</p><p>"…Can't we just take a jet?"</p><p>「Nope.」</p><p>His eyes narrowed as he delivered a resolute denial.</p><p>「Hey, Jin. You still haven't fully trusted me, have you? I'm Magic Johnson. Do I need to show you that?」</p><p>"…"</p><p>It sounds weird when you say it like that.</p><p>Whether he intends to display teleportation or his Johnson is irrelevant. My preference remains a tranquil jet journey.</p><p>Catching my intent look, Mr. Choi interjected.</p><p>"Mr. Johnson, as you know, this place is under the influence of the Archlich. Magic interference is common here, and even communication is not smooth."</p><p>「Ah, that's what it was. I thought it was something else.」</p><p>A light chuckle escaped Magic Johnson.</p><p>「What do you two think brought me here?」</p><p>"Uh?"</p><p>"What?"</p><p>「I came here by teleportation. It was a bit bothersome, but nothing can hold Magic Johnson back.」</p><p>Snap!</p><p>When Magic Johnson snapped his fingers, a pillar of fire erupted skyward. It pulsated with life, a vivid display of raw magic, starkly contrasting the Public Security Force mages who struggled with their spells due to magical interference.</p><p>"Was this possible from the beginning?"</p><p>「Of course not. Even with the interference, I could manage some basic magic, but something as risky as teleportation was too dangerous to even attempt.」</p><p>"Then..."</p><p>「The Archlich. Its power has been gradually decreasing. Especially since last night, a significant part of the interference has disappeared. Well, the communication situation still seems to be a mess, though.」</p><p>His insight into such phenomena was a testament to his status as one of the world's three Grand Mages.</p><p>Flashing a broad, confident smile, Magic Johnson reached out to us.</p><p>「I think this should be enough for you to trust me, right?」</p><p>"If you say so, sure."</p><p>While I accepted his hand without a second thought, Mr. Choi hesitated, then stepped back.</p><p>"Mr. Choi?"</p><p>"I'll stay behind."</p><p>「Why, Choi?」</p><p>"There are still things I need to handle here. Since my voice doesn't carry much weight, it makes no difference whether I hear things there or get informed here."</p><p>Mr. Choi's approach was always pragmatic, prioritizing tasks he could influence over those he could not.</p><p>I wanted to object, but instead, I silently agreed.</p><p>'Because he's right.'</p><p>Even the elite S-rank hunters, though formidable, are merely mercenaries from abroad, transient allies at best.</p><p>That's precisely why figures like President Shao Yang and Defense Minister Wei Feng-Hu emphasized their ultimate authority.</p><p>「We can't leave without you Choi! Jin is simply not attractive!」</p><p>"......"</p><p>Part of me felt compelled to counter his last point, but somehow, knowing this feels comforting.</p><p>After a brief complaint, Magic Johnson, visibly disappointed, bid Mr. Choi goodbye.</p><p>「It can't be helped. See you next time, Choi.」</p><p>"Take care."</p><p>「Take care? It's just a moment's journey.」</p><p>With a shrug, Magic Johnson turned to me.</p><p>「Hey, Jin. Ready?」</p><p>"Yes."</p><p>「Hold my hand tightly. Don't let go.」</p><p>"…Why do we need to interlock fingers? Can't we just hold hands?"</p><p>That's something typically reserved for couples, isn't it?</p><p>As a late-twenties singleton, the idea of interlocking fingers with someone like Magic Johnson was a bit out of my comfort zone.</p><p>Noticing my reluctance, Magic Johnson's voice softened.</p><p>「If you want, we can let go. But if you lose grip during the transport, you could die.」</p><p>Thinking of my first love from childhood, I firmly grasped Magic Johnson's hand.</p><p>"Let's go, darling."</p><p>Magic Johnson replied seriously,</p><p>「Sorry, Jin, but you're not really my type. You don't need to hold on that tightly; could you loosen your grip a bit?」</p><p>"…Ah, yes."</p><p>「Shall we go then?」</p><p>Just as I was about to respond.</p><p>Swoooosh!</p><p>'Gasp!'</p><p>I gasped as the pressure mounted around me.</p><p>Through my fading sight, Mr. Choi's figure shimmered like a mirage before disappearing.</p><p>The world seemed to flip, and suddenly, an overwhelming sense of freedom engulfed me.</p><p>"Puhah!"</p><p>Releasing the breath I'd been holding, I inhaled deeply. The cool air filled my lungs, and as I blinked, my vision sharpened.</p><p>What felt like a moment was enough to change the entire scenery and the faces around me.</p><p>「The last guest has arrived.」</p><p>Wei Feng-Hu of the Central Military Commission, visibly aged from the past week's strain, came forward and clapped a hand on my shoulder.</p><p>「Everyone's been waiting. Let's go in together.」</p><p>"Hold on a moment."</p><p>「Hm?」</p><p>"Stay back… Ughweeeeeeek!"</p><p>Splaaaash!</p><p>For the record, I tower nearly two heads above Wei Feng-Hu.</p><p>As I retched toward the sparsely-haired general, Magic Johnson's voice floated over.</p><p>「Ah, I didn't tell you that motion sickness symptoms might get worse. Sorry, Jin. Sorry, Wei Feng-Hu.」</p><p>"You should have told me that earlier, ughweeeeeeek!"</p><p>「…Ha.」</p><p>It took just a little more time before the meeting could start.</p><p>\* \* \*</p><p>In the dim ambiance of a large conference room, a holographic video flickered to life.</p><p>The footage showed a cockpit view with clouds parting before the reinforced glass. As the aircraft descended, tiny dots materialized on the ground below.</p><p>Those things filling the ground were surging like waves without a pause.</p><p>‘Monsters.’</p><p>It was evident that the perspective belonged to a fighter pilot, equipped with a head-mounted camera, broadcasting his position.</p><p>\- This is YANU-4885. I repeat, YANU-4885. Target confirmed. Target locked.</p><p>\- Fire is authorized.</p><p>Crackle, sizzle.</p><p>Amid the static-filled transmission, the commands were unmistakably clear. The pilot, after inhaling deeply, committed to his task.</p><p>Thump.</p><p>A subtle jolt indicated the missile's launch from the jet, swiftly transforming into a speck as it bore down on the mass of advancing monsters. At that precise moment—</p><p>Swoooosh.</p><p>A dark vortex materialized out of thin air above, engulfing the missile.</p><p>\- Huh!</p><p>The pilot, driven by urgency, slammed a red button on the dashboard. But then—</p><p>Boom! Sizzle.</p><p>An explosion sounded, and the video abruptly terminated. The hologram faded out, leaving Defense Minister Wei Feng-Hu with a somber countenance to address the room.</p><p>「How do others interpret this?」</p><p>As Magic Johnson lit his cigar, he responded.</p><p>「It was teleportation magic. The fired missile was moved above the aircraft.」</p><p>「Mr. Johnson, could you do it?"</p><p>After pondering for a brief moment, he responded.</p><p>「It wouldn't be hard. But I'm not confident to do it as quickly and precisely as that.」</p><p>「Even for you, as a Grand Mage?」</p><p>「…Hmm.」</p><p>Magic Johnson gave a slight nod, exhaling a plume of cigar smoke.</p><p>He is also an S-rank hunter with historic achievements to his name. His pride in his abilities is understandable, and it would naturally sting to find himself outmatched by an entity like the Archlich.</p><p>However, this meeting wasn’t convened for the sake of pride. We must face reality.</p><p>「Then it seems difficult to rely on fire support. Firing off a big one wrongly could lead to a major disaster.」</p><p>Fei Chen spoke, lightly touching her glass with slender fingers.</p><p>「I somewhat expected this... But given the circumstances, we have no choice but to settle this on the ground.」</p><p>「The situation should improve gradually. The Royal Guard led by Prince Felix of the Great British Empire has smashed the monster legion. By the way, is that Romanée-Conti 1945 you’re drinking?」</p><p>「It’s not.」</p><p>「Hmm. You don’t know how to drink.」</p><p>At Prince Felix's comment, Fei Chen's eyes narrowed.</p><p>「Oh, what is this child saying? Hey, snap out of it. The British Empire has long been dissolved, and it's not your few victories that have driven the monsters back. It’s thanks to that guy opposite you.」</p><p>Prince Felix turned his gaze toward me.</p><p>「I've heard that you’ve made significant contributions on the western front... but are all those stories true?」</p><p>Is he implying that I might be lying?</p><p>I looked at Prince Felix with an incredulous expression.</p><p>"Of course they're true. If you don't want to believe it, then don’t."</p><p>「While I commend you for your significant contributions, your manner of speaking is quite disrespectful. You should refer to me as 'Prince Felix' and always use formal language.」</p><p>I readily agreed to his request.</p><p>"Your Highness, did you perhaps eat some bad fish and chips?"</p><p>「Hmm. Brave but extremely rude.」</p><p>"......"</p><p>Rude my ass. I'm about ready to knock off one of his nuts.</p><p>The guy who had been roughed up a week ago now remained silent, avoiding eye contact.</p><p>‘It’s nice that he’s quiet, but it feels off somehow.’</p><p>Given Wu Hei-Xing’s previous brashness, I expected him to confront me again, but perhaps he's more cautious than I assumed, or I've misjudged him.</p><p>More concerning now is someone else who has caught my attention.</p><p>"You've been quiet for a while. Got anything to say?"</p><p>Lee Jeong-Ryong, sly as ever, offered a smooth smile.</p><p>"Thanks for the concern, but I’m fine. A mercenary’s virtue is to follow the employer's will without much fuss."</p><p>"Ah, I see."</p><p>"It’s a simple principle."</p><p>I responded with a chuckle before continuing.</p><p>"But despite that, your performance seemed a bit lackluster. The situation on the northern front wasn’t very promising. Was that also the employer’s will?"</p><p>"……!"</p><p>The room abruptly fell silent, as if plunged into icy water. As all eyes turned to him, Lee Jeong-Ryong stroked his chin thoughtfully.</p><p>"That comment is displeasing. The Ares Guild and I have done our best."</p><p>"Your best, really?"</p><p>"Over the past week, we fought ten times and won nine. Although it’s unfortunate we lost once, I believe that’s still an impressive record."</p><p>Ten battles, nine victories, one loss. Statistically, it was an impressive tally.</p><p>Yet, when Mr. Choi and I received news of the setback at the northern front two days ago, our reaction was nothing short of cynical laughter.</p><p>‘Crafty old man.’</p><p>Lee Jeong-Ryong is considered one of the world's most formidable figures, or by martial arts standards, an incredibly powerful Master. Furthermore, given his personality, he would not have shown all his skills, so he must be stronger than people realize.</p><p>Could such a man truly be defeated?</p><p>'Sounds like an unfortunate defeat.'</p><p>Few might suspect, but I am convinced.</p><p>The circumstances of Lee Jeong-Ryong's engagement and subsequent loss point to a meticulously staged defeat.</p><p>The full withdrawal of Ares Guild members amidst significant casualties underscores this suspicion.</p><p>‘Since it can’t be proven, it must remain a matter of conviction.’</p><p>This rationale explained Lee Jeong-Ryong's current nonchalance. He crossed his arms and began his explanation.</p><p>"While I regret the loss that day, I would appreciate if premature blame could be avoided. There was a clear reason for the defeat."</p><p>"A clear reason for the defeat?"</p><p>"Who could have anticipated that Death Knights would appear in that situation? Once the General leading our front was killed, it was impossible to control the chaos."</p><p>"Death Knights, you say..."</p><p>"I heard they also appeared on the western front last night. Is that not so?"</p><p>This prompted a memory — a report from a couple saved from the small town.</p><p>Ten Death Knights had decimated nearly a thousand soldiers, and their leader, the Black Knight, had inexplicably spared them before departing.</p><p>The tale of the Black Knight disturbed me deeply.</p><p>"So among those that appeared on the northern front, could it possibly be..."</p><p>I was interrupted before I could finish my question.</p><p>The sound of urgent footsteps echoed down the hall, and a Chinese officer burst into the room.</p><p>Bang!</p><p>「Huff, huff. It's an emergency!」</p><p>He continued, gasping for breath.</p><p>「The monster legion has advanced! Battles are taking place on every front!」</p><p>"…What?"<br></p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-394.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-396.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

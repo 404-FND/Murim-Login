@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 218 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 218</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 218</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: Coldbutteredtoast</span>
+                            <span class="published-date">Published: November 9, 2022</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>"This..." Choi's eyes simmered as he turned the [Yeti's Necklace] over in his hands. "This makes me angry..."<br><br>The Team Leader was a man of enormous discipline and self-control. Private and reserved, such explicit displays of emotion from him were rare.<br><br>Im Hyuk-Jun said quietly, "Team Leader Choi? Is there some problem."<br><br>"Yes, there is. A serious problem." Choi shook his head bitterly. "This is a really limited edition. Such a beautiful item should be better known. No! Praised worldwide!"<br><br>"...Ah."<br><br>"Look, the intricacy of the setting. The skill taken to make the smaller gems look like icicles. The magic that preserves the refreshing cold of a snowy field."<br><br>Praising the necklace like a North Korean news anchor praises their leader, Choi turned to the guild. "What do you think, Tae-Kyung?"<br><br>"Me?" Tae-Kyung spoke, voice calm and soft. "I'm angry, too."<br><br>"Oh? Why is that?" Choi was looking at him intently, a keen stare that was hard to read.<br><br>"I just feel a bit strange." He rubbed the coarse stubble on his chin. It felt unfamiliar, as though the skin was not his own. "Perhaps it's because I forgot to shave..."<br><br>"Jin Tae-Kyung, maybe..."<br><br>Choi could not finish his thought, as Myung-Hoon stepped into the group, smiling pleasantly. "That was great, Tae-Kyung!" he said. "You fight really well!"<br><br>"Thanks?"<br><br>"Haha, your spear moves deviated quite a lot from my textbook, though. Did you learn them at a training centre?"<br><br>"Nah, picked up a few things here and there."<br><br>"Here and there? How clever. You're sure to catch up with me at this rate, hoho!"<br><br>Tae-Kyung forced a smile, but when no one laughed, Myung-Hoon expertly shifted the topic. Talking with him was always smooth, like a scene in a TV drama. "But what were you doing? Hope I haven't interrupted anything?" His mouth was asking, but his eyes were quickly reading the scene.<br><br>"I was looking at the necklace you lent me. Team Leader Choi is very interested in this kind of thing."<br><br>"Well, anyone can see he's a man of taste." Myung-Hoon smiled, as though at a kindred spirit. However, he favoured ostentatious displays of wealth, while Choi prized a smart, clean look. "So what did you think?"<br><br>Choi inclined his head, politely. "It's exquisite. If you'd ever like to sell it, please think of me."<br><br>"Unfortunately, I think that's unlikely. I love it too much to part with it."<br><br>Hearing those words, Tae-Kyung said, "It's clearly very important to you."<br><br>"Yes, very much so."<br><br>"In that case, you should have it back." Tae-Kyung held out the necklace. "Here. And thanks again."<br><br>"Huh?" A moment later and Myung-Hoon laughed. "Tae-Kyung, relationships are more important than objects."<br><br>"Relationships?"<br><br>"Exactly. Like the raid team I came with today. We've been together a long time."<br><br>"Like eight years?" said Tae-Kyung.<br><br>Choi flinched at the barb, but Myung-Hoon didn't seem to notice. "It may be that long, sure. Anyway, you're missing the point. I'm not worried about the value of the necklace. I just want you to have it." The idol placed one large hand on Tae-Kyung's shoulder. His palm was soft and fingernails long, manicured. "It's a gift."<br><br>[This man isn't who I thought he was.] "A gift?"<br><br>"Yes. To my new brother." Myung-Hoon placed the necklace around Tae-Kyung's neck. As he stepped in close, his perfume was overpowering. "So please treasure it, Tae-Kyung. Keep it on you, OK?"<br><br>"Sure. I won't let anyone touch it."<br><br>Ding!<br>-You have equipped [Yeti's Necklace] -A cooling breeze flows over you.<br><br>The item display window still hung suspended to one side.<br><br>[Yeti's Necklace] Type: Jewellery Grade: Peak Restrictions: None Description: a prized talisman worn by the most powerful yeti chieftains. Originally a shackle used to enslave dragons, the wearer will attract and be targeted by dragon-type monsters regardless of race. Effect: Causes [Snowy Wind]<br><br>[Target? Not my favourite word.]<br><br>***<br><br>Time in the gate seemed to pass slowly. After a full day of hiking through dense jungle, the raid emerged into an endless wasteland of dirt, black sand and rocky hills. A pall lay over the land and there, as dusk drew in, they were attacked by a ferocious band of trolls.<br><br>Hideous beasts standing a head taller than a man, trolls were famed for their regenerative abilities. Their wounds healed in moments and severed limbs could swiftly reattach to the living flesh or grow again from a stump. Their bodies were prized by alchemists and troll blood was the main ingredient for many kinds of healing potions.<br><br>Even a single troll could be an implacable foe, but the Star Guild were veterans.<br><br>"Aim for the head!"<br><br>"Flame magic now!"<br><br>During the early days of the Cataclysm, trolls had been feared as immortal monsters. However, their weakness was soon discovered: burning or freezing troll cells prevented regeneration and finally enabled them to be dispatched by well-organised teams.<br><br>"DPS, go go go!"<br><br>"Mages... OK, now!"<br><br>A nearby troll fell back, missing an arm and leg. Two armoured hunters rushed after it, smashing axe blades through fat and muscle. Almost immediately, the wounds spasmed and bubbling flesh began to recreate the severed head. In only a minute, the creature would have a new throat and soon after would be hunting again.<br><br>"Down you go," said one of the mages.<br><br>A fan of super-heated flame erupted from her fingertips and the trembling flesh sagged back to the earth, never to rise again.<br><br>"Group 3 complete!" barked their Team Leader.<br><br>"Support here! Straggler on the flanks!"<br><br>The battle was progressing well, as the hunters gained numerical advantage. From dozens of metres away, Won Myung-Hoon watched as his raid groups systematically cut the trolls down. The stench of burning flesh and fat was almost overpowering. Still, this was tolerable. He stifled a chuckle as Star Guild mages taunted their foes, "You guys stink. A little ice storm should fix that!"<br><br>Someone, he forgot who, had once said that life is a tragedy when viewed up close and a comedy when seen at a distance. But that person had never fought monsters. That was a tragedy at any distance. A careless misstep and you could die at any moment. [The smell of troll fat is a hundred times better than funeral incense.] But as far as Myung-Hoon was concerned, the killing and dying was all someone else's business.<br><br>Frowning, he suddenly felt a presence nearby and turned his head. "Oh!" he said and his forehead became as smooth as marble. "Hey Tae-Kyung. Do you want to tell me something?" Why did that sound like: 'Have you overheard everything I've said?'<br><br>"Yeah," said Tae-Kyung, calmly. "I've been feeling a bit sick. At first I was fine, but it's been getting worse and healing magic doesn't shift it."<br><br>Myung-Hoon laughed. "Ah, that's because it's your first time in an A-class gate. There's so much more power here. It can be overwhelming. Don't worry, it's normal for beginners."<br><br>"I see!" Tae-Kyung pulled a sad face, as though hearing this for the first time. "Then, I'll eventually get used to it?"<br><br>"That's right. I don't even notice that feeling any more."<br><br>"In that case, I hope that I can come with hyung again next time."<br><br>Shrugging ruefully, Myung-Hoon said, "Well, I don't know if I'll have time for a while. My calendar is booked up for months."<br><br>"You don't have time to raid?"<br><br>"Haha, Tae-Kyung, guild leaders are really busy. We have so much to coordinate. It's like a performer and the conductor in an orchestra." Myung-Hoon mimed a baton. "Like a maestro!"<br><br>"I see, I see," said Tae-Kyung. "It's so varied. I presume you were in that department store for a guild meeting, right?"<br><br>"Huh?"<br><br>"There was an article online. What was the title again? Oh yeah. [Rising Star Won Myung-Hoon's Luxury Shopping Spree.] Or something like that. I can't be exactly sure, because it was deleted after five minutes. There was a lot of gossip about it."<br><br>"Are you sure you didn't see it wrong?"<br><br>"No, I'm sure. I know this weevil who's always burrowing around online. He never misses anything and tells me anything interesting he finds."<br><br>Dimples appeared on Myung-Hoon's handsome face. But this smile wasn't the same as in his toothpaste commercials. "Not me. I like shopping, but I only have time once a month at best."<br><br>"That's so strange! There were pictures, too, and interviews with store officials. They said you go every day."<br><br>The dimples had disappeared. Myung-Hoon wet his lips. "I'm sure you don't believe that, Tae-Kyung?"<br><br>"Of course not. You're much too busy with guild business. Maestro."<br><br>One corner of his mouth raised, Tae-Kyung looked at Myung-Hoon. His idol stared back, unsmiling. Moments later, the tense silence was shattered.<br><br>"Brother! Guild Master!"<br><br>A man was running towards them out of the wasteland, slipping and stumbling on sand and gravel. Kim Jong-Hoon, the Star Guild Team Leader. But this wasn't the man who had left with a seven man scouting party; this was a pale, wild-eyed shell of a man.<br><br>"Kim," said Myung-Hoon, "where are the others?"<br><br>Panting, the Team Leader staggered and nearly fell. Blood was smeared across his face and armour. "Th-That, that..."<br><br>"Stop spluttering, you bastard!" Myung-Hoon hauled Kim upright by his harness. "What happened?"<br><br>"Wyvern!" Kim cried. "I found the wyvern!"<br><br>"What? How many?"<br><br>"One!"<br><br>"One. Make sense, man! You took six A- and B-ranks with you. Where are they?"<br><br>"Dead! All dead!" Kim's eyes widened in horror. "We used stealth magic and... and... it noticed us!"<br><br>"Bullshit. What wyvern can do that?"<br><br>Kim grabbed Myung-Hoon and hissed, "A named monster! There's been a gate anomaly!"<br><br>A mutated gate. Not even a rare monster, but a unique! Everyone listening knew what that meant.<br><br>In the suffocating silence, someone whispered what everyone was thinking.<br><br>"Fuck."</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-217.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-219.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

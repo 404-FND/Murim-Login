@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 365 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 365</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 365</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: March 8, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>'Was this the feeling?'<br><br>Transcendent. A realm reserved by the heavens for the most elite of martial artists.<br><br>I had reached this realm taht I had never been allowed before, and felt endless freedom.<br><br>What is this feeling...<br><br>'It's amazing.'<br><br>Unconsciously, a subtle smile crept across my face.<br><br>Ding. Ding. Ding.<br><br>\- \[Scorching Sun Divine Arts\] has achieved eighth mastery!<br><br>\- \[Divine Spear of the Fire Dragon\] has achieved eighth mastery!<br><br>\- \[Brilliant Path of Fire\] has...<br><br>System notifications announcing the improvement of various martial arts techniques, level-ups, and achievements rang out incessantly.<br><br>A volcanic force erupted within me, and I became unafraid of the darkness encroaching on Jeok Cheon-Gang and me.<br><br>"Die!"<br><br>A howl, filled with despair. A visage contorted into that of a fiend's.<br><br>The middle-aged man, once adorned with a gentle smile, had vanished.<br><br>A fiend, engulfed in a murderous intent, took his place.<br><br>Whoosh!<br><br>The dark Sword Aura descended as swiftly as lightning. Its sheer destructive power was palpable even from afar.<br><br>But...<br><br>'In the end, you are also human.'<br><br>The present Western Heavenly Demon Lord, weakened by wounds and weariness, allowed rage to diffuse his concentration.<br><br>A disturbed spirit leads to scattered energy. Piercing a stone with a needle may be futile, yet slipping the needle through grains of sand is effortless.<br><br>Swoosh.<br><br>With just one step, the space between us disappeared.<br><br>As Jeok Cheon-Gang noticed my back in front of him, he urgently pleaded.<br><br>"No, you should retreat right now..."<br><br>Jeok Cheon-Gang's warning halted as a burst of blue and white energy emanated from White Flames' tip.<br><br>My Scorching Yang Qi spiraled, merging into a unified form.<br><br>A magnificent, potent fusion of Qi. The hallmark of Transcendent martial artists.<br><br>'Protective Qi.' \[Note: the word used here (강기) is different from the word for Protective Qi (호신강기). The word that is used here just translates to something like "Strong Qi". But if I say "Strong Qi" it doesn't quite evoke the same mental image as "Protective Qi" does. Protective Qi is something that only Transcendent Masters can use, and it is a Qi that coats the body to enhance attacks and fend off the attacks of others. "Strong Qi" is pretty much the same thing here, but I find it easier to continue to refer to it as Protective Qi.\]<br><br>I've finally attained this milestone.<br><br>Thrilled to my core, I extend my arm towards the advancing shadows.<br><br>Swoosh!<br><br>I drew a line through the void. A blue and white flame darted forward, clashing with the darkness.<br><br>Heavenly Strike.<br><br>The claw of the Fire Dragon tore through the dark Sword Aura.<br><br>Boom!<br><br>In the midst of the thunderous explosion, the darkness dispersed, and the Western Heavenly Demon Lord's face, which was contorted in fury and astonishment, become visible.<br><br>Blood and cries escaped the lips of the one wounded by the shattering Sword Aura.<br><br>"Y-you dare-!"<br><br>"Fuck you."<br><br>This is the end for you.<br><br>With a radiant grin, I planted my foot firmly on the ground. Before me, a figure rushed towards the Western Heavenly Demon Lord, outpacing me.<br><br>It was Jeok Cheon-Gang, having recollected his briefly scattered energy.<br><br>\- I'll tell you everything that's happened later.<br><br>A short Sound Transmission followed.<br><br>\- First, let's take down that damn bastard.<br><br>It was a comment, no, a Sound Transmission that made you want to hit the like button.<br><br>\* \* \*<br><br>Shock engulfed the Western Heavenly Demon Lord.<br><br>'How could this be?!'<br><br>Over a hundred years of time. Decades of accumulated energy. Everything he had built up was crumbling.<br><br>And by a mere youth in his twenties!<br><br>'Is such a thing possible?'<br><br>At this juncture, an undeniable realization dawned upon the Western Heavenly Demon Lord.<br><br>'Supernatural strength.'<br><br>A young man just past his youth had manifested Protective Qi. Not only that, but he also possessed the strength of a giant and the speed of the wind.<br><br>It was an achievement unthinkable without the intervention of supernatural forces. Yet...<br><br>'It will be you who dies.'<br><br>With a grinding of his teeth, the Western Heavenly Demon Lord's foot had touched the ground. At that moment, a potent energy wave rippled through his body and erupted forth.<br><br>"Come at me!"<br><br>The Western Heavenly Demon Lord roared like a wounded tiger.<br><br>Indeed, he resembled an actual wounded tiger, worn from extended combat and drained of his Qi. One wrist was dislocated, and an ankle broken. A lapse in judgment had led to internal injuries from the clash with his opponent.<br><br>Yet, an unwavering truth persisted.<br><br>"I am the loyal servant of the Heavenly Lord, and as long as He is with me, even death shall not claim me!"<br><br>Following the Western Heavenly Demon Lord's valiant proclamation, two voices, one old and one young, countered.<br><br>"What nonsense is this guy spouting now?"<br><br>"It's just more Dark Heaven Shmark Heaven bullshit. Let's take care of this damn bastard."<br><br>Jeok Cheon-Gang and Jin Tae-Kyung.<br><br>The master and disciple, swift as the wind, extended their arms simultaneously.<br><br>Boom!<br><br>In the ensuing moment, with a thunderous explosion, a formidable wave of energy swept over the Western Heavenly Demon Lord, causing blood to spill from his mouth.<br><br>"Cough."<br><br>The Western Heavenly Demon Lord's body staggered under the massive shock it received.<br><br>Normally, it might not have been a major concern, but since he was already bearing severe injuries, the combined attack from two Transcendent martial artists was truly threatening. However, the Western Heavenly Demon Lord did not give up.<br><br>'Let's take down one first.'<br><br>The choice lay between the young disciple, brimming with supernatural energy, and the old master, weakened from his injuries.<br><br>The Western Heavenly Demon Lord naturally chose the latter.<br><br>"Die!"<br><br>His leg whipped out like a lash.<br><br>Bang!<br><br>At that moment, Jeok Cheon-Gang, who had blocked the flying kick with his hand, let out a grunt.<br><br>"How dare you touch me?"<br><br>Whack! Crack!<br><br>The spear shaft, quick as lightning, struck upwards towards the Western Heavenly Demon Lord's chin. Even his Protective Qi couldn't fully absorb the tremendous force. The Western Heavenly Demon Lord's jaw clenched, severing his tongue.<br><br>Awaiting the Western Heavenly Demon Lord, who felt only pain and shock, were two hands enveloped in flames.<br><br>"This old man is the Fire King, you bastard!"<br><br>Jeok Cheon-Gang cursed loudly as he unleashed the Divine Palm of Fire.<br><br>Boom!<br><br>The fragile Protective Qi shattered. Scorching Yang Qi infiltrated the cracked facade of the Black Dragon Armor like an intricate web.<br><br>A searing agony ascended his throat as if it were ablaze.<br><br>"Kwaaagh!"<br><br>Black blood, mingled with fragments of organs, erupted from his lips. Before the droplets could reach the ground, a sharp sonic boom pierced the Western Heavenly Demon Lord's ears.<br><br>Ssssshhhh!<br><br>"…!"<br><br>His bloodshot eyes, veined with burst capillaries, mirrored the onslaught of spear shadows.<br><br>Mustering his remaining strength, he confronted the blue and white flames slicing through the air in every direction.<br><br>Tssssssss!<br><br>The shadowy Sword Aura along his blade clashed with the spear shadows, each impact creating explosive sounds and shockwaves that rattled the foundations of the underground prison, agitating the Western Heavenly Demon Lord's very guts.<br><br>"Kuhuh…"<br><br>Yet, the ordeal was far from over.<br><br>"Is this the time to be distracted?"<br><br>At the sound of that cold voice, Jeok Cheon-Gang's Flame-Extinguishing Divine Fist penetrated the Western Heavenly Demon Lord's flank.<br><br>Thud, crackle!<br><br>Jeok Cheon-Gang, known as the mightiest of the Ten Kings, unleashed the full might of his Flame-Extinguishing Divine Fist.<br><br>Parts of the Black Dragon Armor buckled under the force, splintering alongside the Protective Qi. Skin charred and bones fragmented.<br><br>"Aaaaagh!"<br><br>A dreadful scream echoed. The Western Heavenly Demon Lord, contorted in agony, desperately unleashed his dwindling energy in a blind fury.<br><br>Bang! Kaboom!<br><br>The assault ravaged the surroundings — the floor, ceiling, pillars, and rocks. The unleashed dark Qi, reduced everything in its wake to dust.<br><br>Yet, the intended victims blocked all the attacks and stood unscathed before the Western Heavenly Demon Lord.<br><br>Squeak!<br><br>The protective Qi, crystallized on the spear blade, cleaved diagonally across the Western Heavenly Demon Lord's torso, while two fiery palms crashed down on his chest.<br><br>Boom! Crack!<br><br>"…!"<br><br>The Western Heavenly Demon Lord's body catapulted through the air, hurtling into a stone wall and embedding him deeply within.<br><br>"Gurk, gak."<br><br>With a choked gasp, the Western Heavenly Demon Lord's eyes fluttered. His blurring vision captured the advancing silhouettes.<br><br>'Is this how I die?'<br><br>The Western Heavenly Demon Lord thought blankly.<br><br>For years, he had dominated as a formidable entity. He had crushed the weak and confiscated their treasures.<br><br>While the average person in Murim may harbor a fear of death, the Western Heavenly Demon Lord stood exempt from such trepidation.<br><br>In his view, only two forces could end his existence: his own hand or the esteemed Heavenly Lord.<br><br>But then...<br><br>"How dare you lowlifes attempt to kill my servant."<br><br>A voice as dry as desert sand flowed from between the Western Heavenly Demon Lord's blood-soaked lips.<br><br>The tone of the Western Heavenly Demon Lord's voice, devoid of pain or lucidity, echoed hollowly.<br><br>His eyes, filled with murderous intent, were no longer human, nor did they truly belong to him.<br><br>"As I have descended from the heavens to the earth, you shall kneel before me."<br><br>At this juncture, Jeok Cheon-Gang and Jin Tae-Kyung voiced their astonishment.<br><br>"Could it be...!"<br><br>"The Heavenly Lord!"<br><br>Crack!<br><br>An extraordinary force radiated from the entity momentarily inhabiting the Western Heavenly Demon Lord's form, causing the earth and ceiling to quiver.<br><br>Streams of dark energy, emerging from his lacerated limb, wove together like tendrils, gradually mending the hemorrhaging wounds.<br><br>"Submit to me. Bow before the Almighty Power."<br><br>Crack, snap.<br><br>The Western Heavenly Demon Lord's body slowly stood.<br><br>With every step he took, solidified Qi unfolded behind him like wings.<br><br>And the next moment.<br><br>"…!"<br><br>All motion ceased. The vibrations, the breeze, even the floating dust halted.<br><br>Within this stilled reality, a ray of darkness was launched.<br><br>Saaaa!<br><br>The darkness came without a sound and engulfed the two men.<br><br>Or rather, they would have been engulfed.<br><br>If not for the spear blade that cut through the flow of time.<br><br>Roar-<br><br>At the heart of the spear blade, wind and force coalesced, then burst forth. Wrapped in blue and white flames, the spear eradicated all in its path.<br><br>One Strike.<br><br>A brilliant flare erupted.<br><br>\* \* \*<br><br>As time resumed, I was engulfed by pain so severe it seemed as though my entire frame might fragment, accompanied by profound weariness.<br><br>'I just want to collapse.'<br><br>Every limb, digit, and muscle within me screamed on the verge of snapping.<br><br>Nevertheless, I held on with supernatural strength.<br><br>It wasn't time yet. I refused to succumb before he did.<br><br>"Just die already, you bastard."<br><br>My gaze lifted to the Western Heavenly Demon Lord, or rather, the entity masquerading within his body.<br><br>Observing his scorched form and ruptured torso, a slow grin formed on his lips.<br><br>"Interesting. Very interesting."<br><br>Poof.<br><br>With those final words, his fingers disintegrated into ash, dispersing into the breeze. A wind gust followed, and his figure began to disintegrate. \[Note: This is clearly not another teleportation like the Blood Lord used. It seems like the Western Heavenly Demon Lord got the Voldemort treatment and faded away like burned newspaper.\]<br><br>Yet, the usurping spirit seemed untouched by agony, instead casting a taunt tinged with mirth.<br><br>"I'll see you next time."<br><br>With the last of my strength, I defiantly gestured with my middle finger.<br><br>"Fuck you."<br><br>No response came back.<br><br>Past the fading ashes, notifications of quest completion and advancement sounded.<br><br>But the toll of battle lingered, leaving me drained.<br><br>I desired nothing more than to collapse on the spot. And I was indeed falling.<br><br>Suddenly.<br><br>A gnarled hand found my shoulder.<br><br>Fire King Jeok Cheon-Gang. The sight of his elated expression prompted an unexpected inquiry.<br><br>"How was it?"<br><br>"What?"<br><br>"One Strike. Wasn't it spectacular?"<br><br>Jeok Cheon-Gang's previously tense face softened into a warm smile.<br><br>"It was amazing." \[Note: like Master, like disciple.\]<br><br>That's enough for me.<br><br>I closed my eyes as the sound of the underground prison collapsing echoed distantly.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-364.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-366.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

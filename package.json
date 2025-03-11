@@ -1,0 +1,22 @@
+{
+    "name": "murim-login-novel-reader",
+    "version": "1.0.0",
+    "description": "A clean, aesthetic web-based reader for the Murim Login novel",
+    "main": "server.js",
+    "scripts": {
+        "start": "node server.js",
+        "dev": "nodemon server.js"
+    },
+    "keywords": [
+        "novel",
+        "reader",
+        "murim",
+        "dark-mode"
+    ],
+    "author": "",
+    "license": "MIT",
+    "dependencies": {},
+    "devDependencies": {
+        "nodemon": "^2.0.22"
+    }
+}

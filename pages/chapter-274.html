@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 274 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 274</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 274</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: October 27, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>'Hospital? All of a sudden?'<br><br>Before I could voice my confusion, the call ended with the sound of hurried footsteps.<br><br>I redialed. Once, twice, thrice. All in vain.<br><br>\- The line is unavailable. After the tone, you'll be directed to voicemail...<br><br>Frustration building, I grit my teeth and ended the call. A knot of worry formed in the pit of my stomach.<br><br>This was new. Team Leader Choi, the picture of composure, had never been this frantic.<br><br>'Could it be?'<br><br>I shook my head. Don't jump to conclusions.<br><br>Thinking won't help now; action will.<br><br>'Ilsan Hospital. He mentioned Ilsan Hospital.'<br><br>I scooped up my belongings and bolted from the locker room.<br><br>The newcomers outside watched me with curiosity written on their faces.<br><br>Kim Jin-Soo, mid-conversation in the group's midst, rose swiftly.<br><br>"Ah, sunbae. Are we leaving now?"<br><br>"No. I have an emergency."<br><br>Fortuitously, the next raid was two hours away, and the gate wasn't too distant.<br><br>"Kim Jin-Soo."<br><br>"Yes."<br><br>"For the next two hours, you will be the interim team leader."<br><br>"What?"<br><br>"Take the others and move to the next gate. Do not start the raid until I return."<br><br>I patted the stunned Kim Jin-Soo on the shoulder and left the building.<br><br>A taxi idled nearby. I slid in, relayed my destination, and tried another number.<br><br>'Pick up. Please, pick up.'<br><br>Beep. Beep.<br><br>Anxiety gnawed at me with each persistent tone.<br><br>I nearly disconnected, ready to try again, when:<br><br>Yes!<br><br>\- Hello, son.<br><br>\- What? Is it you, brother?<br><br>\- Keep it down. Don't play with your phone while eating.<br><br>\- Seriously, is mom holding a brick instead of a phone?<br><br>\- You little!<br><br>"Sigh."<br><br>Thankfully, it wasn't the news I'd feared.<br><br>Hearing my family's familiar banter on the other end flooded me with relief.<br><br>My mother's voice, laced with confusion, reached out to me, but I offered a vague response and ended the call.<br><br>'So it's about the guild.'<br><br>Who's involved? What happened?<br><br>If Team Leader Choi is unreachable, then the one most in the know would be Butler Kim. But suddenly, a memory resurfaced: the shift in his demeanor and the somber expression on his face.<br><br>'Mr. Hyuk-Jun.'<br><br>My suspicion deepened.<br><br>Upon dialing his number, instead of Im Hyuk-Jun's rugged voice, a sterile automated message answered.<br><br>\- This phone is powered off. After the tone...<br><br>I soon found myself at the hospital, where Song Song, already briefed, awaited with a look of concern.<br><br>"You're here?"<br><br>"Let's talk as we go."<br><br>The hospital's unmistakable scent greeted us as the revolving doors whisked us inside.<br><br>Navigating through the throngs — from civilians to Hunters to hospital staff — I began to draw attention.<br><br>Murmurs and pointed fingers rose in intensity.<br><br>Phones emerged from pockets, cameras flashing.<br><br>"Hey, hey. Look over there."<br><br>"It's Jin Tae-Kyung."<br><br>"Jin Tae-Kyung? Damn, really?"<br><br>"Wow, he looks amazing in person."<br><br>I suppressed my mounting irritation.<br><br>Pushing through the now-gaping crowd, I murmured to Song Song,<br><br>"What happened?"<br><br>"I don't know the details either..."<br><br>"Just tell me what you heard."<br><br>She bit her lip.<br><br>"It seemed like he had a lot of worries on his mind lately."<br><br>"Worries?"<br><br>"Given the current situation of the guild growing day by day, and young, skilled newcomers joining..."<br><br>"I understand."<br><br>Im Hyuk-Jun has been a staple of the Peace Guild since the very beginning, and is the only D-rank Hunter among us.<br><br>As the Peace Guild gained media traction, whispers and speculations surrounded him.<br><br>He was labeled the 'sole vulnerability' of our guild, with some maliciously suggesting he should depart rather than be a liability.<br><br>Im Hyuk-Jun would dismiss these rumors with a chuckle, always urging us to remain composed.<br><br>Yet now...<br><br>"Sigh."<br><br>I inhaled deeply, the weight of responsibility and guilt pressing on me. Despite my determination to take care of those close to me, somehow I had let this old friend fall through the cracks.<br><br>"So? What happened after the raid yesterday?"<br><br>"He was apparently drinking alone and got into an argument."<br><br>"Go on."<br><br>"Word is, he got deeply intoxicated and a fight ensued... resulting in significant injuries."<br><br>My heart sank.<br><br>To outsiders, Im Hyuk-Jun might just be another D-rank Hunter, an easy target for gossip. But in reality, he's a D-rank Hunter bolstered by two decades of expertise.<br><br>He wouldn't be felled easily, not even by a group.<br><br>"They were Hunters, weren't they?"<br><br>Song Song gave a somber nod.<br><br>"How severe are his injuries?"<br><br>"He's undergone treatment, but..."<br><br>She paused, halting mid-step.<br><br>Above us, a sign dangled: \[Special Care Ward\].<br><br>Not mere doctors, but "Healers" were assigned here, suggesting the gravity of his condition.<br><br>"It might be better to see for yourself."<br><br>With a sigh, Song Song pushed opened the door to the ward.<br><br>The door slid open.<br><br>The sterile scent of antiseptics assaulted my senses as I took in the trio clustered around the bed:<br><br>Team Leader Choi, Butler Kim, and a middle-aged woman, presumably Im Hyuk-Jun's wife.<br><br>My heartbeat amplified, each thud echoing my apprehension as I neared the bed.<br><br>"...Mister?" \[Note: the specific term used here is ahjussi, which is commonly used to address a man who is older than the speaker but not old enough to be considered elderly.\]<br><br>Only the soft cadence of his breathing met my query, no words.<br><br>Im Hyuk-Jun lay there, an oxygen mask obscuring his face.<br><br>Then I saw it.<br><br>The powerful arm, which had always embraced me with fervor, was now amputated just below the elbow.<br><br>Silence stretched on.<br><br>With a heavy heart, I exited the room and made my way to the rooftop, seeking solitude and clarity.<br><br>Having absorbed the details of the incident from Team Leader Choi and Butler Kim, I found my voice.<br><br>"Where are those bastards now?"<br><br>Everyone present knew exactly who I was referring to.<br><br>Team Leader Choi, licking his lips, silently shook his head.<br><br>Could it be?<br><br>"They weren't caught?"<br><br>"All three escaped from the scene."<br><br>"What about the CCTV? They drank at a shop. Their faces should've been captured."<br><br>"The investigative agencies have already been there. They have the results."<br><br>In this era, security footage is nearly as definitive as eyewitness testimony. With the culprits' faces likely on record, their apprehension should be imminent.<br><br>Especially since Awakened beings and Hunters, being limited in number, are relatively straightforward to track down.<br><br>"So, it's only a matter of time before..."<br><br>"They haven't been identified."<br><br>"What?"<br><br>Doubting my ears, I sought confirmation from Team Leader Choi, whose deep exhale prefaced his words.<br><br>"Their identities are unknown. They aren't registered as local Awakened beings or Hunters."<br><br>"Could they be foreigners? From China or Japan?"<br><br>"No. According to witness statements, the suspects are indeed Korean. And they started the altercation."<br><br>"Then what on earth is..."<br><br>Butler Kim, who had remained a quiet observer, chose that moment to interject.<br><br>“Black Hunters might be involved.” \[Note: the author actually wrote out "Black Hunters" in English. Wouldn't life be so much nicer if he did this everytime he introduced a new proper noun...\]<br><br>Black Hunters?<br><br>The name itself oozed malevolence. Butler Kim elucidated in hushed tones:<br><br>“Not every Awakened being registers with the Gate Management Office or the Hunter's Association.”<br><br>My temples pulsed as a headache began to form.<br><br>Such a term was unfamiliar to me.<br><br>“You mean an unregistered individual?”<br><br>In our contemporary world, an Awakened being is both the steadfast barrier against the gate and a potential weapon demanding cautious handling. Even a lower-ranked Hunter wields power vastly outstripping the average human.<br><br>Therefore, Awakened beings are always under strict supervision.<br><br>Even if one doesn't wish to become a Hunter, their name is included in the list of Awakened beings.<br><br>The only way off the list is death.<br><br>The designation for those evading registration within the mandated timeframe is 'unregistered'.<br><br>Yet, colloquially, there's another name.<br><br>'Crazy.'<br><br>The label of crazy attached to the unregistered isn't arbitrary.<br><br>If you don't voluntarily report within a month of Awakening, you become not an Awakened being but a prisoner.<br><br>Without any chance for probation, they're directly thrown into a prison for the Awakened, and when released, they're gifted an electronic ankle monitor.<br><br>Who would gamble with their life like that?<br><br>“So there are still such deranged individuals nowadays?”<br><br>“They've always existed, and they still do. That's why crimes keep happening.”<br><br>"So, you're saying those who attacked Mr. Hyuk-Jun are unregistered. Then how do we find...”<br><br>Butler Kim gently interrupted,<br><br>“They're Black Hunters.”<br><br>“Yes. So, they're unregistered.”<br><br>“It's different.”<br><br>Butler Kim, fingers grazing his immaculate beard, posited,<br><br>“Hunter Jin Tae-Kyung, in your view, what fundamentally distinguishes an Awakened being from a Hunter?”<br><br>The query seemed tangential, and I sensed we were veering off-course. Had it been anyone other than Butler Kim, my patience would have waned.<br><br>Swallowing the surge of frustration, I responded,<br><br>“Training. Merely possessing a weapon doesn’t ordain one as a Hunter.”<br><br>"The distinction is much the same between Unregistered beings and Black Hunters."<br><br>"You mean..."<br><br>Butler Kim affirmed with a nod.<br><br>"Precisely. Unregistered beings, yet trained with the precision of Hunters. These are Black Hunters."<br><br>I was momentarily stunned. At its core, it's a simple concept, but I had never thought about it that way before.<br><br>And it made sense.<br><br>"How is that possible?"<br><br>Unregistered beings are considered serious criminals. How could they acquire weapons and undergo structured training?<br><br>"Are you suggesting some criminal organizations are training Black Hunters?"<br><br>"Criminal organizations?... You're half right and half wrong."<br><br>"Then?"<br><br>I waited, and Mr. Choi interjected crisply.<br><br>"Guilds."<br><br>"…Excuse me?"<br><br>"Wherever there are people, money follows. And where money follows, conflicts arise. Do you truly believe guilds exist solely to protect the world from monsters within the gates?"<br><br>I couldn't answer.<br><br>Even I didn't become a Hunter just to protect the world.<br><br>The old ideals are antiquated relics. Presently, being a Hunter isn't synonymous with valor or sacrifice.<br><br>Others envy their wealth and fame, and those inspired by them become Hunters.<br><br>These Hunters collectively form guilds.<br><br>"Do you know the rankings of domestic conglomerates? From first to tenth. On the surface, they're all private enterprises, but in reality, they're mere puppets of massive guilds. It's not much different abroad."<br><br>Mr. Choi's chuckle was devoid of warmth.<br><br>Absorbing the implications, I ventured,<br><br>"Is all of this true?"<br><br>"You asked me once before. Why I left the Ares Guild."<br><br>Mr. Choi didn't continue, but his meaning was clear.<br><br>This pervasive corruption webbed them all together. To such entities, Black Hunters are covert aces in the hole, their existence shadowed in obscurity.<br><br>Or perhaps, some are aware and choose blissful ignorance.<br><br>The weight of the revelations left a numb sensation at the base of my skull, but a nagging question bubbled up.<br><br>"Alright, let's say all of that is true."<br><br>I drew a deep breath, seeking clarity amidst the storm of my thoughts.<br><br>"But why? Why single out Mr. Hyuk-Jun? To rein in our modest guild, such extremes seem..."<br><br>"Tae-Kyung."<br><br>Mr. Choi, who interrupted, cutting me off, moistened his parched lips.<br><br>The look in his eyes was odd, akin to one reserved for a child.<br><br>It momentarily whisked me back to the beginning of my Hunter journey.<br><br>"You're naive."<br><br>Before I could muster a reply, he pressed on.<br><br>"We're surrounded by monsters. Extinguishing a pesky individual or obliterating a guild is child's play for them. Shed your rose-tinted worldview."<br><br>His words, cold and stark, struck deep.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-273.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-275.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

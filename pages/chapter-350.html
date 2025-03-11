@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 350 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 350</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 350</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: February 19, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>Step. Step<br><br>Today, as always, I moved along with a food bucket in hand.<br><br>Time in the underground prison crawled at a snail's pace, yet it flowed as steadily as a Ministry of Defense clock. After six days of monotony, I was becoming increasingly accustomed to the daily routine of the prison.<br><br>Clank. Screech.<br><br>I opened the rusted bars and stepped into the prison cell filled with filth and stagnant puddles.<br><br>A shackled old man with a cunning grin greeted me. \[Note: this is not the Heavenly Force Demon, it's the guy who tried to teach him martial arts from chapter 348.\]<br><br>"Have you arrived?"<br><br>A notorious murderer, he had sided with the Demonic Cult in the Great Faction War, claiming the lives of over a hundred venerable martial artists.<br><br>Now, devoid of teeth, his speech was slurred.<br><br>"I wish to utter my last words..."<br><br>Cutting him off, I ladled out the food.<br><br>"Didn't you say that your words yesterday were your last?"<br><br>"This time they are really my last."<br><br>"Sure, and then tomorrow will be your real, real last words."<br><br>This routine had become all too familiar over the past six days. A repetitious cycle.<br><br>The old man's request was met with my indifference, causing him a momentary recoil before he bellowed.<br><br>"You, become my disciple!"<br><br>"You, take this."<br><br>Thwack!<br><br>Struck on the head with the ladle, he writhed, the chains rattling in protest.<br><br>"Aaargh!"<br><br>"Keep it down. You're too loud."<br><br>"Ugh. You brat!"<br><br>On the verge of another outburst, the scent of grease, veiled by the cell's stench, caught his attention.<br><br>"What is this smell?"<br><br>"None of your business."<br><br>"It's roasted duck. It's roasted duck, isn't it? Do you also have liquor?"<br><br>"Liquor? I don't know what you're talking about."<br><br>"Lies! That scent is unmistakably Jian Nan Chun!" \[Note: Jian Nan Chun is a strong liquor made in Mianzhu City, Sichuan Province. The name can be roughly translated as "Sword of the South Spring".\]<br><br>"...With a sense of smell like this, you could be a drug-sniffing dog."<br><br>"Give it here! Quick!"<br><br>Thwack!<br><br>"Aaargh!"<br><br>"It has an owner already. Just eat your gruel."<br><br>I set the bucket aside, advancing towards the furthest cell.<br><br>This cell, shrouded in deeper darkness than the rest, housed the Heavenly Force Demon.<br><br>Clank.<br><br>"I've brought your meal."<br><br>"..."<br><br>"Must have been tough waiting, huh? But why is it so cold here? I wonder. The bedding must be quite uncomfortable, should I ask the Tang Family to provide a leather blanket or something?"<br><br>"..."<br><br>As expected, this was the response.<br><br>Despite the gentle coaxing, the Heavenly Force Demon remained mute.<br><br>Ever since that event three days ago, he had sealed his lips and shut his eyes.<br><br>But I wasn't one to give up easily.<br><br>"Come on now. Don't be like that. Try this."<br><br>I revealed a roasted duck, seasoned with a medley of spices, from beneath greased paper.<br><br>Its aroma was strong enough to dispel the cell's stench.<br><br>"This is roasted duck made by a former royal chef, you know. I've tried it, and the duck is definitely tender. The taste is incredible too."<br><br>"..."<br><br>"Roasted duck goes well with alcohol, doesn't it? The famous liquor from Sichuan, Jian Nan Chun! For a hero like Grandmaster Heavenly Force Demon, meat and alcohol are a perfect match, right?"<br><br>"..."<br><br>A chilly silence filled the already cold prison cell.<br><br>Facing the smiling, lotus-seated Heavenly Force Demon, my frustration gave way to weariness.<br><br>"Damn it, this is impossible."<br><br>For three days, I'd employed every tactic to win him over — softening my voice, elevating him as a hero, lavishing praise.<br><br>Yet, the Heavenly Force Demon spurned every gesture of goodwill and comfort, from food to clothing, touching none of it.<br><br>"It seems I've done as much as I can. Are you really going to be like this?"<br><br>"..."<br><br>"It's because I'm a person of integrity that I treat you so gentlemanly, but what would happen if the Tang Family of Sichuan found out, huh?"<br><br>At this, the Heavenly Force Demon, who had maintained a silent, meditative pose, finally spoke, his voice raspy from disuse.<br><br>"Do as you wish."<br><br>"What?"<br><br>"If it's torture, I've already had my fill. Even if I were to leave this life, the torture would continue."<br><br>Having been trapped in the underground prison for over forty years, the Heavenly Force Demon's demeanor was as detached as an enlightened monk. I clicked my tongue in annoyance.<br><br>"Really now. Talking to you is like talking to a wall. Is it really that hard to just speak what you know about Dark Heaven?"<br><br>"I have said all there is to say. Whether you kill or torture me, it's up to you."<br><br>"What kind of old man are you?"<br><br>But the Heavenly Force Demon's lips were already firmly sealed, likely never to open again.<br><br>"Stubborn old geezer."<br><br>With a sigh that seemed to carry the weight of the world, I left the liquor and roasted duck within his grasp before turning to leave.<br><br>"For now, just eat. You haven't eaten anything in three days."<br><br>I knew the truth, though. Whether I returned tomorrow, the day after, or even in three days, the food would remain untouched, as cold as when I left it.<br><br>"Damn it."<br><br>After finishing the food distribution with the Heavenly Force Demon, I sat down in the corridor far from his cell.<br><br>'Heavenly Force Demon.'<br><br>The image of his unwavering gaze and stoic visage haunted me, a maelstrom of confusion swirling around the words 'Dark Heaven.'<br><br>His silence on the matter of Dark Heaven was troubling.<br><br>'But it's certain that he has known about Dark Heaven for a long time.'<br><br>Though he hadn't explicitly confirmed it, the conclusion was inescapable.<br><br>What remained elusive was the extent and nature of his knowledge.<br><br>I began to slowly retrace the conversation I had with the Heavenly Force Demon three days ago.<br><br>As I revisited the conversation, the only theory I could come up with was:<br><br>'Dark Heaven and the Demonic Cult are deeply connected.'<br><br>Possibly, they were even one and the same entity.<br><br>The unyielding silence of the Heavenly Force Demon, once a high-ranking member of the Demonic Cult who had endured decades of imprisonment without forsaking his allegiance, was telling.<br><br>'If Dark Heaven had been an enemy of the Demonic Cult, he would have spoken up long ago.'<br><br>So, what then is Dark Heaven? A faction that branched off from the Demonic Cult? Or perhaps an entirely new entity birthed from within the Cult itself?<br><br>'Dark Heaven, a new branch of the Enlightened Church. Is that it?'<br><br>It's certain they're like a plague.<br><br>As I was deeply lost in thought, Cheong Pung appeared with light footsteps and a sweet smell.<br><br>"Hey!"<br><br>"...Has your grandpa returned to Mount Hua?"<br><br>Cheong Pung, in the midst of indulging in a snack, replied.<br><br>"No! He's still in Hanam!"<br><br>"Oh, is that so."<br><br>Sigh. What do we talk about now?<br><br>Seeing the mountain of food piled up in Cheong Pung's arms, I was astonished. I felt sorry for the former royal chef whom I've never even seen.<br><br>"Is that why you left?"<br><br>"Yes! And I also brought a letter sent from the Beggar Sect."<br><br>"Shouldn't you have mentioned that first?"<br><br>"Hehe."<br><br>"Don't laugh. It's not funny."<br><br>I took the letter from Cheong Pung with a bit of a gruff demeanor.<br><br>Unfolding the aged, stained paper, I noticed three strands of yellow dog hair fall away.<br><br>'A Third-Knot Disciple. It was sent by the branch leader.'<br><br>Predictably, the letter originated from the Beggar Sect's branch leader in the capital, addressed to Goong Gi-Bang.<br><br>Given that Goong Gi-Bang resides at the Divine Doctor's hidden sanctuary, the letter was redirected to me for practicality.<br><br>After reading, Cheong Pung inquired,<br><br>"What does it say?"<br><br>"Nothing much. Just that the search continues."<br><br>The Beggar Sect had initially scoured Sichuan in search of the Divine Doctor.<br><br>Now, their focus shifted to tracking down the fiend responsible for slaying the Poison King and the Heaven-Stunning Shinni.<br><br>'Well, that beast won't be easy to catch.'<br><br>The Tang Family Patriarch, having vowed that the Tang Family would independently resolve the matter, altered his stance upon loaning out the Ring of All Poisons.<br><br>Though the Tang Family has since been collaborating actively, the perpetrator's tracks have all but evaporated.<br><br>"Will they be able to find him?"<br><br>"Well, we can only hope for the best. Between the Beggar Sect and the scouts and assassins from the Tang Family's Green Shadow Squad, something ought to come up, right?"<br><br>"What about the government army?"<br><br>"The government army, well, seems to be doing its part quite effectively."<br><br>Zhu Biao, the King of the Upper Mountains, has a large shadow of influence.<br><br>Sichuan's Lord Won Gyun, upon my urging, shifted focus from the Divine Doctor to hunting the monster.<br><br>While the soldiers' martial skills may not rival those of seasoned martial artists, the impact of their numbers, running into the thousands, is undeniable.<br><br>"Wow! Thousands?"<br><br>"I'm not sure about the exact number, but it was a ton, for sure. Cheong Pung, you've seen the government army too, right? On the way back to the Tang Family of Sichuan."<br><br>"Ah, but the people I saw then weren't that many."<br><br>"...Of course. How could thousands move together at once?"<br><br>The government army was probably dispersed in small squads, diligently combing through their designated sectors.<br><br>The government army is gradually expanding its search area, moving towards Qingcheng and Emei.<br><br>It seems to be in preparation for some kind of situation while searching for the monster.<br><br>Finishing the letter, I couldn't help but be mildly impressed.<br><br>'They're doing better than I thought.'<br><br>Sichuan Provincial Lord Won Gyun at a glance might be mistaken for merely another corrupt official, yet he — or perhaps the military strategist behind these operations — displays a surprising competence.<br><br>'What if they still can't find the perpetrator despite all this?'<br><br>Such a scenario causes me concern, especially considering the bold declarations I've made to Tang Sa-Dok.<br><br>But Jeok Cheon-Gang's recovery is my top priority.<br><br>With my gaze drifting towards the still-sealed treatment room, I casually inquire of Cheong Pung.<br><br>"Is none of the food you're holding for me?"<br><br>"Fuck you!" \[Note: the phrase 지짜 마아요 is a misspelled form of 진짜 맞아요 used intentionally because Cheong Pung has food in his mouth, so his words are jumbled. He is trying to say "It's true!" not "Fuck you!"\]<br><br>"...Just finish what's in your mouth. I'll find my own food."<br><br>\* \* \*<br><br>Jang Il is a First-Knot disciple of the Beggar Sect.<br><br>Becoming a disciple of the Beggar Sect was more out of necessity than choice. He had heard rumors that becoming an official disciple after undergoing the entrance ceremony in the Beggar Sect would earn him a dumpling.<br><br>What would an eight-year-old starving street kid know?<br><br>With his stomach leading the way, he arrived at the Sect's capital branch, earning his membership — and half a dumpling — that day.<br><br>"They only gave me half a dumpling. Just thinking about it makes my teeth grind. Damn them."<br><br>His fellow beggars, having endured this tale countless times, could only offer yawns in response.<br><br>More than a decade may have passed, but Jang Il's bitterness remained as fresh as ever.<br><br>"Do you think I became a disciple of the branch leader for only half a dumpling?"<br><br>The tale, growing long in the tooth, prompted the other First-Knot disciples to exchange knowing looks.<br><br>"Ah, suddenly my stomach!"<br><br>"Ugh, me too!"<br><br>"Psst, where's the toilet, the toilet!"<br><br>"Hey, you guys!"<br><br>Jang Il's protests fell on deaf ears as the trio bolted.<br><br>"Those rascals... they'll see when they come back."<br><br>In the midst of his grumbling, a group approached, their uniforms and weapons a clear giveaway of their identities, though their lax discipline was what really gave it away.<br><br>Recognizing them, Jang Il mused aloud,<br><br>"The government army, huh."<br><br>Their presence had become as common as stray dogs.<br><br>Usually, they were loafing about unnoticed until recent directives seemed to have spurred them into a semblance of activity.<br><br>"They said they were widening their search net, but have they come this far already?"<br><br>Lost in thought, Jang Il was soon addressed by a middle-aged officer, seemingly the group's leader, who approached with a congenial air.<br><br>"By any chance, are you from the Beggar Sect?"<br><br>Jang Il nonchalantly nodded.<br><br>"As you can see."<br><br>"Indeed. I asked because I saw the knot and thought maybe you were."<br><br>"You'd know by looking, what else. But you've made good time getting here already."<br><br>"Ah, so the Beggar's Sect is indeed first-rate in gathering information. You were aware, I see?"<br><br>"For someone from my neck of the woods, this is nothing extraordinary."<br><br>A self-satisfied smirk crossed Jang Il's face, met with the officer's unchanging grin.<br><br>"But this 'neck of the woods' has no village and only a few people... why are you alone here?"<br><br>"Don't even mention it. The branch leader kept nagging, so I took a few guys out for some air. With all this noise about a monster or whatever, it's been a bit noisy. Just my luck."<br><br>"I see."<br><br>"Well then, good luck..."<br><br>Jang Il's parting words hung in the air.<br><br>As the officer's smile remained, a chilling sensation abruptly pierced Jang Il's chest.<br><br>Shlick!<br><br>'...Huh?'<br><br>Cough.<br><br>Jang Il, staring blankly at the sword embedded in his chest, vomited blood.<br><br>Why, why this?<br><br>The question never made it past his lips. His knees buckled as he looked at the officer with blurred eyes.<br><br>A cold voice reached his ears as his face hit the freshly sprouting grass.<br><br>"Find the others. They should be nearby."<br><br>"Understood."<br><br>"Stupid beggar. Why here of all places..."<br><br>That was the last sound Jang Il could hear.<br><br>At the age of twenty-five, the young beggar drew his last breath in a secluded forest, two days' distance from the Emei Sect.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-349.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-351.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

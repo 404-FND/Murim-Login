@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 309 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 309</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 309</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: December 29, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>Three days had passed since my departure from Luoyang, along with the Bermuda Triangle bastards.<br><br>Abruptly, I broke the silence.<br><br>“Mu-Jin.”<br><br>“Huff, huff. Yes?”<br><br>Hyuk Mu-Jin, sprawled on a nearby rock, gasped for air.<br><br>His progress over the past year was commendable, yet his physical and martial prowess had hit a ceiling.<br><br>‘Goong Gibang, is also following well, but still lacking.’<br><br>Goong Gibang, befitting of his status as a successor in his faction, possessed one of the top five skills in the world. However, he fell short of matching Cheong Pung and me.<br><br>What's the use of mastering the most powerful technique of his faction, the 18 Subduing Dragon Palms, if he only reaches 5th mastery?<br><br>“Goong Gibang.”<br><br>“Huh, why did you call?”<br><br>He panted heavily.<br><br>Though slightly better off than Hyuk Mu-Jin, he was clearly taxed.<br><br>And then there was the last of us...<br><br>“Savior, would you like some dumplings?”<br><br>“You go ahead and eat them.”<br><br>“I ate a lot on the way here. I'm full.”<br><br>“Then go relieve yourself and eat.”<br><br>“Wow! That's a method!”<br><br>“......”<br><br>Typical Cheong Pung.<br><br>He was munching on dumplings while effortlessly practicing his Qinggong. An enigma, indeed.<br><br>As for me, burdened with Jeok Cheon-Gang on my back, I was hardly in a better state than Cheong Pung.<br><br>I idly scratched my head, observing them.<br><br>‘Hmm. This won’t do as it is.’<br><br>Our trek spanned from Henan through Shaanxi to Sichuan.<br><br>A month-long journey by horse.<br><br>But time was a luxury we couldn’t afford.<br><br>We needed a bolder strategy to cut down our travel time significantly.<br><br>“Huff, Chief! Why did you call me?”<br><br>“Oh, it's nothing much.”<br><br>I asked Hyuk Mu-Jin.<br><br>“Do you still have that thing I entrusted to you last time?”<br><br>“Entrusted? What thing?”<br><br>“The chains.”<br><br>“What chains... Ah, the ones you used to have hanging all over?”<br><br>“Yes.”<br><br>Those were the Ten Thousand Year Tempered Steel chains, crafted by the Scorching Clan.<br><br>Before the Great Celestial Banquet commenced, I had removed them. Hyuk Mu-Jin, intrigued by their Ten Thousand Year Tempered Steel make, eagerly claimed them.<br><br>“Did you bring them?”<br><br>He was always sharp.<br><br>Hyuk Mu-Jin's eyes darted around, betraying his unease.<br><br>“No, I left them somewhere else.”<br><br>“Is that so?”<br><br>“Yes.”<br><br>“Then let's do this. If you end up dying because you didn’t bring them, that’s on you.”<br><br>“Ah, silly me. Now that I think about it, I did bring them.”<br><br>Clank.<br><br>He began unwrapping the chains concealed beneath his garments.<br><br>Made from Ten Thousand Year Tempered Steel, these chains were not only robust but also feather-light.<br><br>He had ingeniously used them as makeshift armor.<br><br>Given their value, it was clear why Hyuk Mu-Jin hesitated as he handed them over.<br><br>“Weren’t these given to me to use? I was saving them to make a weapon later…”<br><br>“Did I tell you to keep them, or did I tell you to take care of them?”<br><br>“But, isn’t it wrong to give something and then take it back?”<br><br>“It’s borrowed. This belongs to the Scorching Clan. I wonder how Grandfather will react when he wakes up and sees you with it.”<br><br>“…Please, just take it. Hide it so well that it doesn't even catch my eye.”<br><br>“Good thinking. Gibang!”<br><br>I called over a baffled Goong Gibang, chains in hand, ready for the next step.<br><br>Both of them, bewildered, queried in unison.<br><br>"What are you doing right now?"<br><br>"What kind of nonsense is this?"<br><br>Sshhh.<br><br>I casually replied.<br><br>"Can't you see? I'm tying knots with the chains."<br><br>"But, why are you wrapping it around my waist...?"<br><br>"Hold on. Untie this."<br><br>"There, done."<br><br>I surveyed my handiwork, feeling a surge of accomplishment.<br><br>Hyuk Mu-Jin, Goong Gibang, and I were now interconnected, akin to dried fish threaded on a line.<br><br>“Did everyone rest well?”<br><br>“Rest? We barely had a moment.”<br><br>“Untie this right now!”<br><br>I simply grinned and shook my head.<br><br>Simultaneously, my Dantian surged with energy, channeling ninety years' worth into my legs. \[Note: the MC is not using all of his Qi here, hence "90 years".\]<br><br>“Now, let’s run.”<br><br>Swoooosh!<br><br>“Ughhhhh! This is crazy!”<br><br>“The Chief has gone mad! He’s trying to kill us!”<br><br>Bound to me, Goong Gibang and Hyuk Mu-Jin sprinted desperately, reminiscent of panicked boars.<br><br>Alerted by the commotion, Cheong Pung, who had been squatting in a nearby bush, hurried out and followed.<br><br>“Savior! I’ll come too!”<br><br>“......”<br><br>That guy probably didn't wipe. No, he must have.<br><br>Dismissing the thought, I launched into my Qinggong, racing against the backdrop of swiftly changing landscapes.<br><br>In just two days, we arrived at the Henan-Shaanxi border.<br><br>\* \* \*<br><br>Trudge. Trudge.<br><br>Haggard, fatigued faces. A group of individuals, all part of the escort agency, trudged onward.<br><br>The couriers and thickly-clad cart drivers all bore the weight of exhaustion.<br><br>Their fatigue stemmed from more than just the four-month trade journey.<br><br>“Hwa-Ran.”<br><br>The call caught her attention, and her sharp black eyes shifted. A firm voice responded.<br><br>“Speak, Uncle Heo.”<br><br>“Well, you see.”<br><br>The man who stepped forward was middle-aged, his beard streaked with white. He paused, then sighed deeply.<br><br>“Chief Escort Seok has passed away.”<br><br>“……!”<br><br>Ju Hwa-Ran, perched atop her horse, tensed. A quivering voice followed.<br><br>“So it has come to this, after all.”<br><br>“The poison had reached his marrow; there was nothing more we could do. I'm sorry.”<br><br>“It's not your fault, Uncle. The death of Chief Escort Seok, no, Brother Seok, is my fault.”<br><br>Under her veil, Ju Hwa-Ran’s lips trembled.<br><br>Her missteps had led to this tragedy.<br><br>Chief Escort Seok's death, and the loss of thirty-two others, were consequences of her errors.<br><br>‘Father. What should I do?’<br><br>Her eyes lifted to the heavens.<br><br>The night sky, speckled with stars, conjured the image of a man. Her father, Ju Ho-Gun, had been grappling with Qi Deviation, teetering on the brink of death.<br><br>‘Having such a beautiful and talented daughter, I couldn't ask for more. Ha ha!’<br><br>Ju Ho-Gun would often say that.<br><br>While others might have adopted a son, he cherished his gifted and beautiful sole daughter, taking immense pride in her.<br><br>‘The only one to succeed me is you. The last fifty years of Dragon Pheonix Armed Escort Agency pale in comparison to what you will achieve.’<br><br>Ju Ho-Gun's pride in his daughter was renowned across Shaanxi.<br><br>But Ju Hwa-Ran was not just a doting father's fancy.<br><br>Even as a youth, she demonstrated a keen grasp of the agency's finances and was lauded as one of Northern Jiangbei's Three Beauties.<br><br>Her martial prowess placed her among the Ten Dragons and Phoenixes, the elite of the righteous martial artists.<br><br>Yet...<br><br>‘Where did it all go wrong?’<br><br>Ju Hwa-Ran swallowed a sigh welling up from deep within her heart.<br><br>Her world was crumbling. Only two years had passed since she took the reins of the Dragon Phoenix Armed Escort Agency after her father's fall.<br><br>“Hwa-Ran, are you alright?”<br><br>The only constant was her people.<br><br>The five-decade legacy of trust and goodwill her grandfather and father had built was her sole pillar of strength.<br><br>Ju Hwa-Ran offered a faint smile to Heo Jun, the chief courier, who inquired with evident concern.<br><br>“You don’t need to worry about me, Uncle Heo.”<br><br>“If that’s the case, I’m relieved.”<br><br>Heo Jun nodded with a somber face.<br><br>Ju Hwa-Ran was just twenty-one.<br><br>She had much to shoulder, perhaps too much for her young heart.<br><br>Heo Jun, laden with guilt, could only offer his silent support.<br><br>Sensing his sentiments, Ju Hwa-Ran steadied herself and commanded.<br><br>“It’s getting dark; we should camp here for tonight. Please make the arrangements.”<br><br>“That’s a good idea.”<br><br>“And... prepare for the funeral as well.”<br><br>The thirty-third casualty of this mission. It was time to bid farewell to Chief Escort Seok, a lifelong companion.<br><br>They might stall the decomposition with salt, but once their journey ended, the residual poison would devastate his remains.<br><br>“I understand, take a break for now.”<br><br>“How can I rest while everyone is working hard? Don’t worry and go ahead.”<br><br>With a brief nod, Heo Jun gestured, and the caravan came to a stop.<br><br>The cool, spacious land was ideal for camping. Ju Hwa-Ran planned to recuperate here before tackling the mountain at dawn.<br><br>‘We’re almost there.’<br><br>Her gaze fixed on the dark silhouette of Mount Heukseok, or Black Stone Mountain.<br><br>Crossing it marked the final leg of their journey.<br><br>Success here could offer the Dragon Phoenix Armed Escort Agency a much-needed respite.<br><br>‘Seven days to Mount Zhongnan. Not ideal, but crossing Black Stone Mountain will buy us time.’<br><br>The real challenge was the attitude of Black Stone Mountain's master.<br><br>Black Stone Fortress, a bastion of the Green Forest Alliance within the Eighteen Fortresses, was led by a peak master renowned for his acumen in wealth. \[Note: the Green Forest Alliance is a historical slang for a group of thieves and bandits, so that may hold true for this novel as well.\]<br><br>A clash with the Black Stone Fortress might bring more suffering to the already beleaguered Dragon Phoenix Armed Escort Agency.<br><br>‘I hope nothing goes wrong.’<br><br>Engulfed in her thoughts, Ju Hwa-Ran’s focus was abruptly shattered.<br><br>Rustle.<br><br>The sound was subtle, not that of wild animals, but more akin to dry leaves being tread upon.<br><br>A surge of alarm coursed through Ju Hwa-Ran.<br><br>‘Enemy!’<br><br>Swoosh!<br><br>With lightning speed, Ju Hwa-Ran unsheathed her soft sword, her voice cutting through the stillness.<br><br>“Identify yourself!”<br><br>Her command resonated in the darkness.<br><br>Heo Jun, the chief courier, instantly grasped the gravity of the situation and mobilized the couriers to form a protective circle.<br><br>“Protect the young mistress of the agency!”<br><br>“Yes!”<br><br>Clash!<br><br>The moonlight caught the shimmer of their drawn weapons.<br><br>Then, the rustling intensified, emanating from the bushes some fifty yards distant.<br><br>“Who is it, you ask? The brave couriers of the Dragon Pheonix Armed Escort Agency, I see.”<br><br>A towering figure emerged, an eight-foot-tall behemoth with a massive axe slung across his back. Heo Jun’s voice dropped to a whisper.<br><br>“Thousand Strength Axe…”<br><br>“Oh, isn’t that you, Brother Heo? I heard you’ve been busy cleaning up after a young girl.”<br><br>“How dare you!”<br><br>Beside the tense Heo Jun, a poised figure stepped forth with boldness.<br><br>“It’s good timing. We were about to pay the toll.”<br><br>“Well, well.”<br><br>Thousand Strength Axe smirked and brandished his axe.<br><br>“Show me the goods first, then we can talk.”<br><br>Ssssssh!<br><br>In his wake, hundreds from the Green Forest Alliance emerged, ready for confrontation.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-308.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-310.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

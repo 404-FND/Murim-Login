@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 390 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 390</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 390</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: April 13, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>The brief respite from the cold front lent an illusion of normalcy.<br><br>Students, newly liberated from the rigors of college entrance exams, found themselves either buried in preparation for another attempt or basking in their hard-earned freedom. Meanwhile, office workers, with fatigue etched under their eyes, crowded into public transport.<br><br>Against this backdrop of everyday tranquility, an unforeseen revelation emerged.<br><br>\[Breaking News - Important Announcement from the United Nations Security Council\]<br><br>The broadcast opened with President Shao Yang, his gaze laden with gravity, addressing the audience,<br><br>「As the ninth President of the People's Republic of China and a member of the United Nations Security Council, I stand before you to discuss the massive monster wave that has occurred in Sichuan Province.」<br><br>It was a bombshell that captured the attention of the entire world and shook all of Asia.<br><br>\* \* \*<br><br>Four days passed and yet, the turmoil showed no signs of abating.<br><br>There had been numerous incidents and accidents since the Great Cataclysm, but the monster wave that occurred in Sichuan Province was of an unprecedented scale.<br><br>President Shao Yang of China declared martial law, and with the approval of the United Nations Security Council, deployed peacekeeping forces to the front lines.<br><br>The world watched and held its breath held as events unfolded.<br><br>Neighboring Asian nations, particularly those closest to China, watched with heightened alarm.<br><br>The hunter discussion board on South Korea's most popular online forum was ablaze with activity.<br><br>Here's a rundown of the current crisis.<br><br>Presumably, no one here has missed the UN Security Council's urgent broadcast. To be unaware at this juncture would be astounding. The gravity of this crisis cannot be overstated — even the North Korean leader is likely following this forum to see what's going on.<br><br>Anyway, since so many of you bugs are making persistent inquiries for a summary of the perilous developments, I'll oblige.<br><br>1. Sichuan Province was engulfed by an unforeseen monster wave, with initial casualty estimates surpassing 300,000.<br><br>That figure, from a week ago, now seems a gross underestimate. The true toll is beyond calculation.<br><br>2. The Chinese response was swift, yet the enormity of the threat defied expectations.<br><br>A legion, led by an entity dubbed the Arch Lich, amassed in the tens of thousands.<br><br>The People's Liberation Army and Air Force faced a humiliating defeat, with over 2,000 hunters from the Public Security Force missing, their fates obscured by magical interference and the failure of satellite surveillance.<br><br>3. In a clandestine move, the Chinese government enlisted several S-rank hunters from abroad to quell the upheaval. Recently, UN peacekeepers joined the fray at the front lines.<br><br>For those keen on updates, the United Nations Security Council periodically shares combat reports.<br><br>(Link attached.)<br><br>The following is just my personal opinion, so feel free to ignore it if you want.<br><br>4. Those with their heads screwed on right will understand, but this situation is far from ordinary. Mainland China is currently a living hell.<br><br>The diversion of all available hunters to the battleground has left other Gates unattended, leading to a surge in their magic power levels and resulting in a hyperinflation of magic energy.<br><br>The dire implication is clear: should the front lines falter and the monster legion breach Sichuan, the consequences are too grim to contemplate.<br><br>5. So, before we all get screwed, head to the supermarket and stock up on emergency food supplies without descending into panic buying or hoarding for profit.<br><br>6. It's impossible to conclude without a nod to our national heroes.<br><br>Our very own Emperor Fuck and Jeong Dragon from the Ares Guild are at the forefront, showcasing their valor. Let’s continue to rally behind them with unwavering support. \[Note: the "Ryong" part of Lee Jeong-Ryong's name means "dragon" in Korean and "Jeong-Ryong" could be translated as "righteous dragon"...oh, the irony...\]<br><br>That's all I've got.<br><br>Within mere hours, the post eclipsed the 100,000 views mark, sparking a deluge of comments from concerned netizens.<br><br>(Best Comment) The situation is as serious as the post describes, but the author has definitely amped up the tension, lol. What's there to worry about when there are 100,000 ordinary hunters and S-rank hunters participating? And do you think the military is just sitting around?<br><br>└ Yeah, the military's just taking a breather.<br><br>└ ...?<br><br>└ Haven't you seen the news? All of China's military equipment broke down, exposing the largest military supply corruption case. They're talking about tens of trillions of won in scale. Many divisions have been immobilized.<br><br>└ Sounds vaguely familiar.<br><br>└ Please change the water supply. You bastards. I was discharged last year, but why did the water still taste like Normandy? Take one sip, and I can't tell if my name is Kim Cheol-Soo or James. \[Note: "why did the water taste like Normandy" implies that the water supply hasn't been changed since World War II.\]<br><br>└ Corporal Kim. Dinner tonight is pollock fillet stew.<br><br>└ Not eating that shit.<br><br>└ True, the equipment fiasco has hamstrung the military, but there's no shortage of manpower. Ultimately, it's the hunters who are key to turning the tide against the monsters. Yet, a more pressing concern looms.<br><br>└ What is it?<br><br>└ The monster count has broken 100,000.<br><br>└ ??<br><br>└ ?????<br><br>└ What do you mean 100,000, damn it; stop talking nonsense.<br><br>└ It's not nonsense, it's confirmed by the UN Security Council. Check the link in the post; it was updated 5 minutes ago.<br><br>└ Wow... fuck.<br><br>└ Judging by the comments, the update's legit.<br><br>└ The article is all in English... I'm waiting for Google Translate.<br><br>└ You serious?<br><br>└ Yet, if the monster count truly exceeds 100,000, we’re facing an unprecedented threat. No prior wave came close to this magnitude;<br><br>└ Initially, this wave wasn't nearly as massive. But the presence of the Arch Lich, a high-caliber Named Monster unfamiliar to scholars, complicates matters. The undead, resurrected by the Arch Lich, constitute the bulk of our adversaries.<br><br>└ Arch Lich: "Kaio-ken times 100." \[Note: I know many of you great scholars know what this is a reference to, but just in case: Kaio-ken is an attack from Dragon Ball that multiplies the user's "ki".\]<br><br>└ So, we just need to kill the Arch Lich, right? If most of the monsters are undead, then killing the controller should end it.<br><br>└ ???????<br><br>└ How is anyone supposed to kill the Arch Lich, you asshole. You're a bastard who can only use an Aura Keyboard, not an Aura Blade. \[Note: a quick reminder - Aura Blade is the real-world equivalent of Sword Aura.\]<br><br>The conversation quickly grew heated.<br><br>Participants ranged from detached observers to those deeply invested in the unfolding crisis.<br><br>Amidst prevailing sentiments of despair and hope, fresh updates rolled in.<br><br>(Best Comment) A UN Security Council update: the eastern front has been compromised. Thankfully, Fei Chen and her reinforcements stemmed further havoc just an hour ago.<br><br>└ Wow, for real.<br><br>└ Eastern front lines, isn't that where Wu Hei-Xing is?<br><br>└ Right. That Chinese drug addict.<br><br>└ But why were they breached? He's an S-rank hunter.<br><br>└ Because he's a Chinese S-rank hunter.<br><br>└ Ah...<br><br>└ If Fei Chen hadn't been there, it would've been a disaster. Maybe it's because Fei Chen is a well-made hunter from the Great Cataclysm.<br><br>└ Fei Chen's parents are Hong Kong nationals, so she's from Hong Kong.<br><br>└ Are you working for the Fact Checking Committee in the comment section? That was so unnecessary.<br><br>└ By the way, any news about Korean hunters?<br><br>└ Jeong Dragon is dominating the northern front, and Emperor Fuck has been reported to have won a few times on the western front, but no news after that. It seems like the situation is maintained.<br><br>└ Hmm... I'm not worried about Lee Jeong-Ryong's abilities, but I wonder if Emperor Fuck is safe. He's still an A-rank hunter.<br><br>└ ??lol<br><br>└ lololololol<br><br>└ There's still someone who treats Emperor Fuck as an A-rank? As an active A-rank hunter, I can't help but laugh. Jin Tae-Kyung is just a monster lol...<br><br>\--------------------------------------------------------------------------------------------------<br><br>Hey hey!! The UN Security Council just announced the situation on the western front!<br><br>└ Oh, it's been a while since we heard from Emperor Fuck.<br><br>└ That sounds urgent. What did they say?<br><br>└ They said it was breached?<br><br>└ What?<br><br>└ Huh?<br><br>└ No way, is Emperor Fuck dead...?<br><br>└ Wait, let me check again. It should be on the homepage — take a look yourselves.<br><br>└ Suddenly feeling very anxious; heading there now.<br><br>└ Go go go go!<br><br>With a mix of anxiety and eagerness, the netizens scrambled to access the latest from the UN Security Council.<br><br>Faced with an unexpected surge in website traffic, users experienced delays as the bandwidth was overwhelmed. When the announcement finally loaded, disbelief was the common sentiment.<br><br>"…What is that?"<br><br>A tactical map highlighted the conflict zones. There, the western front was depicted as if gouged out by a chisel.<br><br>…I’ve just verified it myself. The breach is real.<br><br>└ Is Jin Tae-Kyung dead? How bad is the damage?<br><br>└ No, it was the monsters that were breached.<br><br>└ ??<br><br>└ ???<br><br>└ The event unfolded so swiftly that real-time updates lagged behind.<br><br>└ …Is that even plausible?<br><br>└ Enough chatter, it's time to pay respects…<br><br>\* \* \*<br><br>The imminent battlefield was a vision of chaos, a vast expanse teeming with monstrous entities.<br><br>The air was thick with murderous intent and the stench of death, drifting on the breeze.<br><br>"Damn it. They've gathered in large numbers."<br><br>Mr. Choi, standing beside me, echoed my thoughts.<br><br>"No matter how many we kill, it never ends."<br><br>Four days into our mission on the western front, Mr. Choi's usually pristine condition had vanished.<br><br>Splattered with blood and grime, his gaze was serene yet deeply fatigued.<br><br>"When do we start?"<br><br>"Well, that depends on the opinion of our little commander here, doesn’t it?"<br><br>The last question wasn't directed at Mr. Choi.<br><br>Shao Shen, the twenty-one-year-old 'little commander' always by my side, replied.<br><br>「I will follow Mr. Jin's orders!」<br><br>His earnest gaze prompted a chuckle from me.<br><br>"You're still going on with that Mr. Jin thing. You were the one who told me to speak informally first. Why don’t you just call me 'Hyung' then?"<br><br>「Can I, really?」<br><br>"As long as you're okay with it. But is this okay in front of your subordinates? Aren't you getting promoted soon?"<br><br>Shao Shen’s head shook vehemently.<br><br>「No problem at all! H-h-hyung!」<br><br>He remains eerily calm during battle, but I can't figure out why he stutters so much in normal conversation.<br><br>Glancing back, I surveyed the ranks of nearly a thousand hunters from the Public Security Force.<br><br>Their gaze, alight with zeal, brimmed with respect and awe for the strong.<br><br>Among them, Shao Shen stood out as the most distinguished.<br><br>「Please give the order, H-hyung.」<br><br>"An order, huh."<br><br>My gaze drifted skyward.<br><br>Above us, an eagle soared, its wings wide against the sky — a promising omen.<br><br>"Follow me. Just as we have been doing."<br><br>「…!」<br><br>"Let's go."<br><br>At my word, I stepped forward.<br><br>Crunch.<br><br>The earth beneath my foot yielded, fracturing under the force.<br><br>And then, in an instant.<br><br>Boom!<br><br>I surged ahead with a roar, transforming into a blaze of speed.<br><br>'Brilliant Path of Fire.'<br><br>The brisk air morphed into a fierce wind.<br><br>As the terrain and sky blurred past, a mighty chorus rose behind me.<br><br>「Charge! Charge!」<br><br>「Descendants of China! Everyone! Sweep them all away!」<br><br>「Waaaaah!」<br><br>Thud thud thud thud!<br><br>Roaaar!<br><br>The clamor of humans and monsters alike resounded, the very ground trembling with their force.<br><br>In the midst of this tumult, I brandished White Flames.<br><br>Whoosh!<br><br>From its tip, the Scorching Yang Qi unleashed, cleaving through all in its wake.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-389.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-391.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

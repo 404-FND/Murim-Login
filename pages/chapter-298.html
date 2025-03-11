@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 298 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 298</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 298</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: December 15, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>\- Fine, fine. Skeletons, arise... Ding!<br><br>\- \[Lv.105 Skeleton Warlord\] has used a special skill!<br><br>\- Special Skill, \[Summon the Dead\] has been activated!<br><br>\- The sleeping dead respond to the call of their commander!<br><br>How oddly comforting this is.<br><br>Watching skeletons rise like sprouts in a garden fills a peculiar joy in a corner of my heart.<br><br>'This must be what a farmer feels.'<br><br>It's a bountiful harvest. It's been a good year.<br><br>My harvest begins with a bright smile, wielding not a scythe, but a spear.<br><br>Each newly risen skeleton met their end under my spear. With each skull shattered, a melodic chime resonated.<br><br>Ding. Ding. Ding.<br><br>\- You have defeated \[Lv.71 Skeleton Warrior\]!<br><br>\- A small amount of experience points has been acquired!<br><br>\- You have defeated \[Lv.70 Skeleton Archer\]!<br><br>\- A small amount of experience points has been acquired!<br><br>The Skeleton Warlord, sacrificing his minions for mere experience, spoke in a voice tinged with sorrow.<br><br>\- Ah, my soldiers. Forgive your disloyal commander. Trapped by the cunning of humans, unable to show our true power, and to perish like this.<br><br>As I was about to swing my spear at the next one, I hesitated for a moment.<br><br>"What did you just say?"<br><br>\- I said, cunning humans!<br><br>Look at this defiance.<br><br>A creature that should be cowering stands boldly before me, eyes ablaze with anger. The indignity of being reduced from a grand undead commander to a mere source of experience points has kindled a fire within, banishing any fear of obliteration.<br><br>\- Rather than offering my soldiers to the likes of you, I would prefer to perish!<br><br>"Whether you perish or not is for me to decide. More importantly, repeat what you said earlier."<br><br>\- Cunning humans!<br><br>"Not that part."<br><br>\- What else then?<br><br>"Didn't you say something about not being able to show your true power?"<br><br>\- ...What of it?<br><br>"Now that I think about it, you have that strange skill. Something like 'Commander's Battle Cry' or whatever."<br><br>\- Yes, how do you know about that?<br><br>"Ah, right. I knew something was off. I forgot about that."<br><br>I grinned broadly, running my hand over the Warlord's skeletal head.<br><br>"Use it."<br><br>Confusion laced the Warlord's tone as he inquired.<br><br>\- Commander's Battle Cry? Why?<br><br>"Because if you buff them with that, their levels will increase. I need to suck up a bit more experience points."<br><br>\- ......!<br><br>"So, hurry up and use it. Depending on how you do, I might let you go."<br><br>\- R-really?<br><br>"In the human world, there's a saying: 'A man's word is worth a thousand pieces of gold.' It means a man always keeps his word."<br><br>\- A bond worth a thousand gold pieces after losing a mother? What a strange saying. \[Note: the original Korean for 'A man's word' is phonetically similar to 'mother lost'. The Skeleton Warlord has misunderstood the MC's proverb.\]<br><br>"Why would you lose a mother? You're spouting nonsense, you cursed creature. I should just annihilate you right now."<br><br>Crack.<br><br>I tightened my grip around the skull, eliciting a frantic outcry from the Warlord.<br><br>\- Wait. The bone is cracked! The bone!<br><br>"Lord. Sending one right now."<br><br>\- Wait a moment!<br><br>"So, will you do it or not?"<br><br>The Warlord's eerie green pupils darted nervously.<br><br>The skeleton, surprisingly expressive for a mere heap of bones, finally yielded a reluctant consent.<br><br>\- I... will do it.<br><br>"Good decision."<br><br>\- But don't be mistaken. This is not subjugation; it's a contract!<br><br>"A contract?"<br><br>\- Yes. It's not obedience, but a mutually agreed upon contract!<br><br>"………This guy, a skeleton, seems more human than I am. So, what's the content of this contract?"<br><br>\- In exchange for cooperating with you, a cunning human, guarantee the position I currently hold.<br><br>"The master of the Black Forest and commander of the undead legion?"<br><br>\- Yes! And in addition, stop this indiscriminate and barbaric slaughter like you're doing now!<br><br>"..."<br><br>Did I hear that correctly?<br><br>The irony of being lectured on brutality by a monster, no less, momentarily stunned me.<br><br>"Are you sane? Is that something a monster should say?"<br><br>\- I find that offensive. I am a Skeleton Warlord with cold judgment and intellect. Even though I've become a corrupted undead, the spirit of knighthood is deeply engraved in my soul.<br><br>"…………If you had upheld chivalry, you wouldn’t have fallen like this."<br><br>\- ...Truthfully, the memories from my life were erased when I became undead.<br><br>"Then you shouldn’t talk about chivalry. This guy is really absurd."<br><br>Despite his absurdity, this Named Monster clearly stood apart from the typical, instinct-driven monsters who could only shriek monstrously.<br><br>'Anyway, about the contract.'<br><br>After pondering for a while, I finally spoke.<br><br>"Okay. I've decided."<br><br>\- Human, will you accept the contract?<br><br>"No. I don’t want to."<br><br>\- ....What?<br><br>His glowing green eyes flickered with bewilderment. I pressed on.<br><br>"The first proposal is okay. Whether you're the master of the Black Forest or a legion commander, you do you. But."<br><br>\- But?<br><br>"From now on, you are a member of the Peace Guild, serving as the experience point factory manager. In exchange for maintaining your position, supply me with as many skeletons as I want."<br><br>\- That’s absurd!<br><br>"Don't like it?"<br><br>\- I’d rather perish than become a puppet of a human!<br><br>"Your wish is noted. Sir."<br><br>Crack.<br><br>With a fresh fracture in his skull, the Skeleton Warlord replied in a somber tone.<br><br>\- Thinking about it, that’s not such a bad contract.<br><br>"..."<br><br>\- As a commander, I cannot abandon my soldiers. Human, as the master of the Black Forest and commander of the undead legion, I accept your proposal.<br><br>"Weren’t you saying earlier that you’d rather perish than be a puppet of humans?"<br><br>\- If the commander disappears, the legion falls apart. Don't be mistaken. I'm enduring this momentary humiliation for the soldiers waiting for me.<br><br>"But you have to sacrifice those very soldiers, right?"<br><br>\- Their noble sacrifice will be remembered until the day I perish. So, how much is this month's tribute? No, the tribute in troops?<br><br>"..."<br><br>Observing his willingness to offer up his own, as though it costs him nothing.<br><br>It's clear he's more than a mere puppet. He's a colossal puppet.<br><br>My disbelief must have been apparent, as the Skeleton Warlord, perhaps the first monster amiable towards humans, hastily invoked a spell.<br><br>\- Strengthen, skeleton, skeleton!<br><br>Beep!<br><br>\- \[Lv.105 Skeleton Warlord\] has used a special skill!<br><br>\- Special Skill, \[Commander’s Battle Cry\] has been activated!<br><br>\- Under the command of the Skeleton Warlord, the strength, agility, and magic of the monsters have been enhanced!<br><br>\- The levels of the enemies have risen by 5!<br><br>・・・ Now he's doing well on his own.<br><br>\*\*\*<br><br>The task of harvesting was straightforward.<br><br>The initial challenge always diminishes with repetition. By the second or third attempt, one becomes proficient.<br><br>The Skeleton Warlord efficiently marshaled his command, swiftly meeting the troop quota.<br><br>\- Legion! Assemble!<br><br>Clatter, clatter!<br><br>About a hundred newly grown skeletons were congregated. Merely brandishing my spear in their direction yielded a cascade of experience points.<br><br>Swoosh! Boom!<br><br>Ding. Ding. Ding.<br><br>A smirk formed as I listened to the accrual of experience points. Observing the scene, the Warlord spoke with a note of satisfaction.<br><br>\- Hmm. This way it's much faster and easier.<br><br>"..."<br><br>\- Human, have you seen my command? This is the dignity of a commander.<br><br>Have you ever encountered such a monster so amenable to humans?<br><br>Seeing him content with this efficient method of tribute, it dawned on me why his soul had fallen.<br><br>Should a wind of liberation ever sweep through the Black Forest, the remaining skeleton soldiers would undoubtedly be the first to rise up.<br><br>"I feel like I've become the invader here."<br><br>With this peculiar sensation, I set about gathering the spoils.<br><br>Skeletons are typically categorized as 'poor' monsters. Their drops usually consist of either rusted weapons, potential tetanus inducers, or half-decayed bones.<br><br>While a Minotaur's remains might yield something useful like beef or bone broth, these skeletons offer little more than the taste of a grave.<br><br>"Oh, a magic stone and armor."<br><br>Skeleton Knights, emerging as infrequently as rain in a desert, occasionally leave behind a magic stone and some decent equipment, one or two pieces at a time.<br><br>But such occurrences are few and far between.<br><br>"This size could easily be worth tens of millions."<br><br>It was a wise decision to dismiss the guild members earlier. After securing the experience points, now monopolizing the magic stones feels like a double victory.<br><br>As I jubilantly collected a fist-sized magic stone, the Warlord inquired.<br><br>\- Cunning human. What are you doing?<br><br>"Don’t you see? I'm collecting the fruits of my labor."<br><br>\- Planning to consume it later?<br><br>"Consume, you say? Of course not. I'll sell it."<br><br>\- Foolish. Magic stones are a source of power. It's natural to eat them and increase your strength.<br><br>"That's something monsters like you do. Humans are different."<br><br>It's a well-known fact, but humans aren't the only adversaries of monsters.<br><br>Inter-monster skirmishes are common, and during these conflicts, they often consume each other to gain strength.<br><br>\- Is that so? Humans are truly incomprehensible beings. You could become stronger by absorbing the magic stone... Is money that good?<br><br>"Money is a necessity for life. Besides, humans can't absorb magic stones."<br><br>Magic stones contain what's known as 'demonic energy'. While it serves as a power source for monsters, it's akin to poison for humans. \[Note: I am translating this as demonic energy, but the characters being used here are accompanied by their Chinese counterparts, which typically happens for important information such as techniques, names, monikers, etc. This phrase could also be translated as 'demonic Qi', but 'demonic energy' fits the sentence better in this context. I just found it interesting, and I feel like this may be important later.\]<br><br>Think of it not just as energy, but as a contaminant.<br><br>After briefly explaining this, the Warlord cocked his skull.<br><br>\- It's strange that you can't absorb it. I encountered a group of humans long ago using troll blood to heal their bodies.<br><br>"Ah, potions? That's after undergoing purification processes…"<br><br>\- Then why not purify the magic stone? Like the troll blood you call potions.<br><br>"If it were that simple, we would have purified them long ago. As expected of a monster, so simple-minded."<br><br>If troll blood is akin to a lightly fruit-infused drink, then a magic stone is like undiluted, pure fruit juice.<br><br>Even potions can't entirely neutralize their inherent toxicity, let alone fully purify a magic stone.<br><br>With a chuckle, I continued my explanation.<br><br>"Anyway, humans can't absorb magic stones."<br><br>\- Why?<br><br>"Just stop asking. You question mark bastard. It's an academic consensus. We’ve never heard or seen such a thing."<br><br>\- I’ve also never heard or seen a human like you before.<br><br>I nearly struck the Warlord’s skull but paused.<br><br>Hold on. This might actually be plausible.<br><br>'There's no need to always be bound by common sense.'<br><br>Aren't I myself an entity beyond common sense?<br><br>The so-called academic consensus is merely what’s known and accepted within certain boundaries.<br><br>'It’s the same with the Mana Cultivation Technique.'<br><br>A secret known only to a select few.<br><br>I hadn’t even considered it before my involvement with the Ares Guild.<br><br>Before and after the emergence of monsters, their realm stayed the same, secrets tightly held within their inner circles.<br><br>'Absorbing magic stones...'<br><br>Could I attempt it?<br><br>Just as I was about to retrieve the magic stone from my inventory, the Warlord interjected.<br><br>\- Haha. You look like you’ve been hit hard. Cunning and foolish human.<br><br>"Oh. Want to take a punch that leads to annihilation on that skull?"<br><br>\- ………Reckless words. I apologize.<br><br>"You apologized within 3 seconds, so it counts."<br><br>The Skeleton Warlord, having narrowly escaped destruction, muttered under his breath.<br><br>\- Utter humiliation. Be glad that I haven't grown my strength further, human.<br><br>"As a Skeleton Knight, rising to become the master of the Black Forest through a coup is quite the achievement."<br><br>\- I am now a Warlord! The master of the Black Forest and...<br><br>"The commander of the undead legion. Yeah. I’m getting tired of hearing it."<br><br>Only later did I come to understand his rise to power in the Black Forest.<br><br>To overthrow the necromancer, effectively the lord of the land, he must have consumed a significant number of magic stones.<br><br>"Isn’t this a complete victory for you, a skeleton, no, a Warlord? From a mere Skeleton Knight to the master of the Black Forest, and even evolved into a Warlord. You must have absorbed an enormous amount of magic stones from the necromancer?"<br><br>\- What are you talking about? He didn't have any magic stones.<br><br>"Huh?"<br><br>\- Moreover, the necromancer was the one who directly summoned me. Therefore, until recently, his orders were absolute. A summoned creature cannot disobey its summoner.<br><br>“But how did you………”<br><br>\- How was I able to defeat him?<br><br>The green glow in the Skeleton Warlord's eyes narrowed slightly.<br><br>\- I'm not quite sure why myself. Just a short while ago, I suddenly felt freed from his control. Perhaps my magic power had surpassed the summoner's, ascending a step higher.<br><br>"Suddenly?"<br><br>\- Yes. My magic power increased abruptly and significantly.<br><br>What does this mean?<br><br>But like the Warlord himself, I was unable to fully grasp the nature of his transformation.<br><br>After a moment's contemplation, he offered one additional insight.<br><br>\- If I were to use a human expression, it felt like being possessed by a ghost.<br><br>"………Is that something a skeleton should say?"<br><br>I began to wonder if this entity was even truly a skeleton.<br><br>It was then, as I gazed at the Warlord, dumbfounded.<br><br>\- Hmm?<br><br>His skull rotated, pausing as it fixated southward.<br><br>With his luminescent green eyes trained in that direction, he clacked his jawbones and announced.<br><br>\- Intruders.<br><br>"Intruders?"<br><br>\- I am the master of the Black Forest. I can sense everything that happens in the forest. Another group of cunning humans has just stepped into my territory.<br><br>"They’re my friends, dude."<br><br>Whack.<br><br>With a playful smack on the back of his head, I picked up the Warlord's skull and made my way towards the forest gate.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-297.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-299.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

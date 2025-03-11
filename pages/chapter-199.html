@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 199 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 199</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 199</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: Coldbutteredtoast</span>
+                            <span class="published-date">Published: October 14, 2022</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>"Take your hands off him."<br><br>The tension was palpable.<br><br>The instructor from the Heaven's Gate Temple snatched back his hand from Tae-Kyung's shoulder. "Grand master, I just..."<br><br>"Are you someone who touches other people's things?"<br><br>Flushing in embarrassment, Tae-Kyung looked between the two men. [Huh? I'm not his disciple or his grandson. What's his problem all of a sudden?]<br><br>"I apologise for overstepping." The Academy representative bowed his head deeply. "I was just offering the young master an opportunity."<br><br>"Opportunity? That implies a good thing. I know all about your people and their tricks."<br><br>Even under the glare of the Fire King, the instructor remained steadfast. "I came here as a representative of Heaven's Gate, not my clan. How there can be any harm in offering a place to a prospective student? May I ask what exactly is your relationship with him?"<br><br>His eyes narrowing, the Fire King said simply, "I have entrusted him with the treasures of my clan."<br><br>"With respect, your situation is still unclear, though. I heard that you have bestowed gifts upon the young master, but that is true of many here. It's not obvious that you have formally become teacher and student." The Fire King bit his lip and glowered as the instructor continued, "Candidly, Master Jin hesitated when he heard my offer. Were he your student, he would have refused me immediately."<br><br>All around them, the audience seemed to flinch at the same time. Everyone stared in different directions, not daring to watch the clash, but all had pricked up their ears and focused on the words passing between the two men.<br><br>Once it was known that the Fire King had not taken a disciple in the Jin Family, the mantle of protection that he had draped over them would be swept away. Where once the family had been a bony, stringy beast, now it was a much fatter, juicier prospect for the predators that were watching. The Southern Edge Sect would extract vengeance first, but many others would follow after to feast on the carcass. In that case, it was many times better to have world-class training at Heaven's Gate than to depend on a fake relationship, especially given that it could only protect them while the ancient Fire King lived.<br><br>Hardening his heart, Tae-Kyung said, "While our relationship is good, the great master hasn't been teaching me. I would love to go to Heaven's Gate. Would I be a scholarship student...?"<br><br>"My disciple is right," said Cheon-Gang calmly. "I've tried to keep things quiet until I was ready, but clearly that's not going to be possible."<br><br>Tae-Kyung opened his mouth. "No, wait...!"<br><br>A terrifying shockwave shook the ground and echoed around the estate; hundreds of eyes turned to the Fire King. "I announce to the world of Murim that I, Jeok Chong-Gang, the eighteenth successor of the Divine Palm of Fire, will accept Jin-Tae Kyung of the Jin Family of Taiyuan as my disciple and will teach him in the ways of the Flame Clan!"<br><br>There was a brief silence as the crowd absorbed the significance of his words. Then the entire courtyard erupted in cheers.<br><br>"I have committed a great rudeness," said the instructor, bowing his head. "I apologise to you, great master, and to you, Master Jin. I will deliver the message to Heaven's Gate and I can assure you that none of the Orthodox Faction will dare to repeat such a mistake."<br><br>While his family and guests cried out and struck their fists on the tables in rapturous applause, Tae-Kyung felt his heart sink into his boots. The Fire King had no intentions of taking on a new disciple and now every other route had slammed shut. His fists trembled. [This fucking old man! That's it, there's no way to learn any better martial arts. How can I protect my loved ones now?]<br><br>Congratulations were pouring in from all sides, but he didn't hear them.<br><br>"Give your master a hug," said Cheon-Gang, smiling warmly and opening his arms wide. "Oh, huh, you've got all shy now, have you?"<br><br>Regardless of his will, Tae-Kyung stood and took two steps up to the old man. [The fuck? Telekinesis?!]<br><br>"Smile now," whispered the small figure, hugging him tightly.<br><br>[Damn it, what choice do I have?]<br><br>Standing together in front of the assembled luminaries, they stood shoulder-to-shoulder and laughed, like a model teacher and student. While there was no flash of cameras, they received cheers and adulation like celebrities. It was on this day that one of their biggest fans, the young King of Shanxi, received the ultra-rare limited edition autograph entitled "King of Fire and Sleeping Dragon of Shanxi".<br><br>***<br><br>Much later, once darkness had fallen and the fervour had subsided, the two men sat drinking on another side of the estate.<br><br>"Why are you doing this to me?"<br><br>Instead of answering, the old man raised the bottle to his lips, drained it and belched loudly.<br><br>"I'm grateful for everything you've done for my family. Without you, we'd have been totally screwed by the Southern Edge Sect... but now, this... it's stopping any chance I have to learn. I can't enter the Academy at the Heaven's Gate Temple. No other master will take me on now and why would they? They think that I'm learning from the Fire King! But, actually, I'm not and so now I'm fucked!"<br><br>As Tae-Kyung talked, Cheon-Gang sat quietly, an unreadable expression in his eyes. All of a sudden, he smashed the bottle in his hand against the wall. The overflowing power coursing through his body ignited into Bottle Qi and pulverised the entire side of the building with an explosive roar.<br><br>"Did you forget who I am, you punk?" he bellowed. "People die if they talk to me like this! Think about who you're talking to and whether you're ready to get buried in your family tomb!"<br><br>Tae-Kyung felt his blood freeze in his veins. [I forgot! For just a moment, I forgot that the man in front of me is one of the Ten Kings of Murim!] With the old man's sudden flash of anger, the night seemed to grow darker and more terrifying. Then, as quickly as it had ignited, his rage drained away. Still, frowning, the Fire King wiped one calloused hand across his face. When he spoke again, his voice was quiet and solemn. "You don't like the idea?"<br><br>"Sir?"<br><br>"I asked if you hate the idea of having me as your teacher."<br><br>[I know you have no intention of taking on another disciple. I have a lot of things to say, but I'd rather stay alive.]<br><br>"Tell me. Don't give me that look, it's written on your face, as plain as day. You have lots of things you want to say and I want to hear them."<br><br>"There isn't anything..."<br><br>At that moment, part of the remaining wall collapsed, sending up a plume of dust and plaster. Tae-Kyung fidgeted and coughed.<br><br>"Tell me. I want an honest answer. I won't touch a hair on your head. I swear it before the God of Heaven and Earth."<br><br>"You don't believe in things like Heaven, Earth or God."<br><br>The Fire King recoiled in surprise, then said, "Maybe... before. But I have come to believe. I don't know which damned being is looking down on us, but I have to believe, because I've seen the evidence with my own eyes... Now, talk."<br><br>Tae-Kyung opened his mouth, closed it, then opened it again. It was time to speak the truth, even if he ended up with his ancestors, as a footnote in the Legend of the Fire King.<br><br>"First... well... you have a nasty personality..."<br><br>"What! Well, your personality is pretty nasty, too!" Although his eyes had widened in disbelief, the bottle in the Fire King's hand remained still.<br><br>Tae-Kyung took courage and continued, "Also, you've got the habit of beating people like dogs. Do you remember what happened a few days ago? I mean, I know it was my fault that your manual got singed, but does it make sense to explode like that? You put me in the hospital!"<br><br>"...Go on."<br><br>"It's not even like I'm opposed to corporal punishment, but you take it too far. You're always threatening death for this and death for that. If I made a mistake as your student, I'd be afraid that your feedback would be to take my head off..."<br><br>Like a dam bursting, all of the grudges that had festered in his heart since meeting the Fire King poured out in a torrent.<br><br>The old man listened without comment, his face hard, until finally Tae-Kyung fell silent. When he spoke, his voice was subdued, "Are you done?"<br><br>"Just one more thing."<br><br>"God damn it." Cheon-Gang looked down at the bottle and back at Tae-Kyung. "Tell me."<br><br>"My biggest issue is the one I said earlier. Why did you announce that I'd be your disciple when you don't intend to teach me martial arts?"<br><br>"Is that a problem?"<br><br>"Of course! It's a hundred times better to learn from Heaven's Gate than trying to learn alone."<br><br>"Learning from me is a thousand times better than Heaven's Gate!"<br><br>[Why's he being like this...?] In that moment, a thought occurred to Tae-Kyung. Embarrassed, he said, "Great master, maybe...?"<br><br>"What?"<br><br>"Ah, nothing."<br><br>"Tell me! You're so annoying!"<br><br>Unable to help himself, that made Tae-Kyung laugh. "I... I was wondering if I could really become your student. I know the Flame Clan only have a single successor, though, so you don't have to answer, haha..."<br><br>"Couldn't I, though?"<br><br>"Pardon?"<br><br>"Couldn't I become your teacher?"<br><br>[Uh... what's happening?] "Yes?"</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-198.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-200.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

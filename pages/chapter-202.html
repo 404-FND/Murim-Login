@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 202 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 202</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 202</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: Coldbutteredtoast</span>
+                            <span class="published-date">Published: October 17, 2022</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>The clock was ticking.<br><br>[Thirty minutes. I'd thought it must be possible in thirty minutes, even against the Fire King. It's just one step.] Panting, Tae-Kyung paused to catch his breath. [I was wrong. How's it even possible for a man to be this strong?]<br><br>Catching a spear with your bare hands? You'd have to be crazy. When that blade was imbued with Spear Resonance? That was as ridiculous as putting your hand in a meat grinder.<br><br>But not for the Fire King.<br><br>Another charred spear haft rattled on the ground, molten metal hissing and bubbling where the tip should have been.<br><br>The old man tutted. "These are poorly made. They're melting faster than I expected. Your family has plenty of money now; you shouldn't use crap like this."<br><br>"How can you do that?"<br><br>Jeok Cheon-Gang looked up, his eyes twinkling. "You can do it, too."<br><br>"Me?"<br><br>"Of course. Use your Qi properly. Understand your arts."<br><br>"You make it sound easy."<br><br>"It is." The old man yawned. "But why are you talking? You still have time. If I were in your shoes, I'd pick up another spear and use it."<br><br>Tae-Kyung nodded. The window hovered nearby, the remaining sixteen minutes blinking as they counted down. Nearly half of the time had already passed.<br><br>"Just one step," said the Fire King, smiling.<br><br>For the first time, Tae-Kyung took a deep breath and stared at the old master, who stood at ease on the other side of the clearing.<br><br>Tae-Kyung charged, swallowing the distance between them in one stride, two, energy flowing through his limbs and into the spear...<br><br>Cheon-Gang nodded and raised one foot. "Yes, boy, now we've begun!"<br><br>His foot stamped down.<br><br>BOOM!<br><br>The effect was terrifying. The mountainside shook and the ground beneath their feet trembled. Around them, trees swayed and rained red-gold leaves, and startled birds took flight, their cries echoing in the dawn. The explosion threw debris and stone into the air and, in that slow-motion world, the hands of the Fire King moved in a blur, striking dozens of pebbles directly at Tae-Kyung.<br><br>He had faced 'shattering pellets' before, but Jin Baek-Yang could not compare to this master. Each pebble was a bullet roaring with destructive energy.<br><br>[But I've got stronger, too.]<br><br>Tae-Kyung met them head on. Now he had mastery over the Jin Family's Spear Technique and Foot Technique. There was a calmness from the enlightenment at the Peak, a harmony of spirit.<br><br>His spear hummed with power. Each step pumped energy through his meridians. Crying out, he cut the air in a sweeping arc; a condensed wave of force erupted from the blade. Stones shattered. Powder and shards of rock exploded as the missiles were pulverised. And, through the cloud, Tae-Kyung sprang forward to attack. The Fire King met him head on, hands trailing white flame as his palms swept and parried.<br><br>Tae-Kyung staggered back and then rushed in again, gritting his teeth and swinging his spear. They clashed again and again, minutes ticking past.<br><br>There was a roar and a tremendous blast of heat drove Tae-Kyung backwards. He staggered and nearly fell, singed, trailing smoke.<br><br>"Have you ever seen such a thing! Are you trying to break past with brute force?"<br><br>"Almost had you," gasped Tae-Kyung, grinning.<br><br>"Haha, please. If I'd been really fighting, you'd be dead... Is this your best?"<br><br>"I... I didn't know it would be like this."<br><br>"Well. You'll have to work for it."<br><br>Tae-Kyung tore off his ragged jacket and dropped it into a smouldering heap. "Aren't you working too hard against a youngster who's young enough to be your grandson?"<br><br>"Aren't you attacking a man old enough to be your great-grandfather? Worry less about sleeping and more about becoming a dragon."<br><br>"Grandfather is a Transcendent Master!"<br><br>"Grandson has a Divine Body!"<br><br>Tae-Kyung snorted. His breath steamed in the chill morning air. His fingers felt stiff where they gripped the spear haft. "Alright. Let's do this."<br><br>Cheon-Gang was picking his ear with his little finger. "Eh? Sorry? All I can hear is someone talking shit."<br><br>Hearing the Fire King school the Southern Edge Sect had been the coolest thing in the world. It wasn't as funny to receive the smackdown. Tae-Kyung narrowed his eyes. "And what will you do if I really make you take a step back?"<br><br>"It would be easier for the demon, Mara (天魔 -- Chinese: Mara, a Buddhist demon king), to become the Shaolin Abbot," said the old man. "You look tired; you have enough time for a drink. But enough time to make me take a step? No way."<br><br>-[2:44...43...42...]<br><br>Tae-Kyung knew that he was right. So far, nothing had even come close. So far. "You may regret saying that."<br><br>"Regret? I have no regrets. I'm testing you and, in fairness, it looks like you may have a bit of potential."<br><br>"Ah. I might succeed if Grandfather just tried to block my best attack... I know that wasn't part of the deal, sadly."<br><br>"You think you could push me back?" The eyes of the Fire King shone brightly. Was it goodwill or curiosity?<br><br>Pretending not to see, Tae-Kyung shook his hand. "Forget I said anything. If I succeeded, Grandfather's reputation would be harmed..."<br><br>"Ha! Look at this punk..." The Fire King was scratching his cheek, a strange expression on his face. "It's an obvious trick, but come on then. Let's see what you've got."<br><br>"Are you serious?"<br><br>"I'm serious. And it'd better be good."<br><br>Tae-Kyung threw aside his charcoaled spear and picked up another. It was a risk, sure, but it was one he had to take for the chance to complete a Peak grade quest.<br><br>Jeok Cheon-Gang narrowed his eyebrows as he watched Tae-Kyung adopt a ready stance. "You're not going to use poison or some kind of dirty trick?"<br><br>"Haha, maybe. You'll see."<br><br>The spear began to tremble, then to hum, rising to a scream as 45 years of Qi flowed through it.<br><br>"One... STRIKE!"<br><br>The Fire King stood before a boiling storm. In an instant, trees were struck flat, torn up by their roots, and rocks were crushed and smashed, sent flying through the air. Heaven itself seemed to cut a wedge out of the mountain.<br><br>Amidst the horror of felled trees, ripped earth and uprooted boulders, stood the Fire King. He had been driven back exactly five steps.<br><br>"You...!" he cried, half in excitement. [A single thrust!] "What...! What did you do?"<br><br>It was the first time since the Peak. Tae-Kyung had expected the power to increase with enlightenment and greater Qi, but not like that. "Huh... that was more than I expected..."<br><br>The old man seemed to say something in reply, but Tae-Kyung did not catch it. Staggering, his eyes rolled up into his head and his legs gave way. He felt utterly drained. As though observing from a great distance, he sensed his body crumpling. Strong hands caught him and lowered him to the earth.<br><br>"Talk later," said the Fire King. "Rest now."<br><br>As the old man spoke, a colossal surge of heat and power seemed to flow through his hands. It was unlike the blazing flame he showed in battle. This Qi was warm and safe and limitless in scope. As the warming energy flowed through his body, Tae-Kyung suddenly felt incredibly drowsy. He shook his head.<br><br>"No," said the Cheon-Gang. "Don't fight it. Heal."<br><br>"I... I... I won... right?"<br><br>When the old man spoke, his voice was hoarse. "Yes, I lost."<br><br>"Hahah...ha." Tae-Kyung could not stop the laughter from bubbling up. It hadn't been a fair fight and he had accomplished so little, but even so, it was so satisfying to have forced a backwards step from the Fire King, one of the greatest masters in the world.<br><br>Ding!<br>-You have successfully completed the quest, [The Daily Retreat]! -Quest rewards...<br><br>And, with the sounds of the system notifications ringing in his ears, Tae-Kyung slept.<br><br>[Rest well, you punk.]<br><br>Jeok Cheon-Gang stared down at Jin Tae-Kyung for a long time. With his face relaxed in sleep, he seemed so young and innocent. The more he saw of the young prodigy, the less he understood.<br><br>[I thought I had already peeled off his scales, but there are brighter, harder scales beneath. He really is a sleeping dragon.] The dragon still slumbered, but a vast power was beginning to wake in him. [How high will he be able to go...? And will I live long enough to see it?]<br><br>The Fire King lifted his sleeping student and looked around at what was left of the clearing. He laughed. The idea that a newly ascended Peak Master could wreak such havoc was preposterous. Even Mae Jong-Hak would not have been able to manage it, and not three years after enlightenment, either.<br><br>[The Divine God of War (武神 -- Chinese: Martial God). Maybe he could have done it.]<br><br>A warrior who had been born as a man, but was revered as a god. In his youth, he had carved a reputation as the greatest in the world. How would that young man have compared to Jin Tae-Kyung? The Fire King laughed. [Is this awe?] In his heart, a blazing spark kindled, a burgeoning desire to teach the Divine Palm of Fire to the Sleeping Dragon. [Fly to the Heavens and awaken as a celestial dragon. Bathe the world in rain and wind and flame.]<br><br>Instead of an answer, the boy snored.<br><br>Cheon-Gang chuckled. He was going to be busy.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-201.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-203.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

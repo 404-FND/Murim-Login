@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 393 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 393</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 393</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: April 20, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>War is a series of battles.</p><p>After the day's battle, heavy with bloodshed and mortality, the winners and losers are determined. Those who remain unite to ready themselves for the next confrontation.</p><p>The military leaders in charge of the eastern front of Sichuan Province convened for this exact purpose. \[Note: the two S-rank Hunters that were dispatched to this region \]</p><p>「The damage is too severe.」</p><p>A middle-aged soldier, seemingly in his forties and clad in a bloodied uniform, broke the silence with his fatigued voice.</p><p>「We managed to hold the high ground... but we lost over 3,000 troops just today.」</p><p>A victory marred by wounds.</p><p>The death of 3,000 was grievous, yet the loss of hunters, including commanders and senior officers, making up over 30% of the casualties posed a graver issue.</p><p>Despite outnumbering the enemy three to one, the loss was profound.</p><p>「Has there been a response from the higher-ups?」</p><p>「Of course. After an internal meeting, they've decided to dispatch a new General before dawn.」</p><p>「That's somewhat fortunate then. Who is the new General, if I may ask...」</p><p>Amid the grave dialogue, an interruption came unexpectedly.</p><p>「Fortunate? Do you all really think so?」</p><p>「……!」</p><p>A pause speaks volumes, particularly when uttered by a celebrated hero of the Great Cataclysm and an S-rank Hunter.</p><p>「The attack by flying monsters tore half of our high-ranking officials, including this region's General, to pieces. Our forces were in disarray, and the damage worsened. Can we really call such a situation fortunate?」</p><p>Her intense stare caused everyone to recoil.</p><p>「Well, that is...」</p><p>「Seeing as you're trying to make excuses, it looks like you know it too. However…」</p><p>Her tone grew colder.</p><p>Fei Chen's scrutinizing eyes halted on one individual.</p><p>「Why don't you have an excuse?」</p><p>A hushed moment lingered, then Wu Hei-Xing, swirling his drink in his glass, responded.</p><p>「Why should I have to make excuses?」</p><p>「If you ask why, well...」</p><p>Fei Chen’s gaze intensified.</p><p>「Perhaps because some idiot abandoned his assigned post, and the monsters that were waiting for him shredded the headquarters to pieces?」</p><p>「...I was helping the front lines.」</p><p>Wu Hei-Xing's retort was merely a feeble justification. When he abandoned his post, Fei Chen's unit was already effectively countering the monster hordes at the front.</p><p>「Ah, there was that too. You went deep to make a name for yourself like a naive child, and that's why our formation was broken. Those kids you chased after to save, their bodies weren't even found, were they?」</p><p>「Living and dying are common occurrences on the battlefield.」</p><p>「That's right. Common occurrences.」</p><p>Fei Chen's voice softened as she continued.</p><p>「For someone like you, dying unnoticed is even more common. Looking at it, the world has become overly laxed. If it had been during the Great Cataclysm...」</p><p>Fei Chen's words trailed off.</p><p>Clink, crash!</p><p>The sharp sound of shattering crystal filled the room.</p><p>Wu Hei-Xing, having smashed his glass, rose slowly to his feet.</p><p>「Is that all?」</p><p>「All? Your tongue is quite short, no?」 \[Note: this is an expression for someone who speaks informally or too bluntly.\]</p><p>「There's a limit to my patience, Fei Chen.」</p><p>「Keep talking. Just remember, the shorter your words, the shorter your lifespan becomes.」</p><p>「How dare a traitor from Hong Kong...」</p><p>「Ah, are you talking about the person from Hong Kong who cleaned up the shit you left in the front lines?」</p><p>Woosh!</p><p>A palpable tension surged between them, filling the room with an oppressive force that made it hard for others to breathe.</p><p>The standoff between the two S-rank Hunters quickly ended as a sneer formed on Fei Chen's lips.</p><p>「Scared, tired, and amidst that, trying to establish military honors. That makes you increasingly impatient, doesn't it?」</p><p>「What?」</p><p>「Kid, that's what war is all about. It always pushes people to the brink and tests them. To survive in this hell, you need strong mental fortitude. For a spoiled brat like you, it's undoubtedly tough.」</p><p>「...!」</p><p>Wu Hei-Xing's face contorted grotesquely, each of Fei Chen's words cutting deep.</p><p>「S-rank Hunter? So what, if your mind is no better than that of a seven-year-old. You're worse than useless in a war like this.」</p><p>「Shut up! What do you know...」</p><p>「What do I know? Are you asking me that?」</p><p>Fei Chen's mocking laugh turned Wu Hei-Xing's face crimson with fury.</p><p>Though he was born with power and wealth in both hands, his opponent was a war hero who had survived the Great Cataclysm with all her limbs intact.</p><p>Though she was discriminated against by the media for being from Hong Kong, in terms of experience, Wu Hei-Xing was no match for her.</p><p>「Why don't you answer?」</p><p>Wu Hei-Xing, his jaw clenched as he avoided a response, surveyed the room.</p><p>No one spoke outright, yet their looks echoed Fei Chen’s disapproval.</p><p>'Damn it…!'</p><p>What further fueled his ire was the presence of allies from the Princelings, a group he had strong ties with. \[Note: just as a reminder, the Princelings make up a faction of the Chinese Communist Party, and are descendants of the revolutionary veterans and Chinese Communist Party elites who leverage their lineage for influence and promote business-friendly policies. The other faction is the Shanghai Clique.\]</p><p>The Princelings represented a dominant force within the Chinese Communist Party, and Wu Hei-Xing, a key figure among them, felt deeply betrayed.</p><p>「I will clearly remember what happened today.」</p><p>With these bitter words, Wu Hei-Xing turned to leave.</p><p>As he walked away, reeking of alcohol, Fei Chen’s soft voice followed him.</p><p>「Remember this as well. This childish misbehavior stops today. If the same situation occurs again... I won't let it slide next time.」</p><p>Grkkk.</p><p>Back in his quarters, the first thing Wu Hei-Xing did, besides grind his teeth, was to destroy everything in sight.</p><p>Bang! Bang bang bang!</p><p>「Damn Hong Kong bitch! Those goddamn traitors!」</p><p>In his rampage, the costly luxuries brought on his private jet lay in ruins.</p><p>He continued to wreak havoc, howling uncontrollably, until finally collapsing on his bed, out of breath.</p><p>「Damn it.」</p><p>His fury didn’t ebb.</p><p>On the contrary, the more he dwelled on the confrontation, the angrier he became, his heart racing and his vision blurring.</p><p>'How dare they treat me like this?'</p><p>He had been born into one of China’s most powerful families.</p><p>After attaining S-rank Hunter status, the world seemed to revolve around him.</p><p>Despite any major blunders, only mild reprimands came from his father. He dismissed criticisms from the public and political opponents alike.</p><p>'I am Wu Hei-Xing. Wu Hei-Xing!'</p><p>An S-rank Hunter had come to symbolize national influence. Despite public criticism, this fact remained.</p><p>Perhaps this explained his preference for media appearances and social gatherings over the grueling realities of combat raids. Why he had abandoned training and turned to substance use.</p><p>Yet this war, his first true conflict, presented unrelenting chaos and an endless onslaught of monsters, proving suffocating.</p><p>It was proving too harsh for someone accustomed to a life paved with privileges.</p><p>Moreover, the reason Wu Hei-Xing kept making mistakes was that the influence of one person remained.</p><p>'Jin Tae-Kyung.'</p><p>Before him loomed a challenge even greater than his long-time adversary, Lei Fei.</p><p>His shadow was immense and ominously dark.</p><p>The fear ingrained in his psyche from a past, one-sided defeat seemed impossible to shake unless Jin Tae-Kyung was out of the picture.</p><p>'Yeah, unless that bangzi disappears…'</p><p>A calculating look flashed in Wu Hei-Xing's eyes as he gazed at the ceiling.</p><p>He smiled, reminiscing about the conversation with Lee Jeong-Ryong on the night of his crushing loss. The fiery rage had long since cooled.</p><p>'Let's see who laughs last.'</p><p>As he relaxed, the fatigue he had momentarily forgotten weighed heavily on his eyelids. Drifting towards sleep, Wu Hei-Xing thought,</p><p>'Shit. How many more battles like today will I have to endure?'</p><p>Soon after, the completely exhausted Wu Hei-Xing was unaware.</p><p>The pitch-black night concealed a mass retreat of monster hordes from the frontline.</p><p>A vast migration was unfolding across all fronts in Sichuan Province.</p><p>\* \* \*</p><p>「…Phew.」</p><p>Shao Shen, with red-rimmed eyes, sighed.</p><p>The guy who had spent the night with his Sleep Point sealed only regained consciousness two hours ago.</p><p>Right after waking up, he had been so agitated about killing General Liao that Mr. Choi and I had to work up a sweat to calm him down.</p><p>"Mr. Shao Shen, are you okay?"</p><p>"Are you calming down now?"</p><p>To which Shao Shen responded,</p><p>「Yes. When I first woke up, I didn't have any strength in my body, but now I'm fine. I'm strong enough to rip his head off.」</p><p>"…"</p><p>"…"</p><p>Fine my ass.</p><p>His trembling fists betrayed his bravado, indicating he wasn't about to use General Liao’s head for golf anytime soon, which was somewhat comforting.</p><p>"I'll say it again. I didn't want to do that to you, but desperate times call for desperate measures."</p><p>After a brief silence, Shao Shen nodded.</p><p>「I know, Hyung. I appreciate you stepping in for me.」</p><p>"When did you hear about that?"</p><p>「The Company Captains came and told me. They said you flew into a rage and smashed General Liao's limbs.」</p><p>"…It wasn't something I should have done after stopping you. But it happened."</p><p>Mr. Choi spoke up firmly.</p><p>"If it wasn't something you should have done, then why did you do it?"</p><p>"Well, in the heat of the moment, I lost my cool."</p><p>"It's fortunate that the current situation is so confusing. Otherwise, things could have been bad."</p><p>"The current situation being confusing is indeed fortunate. Otherwise, that bastard would have been dead by my hands a long time ago."</p><p>An inept leader is more dangerous than any adversary.</p><p>General Liao deserves to die for prattling on about the failed mission and costing us a thousand lives.</p><p>"It turned out alright. He's almost recovered with the potion. Let's let it quietly pass."</p><p>"Grudges last long, Mr. Jin Tae-Kyung. Being a high-ranking general of the Central Military Commission, especially one from the Princelings known for holding grudges, there's plenty of room for problems to arise later."</p><p>"What can I do? The milk is already spilled. If problems arise, we'll think about it then."</p><p>At my casual reply, Mr. Choi shook his head in disapproval. That’s when Shao Shen spoke up gently.</p><p>「Do not worry, Mr. Choi. The issue you're worried about won't happen.」</p><p>"Huh?"</p><p>"Mr. Shao Shen, have you heard something specific?"</p><p>「Rather than hearing…」</p><p>Shao Shen paused, then shook his head decisively.</p><p>「Um… It's just my personal thought.」</p><p>"…?"</p><p>"…?"</p><p>What's this suspicious smell?</p><p>At that moment, when Mr. Choi and I regarded Shao Shen with suspicion.</p><p>「C-c-can I come in?」</p><p>"…Did an earthquake hit your vocal cords? Come in."</p><p>Only then did the figure hesitating outside our tent make his entry.</p><p>A familiar face. One of the staff officers closely allied with General Liao.</p><p>Just yesterday, this was the man who had been terrified watching me incapacitate his boss.</p><p>"The lackey of the great country has arrived. But what for?"</p><p>「A g-g-gu…」</p><p>"W-w-what do you want to say? Please, speak clearly."</p><p>The staff officer, visibly unnerved, swallowed hard before responding.</p><p>「A guest has arrived.」</p><p>"A guest?"</p><p>「Yes.」</p><p>"Who's the guest? Do they even allow visitors here?"</p><p>It surely couldn’t be my mother and Ha-Yeon.</p><p>While I entertained this unlikely notion, the staff officer quickly clarified.</p><p>「Magic Johnson, the Hunter from the USA has come.」</p><p>Next to me, I could feel Mr. Choi pucker his butt.<br></p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-392.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-394.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

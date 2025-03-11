@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 268 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 268</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 268</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: October 7, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>The untimely demise of the Dharma King paired with the massacre at Shaolin, revered as the pinnacle of martial arts, stirred the air.<br><br>Whispers traversed the land with a speed rivaling the swiftest stallion.<br><br>From the lips of countless spectators, tales morphed into rapidly spreading rumors.<br><br>“Did you hear the news at the Great Celestial Banquet?"<br><br>“Martial artists have enveloped Mount Song."<br><br>"They whisper of a carnage within Shaolin's walls.”<br><br>The people of Hanam, who were in a festive mood for the Great Celestial Banquet, found themselves jolted. The elders' were haunted by memories of the past havoc wrought by the Demonic Cult, while the younger generation awoke to the realization that the wars from tales of yore were manifesting anew.<br><br>“The resurgence of the Demonic Cult spells monumental trouble.”<br><br>“Yet, some murmur that the Demonic Cult isn’t the true culprit."<br><br>“Who else, other than the Demonic Cult, would do such a thing?”<br><br>“The details elude me."<br><br>"I just now overheard.”<br><br>“It has got to be them. Rumor has it that the Yin-Yang Twin Demons spearheaded the assault on Shaolin.”<br><br>“Those twins? I was told the formidable leader of the Demonic Cult, the very Heavenly Demon, graced the battle with his ominous presence." \[Note: just wanted to quickly clarify. I've been flip-flopping between Heavenly Lord and Heavenly Demon, and this is based on the original Korean. It seems that when his underlings refer to him, they use the character for Lord, and when other people refer to him, they use the character for Demon.\]<br><br>“The Heavenly Demon himself?"<br><br>As tales compounded and intertwined, the fabric of rumors swelled uncontrollably.<br><br>It was inevitable that in this whirlwind of truths and fabrications, all eyes would be drawn magnetically to one place.<br><br>The venerable grounds of the Murim Alliance.<br><br>The very heart where the large and small pillars of Murim factions congregated.<br><br>“I heard the story. About Jong Richu, or rather, Sword Saint Mae Jong-Hak.”<br><br>“Cheer up. Things like this happen in life.”<br><br>“I get it. Anyway, I felt better when I heard the news directly from Squad Leader."<br><br>“Why?”<br><br>“Pardon?”<br><br>“Why did you feel better?”<br><br>“Isn’t it obvious? Ancient wisdom dictates that shared pain lightens its weight...”<br><br>Smack!<br><br>“Ugh.”<br><br>Hyuk Mu-Jin, struck with precision at a tender spot, crumpled with a gasp.<br><br>Seeing the back of his head fully exposed, my hand instinctively reached out.<br><br>Smack!<br><br>“You feeling better, huh?”<br><br>“Hold on! That was a vital point. A vital point!”<br><br>“Because of you, my blood pressure is skyrocketing! My blood's boiling!”<br><br>Smack! Smack! Smack!<br><br>Each consecutive strike, echoing the rhythm of my irritation, imparted a fleeting relief.<br><br>This individual, ever the mischief-maker, couldn’t resist stirring the pot.<br><br>“Be careful with your words given the circumstances. Got it?”<br><br>Hyuk Mu-Jin massaged the throbbing back of his head, murmuring a retort.<br><br>“I just wanted to lighten the mood.”<br><br>“Just stay quiet.”<br><br>“...Okay.”<br><br>Having quelled Hyuk Mu-Jin's comments, my gaze wandered to the window.<br><br>Martial artists hustled in all directions, yet none truly caught the eye. A thick tension permeated the atmosphere, almost tangible.<br><br>Contrasting this, the sky painted a serene tableau. From a distance, Hyuk Mu-Jin's subdued tones reached out.<br><br>“It feels surreal.”<br><br>“What does?”<br><br>“Just... that all of this happened in a mere day.”<br><br>“I feel the same.”<br><br>The term ‘roller-coaster’ wouldn’t even begin to cover it.<br><br>The previous day's events possessed an ethereal quality, bordering on the fantastical.<br><br>Memories swirled: Hong Dao's last will, the crimson aftermath at Shaolin, the emergence of the Yin-Yang Twin Demons, the Blood Lord, and the revered Sword Master Mae Jong-Hak. These images weaved together into an evocative tapestry.<br><br>'This is just the beginning.'<br><br>If this was a movie, the screen would fade to credits. But this was merely an ominous prelude.<br><br>A ubiquitous foreboding pervaded, its presence almost tangible.<br><br>'Something is shifting.'<br><br>The world stood at the precipice, teetering like a tinderbox. The Orthodox faction gripped the fuse, while Dark Heaven brandished the matchstick.<br><br>And, not long past, that fuse ignited.<br><br>The finale of these unfolding events remained cloaked in mystery, but the trajectory was becoming ominously clear.<br><br>'A storm of conflict looms.'<br><br>A confrontation, dwarfing the upheavals witnessed in Shanxi, was imminent. <br><br>This foreboding haunted my thoughts, and I surmised the leadership of the Orthodox sects shared the sentiment.<br><br>Currently, this leadership finds themselves engrossed in the repercussions of recent events and ensuing deliberations.<br><br>“By the way, didn’t Squad Leader abstain from attending yesterday's meeting?”<br><br>A faint nod was my reply.<br><br>While the Jin Family of Taiyuan may not stand shoulder to shoulder with the likes of the Nine Great Sects or the Five Great Families, their significance in Shanxi Province is undeniable.<br><br>Given that Taiyuan was the crucible where Dark Heaven first emerged, it's only fitting the leadership would be keenly attentive.<br><br>“What did they ask?”<br><br>“They inquired about the Head Elder and the Crimson Wind Clan. I answered as much as I knew.”<br><br>“The Head Elder I understand, but the Crimson Wind Clan?”<br><br>“The Power Burst Pill used by Pung-Yang, the leader of the the Crimson Wind Clan, is linked to Dark Heaven.”<br><br>“Ah.”<br><br>Hyuk Mu-Jin, now a high-ranking member of the family, was privy to certain confidential matters. His knowledge about the Power Burst Pill and Dark Heaven's existence was no exception.<br><br>“Was there any other discussion?”<br><br>“I just left. After all, my elder brother will hear any important news and relay it..."<br><br>My voice trailed off, a whisper of its former self.<br><br>“I was uneasy leaving Grandfather alone for too long.”<br><br>My gaze, which had been looking out the window, naturally settled on one individual.<br><br>An old man with a small stature, lying in bed as if deeply asleep.<br><br>His pulse, faint but palpable under my touch, and the gentle rhythm of his breathing confirmed his vitality. Yet, he still hadn't regained consciousness.<br><br>“When will he wake up?”<br><br>“That’s the problem; we don’t know.”<br><br>“Didn’t an excellent healer visit him?”<br><br>“He said there’s nothing he can do. Since he isn’t severely injured like others, we should just keep an eye on him for now.”<br><br>The Ghostly Dance of the Fire God. The most advanced technique of the Scorching Clan.<br><br>Its might is unparalleled, potent enough to challenge legions of martial artists. Yet, every force exacts its toll.<br><br>The old man, already over a hundred years old, didn't have the stamina or strength left to bear its aftereffects.<br><br>'Perhaps...'<br><br>Suddenly, a thought flashed, but I shook my head to dismiss it.<br><br>Let's set aside negative thoughts.<br><br>Both the venerable Sword Saint and the esteemed physician have unequivocally affirmed that he is out of peril's grasp. The most prudent action now is to stand vigilant by Jeok Cheon-Gang’s side.<br><br>“While I was away, were there any suspicious characters?”<br><br>The head of the Shaolin Temple was assassinated while surrounded by those in the Murim Alliance. No one was safe. Just as Jeok Cheon-Gang shielded me from the Blood Lord’s malevolence, the responsibility of protecting him was now mine.<br><br>Hyuk Mu-Jin nodded confidently.<br><br>“The Jin Dragon Squad has surrounded the area without any gaps. You don't need to worry.”<br><br>“Jin Dragon Squad? The elite force of Taiyuan?”<br><br>“Yes. The lesser family head also worried about Sir Jeok's safety and assigned me, Hyuk Mu-Jin, the commander of the Jin Dragon Squad!”<br><br>“Uh..."<br><br>I took a moment to survey him from head to toe, then subtly shifted my gaze.<br><br>The previous aura of unbridled confidence emanating from Hyuk Mu-Jin seemed to waver.<br><br>“What was that reaction just now?”<br><br>“It’s nothing. I just thought I shouldn't leave my position in the future.”<br><br>“Don’t tell me you don't trust the capabilities of the Jin Dragon Squad, our elite?”<br><br>“It's not that. Let’s just move on.”<br><br>Hyuk Mu-Jin, now wearing a petulant scowl, abruptly rose.<br><br>“That settles it. I’ll convey my feelings to the lesser family head and request reassignment.”<br><br>“Hey, why are you reacting like this? Are you going through puberty or something?”<br><br>“What is the meaning behind your disappointment? This is not the first time I have seen it either!”<br><br>“Lower your voice. You'll wake Grandfather.”<br><br>“It would be good if he wakes.”<br><br>Well that's true.<br><br>While I was momentarily at a loss for words, Hyuk Mu-Jin headed towards the door.<br><br>His demeanor hinted at a silent plea to be halted. Perhaps indulging him occasionally is wise.<br><br>“Hey, where are you going?”<br><br>Hyuk Mu-Jin snapped back.<br><br>“I’ve reached my limit. There’s much I can endure, but any slight against my esteemed comrades is where I draw the line!”<br><br>“Is that so? I didn’t expect such words from your mouth. Mu-Jin has really grown up. You speak so sharply.”<br><br>“...I'm seriously leaving now.”<br><br>"Alright, alright. Sit down. Calm yourself and have some water."<br><br>"Hmph. I don’t want to."<br><br>"Hah. Our Mu-Jin has really grown up, making me say things twice."<br><br>"......!"<br><br>Hyuk Mu-Jin hesitated for a moment, then discreetly settled into a chair.<br><br>"But I still need an apology."<br><br>"Huh? Apology for what?"<br><br>"For disrespecting my team."<br><br>"When did I? I never disrespected them."<br><br>"Just now, you implied you couldn't trust them. Doesn't that belittle them, suggesting they’re beneath you?"<br><br>I took a long gulp of the cold tea.<br><br>"Well, we’re not the Nine Great Sects or the Five Great Families. It's natural for there to be a difference in levels. But the members of the Jin Dragon Squad are all young and talented, right? Didn’t they exhibit their mettle just yesterday? Weren’t they instrumental in rescuing fellow martial artists?"<br><br>Shaolin stands as a towering edifice. Yesterday's tumult severed a significant branch, the Dharma King, and many offshoots, but the foundation persisted.<br><br>The martial disciplines of Shaolin and the legacy of the surviving practitioners are that very foundation.<br><br>Ah, didn’t they say that an old monk named Hong Tian also survived?<br><br>"That's right. They fought relentlessly against Dark Heaven."<br><br>Hyuk Mu-Jin puffed out his chest with a face filled with pride.<br><br>"Very well. Their acumen and unwavering loyalty are evident. But one concern lingers."<br><br>"What's that?"<br><br>"That their commander is you. While the subordinates stand tall and perform their duties, their commander is whining here?"<br><br>"Well, that's because..."<br><br>"You said you cherish your subordinates? That you're proud of them?"<br><br>"Undeniably! I hold them in the highest esteem..."<br><br>Hyuk Mu-Jin, momentarily faltering, rallied with renewed vigor, articulating his sentiments as if he had long yearned for this moment.<br><br>"Also, my current mission is to protect Sir Jeok and stay by your side."<br><br>"What about before?"<br><br>"Pardon?"<br><br>"What was your mission before?"<br><br>"Of course, it was to protect the lesser family head."<br><br>"Really?"<br><br>I allowed a smirk to cross my face, extracting 'that' from my pocket and letting it cascade onto the table with a pronounced clang.<br><br>Clank!<br><br>Glimmering in the ambient light lay the gold mask. Hyuk Mu-Jin's eyes widened in alarm.<br><br>"W- where did you...!"<br><br>"Where? I found this next to you while you were groveling and clinging onto me right after the preliminaries." \[Note: MC took the mask in manhwa chapter 163 after he knocked out Hyuk Mu-Jin.\]<br><br>"Hold on. You're misunderstanding. I was truly busy providing security, I didn’t even have time to blink..."<br><br>"Misunderstanding? I like misunderstandings. How about I make sure you don't have the time to blink in the future?"<br><br>Crunch.<br><br>With a swift squeeze, the gold mask surrendered, contorting into a compact orb. The tremor in Hyuk Mu-Jin's gaze was evident.<br><br>"Do you provide security in a gambling den, you bastard? It wasn't even hard to recognize. Someone who wins a hundred thousand silver nyang in one go and then immediately loses a hundred thousand silver nyang isn’t a legend, he’s legendary."<br><br>Given the gravitas of our current setting, the fact that it reached my ears says enough. I heard a rumor that, among the servants working in the Murim Alliance, one of them had won so much money that they arrogantly slapped a high-ranking official before quitting.<br><br>"If you cared so much about your subordinates, you should have made a group bet instead of just using your own money. Were you worried about getting a smaller share? Did you secretly pocket it all?"<br><br>Deafening silence enveloped the room.<br><br>Even if he had ten mouths, he'd have nothing to say. Hyuk Mu-Jin, with a pale face, barely opened his mouth.<br><br>"Life... is always a gamble."<br><br>This guy still hasn’t come to his senses.<br><br>I looked at Hyuk Mu-Jin with disbelief, readying my fist.<br><br>Whoosh, thud.<br><br>Without a hint or sound.<br><br>Like magic, a young man, or rather, an old man, ascended about ten feet, landing on the window sill, smiling and waving.<br><br>"Shall we talk for a moment, friend?"<br><br>What friend?<br><br>Seeing Sword Saint Mae Jong-Hak, I sighed internally.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-267.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-269.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

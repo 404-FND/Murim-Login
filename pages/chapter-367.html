@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 367 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 367</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 367</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: March 15, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>The collapse of the underground prison was imminent.<br><br>It was surprising that it had not already happened.<br><br>Rumble rumble rumble!<br><br>The earth tore apart, and the ceiling trembled. The underground prison, which had been a dark secret of the Tang Family of Sichuan for centuries, succumbed to the strain of relentless conflicts and crumbled.<br><br>Along with the resentful spirits of countless prisoners who had died in the prison over the years, three living people were still inside.<br><br>"…Have you ever seen such a damned situation?"<br><br>Jeok Cheon-Gang surveyed his surroundings, his face etched with disbelief.<br><br>Before shutting his eyes, he was in a forest, yet, upon awakening, he found himself in a cavern, potentially a jail or something else.<br><br>Then he had to muster his worn body to engage in a fierce duel against an unknown adversary.<br><br>He somewhat understood what had happened up to this point. He could even understand why Jin Tae-Kyung had fainted as soon as the battle ended. But now...<br><br>"No, this is too much. Fuck."<br><br>He couldn't help but curse at his situation.<br><br>What is this place? Who is that old man? Why are the earth fissures widening, with boulders the size of humans plummeting down?<br><br>In that instant, overwhelmed by profound despair, Jeok Cheon-Gang narrowly dodged a lethal blow.<br><br>"Damn it."<br><br>First, he must escape. He can wonder about all of this later.<br><br>Once his thoughts cleared, his actions mirrored the swiftness of lightning.<br><br>'I have to take care of Tae-Kyung… But who is this old man?'<br><br>Oh well, never mind.<br><br>Jeok Cheon-Gang, bearing both the unconscious Jin Tae-Kyung and the Divine Doctor, darted forward with urgency.<br><br>Swoosh! Boom!<br><br>A massive boulder plummeting from above barely missed Jeok Cheon-Gang, fracturing the ground upon impact. Yet, it was merely the beginning.<br><br>Thump! Thump! Rumble!<br><br>Each stride he took unleashed a deluge of formidable rocks, inducing a shiver through Jeok Cheon-Gang's scalp.<br><br>'If I'm not careful, I could end up buried here.'<br><br>At a glance, it was clear this was no small cave.<br><br>If cliffs weighing tens of millions of pounds were to fall on their heads... even Jeok Cheon-Gang couldn't guarantee their survival.<br><br>Especially with his lingering injuries from the battle.<br><br>"Ugh."<br><br>He faltered on the uneven terrain. Choking down the blood that surged to his throat, a wry smile spread on his face.<br><br>'What a state to be in.'<br><br>Immobility had rendered his limbs as rigid as rock, accompanied by severe hunger and fatigue.<br><br>It was only expected that his condition would worsen after the confrontation with a mysterious foe. Without his strong foundation Qi, he would have collapsed already.<br><br>Rumble!<br><br>As the quakes intensified, Jeok Cheon-Gang clenched his jaw.<br><br>'Alright, I get it, no need to rush me. I'll find a way out somehow.'<br><br>He had someone he needed to save: his one and only disciple who was the light and warmth that kept him going as he wandered through cold and dark memories.<br><br>'Not just a disciple. This old man's only disciple.'<br><br>A renewed vigor infused his grip on his companions, fueled by a surge of unknown energy from within.<br><br>Brilliant Path of Fire.<br><br>For an instant, Jeok Cheon-Gang, previously staggering, surged ahead with the velocity of a blazing comet.<br><br>Swoosh!<br><br>The destructive exchange between Jin Tae-Kyung and the Western Heavenly Demon Lord, culminating in the prison's demise, inadvertently paved the way for Jeok Cheon-Gang.<br><br>Their confrontation had ravaged the interior, transforming the labyrinthine prison into a vast, open chasm.<br><br>'Over there!'<br><br>With renewed determination, Jeok Cheon-Gang dashed, channeling his strength.<br><br>An exit must be near.<br><br>Guided by a faint draft, he located a narrow exit, barely wide enough for one.<br><br>'Hurry, hurry...!'<br><br>With every ounce of strength, he propelled himself forward.<br><br>He deftly navigated the shifting ground and evaded plummeting stones.<br><br>Racing past the remains of the Heavenly Force Demon, an elder whose serene smile suggested a peaceful demise, he accelerated even more.<br><br>In a blur of time, as Jeok Cheon-Gang neared the prison's exit,<br><br>"There...!"<br><br>Crack! Rumble!<br><br>An upheaval, surpassing all prior tumult, coincided with the ceiling's collapse.<br><br>Centuries-old boulders barred the exit.<br><br>And then,<br><br>"Would you just get out of the way!"<br><br>With a dragon's roar, Jeok Cheon-Gang's fist, alight with blue and white flames, struck the heart of the boulder.<br><br>Crash!<br><br>The searing might of the Flame-Extinguishing Divine Fist obliterated and liquefied the stone.<br><br>A thunderous cacophony, akin to the heavens tearing asunder, unleashed a scorching wind through the underground prison.<br><br>\* \* \*<br><br>"What is this?"<br><br>Drawn by the tumult, a middle-aged man clad in black dashed toward the commotion, his initial reaction cut short by the spectacle that greeted him.<br><br>Crash!<br><br>It was as though the very fabric of nature was unraveling. Cliffs of immense stature that once encircled the Tang Family of Sichuan territory were now gradually collapsing.<br><br>Despite the distance, the devastation was stark and terrifying, yet a greater peril loomed.<br><br>"V-Vice Leader. That place is where the Demon Lord…"<br><br>Underground prison!<br><br>Chills coursed through the Dark Heaven Unit Vice Leader as apprehension gripped him.<br><br>The Western Heavenly Demon Lord. If something were to happen to him...<br><br>'It’s all over.'<br><br>Anxiety manifested as cold sweat on his brow, surpassing even the tension he felt when the Tang Family deployed the Heaven-Shaking Thunder.<br><br>He issued his orders with urgency.<br><br>"Gather all our scattered brothers immediately!"<br><br>"A-all of them? But there are still Tang family bastards left…"<br><br>"We have bigger problems. Hurry!"<br><br>"At your command!"<br><br>The hesitant subordinate ignited a flare, sending a crimson beam skyward.<br><br>This emergency beacon rallied the operatives dispersed within Tang territory.<br><br>More than a hundred gathered in no time.<br><br>"Unit Vice Leader. Please give us your orders."<br><br>The Unit Vice Leader wanted to smash the head of the person who just spoke. He wanted to do the same to their Unit Leader and the First Monster, who hadn't shown up even after an emergency was signaled.<br><br>'Damn it.'<br><br>Yet, with the ongoing collapse within sight, the Unit Vice Leader swallowed hard.<br><br>The forthcoming command was akin to a death warrant. They would need to venture beneath the tumbling cliffs to locate the Western Heavenly Demon Lord.<br><br>However, with no alternative remaining, the command was necessary.<br><br>"The Western Heavenly Demon Lord is in there. As the Unit Vice Leader, I will lead the way, so I expect every single one of you to fol..."<br><br>Midway through his directive, the Unit Vice Leader halted, interrupted by a sudden,<br><br>Boom!<br><br>A deafening blast propelled a mound of boulders skyward.<br><br>In that moment, the Unit Vice Leader and his comrades witnessed the spectacle. A formidable presence burst through the debris.<br><br>"The Western Heavenly Demon Lord! Our Lord has emerged...!"<br><br>The cry was abruptly cut off.<br><br>Swoosh! Thud thud thud!<br><br>The figure, like a projectile launched from the cliffs, careened across the terrain, tumbling through dirt and mud before halting.<br><br>It was an elder, clutching two figures larger than himself. Jeok Cheon-Gang drew a deep breath, gazing skyward.<br><br>"Phewww!"<br><br>Fresh air and rainwater seeped through his nose and mouth.<br><br>A refreshment as if even the soul was being cleansed. Even though his Qi was depleted and his body felt like it was falling apart, Jeok Cheon-Gang laughed with a sense of relief for having saved Jin Tae-Kyung.<br><br>Yet, as he attempted to rise, he stilled.<br><br>"…!"<br><br>A mere twenty or so paces away stood an ominous assembly.<br><br>There were more than a hundred black-clothed individuals, hands and clothes stained with blood.<br><br>Jeok Cheon-Gang muttered.<br><br>"…Damn it. They don't look like the good guys, no matter how I look at them."<br><br>A confirming voice responded,<br><br>"They call themselves Dark Heaven."<br><br>The unexpected input failed to startle Jeok Cheon-Gang.<br><br>He had sensed the elder was now alert by the alteration in his breathing.<br><br>"I see. Dark Heaven. I thought it was those damn bastards."<br><br>Jeok Cheon-Gang muttered curses without turning and continued.<br><br>"Do you know where we are?"<br><br>"We are in the Tang Family of Sichuan. Unfortunately, it seems the battle has already been decided."<br><br>"…This is maddening."<br><br>Jeok Cheon-Gang concluded his thoughts with a short comment.<br><br>Given the current situation, there wasn't much time left to ponder how all of this came to be.<br><br>"What's your name?"<br><br>"Dong Bong. My name is Dong Bong."<br><br>"Do you have a moniker?"<br><br>"I am not a martial artist, so I do not have a moniker."<br><br>"Your dantian is damaged, aren't you a martial artist?"<br><br>"I merely dabbled in martial arts at my master's behest. My true calling is in medicine."<br><br>Jeok Cheon-Gang's eyebrows gave a slight twitch.<br><br>Even amidst grave injuries, this calm and insightful manner of speaking... Why did it evoke memories of a physician of unparalleled medical prowess?<br><br>"Are you the Divine Doctor?"<br><br>"I am just a worthless old medical practitioner."<br><br>At the Divine Doctor's humble remark, Jeok Cheon-Gang let out a laugh, his understanding of the scenario deepening.<br><br>"Thank you for waking up an old man who was dying."<br><br>"You woke up on your own. It was the strength of your will, Grandmaster Jeok."<br><br>"I had no choice. I was woken up by some reckless brat."<br><br>"That very brat crossed the Central Plains to seek me out, asking me to do anything to save Grandmaster Jeok."<br><br>Jeok Cheon-Gang shifted his gaze, landing on Jin Tae-Kyung, bloodied and mud-caked.<br><br>"…Such a foolish kid."<br><br>If only he could wake that boy up, he would.<br><br>They might be able to have a conversation for the last time.<br><br>However, Jin Tae-Kyung, utterly spent, lay beyond the reach of wakefulness. This, Jeok Cheon-Gang understood without needing to be told.<br><br>'Perhaps… this might be for the best.'<br><br>Jeok Cheon-Gang gradually rose, pushing past the agony that wracked his frame, to address the Divine Doctor at his back.<br><br>"Do you still have some Qi left in you?"<br><br>"I am now as I was when I was younger. I was a mere carpenter before I met my Master."<br><br>"Quite the history for a Divine Doctor. How old are you now?"<br><br>"I am seventy years old."<br><br>"It might be difficult since your dantian is damaged, but muster all the strength you can. Run as far as possible."<br><br>"With Young Master Jin, you mean?"<br><br>"Good that you understand."<br><br>A moment of silence ensued before the Divine Doctor replied.<br><br>"Grandmaster Jeok, you're thinking of throwing away your life?"<br><br>"Throwing it away?"<br><br>A slight smile played across Jeok Cheon-Gang's lips as he turned his attention toward the approaching figures clad in black.<br><br>"Do you know why a flame dies out?"<br><br>Without awaiting the Divine Doctor's response, he moved forward.<br><br>His steps made soft sounds in the mud, and the incessant rain ceased.<br><br>His voice, steady and calm, carried on.<br><br>"Because there's nothing left to burn. So it fades away slowly atop the ashes." \[Note: This is a bit cryptic but I think what he's trying to say is that he has accomplished everything that he wanted to in this lifetime so there is no reason left for him to hesitate "throwing his life away".\]<br><br>Jeok Cheon-Gang steeled himself to kindle his final blaze.<br><br>There was no dread of the impending death, nor any ire.<br><br>Only lament remained, for his inability to further protect his disciple.<br><br>"Tae-Kyung, take care of yourself for me."<br><br>As Jeok Cheon-Gang advanced with this heartfelt plea, the Divine Doctor replied.<br><br>"Throughout my life, watching birth, aging, sickness, and death, I've wondered: Is there an afterlife? If so, who is this King Yama, and will I meet the patients I couldn't save there?"<br><br>"…?"<br><br>"Every time, my master would say, 'With those you sent ahead, the underworld must be full by now, so you should be able to ascend to the heavenly realm and join the immortals.'"<br><br>With a gentle tone, the Divine Doctor regarded Jeok Cheon-Gang.<br><br>"Grandmaster Jeok, the underworld is full. Please wait a bit longer."<br><br>"…!"<br><br>A shiver coursed through Jeok Cheon-Gang as he lifted his gaze to the heavens.<br><br>Now cleared of storm clouds and awash with sunlight, the figure of a boy was revealed.<br><br>'No, it can't be. That person is…!'<br><br>The figure's eyes, though youthful and bright, held no trace of emotion.<br><br>This gaze, encountered but once long ago, left an indelible mark on Jeok Cheon-Gang.<br><br>Recognizing the figure, he exclaimed in sheer disbelief.<br><br>"Dark Saint…!"</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-366.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-368.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

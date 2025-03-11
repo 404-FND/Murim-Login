@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 323 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 323</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 323</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: January 26, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>It all happened in a fleeting moment.<br><br>The air, previously electric with tension, shifted palpably. The sword which was leaning against the table was now grasped in his hand.<br><br>And then...<br><br>Shuaaaaaa!<br><br>A blinding beam of light struck swiftly and precisely.<br><br>The sword, adorned with glowing blue energy crystals, radiated intensely. I had learned the name of this phenomenon.<br><br>'Sword Aura.' \[Note: This is similar to Sword Qi, but Sword Aura is more tangible and powerful. This can be technically translated as Enhanced Sword Qi like AsuraScans does for "Return of the Mount Hua Sect", but I think Sword Aura conveys more that this is a big step up from Sword Qi.\]<br><br>Granted only to those who who had stepped into the Transcendent Realm, this formidable power now loomed over me, threatening devastation in its wake.<br><br>I will die. I will definitely die here.<br><br>No.<br><br>'No way I'm going down like this.'<br><br>Time seemed to dilate, and amidst this suspended reality, I maneuvered, the Sword Aura cutting through the air with lethal precision.<br><br>Suddenly! Quaaaaa!<br><br>The room was torn asunder – the furniture, the ancient floor, all cleaved by the relentless force.<br><br>Amidst the Sword Aura's whirlwind, engulfing both screams and roars, the old man's shocked gaze met mine.<br><br>"You, how could you…"<br><br>I gently pushed Ju Hwa-Ran, whom I had momentarily shielded with my body, to the side and answered calmly.<br><br>"How did I dodge? I saw it, so I dodged it."<br><br>"…!"<br><br>“People say that Transcendence is a realm beyond humanity.”<br><br>The shock was evident on Hwang Bo-Eom's aged face.<br><br>"Then, are you…"<br><br>"Well."<br><br>My response was a cryptic smile. Hwang Bo-Eom must have felt as if struck by lightning.<br><br>I hadn't yet achieved the enlightenment of the Transcendent Realm.<br><br>Rather, it was my body's capabilities that had evolved beyond human bounds.<br><br>'What should I call this?'<br><br>A Physically Transcendent Master?<br><br>Unquestionably, I am a new form of Transcendent Master, unprecedented in the history of martial arts.<br><br>I responded with a nonchalant shrug.<br><br>“I just dodged it. It wasn't hard to do.”<br><br>Hwang Bo-Eom, his eyes blazing, roared.<br><br>"Inconceivable! How can a young brat like you reach such a level!”<br><br>"I can't believe this either. Seriously, wielding a sword in such a setting. Are you out of your mind?"<br><br>"That's...”<br><br>Hwang Bo-Eom's gaze swept over the crowd.<br><br>Miraculously, the precision of the attack had spared them, but their faces were etched with shock and fury.<br><br>"All this talk about the orthodox factions and the Southern Edge Sect, but when it comes down to it, you're no different from one of the Demon Heads. Maybe you should consider changing your name to the 'Disordered Sect' or something." \[Note: MC is literally saying that they should change their name from 'Jongnam Sect' to 'Jonggan Sect'. These words are very similar, but the slight change is meant to reflect that the Jongnam (Southern Edge) Sect has no idea what it really is if it claims to be an orthodox sect while acting like demons.\]<br><br>"You bastard...!"<br><br>Hwang Bo-Eom's hand quivered on his sword hilt, his eyes chilling as he surveyed the room.<br><br>“Disciples of the Southern Edge Sect, heed my command.”<br><br>“Yes, Master!”<br><br>The Tai Yi Sword Team, previously statue-like, sprang to life.<br><br>Hwang Bo-Eom commanded with authority.<br><br>“Seal the entrance immediately. No one should leave this place.”<br><br>“Sa- Sasuk!”<br><br>“That’s…”<br><br>“What are you doing! Are you planning to disobey this old man's orders?”<br><br>As Hwang Bo-Eom's thunderous voice echoed, and the Tai Yi Sword Team faltered, a calm voice cut through the tension.<br><br>“Yes, I will disobey them.”<br><br>Hwang Bo-Eom's anger flared as he recognized the speaker.<br><br>"Hyuk So-Pyung, you dare..."<br><br>Hyuk So-Pyung, the Lone Dragon of the Southern Edge Sect.<br><br>He said, staring at Hwang Bo-Eom with indescribably complex eyes.<br><br>"Please stop. This is the first and last time I will ask you."<br><br>“What?”<br><br>"This, what you’re showing now, Sabaek... isn’t this behavior unbecoming of a disciple of the Southern Edge Sect?"<br><br>“Hold your tongue!”<br><br>Quaaaaa!<br><br>Once again, Hyuk So-Pyung's body was pushed away by a violent wind.<br><br>But his eyes did not waver.<br><br>Hwang Bo-Eom, his gaze oscillating between the resolute Hyuk So-Pyung and the wavering Tai Yi Sword Team, clenched his teeth in frustration.<br><br>“Fools.”<br><br>Abruptly, he produced a small bronze plaque from his pocket, hurling it at Hyuk So-Pyung's feet.<br><br>"This is the Sect Leader's Decree Token entrusted to me by your Master. Will you still refuse to obey?"<br><br>“…!”<br><br>The Decree Token symbolized the zenith of authority within the martial arts community.<br><br>Hyuk So-Pyung's eyes flickered with conflict upon seeing his master's emblem.<br><br>"Sabaek, you truly haven't changed."<br><br>"Make your choice. Expulsion from the Sect or obeying the command of your Master."<br><br>"Expulsion...?”<br><br>Hyuk So-Pyung's rueful gaze shifted to Ju Hwa-Ran and then to me.<br><br>With a pained smile, he bowed deeply before the token, his forehead meeting the ground with a resonant thud.<br><br>Thud! Thud! Thud!<br><br>“Disciple Hyuk So-Pyung acknowledges the command of the Sect Leader's Decree Token!”<br><br>His proclamation was strained, as if each word caused him agony. Blood seeped from his brow.<br><br>Expressionless and seemingly numb to the pain, Hyuk So-Pyung rose and blocked the exit, followed by the Tai Yi Sword Team.<br><br>I clicked my tongue as I watched this whole situation.<br><br>"You haven't just crossed the line; you've obliterated it. Are you ready to face the consequences?"<br><br>This place was filled with important figures from the Mount Hua Sect, the Beggar Sect, and the Lower District Sect. Even for the Southern Edge Sect, the repercussions of today's events would be severe.<br><br>Yet, Hwang Bo-Eom's eyes, now clouded with rage, showed only fury.<br><br>"Only you are in danger. I will spare the rest."<br><br>"Ah, are you going to deal with me first and then clean up the mess?”<br><br>"Yes. Finally, I can tear your mouth apart."<br><br>"Why do you think it would be so easy to tear me apart, old man? The Taiyuan Jin Family and the Scorching Clan are not newbies aimlessly running in circles."<br><br>“The Scorching Clan?”<br><br>Hwang Bo-Eom's lips curled into a sneer.<br><br>Then, a Sound Transmission reached my ears.<br><br>\- The tiger cub is in danger, but the great tiger does not know how to wake up.<br><br>“…!”<br><br>\- Did you think I didn’t know, foolish child? I was already aware of the Fire King Jeok Cheon-Gang's condition.<br><br>This confidential information, known to only a select few, now hung in the air.<br><br>Unwittingly, my expression hardened. Hwang Bo-Eom's smile deepened, sensing my displeasure.<br><br>\- Fire King Jeok Cheon-Gang and you. I've been utterly fed up with both. This is a good opportunity to cleanly eradicate the bad karma with the Scorching Clan.<br><br>Eradicating bad karma?<br><br>Hwang Bo-Eom's words left me momentarily disoriented.<br><br>Could this be what I suspect?<br><br>My previously muddled thoughts crystallized into a singular focus.<br><br>"I'm sorry to ask this of everyone…"<br><br>Though unseen, their presence was palpable.<br><br>Baek Mu-Seong, Cheong Pung, Goong Gi-Bang, Heuk Geol-Gae, Wolhwa, Hyuk Mu-Jin, and lastly, Ju Hwa-Ran. All their eyes were trained on me.<br><br>Then, in a voice so devoid of emotion it scarcely seemed my own, I commanded.<br><br>“Block the entrance. Don’t let anyone escape.”<br><br>Hwang Bo-Eom may have initiated the blockade, but I would dictate its terms.<br><br>“Tai Yi Ruthless Sword Hwang Bo-Eom.”<br><br>I sighed softly. The Scorching Yang Qi boiled up from my Dantian and escaped as white steam.<br><br>"You… you shouldn’t have said that."<br><br>It was a mistake to mention Jeok Cheon-Gang so casually.<br><br>He really shouldn't have said that.<br><br>The price for uttering such senseless bullshit will now have to be paid.<br><br>“Fight me, you fucking old rat bastard.”<br><br>In a split second, Hwang Bo-Eom and I lunged towards each other.<br><br>Boom!<br><br>\* \* \*<br><br>The Ultimate 36 Sword Technique.<br><br>A net of sword energy enveloped the sky, both dense and formidable.<br><br>The relentless assault of sword strikes eclipsed those of the Tiger Swordsman and Hyuk So-Pyung that I had faced before.<br><br>Shhh shush!<br><br>Their speed was blinding, their power devastating. A mere graze was enough to shatter bone and flesh, a fatal touch.<br><br>This technique cannot be avoided. It was inevitable that I would be caught.<br><br>'I suppose so. If I were who I was a year ago.'<br><br>The phrase “Gwalmoksangdae” comes to mind. \[Note: Gwalmoksangdae is an idiom that translates to "rub one's eyes and look at them again". It means that the other person's knowledge or talent has increased significantly while you were not looking.\]<br><br>Even this phrase, used to describe astounding progress, seemed inadequate for my transformation.<br><br>Through rigorous and unyielding training, I had not just strengthened but evolved.<br><br>‘Even the heavens are unfair. How could this have happened to someone like you?'<br><br>Jeok Cheon-Gang's face, marked with resignation, merged with the sword energy net in my vision.<br><br>I smiled faintly and swept my spear, White Flames, through the air.<br><br>Swoosh!<br><br>The Scorching Yang Qi within White Flames' blade tore through the net.<br><br>A net may trap a fish, but I was no ordinary fish; I was a shark. The old fisherman, the weaver of this net, had failed to consider this.<br><br>The old fisherman's face wrinkled further in surprise.<br><br>"You-!"<br><br>I remained silent, coiling like a serpent, the spear in my hand arcing like a dragon's tail.<br><br>‘Ultimate Tail of the Fire Dragon.’<br><br>Whoosh! Crash!<br><br>The blazing blue spear met the sword with a resounding clash, unleashing an explosive wave of energy.<br><br>Was Hwang Bo-Eom trying to conserve his strength? If so, it was a severe underestimation. He should have used Sword Aura in his attacks.<br><br>“Sigh!”<br><br>The old man’s eyes widened, staggered by the ferocity of my martial arts, now matching the strength of a Transcendent Master.<br><br>“What kind of martial arts is this…!”<br><br>The founder of the Scorching Clan was hailed as the greatest of his era.<br><br>He established the Scorching Sun Divine Arts as the clan's cornerstone, and the sixteen successors each branched out distinctively from this root.<br><br>The Divine Spear of the Fire Dragon, conceived by the 5th Clan Leader, was a technique of immense power and ferocity, akin to a fire dragon's wrath.<br><br>And then...<br><br>'I'm just getting started.'<br><br>Whooooosh!<br><br>I unleashed my full strength, stabbing, slashing, and swinging with relentless force.<br><br>Each surge of the blue flames was accompanied by a thunderous roar, as if cleaving the sky.<br><br>'After the tail, comes the claw.'<br><br>No one in the world has ever seen a dragon in battle.<br><br>Yet, during my mastery of the Divine Spear of the Fire Dragon, a thought struck me. If a dragon were to unleash its claws, would it not mirror this very moment?<br><br>Gooooong.<br><br>The Scorching Yang Qi coiled around the spear's tip. The tea, spilled in the chaos of Hwang Bo-Eom's earlier frenzy, had long since evaporated. The jade tea set glowed, as if freshly forged in the heat of a kiln.<br><br>Sensing impending doom, Hwang Bo-Eom bellowed with a force like thunder.<br><br>“Gahh!”<br><br>Despite nearing eighty, age was but a trivial detail for someone of his Transcendent mastery.<br><br>A century's worth of the Southern Edge Sect's refined techniques and energy burst forth, radiant as beams of light.<br><br>Sssssssssh!<br><br>If the Ultimate 36 Sword Technique is a net, this is a harpoon designed to cut off one's breath.<br><br>Observing his sword, a blur of motion aimed at my chest, I recalled a specific martial art.<br><br>‘Tai Yi Spectral Sword’<br><br>A pinnacle technique of the Southern Edge Sect.<br><br>Jeok Cheon-Gang once described the Tai Yi Spectral Sword as an exceptionally swift sword technique, with an added quip.<br><br>'Has this old man's mind dulled with age? Why does it seem you outpace even the sword?'<br><br>I wished Jeok Cheon-Gang were awake to hear my response.<br><br>To affirm his suspicion. And to declare that the martial arts of the Scorching Clan had vanquished the Tai Yi Spectral Sword.<br><br>'Heavenly Strike.'<br><br>The fire dragon unfurled its claws. The strike, descending from above, obliterated the Tai Yi Spectral Sword's illusory traces, striking with the fury of a lightning bolt.<br><br>Boom!<br><br>The Fire of Calamity erupted. \[Note: Here, the Fire of Calamity is used as a technique, but in Buddhism, it is one of the disasters said to occur at the end of the world.\]</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-322.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-324.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 302 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 302</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 302</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: December 22, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>Thirty minutes had elapsed since the deployment of the rescue team.<br><br>Hunters from various guilds, tasked with external security in preparation for unexpected events, were poised and ready. Broadcasting crews, equipped with microphones and cameras, were diligently relaying the unfolding situation.<br><br>The activity wasn't confined to the ground alone.<br><br>In the sky, dozens of combat helicopters whirred, accompanied by a swarm of drones, their lenses capturing every moment of this spectacle for a nationwide broadcast.<br><br>“What are you watching so intently?”<br><br>“Live news broadcast.”<br><br>“News? You hardly ever watch TV, what's gotten into you to watch the news? Something happening?”<br><br>“Do you carry your phone just for decoration? It's been over two hours since the chaos erupted due to a Named Monster, you idiot. Try checking the internet for once.”<br><br>“Whoa, a Named Monster appeared... Jin Tae-Kyung presumed dead? Is this for real?”<br><br>“I don't know. Don't talk to me; I can't hear anything.”<br><br>People everywhere – at home, in schools, offices, or commuting on crowded public transport – were glued to either their television screens or the displays of their handheld devices.<br><br>On YouTube, the live streaming channel of HunterTV had already surpassed 100,000 viewers.<br><br>\- Is Emperor Fuck really dead?<br><br>\- Stop talking such unlucky nonsense.<br><br>\- It's not unlucky talk, honestly. Given the situation, the chances of survival are slim. The golden time for rescue operations is 15 minutes, but it's been over an hour with no news. Plus, the opponent is a Named Monster.<br><br>\- Still, the rescue team looked serious. It’s the first time I’ve seen so many A-rank hunters gathered in one place.<br><br>\- That’s what I’m saying. What are they rescuing? If they’re just recovering bodies, that’s not a rescue, that’s a clean-up. The team leader from Peace Guild wasn’t yelling about those bastards for no reason. Sure, safety is important, but you have to save people first.<br><br>\- (Fact check) The mood is set towards the certainty of Emperor Fuck's death. The hunters’ goal seems more focused on a raid against the Named Monster than on rescue. The silence from the rescue team suggests that the battle has either already begun or they have been annihilated.<br><br>\- Annihilated? What happens if they’re all dead?<br><br>\- What happens? What do you mean? It starts a Named Monster’s gourmet tour. Starting with the people waiting outside as an appetizer. An emergency evacuation order has already been issued nearby.<br><br>\- Damn, I have thick body fat, so I won’t even taste good. Can’t they just give it ramen instead?<br><br>\- Are you an idiot? Think a monster would be satisfied eating that and leave the gate?<br><br>\- What’s the max number of people a Named Monster can handle?<br><br>\- What’s that supposed to mean?<br><br>\- Like, how many people can it take on at once?<br><br>\- Another idiot shows up.<br><br>\- Are you guys’ brains filled with noodle soup? Ever think about what would happen if monsters come out of the gate the next time it opens?<br><br>Amidst the flurry of online speculations and dark humor, the gravity of the situation was palpable.<br><br>Despite the formidable hunters deployed, they were up against a Named Monster, a threat not to be underestimated.<br><br>The prospect of a monster with unimaginable power was a harbinger of disaster.<br><br>History had already witnessed a powerful Named Monster wreak havoc, causing tens of thousands of casualties and obliterating an entire city.<br><br>As time trickled on, a palpable tension began to saturate the chat room.<br><br>\- There's really no news. By now, someone should have come out.<br><br>\- Isn't this how rescue operations usually go?<br><br>\- No, no. Since communication devices don’t work inside the gate, they’re supposed to send someone out every 30 minutes to report that they’re alive.<br><br>\- But why isn’t anyone coming? The battle site is just a stone’s throw from the gate, isn’t it?<br><br>\- Maybe they’re in combat with the Named Monster? Shouldn’t they deploy the backup Association hunters?<br><br>Suddenly, the live broadcast showed the gate's mana field fluctuating wildly, like a turbulent sea.<br><br>The chat room, previously a hub of speculation, erupted into a frenzy of rapidly scrolling messages.<br><br>\- They’re coming out!!!<br><br>\- Just saw the mana field!<br><br>\- Go, go, go, go, go!<br><br>= Please, let it be people.<br><br>\- I want to see Emperor Fuck. Hope he's still alive.<br><br>The nation was gripped by the unfolding events.<br><br>Nearly half of South Korea's population was either glued to their screens or present at the scene, anxiously awaiting the outcome.<br><br>Then, in an awe-inspiring moment...<br><br>Whoosh!<br><br>The gate's swirling mana field disgorged a stream of figures.<br><br>Arms and legs, glinting armor, and weapons emerged. These were not monsters, but the hunters, walking in a disciplined line, returning from the fray.<br><br>“Wow!”<br><br>The crowd on-site burst into a collective cheer as a middle-aged man in a suit, leading the procession, appeared startled.<br><br>He quickly recovered, his face breaking into a relieved smile, waving to the crowd.<br><br>“Yes. I have returned. Everyone! We are all safe!”<br><br>\- I've been wondering, but who is that guy?<br><br>\- Lee Woo-Jung. He's officially the President of the Seoul Association, but he's an idiot. His incompetence is already well-known.<br><br>\- Why is Lee Woo-Jung making a fuss?<br><br>\- Went in for a rescue operation and he’s the only one in a suit, lol.<br><br>\- Whether it's Lee Woo-Jung or gynecomastia, he should get out of the way and stop blocking the screen. Seriously.<br><br>In the chat room, criticism towards Lee Woo-Jung was rife.<br><br>The drone-mounted cameras quickly shifted focus from him, zooming in on the hunters emerging in his wake.<br><br>These were the government-affiliated hunters, leading the operation, and the stern-faced members of the Ares Guild. The cameras diligently captured every moment.<br><br>As they walked, stretchers covered with large cloths were carried in their hands. A disturbing sight caught everyone's attention: a blood-soaked hand slipping out from beneath the cloth.<br><br>Snap, click, snap!<br><br>The flash of cameras erupted, echoing the somber mood among the onlookers.<br><br>\- Ah... I hoped this wouldn’t be the case.<br><br>\- Jin Tae-Kyung is really dead.<br><br>\- May he rest in peace.<br><br>\- May his soul rest in peace. May he find tranquility in heaven.<br><br>The air was thick with grief.<br><br>“What the heck? Why are there so many?”<br><br>“…!”<br><br>The announcer, who had been solemnly reporting on Jin Tae-Kyung's death, the photographers snapping away relentlessly, and the chat room filled with messages of mourning, all paused.<br><br>Their attention was captured by an unexpected figure.<br><br>“Wow, look at all these cameras. But is it okay to broadcast this live like this?”<br><br>A young man, clad in simple leather armor, a spear slung over his back, looked around curiously.<br><br>His face was known to all.<br><br>\- …Isn’t that Jin Tae-Kyung?<br><br>\- Huh?<br><br>\- ?????<br><br>\- Why is he there…?<br><br>\- Am I the only one seeing a ghost right now?<br><br>Amidst the sea of confusion, a quick-witted reporter approached Jin Tae-Kyung with a microphone.<br><br>“Are you Jin Tae-Kyung?”<br><br>“No, I’m Tung.”<br><br>“Excuse me?”<br><br>“Just kidding. Yes, it's me.”<br><br>Is this guy joking? Even on live broadcast?<br><br>The reporter, momentarily thrown off by his unexpected levity, composed herself and posed her question.<br><br>“You weren’t actually dead, then.”<br><br>“Given that we’re having this interview here, it seems I’m not dead.”<br><br>“Then who is the person carried out on the stretcher earlier?”<br><br>“Oh, that.”<br><br>Jin Tae-Kyung answered while casually scratching his neck.<br><br>“That would be, well, a hunter who bravely fought and got injured. The injuries aren’t too severe, so they should recover soon.”<br><br>“Where is the Named Monster then?”<br><br>“Named Monster? There isn't one.”<br><br>“There isn't one? Do you mean there was never a Named Monster to begin with?”<br><br>“No, there was one.”<br><br>Jin Tae-Kyung added calmly.<br><br>“It’s just not there anymore.”<br><br>It was a moment when a legend was born.<br><br>\* \* \*<br><br>“I have a question…”<br><br>Mr. Choi, peering over a newspaper crammed with text, suddenly interjected. <br><br>“Why exactly is Jin Tae-Kyung in my office?”<br><br>“Why? Can’t I visit?”<br><br>“You come here more often than I do, so I had to ask.”<br><br>“Ah, well, that happens. I just came to check in on you.”<br><br>“But I had locked the door.”<br><br>“It seemed open to me.”<br><br>“You broke the lock.”<br><br>“Did I? That’s strange.”<br><br>“I'm just asking, really just asking.”<br><br>Mr. Choi took off his glasses and calmly asked.<br><br>“Are you here because of the 17th century Russian royal sofa, crafted by the famous Russian furniture maker Sorkovache?”<br><br>I answered while lying comofortably on the sofa.<br><br>“Absolutely not.”<br><br>“Do you realize that your credibility is zero when you say that while lying there?”<br><br>“I don’t know. Ah, this is comfortable.”<br><br>It’s uncomfortably pricey, but its comfort was undeniable. Once you reclined, it was hard to find the will to stand up again.<br><br>Mr. Choi's office, befitting his status as a third-generation hero or chaebol, was filled with such extravagant items. <br><br>Among these was the latest hologram TV, boasting exceptional picture quality.<br><br>\- The video we are going to introduce today is the hot topic that has heated up the past week. Johnson, have you seen this video?<br><br>On the screen, a white man with a long nose prompted a black man, curiously named Johnson, who nodded.<br><br>\- Of course, Conan. I’ve even memorized the dialogue.<br><br>\- What dialogue?<br><br>\- You know, his last line.<br><br>This was a renowned American talk show I recognized.<br><br>With a solemn expression, Johnson, the co-host, began to mimic.<br><br>\- It's not there anymore. It's just not there anymore.<br><br>\- Haha! That’s spot on!<br><br>“…”<br><br>What's spot on? Does he have actual snails for ears instead of cochleas?<br><br>In disbelief, I shook my head and turned off the TV.<br><br>I chose to switch it off, anticipating that 'that interview' would probably resurface as archival footage.<br><br>“The popularity doesn’t seem to wane.”<br><br>“Yeah, I didn’t think much of it when I said it, but I never expected it to become this big of a topic.”<br><br>“Well, I beg to differ.”<br><br>Mr. Choi commented, settling across from me with a freshly made cup of coffee. <br><br>“It's not the words that made the headlines, it’s the person. You hunted down not one, but two Named Monsters, and alone at that. It’s only natural for the whole world to pay attention.”<br><br>A week had passed, yet the impact of that day hadn’t diminished. On the contrary, it was blazing even brighter.<br><br>My official YouTube interview had shattered records, racking up 200 million views in just 24 hours, surpassing a previous record held by an idol singer. A flood of memes and edits from across the globe followed.<br><br>Even…<br><br>“CNM, an American broadcasting company, has requested an interview.”<br><br>“Again?”<br><br>“I already told you about the offer from BCC in England. They want to invite you as a special guest. They’re offering to allocate up to 20 minutes for a live interview.”<br><br>“Sounds really special. For real.”<br><br>Major broadcasters from renowned countries were clamoring for interviews, a testament to the far-reaching impact of my actions.<br><br>Admittedly, the barrage of interview requests was more burdensome than flattering. Just thinking about them now triggered a headache.<br><br>“Are you still considering them?”<br><br>“Yes. I should do everything I can for the growth of Peace Guild, but…”<br><br>My voice trailed off, just loud enough for him to hear,<br><br>“All of this, it’s all a lie.”<br><br>That was the crux of it all.<br><br>The stark realization that the reality enveloping me was far from the truth.<br><br>Mr. Choi, sensing the gravity of the moment, leaned in slightly, his expression taut with anticipation.<br><br>“Did you... bring it today as well?”<br><br>“Of course.”<br><br>I chanted solemnly, like a priest summoning a deity.<br><br>“Come forth, Warlordmon!” \[Note: some of you may think this is a Pokemon reference, but it is actually a reference to Digimon, given the MC's previous comment about Digimon in novel chapter 295.\]<br><br>Inventory. Summon.<br><br>At my silent command, a skull shimmering with a dark lustre materialized in my hand, amidst an eerie symphony of noises.<br><br>\- Who calls Warlordmon! I am the ruler of the Black Forest, the great commander of the undead legion, Skeleton Warlord!<br><br>“Warlordmon, do a forward roll!”<br><br>\- You crazy human!<br><br>“Warlordmon, freeze!”<br><br>Papapapapat!<br><br>As I feverishly shook Warlordmon's skull, Mr. Choi spoke in a low voice, his face mirroring that of a man who had just had an epiphany.<br><br>“Why on earth did you bring that thing…”</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-301.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-303.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

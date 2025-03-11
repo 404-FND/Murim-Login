@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 376 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 376</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 376</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: March 22, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>Mountains and seas made of people.<br><br>That was the only way to describe the scene.<br><br>Crowds gathered like clouds upon hearing that the Sleeping Dragon of Shanxi, now known as the Divine Scorching Fire Dragon, Jin Tae-Kyung and the Divine Dragon of Mount Hua, Cheong Pung, were leaving.<br><br>Martial artists and daring commoners alike swelled the ranks, forming a procession too vast to quantify.<br><br>"Safe travels, Divine Scorching Fire Dragon!"<br><br>"The Sichuan Murim will not forget you!"<br><br>"It's a horned snake! The Divine Dragon of Mount Hua has a horned snake!"<br><br>"Wow, the snake just did a somersault!"<br><br>"Fire King! The Fire King is trying to catch the snake to burn it!"<br><br>The clamor of the crowd slowly diminished as the procession moved on.<br><br>Seated on a solitary hill, a boy on a tree stump observed the spectacle unfold.<br><br>"We've come a long way."<br><br>"Indeed, it has been tiring."<br><br>The old disciple settled onto the grass, exhaling deeply, while Mun Kyung whispered,<br><br>"…We really have come a very long way."<br><br>He reflected not on the physical distance but on the years they had traversed.<br><br>"Do you remember when we first met?"<br><br>"How could I forget?"<br><br>The old disciple wiped the sweat from his forehead, as if the scorching sun from that long ago day was beating down on him.<br><br>"The year of Hongwu. That extraordinarily hot summer." \[Note: 洪武 (Hongwu) marks the reign title of Zhu Yuanzhang, the founder of the Ming Dynasty, following the disintegration of the Yuan Dynasty ruled by the Mongols. He emerged from peasant rebellions to unite China, establishing Ming rule in 1368.\]<br><br>It marked the year a new sovereign claimed the throne, concluding the battles over succession.<br><br>The zealous young ruler renamed the dynasty and pushed for reforms, yet the people, drained by enduring conflict, lacked the strength to embrace change.<br><br>"Rebellions broke out across the land, and bandits were rampant."<br><br>"Drought hit, and locust swarms devastated the plains. The corpses of government and rebel soldiers filled the land, leading to an outbreak of plague."<br><br>"Yes, it was truly a turbulent time."<br><br>The cycle of death swiftly enveloped the continent.<br><br>Dong Bong, a young carpenter, found himself ensnared in the world's dark shadow as well.<br><br>"I still think about those times every now and then."<br><br>Time had changed not just the landscape. The young carpenter, who lost his beloved wife and two children to the plague, had become an old doctor.<br><br>"If only I had been a bit faster, if I had found Master sooner, perhaps I could have saved my family."<br><br>"Do you regret it?"<br><br>"Yes."<br><br>Perched on a hill, watching the cumulus clouds drift by, the old physician's eyes momentarily mirrored that of the young carpenter he once embodied.<br><br>"For as long as I draw breath."<br><br>It was a mere day too late.<br><br>By the time the carpenter, struck by the epidemic, had fetched an obscure old physician from the slash-and-burn farmers' village, it was too late for any hope of salvation.<br><br>He wept for an entire day and dug graves for his family. Afterward, he made a single request to the physician he had summoned.<br><br>"Please bury me with them. That's what I asked for."<br><br>Mun Kyung's voice was blunt.<br><br>"So, I slapped your face."<br><br>"It hurt a lot. I wanted to die."<br><br>The pain was not from the strike but the inability to ever see his beloved family again.<br><br>"You lifted me up from that, Master."<br><br>Mun Kyung gave a dismissive shake of his head.<br><br>"I just offered my hand. It was your will to grab it and stand up."<br><br>"I had to live. There was a purpose awaiting me."<br><br>The carpenter, too, was meant to succumb to the epidemic.<br><br>Yet, the physician healed him with an unheard-of medical technique, showing the carpenter that even mortals could defy the fates decreed by the heavens.<br><br>"I still see it clearly. The way you kneeled down and asked to be taken as a disciple."<br><br>"My memory is different. I remember the way you gestured for me to follow you, Master."<br><br>Thus, the young carpenter, bereaved of his family, discovered a renewed purpose, and the old physician, a wanderer who ministered to the destitute and the sick, gained a new disciple.<br><br>The carpenter-turned-physician, Dong Bong, would only later come to know his master's true identity.<br><br>"Dark Saint... Indeed, a terrifying moniker. That was the first time I felt like I did not know you, Master."<br><br>Mun Kyung's gaze drifted into the distance, unfazed.<br><br>He was about to pose a question to his disciple, one he had never broached before.<br><br>"Why didn't you leave?"<br><br>"Did you think I would leave you, Master?"<br><br>"I have harmed countless lives up to now. I was just a hideous killer hiding my past. I would have understood if you had left."<br><br>"Maybe that's true. But I knew too well what kind of person my Master is."<br><br>In the next moment, a soft voice continued.<br><br>"Divine Doctor. My Master is called the Divine Doctor. He's not someone who would take lives without reason."<br><br>"...!"<br><br>Mun Kyung's eyes showed a rare flutter of emotion. This acknowledgment unveiled a truth he had never admitted, a recognition never before granted.<br><br>In his life as an assassin, he ended countless lives impartially — those deemed righteous, malevolent, or demonic. Each had a reason to meet their end.<br><br>A respected political figure, celebrated for his integrity, secretly indulged in murdering women. A certain sect's leader wiped out an entire village on a whim.<br><br>Had he not stood against the Demonic Cult, which invaded and killed indiscriminately, he would not have been branded as the Dark Saint.<br><br>"If I had not fought against the Demonic Cult, the whole world would have pointed fingers at me, as they have always done."<br><br>The Dark Saint title was but an accolade, a perverse honor bestowed by the moral victors of Murim.<br><br>Though he was always Mun Kyung, the truth behind the "Dark Saint" moniker remained unseen and deliberately ignored.<br><br>"Why didn't you reveal the truth?"<br><br>"It's all in the past. I intended to leave Murim and become a doctor. And that's what I will continue to do."<br><br>Mun Kyung rose to his feet. The vast procession earlier seen at the Tang Family of Sichuan had vanished in the distance.<br><br>"Let's go down. There are patients waiting for us."<br><br>With these words, the old disciple voiced a grave warning.<br><br>"Great turmoil is about to unfold."<br><br>Mun Kyung halted, listening as the aged voice of his disciple echoed behind him.<br><br>"The same events will recur. Many will die or get injured. There will be an overflow of people who will lose their parents and children, and screams and death will be unending."<br><br>"...It will be busy. We need to prepare."<br><br>"Don't you already know what I am trying to say?"<br><br>"I don't want to know."<br><br>"Master."<br><br>"I am a doctor. Even though I broke my own vow and took lives, I won't make that mistake again."<br><br>Mun Kyung continued thoughtfully,<br><br>"Fighting is their responsibility, treating the sick is ours. It has been a very long time since I left Murim."<br><br>"Then why haven't you abandoned martial arts?"<br><br>"...!"<br><br>Mun Kyung was speechless.<br><br>This dilemma had long haunted him. If his aversion to killing was strong enough to leave Murim, he should have also renounced martial arts, the tools of death.<br><br>Yet, his skill in martial arts only grew, a clear sign of his unresolved fascination.<br><br>'Why is that?'<br><br>The brief moment of contemplation was interrupted by the old disciple's inquiry.<br><br>"Master, you can heal hundreds, thousands of patients. At the same time, you're someone who can save tens of thousands of lives."<br><br>"..."<br><br>"As the Divine Doctor, not the Dark Saint, please prevent the war. I will take care of the patients here."<br><br>Mun Kyung's gaze shifted skyward.<br><br>The sky was a vast expanse of blue. A stark contrast to the dark, clouded sky that hung over the bloodstained gates of the Tang Family in Sichuan just a week prior.<br><br>"The sky is clear."<br><br>He spoke curtly, resuming his pace.<br><br>"It's time to go see the patients. Come down carefully."<br><br>Dong Bong's voice lingered as Mun Kyung walked away.<br><br>"They said they would depart from the western harbor of Chengdu at the hour of the Dog." \[Note: the hour of the Dog is between 7 to 9 PM. In the old days, China and Japan used a 12-hour system to tell the time of day and night (unlike the 24 hour system used today). The 12 hour system divides the day of 24 hours into 12 hours, each of which has a sign of the zodiac.\]<br><br>"It's pointless. My place is not in Murim."<br><br>Yet, the old disciple couldn't help but smile faintly, watching his master's retreating figure.<br><br>"Please... stay safe." \[Note: and just like that, Old Man Dong just became the MVP of the whole series. The man single-handedly unbenched one of the most powerful players we have seen yet.\]<br><br>Whooosh.<br><br>A breeze blew past, brushing between the two of them.<br><br>\* \* \*<br><br>"What are you looking at so intently?"<br><br>Upon hearing Hyuk Mu-Jin's question, I diverted my gaze from the crowd encircling the harbor.<br><br>"It's nothing. Just in case."<br><br>"Just in case what?"<br><br>"Why is this bastard asking so many questions?"<br><br>Hyuk Mu-Jin chuckled knowingly at my retort.<br><br>"Never mind. I actually know everything. Including why the Squad Leader looks this way."<br><br>"...?"<br><br>I hesitated. How did this bastard know? Even Cheong Pung hadn't heard the conversation I had with the Divine Doctor.<br><br>'Was this guy always this perceptive?'<br><br>While I mulled over this, he leaned in and whispered.<br><br>"Weren't you looking at the young lady standing fourth from the right in the front row over there?"<br><br>"..."<br><br>"She's definitely pretty. Looks like she comes from a well-off family. If you allow me, as your right-hand man, I might just go over and make a separate arrangement..."<br><br>"Mu-Jin."<br><br>"Yes? Ah, are you aiming for a natural encounter? In that case..."<br><br>"Do you want to end up at the bottom of the Yangtze River?"<br><br>"...!"<br><br>"Stop talking nonsense and just lay there. And don't end up throwing up later from seasickness."<br><br>"…Yes."<br><br>Goong Gi-Bang couldn't help but laugh at Hyuk Mu-Jin's subdued grumble.<br><br>"Such a stupid bastard. It's not the fourth girl on the right, but the third one on the left. Clearly much more beautiful, but you've got your eyes crossed."<br><br>"Want me to cross your eyes for you?"<br><br>"…Sorry."<br><br>"Let's act like humans, not like animals."<br><br>With that, I took another look at the assembling crowd.<br><br>True, both were very pretty, but Goong Gi-Bang's preference, the third girl on the left, aligned more with my tastes. But that's beside the point.<br><br>'Dammit, now their banter has me repeatedly glancing in that direction.'<br><br>As I mulled over this, a suntanned man approached.<br><br>"Hey, junior. No, not junior, Young Master Jin, no, Master Jin."<br><br>What's with the buffering?<br><br>I offered a solution to Ship Lighter Mu-Song, who was struggling with which title was appropriate.<br><br>"Just call me junior."<br><br>"Ahem. Would that be alright?"<br><br>"Why wouldn't it be? You used to call me that just fine."<br><br>"But, well, you've achieved such great feats."<br><br>Indeed, it was a steep climb from the Sleeping Dragon of Shanxi to a figure of national renown.<br><br>"And it seemed like Grandmaster Jeok Cheon-Gang didn't quite like me much..."<br><br>"It's alright. He's just not too fond of water."<br><br>Mu-Song cast a wary glance towards Jeok Cheon-Gang, who wore a scowl.<br><br>Nearby, Jin Wi-Kyung appeared engrossed in something cryptic, while Cheong Pung was instructing Mimi on a new skill.<br><br>"Mimi, surf the wave!"<br><br>Ssss, whoosh!<br><br>...Was that a water snake?<br><br>Fascinated briefly by this uncommon sight, Mu-Song hesitantly initiated conversation.<br><br>"Anyway, preparations for departure are already finished. When can we set sail?"<br><br>"What time is it now?"<br><br>"It's past the hour of the Dog. It would be better to leave before it gets darker."<br><br>"…Hmm."<br><br>"Is there anyone else coming?"<br><br>After pondering briefly, I responded with a shake of my head.<br><br>"No. There isn't anyone."<br><br>"Then we can depart."<br><br>"Let's do it."<br><br>"Understood."<br><br>With Mu-Song's spirited signal, the crew, ready at their stations, sprang into action.<br><br>Just as the crowd assembled for our send-off began their goodbyes, a sudden call rang out.<br><br>"Wait, just a moment!"<br><br>"Stop, stop!"<br><br>The vessel teetered slightly, poised for departure.<br><br>Observing a young boy navigating the crowd from a distance, I couldn't help but smile.<br><br>"Let's take one more person aboard."</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-375.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-377.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

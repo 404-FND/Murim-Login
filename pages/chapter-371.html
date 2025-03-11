@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 371 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 371</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 371</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: March 22, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>"We greet the Divine Scorching Fire Dragon, Jin Tae-Kyung!"<br><br>As that cry of awe resonated across the Tang Family's Sichuan estate, the excitement wasn't limited to Jin Tae-Kyung alone.<br><br>The old master, observing from afar, struggled to conceal his profound emotions.<br><br>'That guy...'<br><br>Jeok Cheon-Gang vividly recalled their first encounter.<br><br>The youngest son of an unknown martial family, barely starting to make a name for himself in the Shanxi region, had become a sleeping dragon. Now, he was unfurling his wings, ascending towards the blue sky.<br><br>'Yes, you are truly a Divine Dragon, a true Master.'<br><br>Greeting the Fire King's look with a broad smile, Jin Tae-Kyung leaned forward from the window, waving enthusiastically.<br><br>"What's my name?"<br><br>"Jin Tae-Kyung!"<br><br>"And my moniker?"<br><br>"Divine Scorching Fire Dragon!"<br><br>"Louder!"<br><br>"Waaaaah!"<br><br>The once solemn air abruptly shifted, bursting into exhilaration. Jeok Cheon-Gang let loose the laughter he had restrained.<br><br>"Ha, hahaha!"<br><br>Their laughter intertwined with the surrounding cheers. The breeze was invigorating, under the pristine sky.<br><br>Amid the dawn of tumultuous times, it was on this balmy spring day that a new hero was born.<br><br>\* \* \*<br><br>Jeok Cheon-Gang reemerged as the excitement subsided.<br><br>"There are a lot of people gathered in a room the size of a rice grain."<br><br>"Huh? It's not narrow at all, is it?"<br><br>"Grandmaster Jeok, there's an empty seat over there."<br><br>Unlike Cheong Pung or Hyuk Mu-Jin, who seemed to lack any sense of the atmosphere, Goong Gi-Bang, a beggar to his core, immediately took action.<br><br>"Oh dear, now that you mention it, it does feel like we're packed in here. I'll be outside."<br><br>Cheong Pung and Hyuk Mu-Jin bid farewell with a wave.<br><br>"Goodbye, Young Master Goong."<br><br>"That guy is finally leaving. Squad Leader, didn't it smell like a dog's behind in here for a while?"<br><br>I responded with a careful nod.<br><br>"Yeah, it was kinda bad..."<br><br>"Enough with the nonsense, both of you get out with me!"<br><br>"No, I'm serious, it really smelled..."<br><br>"Alright, alright. Don't get so mad, Young Master Goong."<br><br>Goong Gi-Bang's sharp rebuke caused Cheong Pung to bow his head, looking disheartened.<br><br>"Mimi. Greet with a whirlwind spin."<br><br>Zwick. Zwirlirlwick!<br><br>"...What the... damn."<br><br>Cheong Pung has remarkably improved his skills. After showing off a splendid performance, he was the last to leave the room, and then Jeok Cheon-Gang turned to me.<br><br>"You thunderous brat. You really made quite the ruckus."<br><br>With his stern face and composed tone — so characteristic of Jeok Cheon-Gang — it was almost comical.<br><br>"You're laughing?"<br><br>"Should I cry instead?"<br><br>"Huh, look at this guy. You disgraced the reputation of our clan in front of everyone, and you laugh about it?"<br><br>"You were laughing quite loudly yourself."<br><br>"…!"<br><br>"I saw everything."<br><br>Jeok Cheon-Gang's stern expression faltered. Slowly, he glanced towards the window.<br><br>"Cough. What did you 'see' exactly?"<br><br>"About fifty people besides me saw it. I thought you were going to bleed from the corners of your mouth."<br><br>He was almost the Chinese Joker.<br><br>Cornered by my remarks, Jeok Cheon-Gang, after a moment's hesitation, begrudgingly acknowledged.<br><br>"... well."<br><br>"Excuse me?"<br><br>"Ah, I said you did well!"<br><br>Jeok Cheon-Gang exclaimed, his cheeks reddening, then muttered under his breath.<br><br>The smile on my face broadened at his concession. That single acknowledgment was all I needed.<br><br>"Thank you. It was all thanks to you, Grandfather."<br><br>"…"<br><br>What's with that look?<br><br>A touch of disappointment clouded his gaze, leaving me bewildered as I inquired,<br><br>"What's the matter now?"<br><br>"Nothing. It's nothing."<br><br>"Your expression says otherwise..."<br><br>"It's nothing, I tell you!"<br><br>"Why are you yelling? The atmosphere was so warm and pleasant just now."<br><br>"Well, if I say it's nothing, it should be taken as nothing. You keep prying, which is why I'm reacting this way!"<br><br>"What now?"<br><br>Why is he suddenly like this? Did I make some mistake?<br><br>Just as I was lost in thought, tilting my head,<br><br>Swoosh.<br><br>I heard the soft sound of footsteps ascending the staircase.<br><br>Without my heightened awareness achieved through Transcendence, these nearly silent steps would have gone unnoticed.<br><br>'Both are incredibly skilled masters.'<br><br>Two Transcendent Masters appearing out of the blue?<br><br>Recent encounters had honed my instincts, preparing me for immediate response to danger.<br><br>Yet, Jeok Cheon-Gang signaled with a glance to ease my tensed fist and gracefully opened the door, allowing a stream of warm air to enter.<br><br>"Everyone's so impatient. Can't even wait for a moment, huh?"<br><br>Jeok Cheon-Gang's gruff voice was met with responses from an elderly nun and a Taoist priest.<br><br>"You're one to talk about impatience."<br><br>"We have committed a discourtesy. However, the matter at hand is of great significance."<br><br>Though it was my first encounter with the wrinkled nun, the Taoist priest was immediately recognizable.<br><br>I greeted him with a fist-palm salute.<br><br>"Greetings, Sect Leader."<br><br>"Good to see you again, Young Master Jin."<br><br>This Taoist priest was none other than the Sapphire Wind Blade, leader of the Qingcheng Sect, who I previously consulted in my quest for a Divine Doctor.<br><br>'Then this nun must be the Sect Leader of the Emei Sect... But who is she?'<br><br>With my accumulated experience within Murim, I was familiar with the sect leaders, though less informed on the specific dynamics of each sect.<br><br>So I was unaware of who would emerge as the new leader in the wake of the Heaven-Stunning Shinni's demise.<br><br>Seemingly attuned to my curiosity, Jeok Cheon-Gang subtly communicated with me through sound transmission.<br><br>\- That old lady is the Annihilating Shinni of the Emei Sect. Despite her kind appearance, once she flips, there's no stopping her, so be especially careful with your words and actions. Specifically, don't even breathe a word about age.<br><br>I cautiously responded through Sound Transmission.<br><br>\- How old is she?<br><br>\- Older than this old man. She is also a survivor of the incident involving the Heaven-Stunning Shinni.<br><br>\- Ah.<br><br>Though Jeok Cheon-Gang's age remains unknown to me, it's clear he's lived beyond a century.<br><br>I bowed deeply to the grand old woman who looked like a boss of a bossam restaurant. \[Note: bossam is a Korean pork dish that consists of pork shoulder boiled in spices and thinly sliced, served with numerous side dishes. In Korean culture, the image of a bossam restaurant owner can evoke a sense of somenoe who is hearty, enjoys good food, and possibly has a jovial, motherly personality.\]<br><br>"Hello! My name is Jin Tae-Kyung!"<br><br>"Pleased to meet you, Young Master Jin."<br><br>The Annihilating Shinni, eyes shimmering with curiosity, acknowledged my greeting.<br><br>"Your reputation precedes you. In truth, you exceed the tales."<br><br>The Sapphire Wind Blade, with a hint of amusement, commanded the conversation.<br><br>"Isn't it astonishing?"<br><br>"The new waves of the Yangtze River push the old waves. It seems the younger generation is pushing us old folks aside. To overcome the wall at such a young age..."<br><br>"It's not just him, Shinni. There's also a young man named Cheong Pung."<br><br>"Oh, the heir of the Sword Saint?"<br><br>"Yes. Although it's hard to determine superiority due to the lack of opportunities, both young men are undoubtedly heaven-sent. They are a great blessing for all of Murim."<br><br>"Ho ho..."<br><br>Intrigue and surprise lit up their previously weary expressions.<br><br>Feeling slightly awkward and shifting my gaze, Jeok Cheon-Gang abruptly stepped in front of me to shield me from their view.<br><br>Not that it made much difference due to the height difference.<br><br>"Don't tire your eyes. Speak your piece and be on your way."<br><br>Caught off guard by his directness, the sect leaders broached the primary issue.<br><br>"We've encountered a problem. Could you both accompany us for a while?"<br><br>"It won't take long, we promise."<br><br>"Accompany? Right now?"<br><br>Jeok Cheon-Gang, sounding somewhat irritated, turned to me for a decision.<br><br>"What will you do?"<br><br>"..."<br><br>What am I supposed to do when two leaders of the Nine Great Sects are asking for my help?<br><br>"I'll go."<br><br>After all, I felt light on my feet, and accompanying them would allow me to hear the full story up to now, so there really wasn't a reason to refuse.<br><br>At my ready agreement, the sect leaders began to lead the way, when Jeok Cheon-Gang interjected.<br><br>"Where's the other one?"<br><br>"He's waiting down below."<br><br>"He doesn't want to be noticed by others."<br><br>The other one? If it's a member of this group, could it be the Patriarch of the Tang Family, Tang Sa-Dok?<br><br>'Well, whoever it is, I'll see soon enough.'<br><br>Yet, my curiosity evaporated as I exited the pavilion and was greeted by a familiar figure.<br><br>I let out a shout of joy.<br><br>"Hey, man! Mun-Kyung!" \[Note: oh boy, here we go.\]<br><br>Mun-Kyung appeared unchanged since his departure from the Tang Family in Sichuan.<br><br>I had been worried since it hadn't been long since he left that Dark Heaven had invaded, but it seems he had luckily avoided any harm. Perhaps he took a different path.<br><br>"How long have you been here? You seem to have grown taller since I last saw you. Did you hit your growth spurt?"<br><br>"......"<br><br>"Why so silent? Are you in a bad mood? Perhaps......"<br><br>While ruffling Mun-Kyung's hair in jest, I leaned in to whisper.<br><br>"Did you have a wet dream this morning?"<br><br>"......!"<br><br>"You did, didn't you?"<br><br>Damn, look at him, too embarrassed to speak.<br><br>I smiled contentedly.<br><br>It's quite common at his age. It might be a good opportunity to have a proper sex education course in this old martial arts community.<br><br>"Your hyung will teach you about a new world. From now on, call me Professor Jin Sung-Ae." \[Note: Sung-Ae, or 성애 translates to sexual love.\]<br><br>Professor Koo Sung-Ae, are you watching? Your knowledge is being spread through time and space. \[Note: Koo Sung-Ae is a famous Korean sex educator.\]<br><br>As I patted Mun-Kyung's shoulder, brimming with pride,<br><br>"Uh......"<br><br>"That......"<br><br>"Oh... there's something I haven't told you yet."<br><br>What haven't you told me?<br><br>The collective exhale of three individuals echoed behind me as Mun-Kyung's voice, tinged with irritation, cut through the silence.<br><br>"Remove your hand."<br><br>"......What?"<br><br>"And I stopped having wet dreams a long time ago."<br><br>"That's a bit problematic, because you haven't finished developing your secondary sexual characteristics yet... Wait."<br><br>I swallowed hard.<br><br>Because a terrifying thought had just crossed my mind.<br><br>"Who... are you?"<br><br>Mom, I'm scared. \[Note: the expressions on the elders' faces must be giving our boy flashbacks.\]<br><br>\* \* \*<br><br>"...and so, that's what happened."<br><br>"Truly a bizarre incident."<br><br>Despite their swift pace, the sect leaders' voices remained steady.<br><br>Facing their anticipatory looks, I found it difficult to speak.<br><br>"Ah, yes. So, we're heading to a place that has, what was it? A strange formation?"<br><br>"According to what we learned from interrogating the Third Monster, it seems so. But the formation is so peculiar."<br><br>Jeok Cheon-Gang interjected with a gruff voice.<br><br>"Both this old man and this guy are clueless when it comes to formations. Even if we look at it, we won't understand."<br><br>True, while Mount Jiuhua Scorching Cavern boasts an intricate Qi Entrance Array, it hardly makes us experts.<br><br>'We should call someone from the Jaegal Family or the like.' \[Note: this is a family known for their intelligence, and thus, illusory arts are considered to be their forte. The Korean name for this family is "Jaegal" but others may be more familiar with "Zhuge" as Zhuge Liang was a famous strategist in the War of the Three Kingdoms. AsuraScans previously said that this is a clan in manhwa chapter 164. However, it's clear that this is a family line that carries the same last name like the Tang Family does. So I am changing it from Jaegal clan to Jaegal family. The confusion for these distinctions came about due to the fact that in Korean, the same character is used for sects, clans, and families. So far I have been distinguishing between them based on context clues for the faction. A family passes down martial arts to only family members, hence these members should have the same last name. A clan passes down martial arts directly (word of mouth) and is tightly knit like a family but not necessarily blood related, e.g. the Scorching Clan. Sects are much larger operations which may have several generations of disciples training at once, e.g. Mount Hua or the Southern Edge Sects.\]<br><br>Yet, involving the Jaegal Family would delay our proceedings significantly.<br><br>Somehow, the sect leaders harbored great expectations, particularly of me.<br><br>"Jin Tae-Kyung. Didn't you notice anything more unusual about him? Any behaviors or words?"<br><br>"What I've mentioned is everything. And from what I've felt... there's nothing more bizarre than that."<br><br>Dark Heaven's very existence is odd. They almost worship a being they call the Heavenly Lord as a deity.<br><br>The capabilities and enigmatic powers wielded by the Blood Lord and the Western Heavenly Demon Lord were also odd.<br><br>'They can regenerate like human trolls, stick and un-stick arms as if they had double-sided tape, and even become possessed.'<br><br>Reflecting on it, the sheer improbability of our victory over such entities is astounding.<br><br>"Hmm. First off, I've heard the general situation from Grandmaster Jeok before you woke up. Once the messenger sent to Henan returns with a reply, we should have a clearer direction."<br><br>"Just take a look at the formation, and if you notice anything odd about it, let us know."<br><br>"Okay."<br><br>As I answered, I glanced at the figure moving ahead of us in the distance.<br><br>Mun-Kyung, no, the one with the moniker of Dark Saint.<br><br>'Fuck, why is the Dark Saint here?'<br><br>To be honest, I almost pissed myself.<br><br>It wouldn't be this bad even if I had spent half a day frolicking in the waters of the River Styx and then had a barbecue.<br><br>'Mun-Kyung is the Dark Saint. And I asked the Dark Saint if he had wet dreams!'<br><br>Professor Koo Sung-Ae, I almost died because of you.<br><br>Just as I was secretly breathing a sigh of relief, the dense bushes around us cleared, and a tall cliff began to emerge.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-370.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-372.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

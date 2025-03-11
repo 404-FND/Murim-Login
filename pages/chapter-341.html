@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 341 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 341</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 341</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: February 19, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>A recent memory of a conversation with Mun-Kyung resurfaced.<br><br>'Thank you for everything. Thanks to you, I was able to continue living and gain many valuable experiences.'<br><br>'Don't mention it. Just focus on your health and studies to become a great doctor.'<br><br>'Like a Divine Doctor?'<br><br>'Yes, like a Divine Doctor.'<br><br>His fleeting words echoed in my thoughts.<br><br>'I regret that I can't join you this time. I must return to my Master.'<br><br>How did I not see it before?<br><br>In retrospect, Mun-Kyung was always a cut above the rest. His quick thinking in perilous situations, his unflappable demeanor, and medical expertise beyond his years.<br><br>'It's more than that.'<br><br>The way he nonchalantly boarded the pirates' vessel after their attack nearly plunged him into the depths of the Yangtze River. His audacity in approaching the notorious Tang Family in Sichuan for a simple medicine request.<br><br>Even though seasoned martial artists would flinch as if they had been injected with Botox in their livers when faced with such daunting tasks, Mun-Kyung handled them with ease.<br><br>'Moreover, the words and actions he just showed...'<br><br>The specifics of the Black Hand Seal martial arts are unknown to me, as is its power.<br><br>Yet, one thing was crystal clear.<br><br>"The Divine Doctor. You're the Divine Doctor's disciple."<br><br>"…!"<br><br>"…!"<br><br>My words, tinged with both elation and despair, caused a stir among the others, who turned their eyes to Mun-Kyung in astonishment.<br><br>Mun-Kyung recoiled under the weight of the sudden silence.<br><br>"I'm sorry. But I couldn't tell you."<br><br>"Why?"<br><br>I regretted asking so reflexively. It made sense for a disciple of the Divine Doctor, who lived his life in secrecy, to stay silent.<br><br>Had Myo-Ryong's life not been in jeopardy, Mun-Kyung might never have exposed his master's identity.<br><br>"Where is your master, the Divine Doctor, now?"<br><br>Mun-Kyung hesitated, then bit his lip.<br><br>"Before that, can you promise me one thing?"<br><br>"I'll keep your secret. Forever."<br><br>I adamantly replied as I pulled an item from my pocket.<br><br>That object was frequently examined by me these past couple of days.<br><br>\[Wu Bei Zi is best when it comes from Sichuan land.\]<br><br>Mun-Kyung's eyes widened as he discerned the subtle inscription on the jade-like porcelain.<br><br>“This is…”<br><br>“You recognize it?”<br><br>“Yes, it's definitely my Master's handwriting.”<br><br>With a mix of awe and curiosity, Mun-Kyung examined the \[Trace of the Divine Doctor\].<br><br>“Now that I think about it, my master once said he left a token for a famous physician long ago, inviting them to Sichuan. But how did Young Master Jin…”<br><br>“I received it directly from that physician. There’s a patient only the Divine Doctor can heal.”<br><br>I stressed this point firmly.<br><br>“He is someone of the utmost importance.”<br><br>“I don't know who or where they are... but Young Master Jin must value them greatly.”<br><br>That much was evident.<br><br>Jeok Cheon-Gang is invaluable to me. He risked everything for my sake, and now, it is my duty to repay him.<br><br>“That's right.”<br><br>Mun-Kyung responded, his smile faint yet genuine.<br><br>“Follow me. I'll guide you to my master.”<br><br>\* \* \*<br><br>Crunch, crunch.<br><br>Each step compacted the snow beneath our feet.<br><br>I surveyed the surroundings. The skeletal branches of trees were frosted over, and the land was blanketed in an unbroken sheet of snow.<br><br>‘Amazing.’<br><br>The world outside harbored the onset of spring, buds emerging, yet here we were amidst a winter wonderland.<br><br>‘Could this be a Qi Entrance Array?’ \[Note: the direct translation of the term used here 기문진(奇門陣) is Qi Men Formation, or Qi Door Formation. It is a kind of illusionary arts used for protection or concealment.\]<br><br>Mun-Kyung led us back to a mountain we had previously scoured with the Qingcheng Sect. At a certain juncture, he labored to shift stones, unveiling a hidden passage and landscape.<br><br>‘Again...Amazing.’<br><br>Mun-Kyung revealed this was the work of the Ancient Master of Illusions. \[Note: the way the characters are used here, it could very well be a person's name, but I'm a little more certain that it is most likely a moniker.\]<br><br>As Goong Gi-Bang enthusiastically elaborated, this Master was once esteemed as the supreme illusionist of ancient times.<br><br>Although I don’t know the connection between him and the Divine Doctor, setting up something like this is incredible. We almost missed it, even though it was right under our noses.<br><br>‘No wonder no one could find him.’<br><br>What good are numerous martial artists and government soldiers, if they don't know where to look?<br><br>A thorough search of every mountain could have easily spanned not mere months, but decades.<br><br>"Wow, wow!"<br><br>Cheong Pung, brimming with childlike wonder, darted ahead like a pup unleashed into an open field. I was on the verge of reprimanding him when suddenly, the scenery transformed, rendering me speechless.<br><br>"Wow, what is this?"<br><br>In a mere handful of strides, we had transitioned from a harsh winter to the heart of spring.<br><br>Verdant greenery surrounded us, and unfamiliar flowers blossomed riotously.<br><br>Hyuk Mu-Jin, wearing a look of bemusement, approached and queried.<br><br>"Squad Leader, am I seeing things?"<br><br>"I don't know, man."<br><br>Even Goong Gi-Bang, our most seasoned Murim veteran, was visibly astonished, murmuring in awe.<br><br>"Wow...oh, gross! What is this!"<br><br>"Butterflies?"<br><br>Indeed, there was an abundance of butterflies.<br><br>Vibrant, enchanting butterflies.<br><br>The sight of countless butterflies fluttering amidst the floral splendor was nothing short of mesmerizing.<br><br>Whoosh!<br><br>The sudden gust and the radiant sunshine only deepened our bewilderment.<br><br>To my eyes, each aspect of this landscape was akin to one of the world's seven wonders.<br><br>'The pyramids are nothing compared to this.'<br><br>Every few steps brought a change in the seasons here. The pyramids might as well have been built by children playing with stones.<br><br>If the Pharaoh saw this place, he would be disappointed in his people.<br><br>This place... it was an entirely different realm.<br><br>"Young Master Jin?"<br><br>"Huh?...Oh, yes. What is it?"<br><br>"We're almost there. We just need to go over that hill."<br><br>Regaining our composure, we resumed following Mun-Kyung.<br><br>As we traversed a small hill blanketed in lush grass, a solitary thatched cottage came into view on the flat terrain.<br><br>And there... 'he' was.<br><br>"Master!"<br><br>Upon hearing Mun-Kyung's call, an old man planting something in the garden in front of the thatched cottage straightened his bent back. His beard was as white as the snow we had seen on the way, and his eyes were wrinkled yet clear.<br><br>The old man's eyes softened as he noticed us.<br><br>"Ah, esteemed guests have arrived."<br><br>We finally found him. The Divine Doctor.<br><br>\* \* \*<br><br>It was much later when we properly conversed with the Divine Doctor.<br><br>After examining Myo-Ryong's condition, the Divine Doctor asked Mun-Kyung to move the patient to the cottage, and they reappeared an hour later.<br><br>"It's been a while since someone came to visit."<br><br>The Divine Doctor's voice, like a cool spring breeze, surprised me as I paced around the cottage. I promptly bowed.<br><br>"I, Jin Tae-Kyung from the Jin Family of Taiyuan, greet the Divine Doctor."<br><br>"Dong Bong."<br><br>"Pardon?"<br><br>"That's my name. The title Divine Doctor is too grand; just call me Old Man Dong."<br><br>He's not Mr. Kim who runs the real estate office down the road; how could I possibly refer to the renowned Divine Doctor simply as "Old Man Dong"?<br><br>‘Even though he's old enough to be my grandfather.’<br><br>Yet, under his warm gaze, I felt compelled to agree.<br><br>"Yes, I shall do so, Old Man Dong."<br><br>"Thank you, Young Master Jin."<br><br>The Divine Doctor responded with a soft smile, proceeding to cordially greet each member of our group.<br><br>His demeanor remained courteous and patient, even through our group was a bit odd.<br><br>"Hello! I'm Cheong Pung!"<br><br>His smile persisted even in the face of crazy bastards.<br><br>"Ha, you are full of energy. I am Dong Bong. You can call me Old Man Dong, like the others."<br><br>"But, my grandfather said we should show respect to elders."<br><br>"Your grandfather has taught you well. But if our hearts agree, what's the problem? Just think of me as an older friend."<br><br>"A friend?"<br><br>"Yes, a friend."<br><br>Cheong Pung's laughter rang out heartily.<br><br>"Then please take care of me, Old Man Dong!"<br><br>"Ha ha, ha ha ha!"<br><br>Am I supposed to find humor in this?<br><br>Is he the jester of Murim? Do people find themselves smiling in his presence, even when irritated? Does his absurdity always provoke laughter?<br><br>"Have you ever tried sweets, Old Man Dong?"<br><br>"I like them. I used to enjoy gourd candy as well."<br><br>"Me too!"<br><br>The atmosphere is akin to a feel-good movie, yet the dialogue borders on the unsettling nature of a thriller. Eventually, Goong Gi-Bang, his face ashen, swiftly clamped a hand over Cheong Pung's mouth and retreated.<br><br>Watching this, the Divine Doctor laughed heartily and turned to Mun-Kyung.<br><br>"You've brought some interesting people."<br><br>Mun-Kyung bowed deeply.<br><br>"I'm sorry for bringing them without your permission, Master."<br><br>"No, no, it's alright. Fate is woven by the heavens. This too must be the natural order, right?"<br><br>His last inquiry seemed directed at me. I nodded, retrieving the \[Trace of the Divine Doctor\] I had prepared.<br><br>"This is..."<br><br>"A token left by the Divine Doctor, or should I say Old Man Dong, long ago. The Mad Doctor of Luoyang gave it to me, telling me to seek you out."<br><br>"Me? I left this?"<br><br>"Excuse me?"<br><br>Could he have forgotten about this?<br><br>After a brief moment of bewilderment, the Divine Doctor, jogged by Mun-Kyung's reminder, suddenly recollected.<br><br>"Ah, yes, that's right. It was such a long time ago; I had forgotten."<br><br>"Phew. I thought you had completely forgotten."<br><br>"Nevertheless, having this token means... there must be a need for this old man."<br><br>"Yes, that's correct."<br><br>"Is it about the nun you brought here? If so, there's no need to worry. She's past the critical point."<br><br>Gazing towards the cottage where Myo-Ryong was recuperating, he continued.<br><br>"It won't be smooth, but... after the remaining treatment and proper rest, she should fully recover."<br><br>Hearing this was a tremendous relief. Myo-Ryong was no longer teetering on the edge of death, affirming the Divine Doctor's esteemed reputation.<br><br>Inhaling deeply, I spoke.<br><br>"There's another patient."<br><br>"Another patient?"<br><br>"The person who gave me the token said that only the Divine Doctor could cure them in this world."<br><br>"Only I can cure them..."<br><br>The Divine Doctor's voice was a gentle murmur before he spoke more firmly.<br><br>"Life, aging, sickness, and death are beyond human control. However, if there's even a sliver of possibility, I, as a physician, will do my utmost."<br><br>"That's... that's all I need."<br><br>Years ago, my mother faced a grave illness.<br><br>The surgeon who took her case had uttered the same commitment: I will do my utmost.<br><br>To Hayeon and me, those words were a beacon of hope, and, fortuitously, the surgery concluded successfully.<br><br>Echoing my past actions with that surgeon, I now clasped the Divine Doctor's aged, yet steadfast hand.<br><br>"Please, Old Man Dong."<br><br>His smile was tender, resonating with an understanding beyond words.<br><br>"Let's see the patient first."<br><br>What ensued was a tense vigil.<br><br>After Jeok Cheon-Gang, lying motionless on a stretcher, was transferred to the cottage, I paced relentlessly, engulfed in a sea of anxious anticipation.<br><br>The dance of butterflies and bees amidst the blossoming garden, the trees unfurling new leaves - none brought me solace.<br><br>'It must have gone well. It must have.'<br><br>Apprehensive of hearing disheartening news, I dared not venture near the cottage.<br><br>Thus, with a singular thought cycling relentlessly in my mind, I wandered for what seemed an eternity.<br><br>Only when the daylight waned, giving way to a soft twilight, did I return to the cottage.<br><br>And there, exuding a weary yet hopeful aura, the Divine Doctor and Mun-Kyung awaited me.<br><br>"I think I can cure him."<br><br>At those words, my legs buckled, my strength draining away. A familiar chime echoed in my ears.<br><br>Ding.<br><br>\- Quest condition, \[Receive Treatment from the Divine Doctor\] completed!<br><br>\- Quest, \[Finding the Divine Doctor in Sichuan\] successfully completed!</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-340.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-342.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

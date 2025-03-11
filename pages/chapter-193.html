@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 193 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 193</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 193</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: Coldbutteredtoast</span>
+                            <span class="published-date">Published: October 9, 2022</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>The treasures of the Fire Clan.<br><br>The eyes of the Tiger Swordsman widened in surprise. "What are you talking about?"<br><br>"Have you got something in your ears, amateur? I'll tell you once more, so listen carefully. I left our heirlooms with this guy. Understand?"<br><br>Everyone looked between Tae-Kyung and the Fire King in horror and amazement. Even Jin Wi-Kyung and Baek Mu-Sung were speechless in shock; only one of the onlookers seemed unaffected.<br><br>"Benefactor," said Cheong Pung. "What is the treasure? Show me, too!"<br><br>Tae-Kyung spluttered, "I don't know, you bastard!" [The only items I've received from the Fire King are the manual and... oh wait.]<br><br>Jeok Cheon-Gang, the Fire King, clicked his tongue. "Dumbass."<br><br>Tae-Kyung hurriedly unfastened the knotted cloth he carried with him and withdrew the crude, old blade. The nameless sword. The very thing that Jo-Pil had taken from his teacher and then had stolen in turn.<br><br>As Tae-Kyung drew the sword from its scabbard, the blade seemed to ignite, bathing the courtyard in its brilliant white radiance. The crowd gasped and cried out at its appearance, as though it were a legendary weapon. "This is the heirloom of the Fire Clan?" Tae-Kyung murmured, his face illuminated in its glow. [Then why the hell was it called 'Nameless Sword' and not 'Cinder' or 'Flame God' or something cool?]<br><br>"This is ridiculous!" cried Il-Sung. "If you'd been entrusted with his heirloom, there's no way you wouldn't know!"<br><br>All of a sudden, Tae-Kyung remembered the words of Cheong Pung as they rode back to Taiyuan. "Don't you think he's trying to make you his disciple?" [At the time, we laughed at the idea, but... shit... I don't know!]<br><br>Il-Sung chewed his lips. "Boy, you are so lucky."<br><br>Tae-Kyung shook his head. [Why are these old men always fucking with me?] "You've got the wrong person. I don't have any luck." [If I was lucky, I wouldn't have crossed paths with a motherfucker like you!] "Anyway, it's our honour to meet you."<br><br>"Cunning boy. Why didn't you receive us this courteously before?"<br><br>"Before? Oh, sorry for saying it was shit. It's just because I can't stand the sight of injustice. Please think of it as a junior's mistake."<br><br>The Tiger Swordsman darkened and blood dripped from his clenched fist.<br><br>Tae-Kyung met his gaze evenly. [The difference between us is that you grovelled before greater strength, whereas I'm not bowing to you. But it's a bitter feeling to see that it always comes down to strength. It feels dirty. If it wasn't for the Flame King, all of the Jin Family would be experiencing the shame that you're feeling now.]<br><br>[It might even be possible to defeat someone like the Tiger Swordsman, but a great sect stands behind him. I hate to admit it, but the difference between the sects and the Jin Family is completely insurmountable at this time... but I used to be an F class hunter and now look at me. There will come a time when the Jin Family stand shoulder to shoulder with the nine sects and five great families.]<br><br>[It's like a local mayor challenging in the presidential election.] Tae-Kyung grinned at the thought.<br><br>"Do you dare laugh at me?"<br><br>Without warning, the Fire King snapped a lightning fast kick into Il-Sung's shin. The Tiger Swordsman gasped in pain and fell to the ground.<br><br>The master of a great sect, a 60 year old expert of high social position, yet he was beneath the Fire King in all aspects. Age, martial arts, status. The Fire King was on another level.<br><br>As Il-Sung glared at Tae-Kyung, a cool voice stated, "Do not speak of what has happened here today. Do I make myself clear?"<br><br>[I really need to start a fan club.] In reality, Tae-Kyung was worried. If the Tiger Swordsman decided to retaliate in the future, there would be no way that the Jin Family could ever withstand the might of the Southern Edge Sect. However, the intervention of the Fire King changed things.<br><br>The Fire King loomed over his opponent. "Why haven't you answered me? Speak. Use your words. Right now."<br><br>"Alright! I swear on my name!"<br><br>"Ah, your name is worthless. Swear on your sect."<br><br>"I so swear!"<br><br>Cheon-Gang smiled slowly and tapped Il-Sung on the shoulder. "Why are you grinding your teeth when you talk to me, punk? Maybe I should yank all of them out?" His smile widened. "Oh, I guess you're an old man, so I can't do that in front of all these people. Ho ho ho!"<br><br>Hearing his laughter, the assembled guests cowered in fear.<br><br>The Fire King turned his head to Tae-Kyung. "And you. You didn't do anything well. Whatever the situation, why the hell are you speaking in that way to your elders? Are you mad? You have no tact. It doesn't matter that this old man here is pathetic and ridiculous. He's still a grand elder of Murim. Even if he is a dirty scumbag, be polite in future."<br><br>"Yes, great warrior Jeok. I sincerely apologise."<br><br>When Tae-Kyung straightened from his bow, he saw the face of the Tiger Swordsman, flushed red with barely contained rage.<br><br>[Even though I apologised to someone I don't like, I feel refreshed!]<br><br>"Any questions?" asked Cheon-Gang.<br><br>[The Fire King is not only a transcendent martial artist. He should change his name from the Fire King to the Silver-Tongued King!]<br><br>"Now," said the Silver-Tongued King, "all the uninvited beggars may help themselves to a bowl of rice if they're hungry."<br><br>Shaking from being called a beggar, Il-Sung shook his head. "W-we will return home."<br><br>"Then go!"<br><br>In response, Il-Sung leapt to his feet and fled, followed by Gong Il-Hyuk and the other disciples of the Southern Edge Sect. However, at the gate, he turned back momentarily and stared at Tae-Kyung, who heard the words clearly in his mind: "I don't know what kind of relationship you have with that old man, but as long as I still draw breath, I will punish you and the entire Jin Family." Then he melted away into the darkness and was gone.<br><br>Tae-Kyung glanced over at the Fire King, who was staring into the night with unreadable eyes.<br><br>"Just popping out," said the old master, a little while later.<br><br>"Where are you going?"<br><br>"Do I need to ask permission to use the bathroom at this age?" Then the Fire King took a step and was gone.<br><br>Meanwhile, on the road some distance from the Jin Family estate, the Tiger Swordsman was lashing out in blind fury. His great sword swept through the air, cutting trees and crushing rocks, but still his fury would not abate. As the last tree toppled, he whirled on the terrified disciples of his sect.<br><br>"Fools!"<br><br>"Elder, please!"<br><br>"The insults that I have received because of you!"<br><br>"Lord, please forgive your poor disciples!" cried the sect warriors, cowering before him.<br><br>Among them, Gong Il-Hyuk was particularly frightened. Their master would not have travelled to Shanxi had it not been for his encouragement. "Elder, please calm down and listen to me. We closed our eyes and didn't see anything!"<br><br>In an instant, the Tiger Swordsman's skinny hand grabbed Il-Hyuk by the throat.<br><br>"Urgh... I'm... the fifth cous..."<br><br>Il-Sung snarled. "He would not blink an eye at your punishment."<br><br>Gong Il-Hyuk's face turned white. His slumped to the ground in a heap, the neck snapped. The other disciples collapsed in fear.<br><br>"Why are they doing that?" said a calm voice. "And why are you still here?"<br><br>The Tiger Swordsman span around as the small old man emerged from the darkness.<br><br>The Fire King clicked his tongue in disapproval at the fallen sect disciples. "It seems like I have saved them by accident. Shall I come back later?"<br><br>"W-why are you here?"<br><br>The Fire King smiled. "I forgot something."<br><br>The Tiger Swordsman and the Fire King stared at one another for a moment.<br><br>Suddenly, the sword spirit rose with a hiss, the sword leaping from its scabbard in a deadly arc.<br><br>However, the King had already won. "I warned you not to touch a single hair."<br><br>The Tiger Swordsman screamed, wrist shattering, his sword tumbling from his grasp. As he screamed and stumbled to his knees, the Fire King reached a burning hand into his chest, crushing bones and bursting the flesh. Face twitching, the Tiger Swordsman knelt in a pool of his own blood and trembled.<br><br>"Look at me." The voice of the Fire King was as cold as ice. This was a man who had forged his legend in a single day. An opponent that could not be fought.<br><br>Despair fell over the Tiger Swordsman. "Are you going to kill me?"<br><br>"If killing you would finish things, you would be dead. Instead, remember one thing. Jin Tae-Kyung. You can kill him... but I will be watching. If that happens, I will visit the Southern Edge Sect. I will smash your symbol and burn the mountain to the ground. I will kill everyone and everything. If any of you flee, I will follow you and put you in the ground, and I will never stop coming until the day my breath stops."<br><br>Gong Il-Sung, the Tiger Swordsman, elder of the Southern Edge Sect, shook in terror and lowered his head to the ground.<br><br>"What should I do?"<br><br>"The choice is yours."<br><br>Il-Sung knelt, bleeding, waiting for further instruction.<br><br>"Elder," said one of the disciples and Il-Sung looked up to find the Fire King gone. "What should we do master?"<br><br>After a long time, the Tiger Swordsman said, "Return home."<br><br>At his voice, filled with dread, the disciples of the Southern Edge Sect could only pack their belongings and follow.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-192.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-194.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

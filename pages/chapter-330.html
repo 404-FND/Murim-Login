@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 330 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 330</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 330</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: February 9, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>Near the stroke of midnight.<br><br>As four figures swiftly departed from the Dragon Phoenix Escort Agency, their silhouettes vanished on the horizon.<br><br>The chilling wind made the accompanying members of the Dragon Phoenix Escort Agency shiver, but Ju Hwa-Ran stood still, as if carved from stone.<br><br>Her stance suggested a lingering hope for someone's return.<br><br>Amidst the dense darkness, a voice suddenly pierced the silence.<br><br>"They've left."<br><br>Startled by the sudden voice, the couriers split to either side. Ju Hwa-Ran, however, did not waver.<br><br>"Yes, they've left."<br><br>"Are you disappointed?"<br><br>"It would be a lie to say I wasn't."<br><br>"There's nothing to be done. Those who need to leave, leave; those who wish to stay, stay. That's the way of the world."<br><br>"The way of the world…"<br><br>Ju Hwa-Ran echoed, her voice a mere whisper, as she slowly pivoted.<br><br>"And to which fate does Chief Escort Song belong to?"<br><br>"Me?"<br><br>Song Il-Seom, with a trace of a smile, casually jostled the bag over his shoulder.<br><br>"What do you think?"<br><br>"Is that why you pretended to be drunk and asleep?"<br><br>"Ten years. I believe I've fulfilled my duty in that time… or is it still insufficient?"<br><br>"Yes."<br><br>"…!"<br><br>"It is insufficient. You haven't yet fulfilled your duty."<br><br>At Ju Hwa-Ran's firm retort, Song Il-Seom's brow creased.<br><br>"Still insufficient? Even after I've protected you and the Dragon Phoenix Escort Agency for ten years?"<br><br>"Does it weigh equally against the life debt owed to my grandfather?"<br><br>"You…!"<br><br>As Song Il-Seom's voice escalated, stepping forward, the nearby couriers tensed and readied their swords.<br><br>To them, unaware of the hidden truths of his origin, Song Il-Seom was still a figure to be wary of. This was particularly true for the other two Chief Escorts of the Dragon Phoenix Escorts Three, who displayed open animosity.<br><br>"Lower your voice. It will do good for your character."<br><br>"I'm not sure what the Young Leader thinks, but I disagree. No matter how I consider it, you are very suspicious."<br><br>The two Chief Escorts positioned themselves before Song Il-Seom, their expressions unyielding.<br><br>"Enough. Stand aside."<br><br>Ju Hwa-Ran ordered in a voice serene yet authoritative, causing the two Chief Escorts to falter.<br><br>"Y-Young Leader."<br><br>"But this man hasn't completely cleared his suspicion yet...!"<br><br>"I said stand aside. We have urgent matters to discuss, so everyone return to your posts and attend to the remaining tasks."<br><br>"Uh..."<br><br>"Okay, understood."<br><br>Reluctantly, the two Chief Escorts, holding back further objections, gestured for the other couriers to follow as they retreated.<br><br>Observing their departure, Song Il-Seom clicked his tongue, turning to Ju Hwa-Ran.<br><br>"I can't tell if they're loyal or just stupid. To come this far and still not be able to distinguish friend from foe..."<br><br>"You're mistaken."<br><br>"What?"<br><br>"They are neither as loyal as Chief Escort Song thinks, nor are they stupid."<br><br>A realization dawned on Song Il-Seom.<br><br>'These two as well?'<br><br>It struck him immediately.<br><br>Despite being a born fighter and a natural warrior, he wasn't simple-minded.<br><br>With a soft utterance, Song Il-Seom acknowledged the complexity of the situation.<br><br>"This is truly a mess."<br><br>Ju Hwa-Ran nodded.<br><br>"They orchestrated disruptions in our missions, diverted funds amidst the chaos, and manipulated records. Uncle Heo couldn’t have masterminded this alone."<br><br>"How many others are there?"<br><br>"We need to figure out the exact number and their identities, but at least those two would have been a part of this."<br><br>Ju Hwa-Ran’s gaze shifted from the departing figures to Song Il-Seom.<br><br>"We must unearth this now."<br><br>"Shouldn't you have exposed this when Chief Escort Heo Jun faced judgement?"<br><br>"That would have caused more chaos. If I cannot resolve this myself, I am unworthy of leading the Dragon Phoenix Escort Agency."<br><br>"You're confident that you can do this, then?"<br><br>Ju Hwa-Ran fixed her gaze on Song Il-Seom.<br><br>"Perhaps you could pack that bag again after a year?"<br><br>"Are you going to use me as the blade for your judgement?"<br><br>"Chief Escort Song. Right now, I need a sharp sword that can cut down anyone. And the right person happens to be right in front of me."<br><br>"I refuse. And stop calling me 'Chief Escort' from now on."<br><br>"Then may I hire the Soul Chasing Wanderer, then?"<br><br>"What?"<br><br>Ju Hwa-Ran shrugged her shoulders slightly.<br><br>"Hiring the Soul Chasing Wanderer might be quite expensive... But given our shared history, you might provide a discount, right?"<br><br>"Is this how I should repay the life-debt?"<br><br>"If that were the case, I would have asked for much more."<br><br>"Earlier, you said I hadn't fully repaid the grace given by the Escort King."<br><br>"That's because there were many eyes watching. My grandfather always said it was just a person saving another person."<br><br>"Hah!"<br><br>Song Il-Seom couldn't help but burst into laughter.<br><br>He was reminded of the words Gentleman Sword Ju Ho-Gun had said to a young man with an old jade hairpin ten years ago.<br><br>'You've crossed a generation to repay a nonexistent debt. Don't be bound by the ties of the previous generation. Live your life as you wish.'<br><br>'Really?'<br><br>'My father always said that what he did was merely a person saving another person. I think the same. And... thank you for growing up to be the person that you are.'<br><br>It was a shock.<br><br>Song Il-Seom’s life had been a relentless struggle. Orphaned young, and losing his sole support - his grandmother, he was left to survive alone.<br><br>He had looted from corpses, slain bandits who tried to take rightful payments, and emerged victorious from countless life-or-death duels.<br><br>'I assumed he would demand a service in return.'<br><br>To Song Il-Seom, the wanderer, such requests were the norm.<br><br>Had Ju Ho-Gun sought someone's end, he would've obliged.<br><br>It might tarnish his conscience, but it was a path well-trodden.<br><br>Yet, Ju Ho-Gun was unlike others.<br><br>The first 'adult' Song Il-Seom encountered after his loss.<br><br>That might explain his unguarded admission.<br><br>'Ten years.'<br><br>'Really?'<br><br>'In ten years, I will leave. Though all I've learned is the art of killing, should anything happen, I will protect the Leader and the child, just as the Escort King did decades ago.'<br><br>Song Il-Seom kept his oath.<br><br>He became a courier of the Dragon Phoenix Escort Agency, faithfully following orders, and protected the Leader's daughter as she grew into a beautiful young woman.<br><br>He paid no heed to the murmurs and gossip that swirled around them.<br><br>Even when the Leader fell ill and the Agency was on the brink of collapse, Song Il-Seom remained steadfast.<br><br>'I am just fulfilling my duty.'<br><br>Opening his eyes, which had been shut in contemplation, Song Il-Seom addressed Ju Hwa-Ran, who was observing him.<br><br>"In one month, I shall take my leave."<br><br>"…!"<br><br>"Once you uncover the traitors' identities, I will lead the purge. One month should be enough."<br><br>Noticing Ju Hwa-Ran's startled look, Song Il-Seom spoke candidly.<br><br>"No need for that face. I'll only be gone to visit Xianyang for an elixir."<br><br>"An elixir...?"<br><br>"Yes. It should cure the Leader's illness. The Thousand Year Snow Ginseng might be too potent and cause adverse effects, but the elixir I've found should definitely work."<br><br>"How did you manage to find such an elixir…?"<br><br>"Let's leave it at that. Speaking of it tires me."<br><br>With a dismissive wave, Song Il-Seom closed the topic.<br><br>The elixir was a result of over two years of relentless search. Although less famed than the Thousand Year Snow Ginseng, it was ideal for treating the Leader's Qi Deviation.<br><br>Acquiring it had exhausted his amassed wealth as the Soul Chasing Wanderer, but fortunes can be rebuilt.<br><br>"Do you understand?"<br><br>Song Il-Seom's voice held a steady calm.<br><br>"Saving a life is the most arduous task. What you perceived as ordinary… has been my greatest challenge."<br><br>Song Il-Seom had made a living by taking lives.<br><br>Only upon joining the Dragon Phoenix Escort Agency did he begin to protect one.<br><br>"Chief Escort Song…"<br><br>Ju Hwa-Ran, eyes brimming with tears, gazed at Song Il-Seom's stern expression and quickly corrected herself.<br><br>"Or rather, Master Song."<br><br>"How long will you keep calling me by that title?"<br><br>"I'm sorry. I was just too surprised for a moment…"<br><br>"Then, how about we create a new position?"<br><br>"Huh?"<br><br>"I don't like being a Chief Escort. Managing escorts and dealing with people isn't my thing."<br><br>"What?"<br><br>"Guard Commander. Yes, that sounds much better."<br><br>Ju Hwa-Ran, momentarily at a loss for words, watched as Song Il-Seom turned and began to stride away.<br><br>Not into the enveloping night, but towards his own quarters.<br><br>"Sigh. I guess I'll have to unpack this bag."<br><br>Ju Hwa-Ran's face lit up with a subtle smile as she watched Song Il-Seom walk away.<br><br>\* \* \*<br><br>Swoosh.<br><br>The sound of wind-filled sails and the hull slicing through the waves echoed in the air.<br><br>Aboard the swiftly sailing vessel, sun-bronzed men worked tirelessly, pulling ropes and rowing. The deck was alive with the activity of about fifty men.<br><br>With five such vessels, their collective strength was a formidable three hundred.<br><br>"Faster, faster!"<br><br>"You lot, how can you call yourselves part of the Water Dragon Fort when you move so sluggishly!"<br><br>The Water Dragon Fort, a significant stronghold within the Yangtze River Water Route Alliance, prided itself as the heroes of the river. \[Note: This name first appeared in manhwa chapter 162. This is where the Western guy, the Iron Water Divine Dragon, is from.\]<br><br>However, the local people's opinion of them was not so flattering.<br><br>"We are outnumbered!"<br><br>"Shit, why are those damned bastards here!"<br><br>The captain sank into his chair, his face paling at the sight of the five swift ships.<br><br>These weren't mere bandits but part of the formidable Water Dragon Fort fleet of the Yangtze River Water Route Alliance. Outrunning their swift ships was futile, and engaging them in battle was a death wish.<br><br>'Talk about bad luck.'<br><br>There was only one feasible option to navigate this predicament quietly.<br><br>The crestfallen captain signaled a junior crew member.<br><br>"Hey!"<br><br>"Yes, Captain?"<br><br>"Tell the passengers to pay up."<br><br>"What?"<br><br>"Collect the money! We have to pay the toll, don’t we?"<br><br>The presence of the Yangtze River Water Route Alliance as adversaries was a mix of misfortune and serendipity. While escape was impossible once they had you in their sights, they were not known for wanton violence.<br><br>The Alliance fancied themselves distinct from ordinary river pirates, yet to the common folk, they were cut from the same cloth.<br><br>"Sigh... Today's business has really gone awry,"<br><br>The ship's owner sighed deeply. Just then, he felt a tap on his shoulder.<br><br>"Excuse me."<br><br>"Ah! You startled me! Who are you?"<br><br>"I'm a passenger."<br><br>"Well, I can see that."<br><br>The ship's owner looked at the young man who had suddenly appeared. The sword at his waist suggested he might be a martial artist.<br><br>'He looks somewhat clueless. That protruding mouth looks like it would talk a lot.'<br><br>Such mediocre warriors were common.<br><br>With another sigh, the ship's owner said,<br><br>"Why are you here? If it's about the money collection, I have nothing to say. Just go back to your seat and don't cause trouble, or you might find yourself crossing the River Styx."<br><br>The young man, eyeing the rapidly nearing ships, inquired,<br><br>"Are those bandits?"<br><br>"Can't you see? They're the Water Dragon Fort from the Yangtze River Water Route Alliance. There's nobody in Sichuan who doesn't know them."<br><br>"Yangtze River Water Route Alliance..."<br><br>"Running away is futile. We can't escape their fast ships. If they spot us, that's it, the end!"<br><br>"Those ships are fast, huh?"<br><br>"...Yes..."<br><br>As the ship's owner prepared to respond with visible irritation, he abruptly stopped mid-sentence, his eyes widening.<br><br>Behind the young man loomed a larger, more imposing figure.<br><br>With disheveled hair and a towering stack of leather, this giant fixed a blank stare on the ship's owner.<br><br>The towering figure addressed the young man.<br><br>"Mu-Jin."<br><br>"Yes?"<br><br>"Let's take one of those ships."<br><br>The ship's owner stood there, utterly dumbfounded.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-329.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-331.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

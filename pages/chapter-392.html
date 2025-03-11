@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 392 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 392</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 392</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: April 20, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>‘Damn it. Faster, faster.’</p><p>Screech!</p><p>I poured every ounce of strength into executing the technique. My surroundings blurred as the devastated city loomed closer.</p><p>Yet, I already knew the outcome before I arrived, or rather, something had forewarned me.</p><p>Beep.</p><p>\- \[???\] has completed their objective and disappeared.</p><p>\- The sudden quest, \[Unexpected Assault\], has been canceled.</p><p>\- You have failed to complete the quest. As a penalty for failure, a random stat will decrease by 10.</p><p>\- \[Strength\] has decreased by 10.</p><p>At the sound of the system alert, the tension that had gripped me unraveled abruptly.</p><p>It wasn't solely the quest's failure or the loss of a stat that shook me. It was the realization of what it all signified.</p><p>As I neared the city, the oppressive silence and the horrific scene that soon came into view confirmed my fears.</p><p>“…….”</p><p>The area was drenched in blood, bodies grotesquely scattered everywhere. Even I, seasoned in combat and death, momentarily froze.</p><p>‘Carnage.’</p><p>This was a massacre. Bodies were blown apart, shredded, crushed.</p><p>The spectacle of living people being slaughtered like insects was suffocating.</p><p>For a foreigner and an outsider like myself, the impact was profound; the grief and rage of the Public Security Force Department hunters who arrived later were beyond words.</p><p>「Jang Wei! Lang Lang!」</p><p>「What kind of bastards did this?! Who did this......ugh!」</p><p>「No! Ahhhhh!」</p><p>They were allies who had depended on each other. Among the lifeless bodies were their brothers and lovers.</p><p>Amidst the unending cries and screams, one individual who had been silent took a step forward.</p><p>Step, step.</p><p>His hollow footsteps echoed loudly, his expression numb and detached.</p><p>Mr. Choi, beside me, spoke in a hushed tone.</p><p>“Jin Tae-Kyung.”</p><p>“I know. I see him.”</p><p>There are tasks we dislike but must undertake. Such was the moment, and with a heavy heart, I hesitantly parted my lips.</p><p>"Shen."</p><p>「…….」</p><p>"Shao Shen!"</p><p>Step, step, step.</p><p>Despite my urgent calls, Shao Shen continued walking, his steps resolute as he pursued the creatures that had slain his men.</p><p>Ultimately, I had to catch up and seize his shoulder.</p><p>Thud.</p><p>"Stop."</p><p>His voice was hollow, devoid of life.</p><p>「......Let me go. I must go.」</p><p>"Where?"</p><p>「Where?」</p><p>With hollow eyes, Shao Shen scanned the surroundings.</p><p>「I don't know. But they must be somewhere.」</p><p>"You......"</p><p>「I must chase them. I will find them and take my revenge, whatever it takes.」</p><p>"......!"</p><p>I found myself at a loss for words.</p><p>The man before me was not Shao Shen. He mirrored my younger self.</p><p>That resemblance made it difficult to speak the necessary words.</p><p>‘I know how it feels.’</p><p>The desire to exact vengeance and the yearning for self-destruction.</p><p>The emotions left by the death of loved ones encompass more than anger and sadness. There’s a guilt for the survivors, a burden often heavier than both.</p><p>The guilt of a hundred lives was an unbearable load for someone only twenty-one years old.</p><p>‘Damn it.’</p><p>I swallowed the curse about to escape my lips and tightened my grip on his shoulder.</p><p>"It's too late."</p><p>「…….」</p><p>"It's already too late. We can't find them right now. This isn't my guess; it's a certainty."</p><p>This fact was confirmed by the system notification. In response to my assured gaze, Shao Shen murmured absentmindedly.</p><p>「It's too late. It's really too late.」</p><p>"I hate to admit it... but yes. That's the reality."</p><p>I anticipated that Shao Shen would release the pent-up anger and sorrow.</p><p>I had expected him to scream and lash out at everything within reach, as I had years ago.</p><p>But I was mistaken. Shao Shen's vengeance was not solely aimed at the monsters.</p><p>Rumble. Thud.</p><p>Tanks began rolling into the city.</p><p>As Shao Shen watched the advancing column grow nearer, his eyes ignited with a fiery intensity.</p><p>「If so, I must kill that guy.」</p><p>It was clear who 'that guy' referred to.</p><p>General Liao. The very person who issued this damn command.</p><p>A single disastrous order from him had resulted in the deaths of countless hunters and soldiers. It was clear to me that this man deserved retribution.</p><p>But...</p><p>"Fuck, I'm sorry."</p><p>Overwhelmed by a deep sorrow, I extended my hand.</p><p>Shao Shen sensed something amiss and tried to evade, but my hand swiftly brushed his vital points.</p><p>Thud. Crack!</p><p>Paralysis Point, Mute Point, and Sleep Point. \[Note: these are the pressure points that the MC used to put Shao Shen out of commission temporarily. We see an example of these in manhwa chapter 152, when the Fire King blocks these to shut the MC up.\]</p><p>The now paralyzed and muted Shao Shen was overtaken by profound sleepiness.</p><p>He struggled valiantly against the encroaching slumber, his eyelids fluttering.</p><p>"For now... just sleep deeply. Their deaths are not your fault."</p><p>Swoosh.</p><p>His eyelids finally shut tightly. The last expression in Shao Shen’s eyes was a piercing inquiry.</p><p>‘Why, how?’</p><p>This question was not Shao Shen’s alone.</p><p>「Senior Colonel!」</p><p>「Jin Tae-Kyung, you!」</p><p>Whoosh! Swish!</p><p>With cries filled with fury, five blasts erupted.</p><p>They were from the A-rank Hunters, the Company Captains, under Shao Shen’s command.</p><p>I decisively waved my hand toward those charging at me.</p><p>Boom!</p><p>The sound of compressed air exploding caused the weapons aimed at me to swiftly redirect.</p><p>The Company Captains managed to intercept the burst of force from my palm, stumbling back in unison.</p><p>It was only because I moderated my strength; had I been fully committed, the outcome would have been different.</p><p>"Everyone, calm down. I don't want to do this."</p><p>「Tch!」</p><p>「What on earth is this behavior!」</p><p>「You dare do this to the Senior Colonel...!」</p><p>「To repay kindness in such a manner!」</p><p>In the escalating tension, Mr. Choi intervened with a calm voice.</p><p>"Jin Tae-Kyung is merely repaying a favor."</p><p>「W-what did you say?」</p><p>"If left alone, an enraged Senior Colonel Shao would have killed General Liao."</p><p>「...General Liao deserves to die. Even if it weren’t for the Senior Colonel, we would have taken action ourselves.」</p><p>"I agree. However, I'm unsure what the Central Committee of your country would think, especially the faction that General Liao belongs to."</p><p>「...!」</p><p>"He is the General responsible for this entire region of the current operation. Killing him would not end as a personal matter."</p><p>Mr. Choi surveyed the gathered Public Security Force hunters.</p><p>Their number was close to a thousand. I hadn’t anticipated such a large gathering, but their involvement in such a matter would likely bring severe repercussions.</p><p>"I will not tell you to forget today's events. But now is not the time."</p><p>The tension seemed to ebb slightly.</p><p>Following Mr. Choi’s pragmatic yet poignant words, one of the Company Captains who hadn't joined the initial assault spoke up.</p><p>「I agree. Dealing with him right now would be easy... but the aftermath would be difficult to manage.」</p><p>「...」</p><p>「Remember, our brothers didn’t die solely because of General Liao.」</p><p>He surveyed the grim scene of carnage and gritted his teeth.</p><p>「Just wait. Just a little longer. The right time will come.」</p><p>「Sigh.」</p><p>「...Damn it all!」</p><p>Some were gazing skyward, mourning, while others struggled to contain their burgeoning grief and rage. Yet, it was evident that a silent consensus had been reached among them.</p><p>As calm finally returned, Mr. Choi breathed a sigh of relief.</p><p>"I'm relieved. It's fortunate that Jin Tae-Kyung was able to stop Senior Colonel Shao."</p><p>"......Sigh."</p><p>Fortunate. Should I truly consider it fortunate?</p><p>Despite knowing it was inevitable, a sour taste lingered in my mouth as I empathized with the anger and sorrow Shao Shen must have felt.</p><p>"Are there any survivors?"</p><p>"There's a middle-aged couple and a child left. They were unconscious due to extreme tension, so they are being moved to rest separately for now."</p><p>"Any other survivors?"</p><p>"We'll find them soon..."</p><p>Mr. Choi, his brow furrowed, glanced over my shoulder as he spoke.</p><p>"...when the incompetent General's order comes down."</p><p>Rumble.</p><p>An armored vehicle noisily halted about twenty meters away.</p><p>Moments later, under heavy guard, General Liao, plump and soft, made his appearance.</p><p>「W-what is this......」</p><p>His already pale complexion blanched further at the appalling sight before him.</p><p>Watching him double over and vomit momentarily, I found myself thinking, despite my revulsion, that he was human after all.</p><p>'Son of a bitch. Yet, he appears somewhat remorseful.'</p><p>Likely, everyone present shared this thought.</p><p>However, a statement from General Liao soon jolted me back to reality.</p><p>This type of person always defies expectations.</p><p>「No. This was a mission that we couldn’t afford to fail!」</p><p>"......!"</p><p>Time seemed to slow. As if in slow motion, I observed the shock and fury erupting on the faces around me.</p><p>Mr. Choi was extending his hand towards me, his actions swift and his voice urgent.</p><p>"Jin Tae-Kyung!"</p><p>But it was already too late.</p><p>By the time he uttered my name, I had already covered the twenty meters to confront General Liao.</p><p>'A mission. A mission......'</p><p>I couldn't help but chuckle.</p><p>I reached out to the man who stared up at me with wide, disbelieving eyes, as though he had seen a ghost.</p><p>Crack! Crunch!</p><p>It was over in a heartbeat.</p><p>With sheer physical strength, devoid of Qi, I snapped his arms and shattered his kneecaps.</p><p>'Be thankful that I'm still holding onto some sanity.'</p><p>His mouth fell open, eyes wide with shock, then he let out a scream reminiscent of a pig under the butcher's knife.</p><p>「Waaaaaah!!!」</p><p>I spat on the writhing figure, whose eyes had rolled back in his head, and turned my back on him.</p><p>I didn’t miss the opportunity to address the staff officer who watched, pale as if his soul had fled.</p><p>"If this makes you sick, take it up with your superiors. You damn bastards."</p><p>Mr. Choi, shaking his head, approached with a high-grade potion.</p><p>\* \* \*</p><p>The chair was imposing and grotesque.</p><p>Appropriately so, as it was crafted from the bones of both humans and monsters.</p><p>Yet, it was neither as grotesque nor as terrifying as the figure who sat upon it.</p><p>Click, clack.</p><p>Bone-dry fingers tapped against a skull that adorned the armrest.</p><p>The figure towered over three meters tall, enshrouded in a black robe that seemed to swirl like mist around him.</p><p>He appeared regal, almost kingly, seated upon his throne. It was a fitting comparison.</p><p>Arch Lich.</p><p>A being justifiably dubbed the monarch of the undead, a sovereign presiding over the realm of death.</p><p>Yet, the Arch Lich himself did not hold such a lofty view. To him, there was a true king elsewhere, and he was merely a devoted servant to that rightful overlord.</p><p>But…</p><p>'Have I been too impatient?'</p><p>Suddenly, the Arch Lich was struck by a twinge of regret.</p><p>Despite his formidable magical powers, they still fell short of his peak strength. Additionally, the circumstances were proving more complex than he had initially thought.</p><p>Lost in contemplation, the Arch Lich spoke.</p><p>\- Are you listening, my servant?</p><p>A figure, cloaked in darkness and lay prostrate, responding to the call.</p><p>\- Yes, my lord.</p><p>\- Proceed to the front lines. Engage the human armies.</p><p>\- As you command.</p><p>\- Go. Relay my commands to all legions within my dominion.</p><p>The black knight, having risen from his position, slowly retreated.</p><p>In the final moment, the visage of the Arch Lich's throne was mirrored in the fiery red of the black knight’s eyes.</p><p>Click, clack.</p><p>The skulls adorning the armrest were too small to belong to adults.<br></p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-391.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-393.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

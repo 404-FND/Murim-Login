@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 306 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 306</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 306</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: December 25, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>The Boeing 747-8 VIP, a behemoth in the skies, lifted off. Jin Tae-Kyung, restless in his seat, rose to his feet and began to meander through the plane's lavish interior.<br><br>"Wow, this isn't just an airplane, it's like a hotel suite! Look, Mr. Choi, there's even a bed!"<br><br>Jin Tae-Kyung marveled, his voice echoing with wonder. Choi Min-Woo, barely concealing his frustration, touched his forehead. To an outsider, their journey might seem like a jaunt to exotic locales, not a mission to a warzone.<br><br>"Um... Jin Tae-Kyung?"<br><br>"Just a moment. I’m going to ask about the drinks available here."<br><br>Aboard the private jet dispatched by the Chinese Central Committee, three stewardesses attended to their needs. Fluent in Chinese, Jin Tae-Kyung beckoned one over, engaging in a conversation that flowed effortlessly.<br><br>‘His fluency is astonishing.’<br><br>His mastery of the language mirrored that of a native speaker, his vocabulary impeccable.<br><br>Choi Min-Woo, though talented in languages, couldn't match Jin Tae-Kyung's expertise.<br><br>He wondered how Jin, with his limited formal education, had achieved such proficiency in Chinese.<br><br>Choi's thoughts were interrupted by a realization.<br><br>‘Right, he’s the one who converses with monsters, after all.’<br><br>Jin Tae-Kyung, skilled in the infernal tongue, effortlessly wove curses into his speech, a feat that left even seasoned linguists perplexed.<br><br>Inquiries about this skill were always met with a cryptic, "It's a corporate secret."<br><br>‘…Better to just give up thinking about it. It’s more peaceful that way.’<br><br>Resignation brought tranquility, a familiar sensation for Choi Min-Woo. He assumed Jin would disclose his secrets eventually.<br><br>Accepting a glass from the stewardess, Choi Min-Woo inquired,<br><br>"What kind of drink is this? It looks clear, like some kind of vodka."<br><br>"It’s Chamisul Fresh."<br><br>"…"<br><br>"I didn’t expect it, but they had soju here. Chamisul tastes best on the rocks."<br><br>Jin Tae-Kyung lounged on the sofa, steadily imbibing. Choi, taken aback by his companion's drinking prowess, quipped,<br><br>"Are you possessed by a ghost that died from not being able to drink?"<br><br>"I’m just pre-drinking. It’s bothersome to go back and forth."<br><br>"What?"<br><br>"Nothing, never mind."<br><br>Jin mumbled, his words trailing off, then inquired,<br><br>"They said it takes about six hours, right?"<br><br>"Yes, at least to Chengdu International Airport in Sichuan Province. The time might be extended in case of an emergency."<br><br>"In case of an emergency?"<br><br>"There's only one scenario that comes to mind."<br><br>Choi Min-Woo's reference to an 'emergency' hinted at the grim possibility of Chengdu falling to the monstrous forces led by a formidable Lich.<br><br>"Of course, the likelihood of that happening is slim. By now, a huge number of People's Liberation Army soldiers and hunters will be defending the place."<br><br>Chengdu, with its massive population of 100 million and a landmass double that of Korea, serves as the administrative heart of Sichuan Province.<br><br>The fall of Chengdu would symbolize the conquest of Sichuan itself.<br><br>Jin Tae-Kyung, hearing this, gestured dismissively.<br><br>"You can't go by probability. If we did, the Monster Wave wouldn't have occurred."<br><br>"Of course, but..."<br><br>"Always consider the worst. Don't just assume the best."<br><br>This might seem like casual banter, but coming from Jin Tae-Kyung, it bore a deeper resonance.<br><br>It's as if his words masked a profound diligence and the insight of a seasoned warrior, rather than the carelessness that Jin Tae-Kyung usually displayed.<br><br>‘He’s an enigmatic person.’<br><br>Choi Min-Woo occasionally felt that Jin Tae-Kyung was somewhat mysterious.<br><br>It wasn't merely his skills or combat prowess that intrigued Mr. Choi.<br><br>In conversations, Jin seemed to emanate an aura of someone who had weathered and surmounted numerous crises.<br><br>‘And he’s even younger than me.’<br><br>As Choi Min-Woo looked at him anew, Jin Tae-Kyung, who had been sipping his drink, hesitated.<br><br>“Do you want vodka instead?”<br><br>“No, Chamisul Fresh is fine.”<br><br>“Right? It has a clean taste…” \[Note: this chapter is brought to you by Chamisul Fresh.\]<br><br>Jin's words trailed off, his brow furrowing.<br><br>“This bastard is making a fuss again.”<br><br>“...?”<br><br>“No, not you. Some asshole keeps squawking annoyingly.”<br><br>Choi Min-Woo, eyeing the stewardesses, leaned in and murmured,<br><br>“Are you talking about the Skeleton Warlord?”<br><br>“Yes. He’s been making a scene since earlier about not wanting to go to China.”<br><br>“It’s because of the Lich.”<br><br>“Apparently, even among the Named Monsters, there are different classes. And it’s an upper-tier undead monster, after all.”<br><br>If the Lich is like a tiger's fur, the Skeleton Warlord is merely a dog's hair. Despite their status as Named monsters, their origins couldn't be more disparate.<br><br>The Lich currently at large was markedly more formidable than the one from the Great Cataclysm era.<br><br>With a grave demeanor, Choi Min-Woo began,<br><br>“Jin Tae-Kyung.”<br><br>“Oh, shut up! Yes?”<br><br>“Something’s been off lately.”<br><br>“You threw out your back?”<br><br>“No, not that. I mean the general atmosphere of the world.”<br><br>“Oh, the atmosphere. I feel that too. I just want to live peacefully, but there are all these annoying jerks causing trouble everywhere... Oh, I’m not talking about you, so be quiet.”<br><br>Choi Min-Woo, now nursing a burgeoning headache, massaged his temples.<br><br>“I’m talking about the gates and monsters.”<br><br>“Oh.”<br><br>Jin Tae-Kyung, momentarily diverted from his invisible adversary, Skeleton Warlord, looked up.<br><br>“It is strange. Named Monsters, which might appear once every few years, are popping up two at a time in just a matter of months.”<br><br>“This year, the number of gate incidents has also surged. The media, eager to criticize, talks about the carelessness of guilds and individuals, but I don’t know. The view of the International Gate Research Institute is quite the opposite.”<br><br>He handed Jin Tae-Kyung a tablet PC, its screen emblazoned with 'Investigation Results on the Sudden Increase in Gate Mana.'<br><br>“It hasn’t been officially announced, but it’s already a known fact. The mana distribution in many gates is rapidly increasing.”<br><br>“That’s the real cause of the recent gate accidents?”<br><br>“Yes.”<br><br>Mana is the source of power for monsters. If the mana distribution inside a gate increases, it’s natural for the monsters to become stronger.<br><br>And more importantly...<br><br>“I have the evidence in my hand.”<br><br>At  Tae-Kyung’s declaration, Choi nodded.<br><br>The Skeleton Warlord. This Named Monster, as Jin Tae-Kyung had revealed days earlier, had undergone an 'evolution.'<br><br>The transformation was so abrupt that even the Warlord was baffled by its occurrence.<br><br>“The Lich that appeared this time might have experienced the same growth in power.”<br><br>“I had somewhat expected that. But…”<br><br>Jin Tae-Kyung brushed back his long hair.<br><br>“This is going to be tougher than I thought.”<br><br>“That’s why we need sufficient countermeasures. According to some of the information I’ve gathered about this situation…”<br><br>"I'll look at the materials later."<br><br>"What?"<br><br>"I have a lot of work to do right now."<br><br>"Work? At this moment?"<br><br>They were aboard a Boeing 747-8 VIP, cruising at 25,000 feet.<br><br>Jin Tae-Kyung's notion of 'work' seemed incongruous in this setting.<br><br>Choi Min-Woo's confusion only deepened with Jin Tae-Kyung's next revelation.<br><br>“I’m going to sleep.”<br><br>“...Sleep? You can sleep in this situation?”<br><br>“I haven’t been able to sleep properly these days.”<br><br>“Wait, just a moment.”<br><br>“Don’t wake me up under any circumstances. This is the answer for now.”<br><br>Choi Min-Woo was astounded. How could someone be so nonchalant in such circumstances?<br><br>He watched, mouth agape, as Jin Tae-Kyung wearily made his way to the aircraft's bed.<br><br>“Oh, right. Mr. Choi.”<br><br>Jin Tae-Kyung, half-hidden under the covers, added with a hint of seriousness,<br><br>“Please turn off the light.”<br><br>“…”<br><br>Choi Min-Woo stood in disbelief as Jin Tae-Kyung drifted into sleep almost immediately.<br><br>‘The profit distribution is definitely 9 to 1.’<br><br>\* \* \*<br><br>Ding!<br><br>\- \[Login\] completed.<br><br>That familiar alert replaced the comfort of the bed with the stiffness of a wooden counterpart.<br><br>Opening my eyes, I was greeted by the unfamiliar ceiling of a Murim Alliance building.<br><br>‘I’m back.’<br><br>After a month in the outside world, here in the martial realm, mere hours had elapsed.<br><br>To my right, an elderly man, small in stature yet profound in presence, slept soundly.<br><br>Fire King Jeok Cheon-Gang, undisturbed even by the sunlight bathing his face.<br><br>“I’ve returned, grandfather.”<br><br>Softly addressing the old man, I rose from the bed.<br><br>"Oh, uh, ah."<br><br>"......"<br><br>"There. Good. Yeah."<br><br>I watched Hyuk Mu-Jin, contorted in a corner of the room, his body writhing subtly.<br><br>'I'm pretty sure I left him on guard duty before logging out.'<br><br>This bastard, instead of keeping watch, is having a wet dream.<br><br>I will regret that I can't capture this moment for the Taiyuan Jin Family chat for the rest of my life.<br><br>But a well-placed kick will ease the pain.<br><br>Whack!<br><br>"Ouch!"<br><br>"Wake up, you Tokyo Hot bastard." \[Note: apparently Tokyo Hot is an adult film distributor.\]<br><br>Jolted awake by the sudden pain, Hyuk Mu-Jin bolted upright.<br><br>"Squad Leader, did you... ahem!"<br><br>"Yeah. Seems like you've been 'ahem-ing' yourself."<br><br>Hyuk Mu-Jin, with a sheepish grin, rubbed his eyes.<br><br>"Oh, that. There were some... circumstances."<br><br>"......"<br><br>Were there circumstances, or you were about to create some?<br><br>Looking at Hyuk Mu-Jin with a disgusted gaze, I sighed deeply.<br><br>Yes, it’s all my fault for trusting this guy.<br><br>"Phew, how long have you been asleep?"<br><br>"Not long. Really."<br><br>"Then nothing unusual happened while you were awake?"<br><br>"Yes. Until two hours ago, I made sure not even an ant could get in."<br><br>Thinking it over, I asked,<br><br>"Two hours ago? Wasn’t that when I just fell asleep?"<br><br>"Well, that's true. But I really didn’t sleep for long."<br><br>"Right. Two hours isn’t a long time to sleep."<br><br>"Yes, yes."<br><br>“So, my dear Mu-Jin followed me even into my dreams to guard me?”<br><br>Hyuk Mu-Jin nodded with frantic eagerness.<br><br>“Yes! Hyuk Mu-Jin of the Jin Dragon Squad of the great Taiyuan Jin Family! I pledge my unwavering loyalty to you, Squad Leader!”<br><br>“Oh, how admirable.”<br><br>Suppressing a laugh, I reached for a vase beside the bed.<br><br>“Then why were you making those strange moans while guarding me in your dreams?”<br><br>“Gasp.”<br><br>“Who exactly did you meet? Mimi from Honghwaru? Kirara from Tokyoru? Or the virtuous daughter from the Sundubu House?” \[Note: these are all real-world restaurants.\]<br><br>His mere presence irked me to the point of near combustion.<br><br>As I hoisted the vase, Hyuk Mu-Jin cautiously retreated.<br><br>“Ha, please overlook it just this once.”<br><br>“I’ve already overlooked it five hundred times.”<br><br>“Then, considering those five hundred times, just one more…”<br><br>“Just this once.”<br><br>Whoosh!<br><br>Three events unfolded in rapid succession.<br><br>First, my hand launched the vase with tremendous force. Second, it narrowly missed Hyuk Mu-Jin, who dodged in the nick of time, and hurtled towards the door.<br><br>And third, as fate would have it, the door swung open at that exact moment.<br><br>“How is Elder Jeok's condition...”<br><br>Whack!<br><br>The short, elderly man, arms laden with a small bundle, couldn’t finish his sentence.<br><br>His eyes glazed over in shock as he glanced at Hyuk Mu-Jin and me, mouth opening and closing wordlessly, before he crumpled to the floor.<br><br>Thud, bang!<br><br>The vase, having struck the old man's forehead, rolled away, scattering acupuncture needles and medical tools from his bundle across the floor.<br><br>“...!”<br><br>“...!”<br><br>And thus, the Mad Doctor of Luoyang, who had arrived early to tend to Fire King Jeok Cheon-Gang, succumbed to a concussion.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-305.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-307.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

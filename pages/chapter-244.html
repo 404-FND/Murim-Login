@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 244 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 244</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 244</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: Coldbutteredtoast</span>
+                            <span class="published-date">Published: January 12, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>Even in his earliest memories, Tae-Kyung had always loved the sea. He loved the beach, the unique smell, and watching waves crash on the shore. Now the sea was within him, except this was an ocean of fire.<br><br>Today, as always, he swam in that endless energy. Grabbing the horns of the dragon curled within his dantian, he rode a fiery wave of Qi through hundreds of interconnected vessels and meridians before returning back to his centre.<br><br>*Ding!<br><br>-You have successfully completed [Qi Meditation].  <br>-The level of the [Divine Art of Fire] has risen to 6th Mastery!  <br>-All martial arts of the [Flame Clan] become more sophisticated and powerful!  <br>-All fatigue and stamina has been restored!  <br>-Level up!<br><br>[Is it finally done?]<br><br>Tae-Kyung wasn't concerned with the system notifications. The only thing that mattered to him was improving his mastery over the Divine Art of Fire.<br><br>[It's real from here on out.]<br><br>He had come a long way. Bathed in the sunshine pouring through the window in his guest room, his mind returned to earlier days and the dark intensity of the Chamber of the Divine Flame. It was said that, in ages long past, the first Lord of the Volcano had created the sacred hall for his successors. It was a place of heat and flame, optimised for the absorption of Burning Qi, as well as for learning the philosophy of the Flame Clan. In other words, it was a double EXP area that was perfect for grinding. However, there were still limitations.<br><br>'Hmm.'<br><br>'Why are you moaning like a sick puppy?'<br><br>The conversation had taken place about half a year after Jeok Cheon-Gang had first taken him to the Chamber of Flame. At that time, Tae-Kyung had been full of confidence, quickly reaching Third Mastery in the Divine Art of Fire.<br><br>'Oh, no reason. I was just thinking of doing another year of closed training before we leave.'<br><br>'Here? In the Chamber of Flame?'<br><br>'Yeah.'<br><br>'What about the Convocation of the Stars?'<br><br>'Why go out when I'm making such good progress? It's just one more year... What? Why are you looking at me like that?'<br><br>'No reason. Just admiring your stupidity.'<br><br>'You make it sound like a big deal.'<br><br>Letting out a deep sigh, Jeok Cheon-Gang shook his head and said, 'Do you know how old I am, boy?'<br><br>'How should I know something that grandfather doesn't know himself?'<br><br>'Your grandfather knows perfectly well. This year, I'm one hundred and one.'<br><br>'Oh, a Dalmatian for every year.'<br><br>'What? Boy, I swear on the burning souls of the ancestors that if you spout any more shit like that, I'm going to throw you on the fire.'<br><br>Tae-Kyung's face immediately became serious. 'You've reached a great and revered age, grandfather.'<br><br>'Huh. Quite right. Anyway, that's not important. What I'm telling you is that despite living for so long, I've only reached eight stars. Do you see the problem?'<br><br>'Wait a moment. What do you mean, eight stars? Didn't you already master the Divine Art?'<br><br>'Do you think our martial art is called divine for nothing? You've progressed very quickly with your Heavenly Martial Body, but there is a limit to what can be learned in the Chamber of Flame. You cannot take the Divine Art of Fire higher than five stars in here.'<br><br>'Oh... then how do I reach the higher levels?'<br><br>'Martial arts are like weapons,' said Cheon-Gang, with eyes that gleamed in the firelight. 'You must grind and polish them constantly. If you want enlightenment, you need insights gained from real world experience.'<br><br>'Damn. Alright, but I'll have to learn the Divine Art to five stars before we leave, though.'<br><br>'Ha! Have you ever seen such a greedy fellow? Learning three stars in half a year is already a great achievement. The heavens say you will do great things, but the heavens can lie.'<br><br>'So, how long do you expect it to take?'<br><br>'Well, it took me five years to go from three stars to five. No matter how talented you are, it will take two years at least.'<br><br>But just half a year later, Tae-Kyung was able to stand before the half-fascinated Jeok Cheon-Gang. 'This can't be happening,' the old man said. 'It doesn't make any sense!'<br><br>'Sure it does. Did it really take you five years?'<br><br>'You punk! Your grandfather was one of the most talented students of his time!'<br><br>'Your grandson has a Divine Body, though...'<br><br>'This is ridiculous! How can the heavens bless a guy like this!'<br><br>Recalling the incredulous howls of his master, Tae-Kyung couldn't help but smile. They were good memories. Leaving them behind, he stood and walked over to the mirror. A perfectly-balanced body was reflected there, rippling with supple, condensed muscles that perfectly combined strength and elasticity. His long hair was tied up and his chin was shaved smooth.<br><br>[Even if nothing changed, this would be fine.]<br><br>A martial artist was supposed to eschew riches, but Tae-Kyung felt like something was missing when he lived a less abundant life. Besides, it was hard to argue with Jin Wi-Kyung that the world was watching the Convocation. It would be a sin for the Sleeping Dragon to appear in the Central Plains like this. While that wouldn't have deterred Tae-Kyung in the past, having tried a better way, he'd found that he liked it more.<br><br>The reflection smiled at him. He didn't know whether this form was different from his real body, but the face in the mirror was incredibly handsome.<br><br>[I look like a damn model!]<br><br>While paying himself the best compliment a man could give a man, Tae-Kyung suddenly realised that he'd forgotten something. The chains. Even now, he was wearing hundreds of kilos of shackles and iron balls. These days, he barely noticed them, like they were simply a part of his body.<br><br>"Open inventory. Summon spear."<br><br>In the next moment, it materialised in his hand. Almost three metres in length, forged from an enormous quantity of ten-thousand-year-old cold iron, the entire spear gleamed all the way from the sharp tip at one end of the shaft to the long, shining blade at the other.<br><br>Tae-Kyung lifted the spear, shining in the sunlight. "White flame." (白炎)<br><br>As though it recognised its name, a faint echo sounded within the depths of the blade. A once-in-a-lifetime masterpiece created by Jang Tae-Bo, one of the greatest smiths in the world, there was no need to look at the system window to know that the spear was special.<br><br>"Captain." The voice of Hyuk Mu-Jin could be heard on the other side of the door. "It's time to leave."<br><br>Outside the window, the day was bright and warm, and the Jin family retainers were busy preparing, under the watchful eye of Jin Wi-Kyung.<br><br>"I'll be right there," said Tae-Kyung, lifting White Flame.<br><br>With four beams of light, cold iron cut cold iron and everything that had bound him for a year fell away. A crushing pile of shackles, chains and iron balls struck the ground, smashing the floorboards to splinters.<br><br>The door flew open and a startled-looking Mu-Jin ran inside. "What happened?"<br><br>"Nothing. Let's go. Oh, grab some chains while you're here."<br><br>"What! You're not going to tie me up, right?"<br><br>"Just so you know, it's ten-thousand-year-old cold iron..."<br><br>"I'll take it! It's mine!"<br><br>"Sure!"<br><br>Wondering if he should tell Mu-Jin that the Fire King would want his chains back, Tae-Kyung went outside.<br><br>Sitting astride a tall, black horse, Jin Wi-Kyung smiled in greeting. "Ready? Let's go."<br><br>"Yeah."<br><br>Their destination was Mount Song, where the curtain would rise on the Convocation of the Stars. The world would be watching.<br><br>The brothers rode at the head of a column of fifty soldiers from the Jin Dragon Troop. As they travelled, a faint cry echoed on the wind. "Wait! Don't leave me behind!"<br><br>[I can't believe he's the Vice-Leader...]<br><br>***<br><br>With an exaggerated sigh, Fire King Jeok Cheon-Gang muttered, "Whenever I attend these things I always ask myself why I bother."<br><br>His Divine Holiness, the Abbot of Shaolin, Dharma King Hong Dao smiled, with an expression of infinite benevolence. "This old monk is also bored, so stop going on about it."<br><br>"Why? You said you're bored, too."<br><br>"I'm bored, but imagine how you'd feel if there was an old man next to you whining like a child?"<br><br>"Huh. I'd be annoyed."<br><br>"There you go. If you were as bored and annoyed as me, you'd have smashed the table and gone home."<br><br>"I see you've attained enlightenment."<br><br>"Amitabha Buddha," said Hong Dao, tapping on the table. "Amitabha Buddha."<br><br>Famed for their eccentricities, the Fire King and the Dharma King had clearly not changed despite their great age. Listening to their banter, the guests people nearby exchanged glances. However, while their attire and their auras were different, these were also not ordinary people. From middle-aged and vigorous to grey-haired elders, they represented the Nine Great Sects and Five Great Families, the fourteen pillars that upheld the world of Murim.<br><br>Some of the assembled group were familiar even to Jeok Cheon-Gang. "You're the head of the Namgoong Family, aren't you?"<br><br>Namgoong Ryong stood and saluted. "Yes, Lord. Please forgive me for not introducing myself sooner. The two Great Masters were in deep conversation and I had no wish to interrupt."<br><br>"It's fine. Last time, I left before I had a chance to meet with you. My apologies."<br><br>"No, it is I who should apologise."<br><br>"As you wish. Will your son be participating in the tournament?"<br><br>"Unfortunately, he cannot attend this time."<br><br>"Huh. Too bad."<br><br>The Fire King swept his gaze onto the person beside the Namgoong Lord. "Who are you?"<br><br>A bearded old man stared back, sour-faced. "Are you talking to me?"<br><br>"Yeah, the one with a beard like a crippled bastard. What's your name?"<br><br>"Gong Il-Jung. Leader of the Southern Edge Sect."<br><br>"Oh, you're the Windy Sword or something, right?"<br><br>"It's 'Tempest Swordsman'."<br><br>"Tsk, what does it matter? You young people are so uptight."<br><br>A young man of sixty years, Tempest Sword Gong Il-Jung held his tongue. Only a year before, his fellow elder, Gong Il-Sung, the Roaring Swordsman (노호검객), had returned to their stronghold swaddled in bandages. It was a great insult to their sect, but it had to be endured. The Fire King was literally a mad tiger.<br><br>"Did your brother-in-law tell you how things stand?" said Jeok Cheon-Gang. "Take good care to ensure you aren't noticed. It wouldn't be a bad idea to stay in your Confession Hall for about twenty years."<br><br>Did that mean he expected to be around for twenty years, so not to mess around? The Tempest Sword barely stopped himself from swearing. The other honoured guests clicked their tongues inwardly. 'What a terrible old man!' 'Think you're going to live forever?' 'If you're that upset, go chill out somewhere, you old monster!'<br><br>Clear divisions existed in the schools and clans of Murim. As a hero from an earlier era, Jeok Cheon-Gang was part of the highest division. This was one of the reasons why the assembled leaders couldn't help but feel small and embarrassed before him, no matter how powerful they were. Martial arts, rank, gibberish. In all areas, he was their superior. Many of the assembly began to cough and squirm, hoping to avoid the Fire King's next question.<br><br>"Ho ho!" A loud voice rang out, as a great figure swept into the room. "Since there was no tiger, the fox is acting as king. Jeok Cheon-Gang, how are you?"<br><br>Frowning in recognition, Cheon-Gang turned his head. "Motherfucker, you're not dead yet?"<br><br>"Listen to this sad, little fossil." The enormous old man chuckled, but his eyes were razor sharp. "I saw my great-grandson not too long ago. He'll be married soon, I expect.<br><br>"Great-grandson?"<br><br>"Jealous? My great-granddaughter-in-law is the greatest beauty in the North. She's so cute, because she looks like my mother."<br><br>Jeok Cheon-Gang wrinkled his nose. "I can imagine. They say that if a girl has big fists and a thick waist, she'll be a beauty queen in Hebei."<br><br>"What!"<br><br>"Well, anyway, congratulations. Now you have ten children, you won't have to worry about your successors. In commemoration of your great-grandson, let's modify your title. Rather than Thunderbolt King (벽력도왕 / 霹靂⼑王), we'll call you Virile King (정력도왕 / 精⼒⼑王 -- Chinese: Energy Dao King). What do you think?"<br><br>"Argh! Damn your tongue!"<br><br>"Sit down while I'm being nice to you. Don't you remember when your bones got broken during the Great War?"<br><br>"You..."<br><br>A mighty wave of energy flowed between the two superstars. It clashed with incredible force, the killing intent so great that the other guests stepped back in fear.<br><br>"Amitabha," said the Dharma King, stepping between the two rivals. Hong Dao was a large man, but he seemed three metres tall in that moment. "Calm yourselves, heroes. Do you want to smear shit on the names of the Flame Clan and the Peng Family of Hebei?"<br><br>There was a moment of hesitation. Then, the two men recovered their composure.<br><br>"Ahem. Jeok Cheon-Gang, I'll be sure to take care of you next time."<br><br>"I can't wait, Virile King."<br><br>Turning from his spluttering foe, the Fire King strolled out of the room. The Dharma King, the Thunderbolt King, and the leaders of the Fourteen Pillars of Murim followed.<br><br>Passing through a blue silk curtain, the group walked down a hallway towards the light. With every step, the rumble of countless voices grew louder, until it was like a great weight on their shoulders. Finally, blinking in the sunshine, they stepped out onto the slopes of the Songshan Mountains and were greeted by the roar of ten thousand voices cheering.<br><br>The Convocation of the Stars had begun.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-243.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-245.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 358 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 358</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 358</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: March 1, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>Kwaaaaaa!<br><br>A spear blade, wreathed in blue flames, hurtled towards the crown of the Western Heavenly Demon Lord's head.<br><br>It resembled a fire dragon's claw descending from the heavens, a force of destruction poised to obliterate all in its path.<br><br>'This is...'<br><br>In that split second, the Western Heavenly Demon Lord thought.<br><br>'This is unavoidable.'<br><br>Merely stepping back a few paces wouldn't evade this strike.<br><br>What should be done then? Before the question could fully form, his battle-hardened body instinctively sprang into action.<br><br>Swoosh!<br><br>His dark red sword, drawn from his waist, clashed with the blue flames.<br><br>\* \* \*<br><br>Boom!<br><br>A deafening boom erupted, sending a shockwave that left my ears ringing and my breath hitching.<br><br>As the sword met the spear, a dark red flash detonated, hurling me backwards as if yanked by an unseen force.<br><br>Bang, crack, boom!<br><br>The thick sedimentary rock wall crumbled upon my impact, disintegrating like a sponge cake.<br><br>Twisting mid-air, I deflected falling stalactites away from my eyes.<br><br>The moment my feet struck the ground, the solid rock beneath splintered, opening like a furrow plowed through a field.<br><br>Crack!<br><br>Damn it. I must have flown at least three jang.<br><br>Discarding my leather shoes, now soleless, I glared at the distant figure.<br><br>"Fucking bastard. You're pretty strong, huh?"<br><br>"......"<br><br>Through the dusty haze, the Western Heavenly Demon Lord's stern expression was unmistakable.<br><br>Silently, he surveyed his broken sword and blood-stained hands, then spoke.<br><br>"That spear must be a divine weapon."<br><br>"A divine weapon? Sure, I guess so."<br><br>"What martial art was that?"<br><br>I answered without hesitation.<br><br>"The Get Hit and Die Technique."<br><br>"I'm beginning to understand why the Blood Lord called you arrogant and... why he wanted to kill you so badly."<br><br>He scrutinized me from head to toe.<br><br>"You are dangerous."<br><br>"I guess I am a bit dangerous. Maybe that's why all the women avoid me." \[Note: what's this boy even talking about? Wolhwa spent a night in bed with him and clings to him every chance she gets; Ju Hwa-Ran is smitten by him during their encounters; and the FBI almost got involved because an underage girl essentially threw herself at him (don't believe me? Take a look at the last panel of manhwa chapter 87).\]<br><br>"I'm amazed that such a young man as Cheong Pung has reached the Transcendent Realm, but now I am even more so. Honestly, you have far exceeded my expectations. To think you could wound me with just that level of skill." \[Note: I'm not exactly sure how the Western Heavenly Demon Lord knows that Cheong Pung is in the Transcedent Realm.\]<br><br>I wasn't surprised. I had a hunch that Cheong Pung had surpassed the wall to reach Transcendence.<br><br>It seemed the Western Heavenly Demon Lord had accurately assessed the level of my martial arts as well.<br><br>"Is that a compliment?"<br><br>"Of course. But don't be too pleased. I do not like those who exceed my expectations."<br><br>He opened and closed his bloodied hand, drops of blood falling onto the stone and sand below.<br><br>"The technique I used, Art of Gentle Diversion, was perfect. Yet, I couldn't fully deflect your attack. To think a green young man, barely touching Transcendence, could strike me." \[Note: the literal translation is Four Taels to Deflect a Thousand Catties. A tael is approximately 50 grams, and a catty is approximately 500 grams. In essence, this technique uses minimal force to achieve a powerful effect against a heavy attack.\]<br><br>Art of Gentle Diversion. The profound martial principle of controlling a powerful force with only a fraction of your strength.<br><br>The execution of this technique by the Western Heavenly Demon Lord was impeccable, demonstrating remarkable composure and precision even in a dire moment.<br><br>However, he had overlooked one detail...<br><br>"I'm stronger than I look."<br><br>He was not merely contending with an ordinary Peak Master.<br><br>The hierarchy is clear: third-rate cannot challenge second-rate, second-rate succumbs to first-rate.<br><br>With each ascension in the martial realms, the disparity in power becomes unfathomable. That's the common knowledge of Murim, yet I stand as an exception to that rule.<br><br>"Call me a Physically Transcendent Master."<br><br>"Physically Transcendent Master. I don't quite understand, but if you say so, it must be true. Understood."<br><br>His agreement left me in disbelief.<br><br>"...What do you understand?"<br><br>"When one lives as long a life as I have, they experience many things. Compared to the monstrous strength of my all-powerful Lord, what you showed is just the tip of the iceberg."<br><br>The Western Heavenly Demon Lord lifted his new left arm with a faint smile.<br><br>The movement was as natural as if it had always been his.<br><br>Surely, the monstrous strength he mentioned must include his recovery as well.<br><br>"Everything will proceed according to the will of my Heavenly Lord. How about surrendering now and abandoning futile hope?"<br><br>"Surrender?"<br><br>"If you do, I'll personally appeal to the Heavenly Lord on your behalf. Even the Blood Lord wouldn't dare to touch you then."<br><br>"Wow, you've got it all planned out, huh?"<br><br>"Should I take that as a yes?"<br><br>"Hmm, wait a moment. I just thought of a better idea."<br><br>Approaching the Western Heavenly Demon Lord, I proposed,<br><br>"After all, stories like this always end with justice prevailing over evil. Instead of blabbering nonsense about Dark Heaven or Shmark Heaven or whatever, why not switch sides to the righteous path? I'll put in a good word for you with Grandpa Sword Saint and let you off easy." \[Note: Regarding the "Dark Heaven or Shmark Heaven" part, I have slightly changed this from the raw. The literal translation is "Dark Heaven or Cheonggyecheon". The word for Dark Heaven (암천) is pronounced Amcheon. Cheonggyecheon (청계천) is a natural spring and public place in downtown Seoul. Phonetically, this is similar to saying "Dark Heaven or Shmark Heaven".\]<br><br>"Heh, how amusing."<br><br>The Western Heavenly Demon Lord started walking towards me with a faint smile.<br><br>"I apologize. Just don't regret this when you meet the Blood Lord."<br><br>"Bastards who have said shit like that to me are all now getting their heads kicked in front of Yama." \[Note: in Buddhism, Yama is the King of Hell similar to Hades in Greek mythology.\]<br><br>"Perhaps it's because you're young, but you are very confident in yourself. If you're hoping for the same luck as last time, you should forget it. I'm aware that the strike you showed was your full strength."<br><br>"That's the biggest load of shit I've heard this year. Did you take bullshit lessons from the yellow dog next door?"<br><br>My response was light-hearted, yet the truth in the Western Heavenly Demon Lord's observation was undeniable.<br><br>A surprise attack aimed at a critical vulnerability must conclude decisively. It should incapacitate the foe or end their life.<br><br>A broken weapon and bloodied hands were insufficient.<br><br>The Western Heavenly Demon Lord stood leagues ahead of me. Revealing my peak strength in an attack and failing to deliver a crippling blow was an egregious error.<br><br>'Should I have unleashed a full-force strike from the beginning?'<br><br>What if I had gone all-in from the start?<br><br>I swiftly dismissed the thought. Even if I could go back, risking everything isn't an option.<br><br>Gambling on a win-or-lose situation should be avoided, especially when other people's lives are at stake.<br><br>'And... I haven't played all my cards yet.'<br><br>Gradually, we closed in on each other.<br><br>The Western Heavenly Demon Lord and I, we both slowly approached each other.<br><br>Unlike our initial clash, neither of us launched any swift attacks or hidden weapons this time.<br><br>We simply gauged the interval separating us, observant of each other's movements, biding our time for an opportune moment.<br><br>A moment like now.<br><br>Snap!<br><br>The Western Heavenly Demon Lord moved first.<br><br>With just one step, he closed a distance of three jang, his hand becoming a blur. The serpent-like sword in his grasp blazed with a dark energy.<br><br>'Avoid direct confrontation at all costs.'<br><br>The presence of enlightenment is a gap that even the System can't fill.<br><br>The difference in strength between those who have reached the Transcendent Realm through enlightenment and those still in the Peak Realm is as vast as that between the heavens and Earth.<br><br>No matter the magnitude of my strength, repeated collisions with his Sword Aura would surely result in internal injuries.<br><br>Whoosh! Boom!<br><br>As the Sword Aura split through the earth, a crater appeared as if straight out of a movie. Had I not narrowly avoided it, I would have been cleaved in two for sure.<br><br>Retreating, I flexed my hand.<br><br>'Inventory open. Summon.'<br><br>Shhhshshsh!<br><br>Untrained in the art of dagger throwing, I nonetheless propelled them with formidable velocity and strength.<br><br>Predictably, this tactic proved futile against the Western Heavenly Demon Lord.<br><br>Screech!<br><br>He drew a horizontal arc. The dark Qi enveloping his blade effortlessly dissected the incoming daggers, propelling a deadly line towards me.<br><br>With a minor tilt of my head, I let the scorching wave of Qi and the blade's momentum skim by.<br><br>Boom!<br><br>Disregarding the resonant boom and the ground's tremor behind me, I advanced.<br><br>Crack! Crunch!<br><br>Beneath me, the earth fractured like a spider's web.<br><br>I propelled myself forward at a velocity rivaling, perhaps even surpassing, that of a Transcendent Master.<br><br>"Excellent!"<br><br>With a shout of admiration, the Western Heavenly Demon Lord lowered his sword, now aiming at my abdomen.<br><br>His inky black blade cleaved through me.<br><br>Or, it would have probably happened that way if it weren't for the words that came to mind in the split second before that happened.<br><br>'Thirty points to agility and strength.'<br><br>Swoosh!<br><br>The transformation was instantaneous. My body became lighter, my muscles denser and more elastic, extracting every bit of available power.<br><br>Gliding on the breeze, I evaded the obsidian blade as it sliced the air.<br><br>Kwaaaa!<br><br>The Western Heavenly Demon Lord's eyes widened in shock.<br><br>It was too late to retrieve his sword. He hastily reached out his other hand to grasp the spear approaching his chest.<br><br>His reflexes were astonishing. What surprised me even more was that my prediction had been spot on.<br><br>'Inventory open. Store.'<br><br>Swoosh!<br><br>The hand of the Western Heavenly Demon Lord, enveloped in Qi, cut through the air.<br><br>White Flames, once seemingly within his reach, now resided within my inventory.<br><br>Then came the moment I had anticipated.<br><br>'Divine Palm of Fire.'<br><br>My right hand, engulfed in blue flames, connected with the Western Heavenly Demon Lord's abdomen.<br><br>Boom!<br><br>A blast of intense heat propelled his body upwards, and I readied my left fist for the follow-up.<br><br>'Flame-Extinguishing Divine Fist.'<br><br>Crack!<br><br>The blow that had shattered a cliff dug into the Western Heavenly Demon Lord's side.<br><br>The impact reverberated through my fingertips as his body was hurled like a projectile into the wall.<br><br>Bang! Boom!<br><br>The entire underground prison shook. Simultaneously, a wave of exhaustion and hunger overwhelmed me.<br><br>Every movement was a fully committed exchange. I breathed as quickly and as deeply as I could manage, trying to regain my composure.<br><br>"Phew."<br><br>Crunch.<br><br>I steadied my breath and slowly walked through the falling rubble.<br><br>Pinned within the solid rock, the Western Heavenly Demon Lord gazed at me, his vision clouded.<br><br>"How did you... I was sure I had grabbed the spear."<br><br>"It's something similar to the monstrous strength of the all-powerful Lord you believe in."<br><br>"Cough. I see. Is that also how you suddenly became faster?"<br><br>"Yes. It cost me a few lives. Though they were doomed to die anyway."<br><br>"What do you mean?"<br><br>"This is an underground prison. Don't you feel something strange?"<br><br>After a brief pause, he acknowledged.<br><br>"...It is a prison without prisoners."<br><br>"Correct."<br><br>"How did you do it? Did you use the Great Qi Absorption Method on the prisoners?"<br><br>"In a manner of speaking, you could say that."<br><br>The distinction lies in the Great Qi Absorption Method's focus on seizing the opponent's Qi, whereas my approach involves acquiring experience points.<br><br>'Thanks to them, I earned a solid 60 points. Truly a godsend.' \[Note: I rescind my previous comment. This boy really did kill them for the XP.\]<br><br>The Tang Family of Sichuan opted to seal the dantians of the prisoners rather than break them, choosing to limit their abilities and enforce the use of restraining shackles.<br><br>This method ensured their prolonged survival. The longer they lived, the more prolonged their suffering could be.<br><br>Thanks to this, the twelve prisoners, the Heavenly Force Demon excluded, served as my source of sustenance.<br><br>"Cough. The Great Qi Absorption Method, I see, that was it."<br><br>"Has your curiosity been satisfied now?"<br><br>"Would you answer if I asked more?"<br><br>"Sure. So..."<br><br>Gazing down at the Western Heavenly Demon Lord, who offered a feeble nod, I pressed on,<br><br>"...Cut the poor acting and get up. And stop the fake coughing too. You're not even coughing up any blood."<br><br>"Really now."<br><br>The dimming eyes of the Western Heavenly Demon Lord suddenly gleamed, shaping into crescents.<br><br>"It appears I have no talent for such theatrics."<br><br>"...Sigh."<br><br>Damn bastard.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-357.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-359.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 277 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 277</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 277</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: November 3, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>Countless blades and arrow tips rained down on me from all sides.<br><br>At the same time, instinct took over; my hands flowed seamlessly with my thoughts.<br><br>Swoosh! The azure flame wrapping around my spear traced a luminous crescent.<br><br>Crash!<br><br>Weapons and arrows intersecting its path were cleaved as if they were mere slices of silken tofu.<br><br>This spear, forged from Ten Thousand Year Tempered Steel, was as anticipated: resilient and sharp enough to obliterate any modern weaponry.<br><br>Yet, this was a surprise revelation to them.<br><br>"Gasp!"<br><br>A Black Hunter's eyes widened in disbelief as he witnessed his blade disintegrate under the overwhelming prowess of the Scorching Clan's martial arts.<br><br>Snap!<br><br>My grip, strong enough to shatter stone and bend iron, tightened around the thug's arm. His flesh contorted, and his bones jutted out at grotesque angles.<br><br>"Arghhh!"<br><br>I had committed to memory the visages of all those who had dared ambush Im Hyuk-Jun. My gaze locked onto the Black Hunter's face as he wailed.<br><br>"You're not the one."<br><br>"Die!"<br><br>His malicious shout was laced with agony as a dagger lunged at my throat. Even amidst his torment, his strike was precise and unhesitating.<br><br>This wasn't the work of a mere amateur, but the precision of an adept assassin.<br><br>'I was a fool to use common sense while engaging with these guys.'<br><br>Amused by my own realization, I sidestepped the dagger.<br><br>In one fluid motion, I seized his other arm and yanked.<br><br>It came free.<br><br>Crunch!<br><br>"Ughh…"<br><br>His jaws slackened as the sheer agony robbed him of his voice.<br><br>With a swift kick, I sent the trembling figure sprawling, blood spewing from the jagged stumps of his severed arms.<br><br>I nonchalantly tossed the dismembered limbs onto the verdant grass.<br><br>"That's one down."<br><br>"......!"<br><br>"......!"<br><br>A heavy silence descended on the scene.<br><br>Witnessing one of their equals dispatched with such ruthless efficiency, the remaining Black Hunters faltered. Im Young-Jun, having observed from a distance, raised an eyebrow.<br><br>"I had a hunch about you."<br><br>"It was a good hunch. Had you been smart enough to act on it, maybe I wouldn't be here now."<br><br>"Jin Tae-Kyung, you son of a..."<br><br>"When I was nice enough to offer you a truce, you should have listened. Because of you and the other two, this bastard here can't even jerk off on his own anymore."<br><br>I glanced around at my adversaries, my tone even and impassive. Every glance sent my way held waves of mixed emotions of anger and bewilderment.<br><br>Im Young-Jun, reading the situation, widened his eyes and shouted.<br><br>"What are you bastards doing?! I'll ensure that all of you are saved, even if I have to drench you in potions. Don't be scared of this asshole. Kill him!"<br><br>I paused, momentarily confused. What had I just overheard?<br><br>Oh, right. Potions.<br><br>"If an arm or leg gets torn off, you'd need a top tier potion. Seems you guys are rich."<br><br>"It's a small price to eliminate a colossal nuisance like you. We should have taken you out from the start... You've been a pain in my ass since I got my first command."<br><br>"You're openly admitting that you've got backers? Aren't you afraid of being assassinated?"<br><br>"Assassinated?"<br><br>A mocking smile formed on Im Young-Jun's lips.<br><br>"We are the assassins. And either way, you're going to die here."<br><br>"Well, before I die, there’s something I've always been curious about."<br><br>I asked with genuine curiosity:<br><br>"Do those potions have the ability to resurrect the dead? Or do you carry around a few spare lives?"<br><br>"What?"<br><br>Swish!<br><br>Before he could complete his sentence, my blade sliced through the air. The agonized Black Hunter at my feet lay silenced, his throat cut.<br><br>I kicked the severed head, rolling it towards them.<br><br>"Go ahead. Save him. Oh, wait... If the heart bursts or the neck gets snapped, you can't save them with a potion, right?"<br><br>Shhh!<br><br>Without hesitation, my hands shot forward.<br><br>Two gleaming daggers shot out at a terrifying speed, barely visible as they flew.<br><br>A wet squelch sounded as two Black Hunters staggered and crumpled to the ground.<br><br>Their heads were nearly halved by the crushing force of my attack.<br><br>"Ah, I tried to hit cleanly between the eyes, but I couldn't control my strength."<br><br>The air around me crackled.<br><br>The taunting grin on Im Young-Jun's face had evaporated. A tempest raged in the eyes of the remaining twenty-five Black Hunters.<br><br>"How, how is this possible?"<br><br>"This damn..."<br><br>Whispers of disbelief swirled around me. This must be an experience these men have never faced before.<br><br>Hunters hunt monsters, but the Black Hunters hunt Hunters.<br><br>They were used to murder, kidnapping, threats, and much more. They would have acted as the hidden hands for the massive guilds, handling all of their dirty work.<br><br>Yet, it was unlikely that they had ever fathomed that they would become the hunted, especially not by a solo individual.<br><br>I spat on the headless corpse at my feet.<br><br>"Bastards. You're no better than street thugs."<br><br>Actually, in terms of mindset, street thugs might even be better.<br><br>At the very least, they anticipate the danger lurking in the shadowed corners of the streets they tread. \[Note: the MC is suggesting that though similar, street thugs navigate their world with fear of potential danger, making them at least cautious in their actions. The Black Hunters, on the other hand, kill recklessly, without any fear of retribution.\]<br><br>"You... who the hell are you?"<br><br>The parched terror in his voice seemed to reflect his state of mind. I gave a sly smile towards Im Young-Jun, who was staring at me intently.<br><br>"Why ask when you already know?"<br><br>His gaze hardened.<br><br>"You've fooled others quite well. All of this isn't the work of someone who has killed once or twice."<br><br>"Slaughtering animals hardly qualifies as murder."<br><br>Step by step, I took my time as I approached.<br><br>With each step, the encirclement of Black Hunters around me retreated.<br><br>Even the dullest among them must have felt it. The fact that I wasn't just a simple A-rank Hunter.<br><br>My unique aura and the thick scent of blood would have given it away...<br><br>"Jin Tae-Kyung."<br><br>Im Young-Jun's voice was steely.<br><br>"Targeting the D-rank Hunter was a warning. It was an order from the higher-ups."<br><br>"I didn't like that method of warning. Not one bit."<br><br>"I understand your sentiment. Stop here."<br><br>"And if I don't?"<br><br>"It could escalate further next time."<br><br>"Further?"<br><br>"Aren't you worried about your mother and your little sister?"<br><br>For a moment, I was at a loss for words.<br><br>Gradually, my advancing steps stilled to a halt. A newfound resolution colored Im Young-Jun's tone.<br><br>"We can negotiate with the higher-ups. Consider me your stepping stone for a conversation with them."<br><br>"...A stepping stone?"<br><br>"Just give up one thing: abandon the mantle of A-rank Hunter Jin Tae-Kyung and simply exist as the civilian, Jin Tae-Kyung. You will be adequately compensated, of course."<br><br>I locked eyes with Im Young-Jun.<br><br>The palpable strain of my very presence, countered by the hungry anticipation lurking in his gaze, was undeniable.<br><br>A tense quiet settled. My voice, edged and gravelly, broke the silence.<br><br>"A stepping stone, huh? I like the sound of that."<br><br>Just as a hint of a smirk began to grace Im Young-Jun's face, I added, coolly:<br><br>"Stepping stones exist to be walked upon. We'll see who's awaiting me once I cross."<br><br>"...!"<br><br>There was no room for compromise. The line had been crossed.<br><br>The ways of the modern world or those of the Murim. I weighed both options at each turning point... but today, I will choose the ways of the Murim.<br><br>"Next time you propose such a deal, ensure your eyes don't betray your deceit."<br><br>"Jin Tae-Kyung-!"<br><br>As his voice rang out in protest, I grounded my stance, angling my spear towards the onslaught of Black Hunters.<br><br>Swish!<br><br>Ahh!<br><br>Channeling just a fraction of my might, a devastating punch followed.<br><br>Magic enhancements crumbled, and the tower shield lay in ruins. The tanker hiding behind the shield stared at me with disbelieving eyes.<br><br>Thunk.<br><br>The blade of White Flames pierced through the tanker's chest. The mage who had taken refuge behind the shattered defense scrambled backward.<br><br>Thud!<br><br>I threw a dagger, which stuck in the back of his skull. But the assault didn't end there.<br><br>"Die!"<br><br>Swoosh!<br><br>Three blades lunged at my throat, chest, and shoulder.<br><br>Each blade sliced through the air with murderous intent. The faint aura clinging to the blades indicating that my attackers were A-rank Hunters.<br><br>Swish!<br><br>Extracting my spear from the now lifeless tanker, I executed a swift counter.<br><br>In a blur, three blades were shattered; one assailant clutched his throat, collapsing.<br><br>A surge of blood erupted as I released my weapon, charging the remaining duo, who, despite their fractured swords, sought to retaliate. Both my palms thrust forward.<br><br>Crack, boom!<br><br>The air seemed to detonate.<br><br>Flames pierced their chests, eliciting agonized gasps and coughs of blood as they crumpled to the ground.<br><br>The molten remnants of their magical armor clung to them, searing their skin. Yet, death's cold embrace claimed them before the agony could truly register.<br><br>"Goodbye."<br><br>I used my sleeve to wipe away the blood smearing my face.<br><br>Shick, shriek!<br><br>Instinctively, I pivoted. A dense, formidable metal projectile – almost dainty enough to be dubbed a dart – zipped past, embedding itself into the ancient stone behind.<br><br>Bang!<br><br>Debris erupted as the projectile burrowed deep, testifying to its tremendous force.<br><br>'Now these guys are bothering me.'<br><br>Their roles mirrored those of conventional Hunters. There were tankers, magic users, and close-range damage dealers, so naturally, there would also be long-range damage dealers.<br><br>From the onset, a trio of archers had ensconced themselves within the mansion, raining arrows from a second-story vantage point.<br><br>Shushushush!<br><br>In the brief moment as I deflected with my spear, a shadow coalesced from the ether, its blade lunging for my head with the ferocity of a viper.<br><br>Shiiing!<br><br>Swift. Deadly. Without a doubt, a melee assassin with impeccable stealth abilities.<br><br>How many had he killed this way so far? I wasn't sure, but one thing was certain.<br><br>'He picked the wrong target today.'<br><br>Thunk!<br><br>I skillfully twisted the spear blade. The metal arrow changed its path and pierced through the Black Hunter who was aiming for my brow with a knife.<br><br>Squelch!<br><br>"Cough!"<br><br>Struck by the unexpected missile, the Black Hunter plummeted.<br><br>Yanking the arrow from him, I watched his spasms subside. Without hesitation, I hurled the arrow back to its origin.<br><br>Shriek! Squelch!<br><br>Charged with renewed vigor, the arrow executed its mission flawlessly.<br><br>Speeding back with double its initial ferocity, the arrow hit its mark.<br><br>The trio of archers, readying their subsequent shots, met their end in a cruel synchronicity.<br><br>"This crazy..."<br><br>The charging men stopped in their tracks upon witnessing the scene. I could see their hands trembling as they held their weapons.<br><br>Their shock was justified. In mere moments, they had seen a battalion of comrades fall.<br><br>But my onslaught was far from over.<br><br>Shrilik! Swish!<br><br>With unyielding fervor, I surged forward—slashing, impaling, and decimating. A scarlet haze hung in the air as severed limbs and heads seemed to rain from the sky.<br><br>“Argh!”<br><br>“Aaah!”<br><br>Cries of torment reverberated. Amidst the disarray, a power-laden fist lunged, colliding with my spear.<br><br>Whack!<br><br>“Retreat into the mansion!”<br><br>A fleeting smirk graced my lips at Im Young-Jun's command.<br><br>“Did you set up a trap spell?”<br><br>“Silence!”<br><br>Whooosh.<br><br>Being the leader, he was certainly the best among them.<br><br>At this level, he'd be considered a top expert even in the Murim.<br><br>'He knows how to utilize his Qi.'<br><br>One of the reasons Hunters were inferior to martial artists is the way they utilize their energy.<br><br>However, Im Young-Jun and his Black Hunters showcased finesse that eclipsed their peers.<br><br>'But that's just about it.'<br><br>No matter how skilled, there are walls one cannot overcome.<br><br>Matching his fervor, I lunged, knuckles poised.<br><br>With a grit of his teeth, Im Young-Jun retaliated.<br><br>Bang!<br><br>First strike. His knuckles shattered.<br><br>Bang!<br><br>Second strike. Im Young-Jun's fist buckled under the pressure.<br><br>Whack!<br><br>Third strike. This strike of the Flame-Extinguishing Divine Fist struck his shoulder. Skin seared, bones disintegrated. Like a mythical dragon consuming him, a torrent of blood escaped his lips as he was hurled into the distance.<br><br>“Team leader!”<br><br>Yet his underlings remained.<br><br>The Black Hunters, their allegiance unwavering, hastily secured Im Young-Jun's battered form, making a beeline for the mansion's safety.<br><br>Thud. Before the entrance sealed, shimmering barriers coalesced around the estate.<br><br>'A defensive spell?'<br><br>Clearly, a formidable shield spell. It felt even more impenetrable than anything I'd witnessed from Butler Kim.<br><br>Nonetheless, my pursuit was relentless.<br><br>In a singular, fluid motion, I found myself at the doorstep, readying to unleash devastation upon the myriad barriers before me.<br><br>Fourth Strike.<br><br>The force of the Flame-Extinguishing Divine Fist crashed into the shields.<br><br>Like that nameless cliff in Mount Song, the Flame-Extinguishing Divine Fist shattered and crushed everything blocking its path. \[Note: this was the first challenge in the preliminaries for the Great Celestial Banquet in manhwa chapter 162.\]<br><br>Kwaaaaaa!<br><br>With a roar that seemed to split the heavens, the barriers were torn apart as easily as if they were shredded paper.<br><br>Roof tiles were sent airborne; walls were reduced to mere wisps.<br><br>Past the molten remnants of the entrance, I caught sight of my adversaries, immobilized by shock.<br><br>At their core stood Im Young-Jun.<br><br>Beneath his blood-caked lips, his quivering jaw formed a whisper that bore the weight of dread.<br><br>“Who... what are you...?”<br><br>I responded with an almost playful tone,<br><br>“A monster. Just like you.”<br><br>Mr. Choi had once said, this world is a place where monsters roam.<br><br>So, I resolved to become a monster if the need ever arose.<br><br>Today it was called for.<br><br>“Have you ever heard of the 'Bonebender's Tendon Twist' technique?” \[Note: the direct translation of this technique is "Separate Tendon, Twist Bone", but this sounds more poetic.\]<br><br>Im Young-Jun's expression shifted to one of horrified recognition.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-276.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-278.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

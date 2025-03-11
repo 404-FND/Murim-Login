@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 253 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 253</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 253</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: No_End_9483</span>
+                            <span class="published-date">Published: February 18, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>\*Shing!\*<br><br>There was no formal Bowing Ceremony(기수식/起手式). As the flag signaling the start of the battle was raised, the two men charged at each other fiercely.<br><br>And in the instant when the distance of about ten yards had closed in, a magnificent beam of light shot out from the waist of Willow Cloud Divine Dragon.<br><br>'Using Sword Qi right from the start?'<br><br>Everything has its pros and cons.<br><br>While Sword Qi can exhibit powerful force, it also consumes a great deal of energy.<br><br>In this battle, Willow Cloud Divine Dragon had chosen to quickly decide the outcome instead of engaging in a prolonged fight.<br><br>\*Swaaah!\*<br><br>The blue Qi energy flowing from his pine-patterned ancient sword(송문고검/松紋古劍) swirled down towards Cheong Pung's shoulder.<br><br>It was a powerful strike without any unnecessary movements. It must have been the culmination of countless swings since the day Willow Cloud Divine Dragon first held the sword.<br><br>But...<br><br>'From what I can see, it is the same for Cheong Pung.'<br><br>\*Crack!\*<br><br>It was only a half step difference. The ancient sword, wrapped in blue Qu energy, exploded on the training stage.<br><br>However, Willow Cloud Divine Dragon was a master with abundant experience. As if he had anticipated it, he twisted the sword and tried to cut off Cheong Pung's ankle.<br><br>"Ahh!"<br><br>\*Shh! Shh-shh!\*<br><br>With a distressed cry, Cheong Pung twisted his body to avoid the sword.<br><br>Then, the sword cut through the air like a beast's claws, slashing in all directions. The loose edge of Cheong Pung's robe was torn to shreds and scattered in pieces along its path.<br><br>Amidst the crowd, screams and cheers erupted at the sight.<br><br>"Aaah!"<br><br>"Kyaa!" <br><br>However, to me, Cheong Pung's unharmed body and the smile hanging from his lips were clearly visible, without even a gasp.<br><br>He was enjoying himself. Cheong Pung avoided the sword with a nimble body movement, like dancing, and applauded with a broad smile.<br><br>"Wow! Was that the Supreme Purity Sword Method(태청검법/太淸劍法)?"<br><br>"Er, that’s right."<br><br>Willow Cloud Divine Dragon, who answered hastily, had a bewildered expression.<br><br>It was not just him. Everyone must have been thinking the same thing. What was that? How did he avoid it? Their minds were filled with such thoughts.<br><br>"I find the Way of Sword quite enjoyable. Have you mastered the Supreme Polarity Wisdom Sword(태극혜검/太極慧劍) yet?"<br><br>"Why……"<br><br>"I really wanted to see the Supreme Polarity Wisdom Sword once. Grand-, well, someone I know praised it several times. They said it's an excellent martial art."<br><br>The Supreme Polarity Wisdom Sword is the most famous sword principle of the Wudang Sect, to the extent that I have heard of it a few times.<br><br>Cheong Pung spoke with pure intent, but for someone who doesn't know his character, his words could come across as extremely rude.<br><br>For example, Willow Cloud Divine Dragon, who was standing right there, felt the same.<br><br>"The martial arts in our sect are not there to receive evaluations, nor are they here to please you."<br><br>Willow Cloud Divine Dragon said with a stern face, pointing his ancient sword at Cheong Pung.<br><br>"However, if you really want to see it, I will show you. You will see how frightening this martial art is."<br><br>A soft but powerful Qi energy surged and pressed down on Cheong Pung. At the same time, the tip of the sword moved slowly, drawing a circle.<br><br>Supreme Polarity (Taiji). The essence of martial arts in the Wudang Sect was about to unfold in his hands.<br><br>"Supreme Polarity Wisdom Sword! It's the Supreme Polarity Wisdom Sword!”<br><br>"Please do your best. Otherwise, you will regret it."<br><br>\*Whoosh!\*<br><br>As Willow Cloud Divine Dragon's words ended, his figure disappeared like a ghost.<br><br>The next moment, a blue Sword Qi swayed and aimed for Cheong Pung's upper body.<br><br>It was then that Cheong Pung's sword, which had never been unsheathed since the beginning of the fight, was revealed.<br><br>\*Ssshaaaak! Clang!\*<br><br>The collision between Sword Qi. It was only one clash, but the winner was clear.<br><br>Willow Cloud Divine Dragon, who who was pushed back one zhang, opened his eyes wide. Blood was trickling down from his torn hand.<br><br>"W-what is this?"<br><br>"Can I go first this time?"<br><br>With the question, Cheong Pung's body disappeared like a ghost.<br><br>Mount Hua Sect's Dark Drifting Fragrance(암향표/暗香飄). It was the same movement that I had been sick of seeing while sparring with him in the past<br><br>Now, after a year, his Dark Drifting Fragrance had become even more secretive and faster.<br><br>\*Shh!\*<br><br>The faint purple Qi energy swirled around the tip of the sword, which was coming for the middle of Willow Cloud Divine Dragon's forehead. He dodged it as much as he could, and during his attack, he only used his Sword Qi at the moment of impact.<br><br>It was evidence that he was reducing unnecessary energy consumption and perfectly controlling his Sword Qi.<br><br>"Heok!"<br><br>The startled Willow Cloud Divine Dragon hastily raised his sword. However, this time it was different from before. The ancient sword flowed along Cheong Pung's sword blade, changing its direction.<br><br>Softness overcomes hardness(유능제강/柔能制剛), that was the essence of the Wudang's martial art and the principle embodied in the Supreme Polarity Wisdom Sword.<br><br>But...<br><br>"Oh, I can do something similar too."<br><br>\*Swoop.\*<br><br>With those playful words, Cheong Pung's wrist turned flexibly.<br><br>The ancient sword, which had been persistently pressing against Cheong Pung's sword, suddenly fell off without any force.<br><br>In an instant, Cheong Pung's sword caught the wobbling ancient sword in mid-air.<br><br>"Okay. This is how you do it, right?"<br><br>"......!"<br><br>"Isn't it? Wait, I think this way would work better. Ah, I see."<br><br>Suddenly, Cheong Pung put his sword away and smiled brightly, lost in thought. In contrast, Willow Cloud Divine Dragon's face was full of astonishment as he looked at him. And the same was true for the martial artists who were watching the fight.<br><br>"Uh!"<br><br>"The Supreme Polarity Wisdom Sword!"<br><br>Power is overcome by greater power. Softness is overcome by greater softness.<br><br>For the Wudang Sect, whose secret principle is to use softness to overcome strength, the fact that their Supreme Polarity Wisdom Sword, considered the best among them, has been subdued in the same way, is causing great surprise and astonishment.<br><br>'Cheong Pung is one step ahead of Willow Cloud Divine Dragon. No, at least two steps ahead.'<br><br>There's no way that Willow Cloud Divine Dragon, who has been fighting against him didn't feel that fact directly.<br><br>"How, how on earth?"<br><br>"Well, you just have to think of embracing your opponent. Then your body will naturally react to where and how to move. It's really easy, isn't it?"<br><br>"......"<br><br>Easy? Are you crazy?<br><br>No, can you really do that?<br><br>'A guy who said he only ate dumplings for a year.'<br><br>As I stared at Cheong Pung with bewildered eyes, Willow Cloud Divine Dragon, who was trembling with shock, suddenly rushed towards Cheong Pung.<br><br>\*Zzt zzt zzt!\*<br><br>A blue Sword Qi emitting a brighter light than ever before. It was an unmistakable strike that gathered all the power.<br><br>In a moment when the audience screamed at the sight of Cheong Pung, who stood still as if he was about to be slashed in the chest by the approaching sword.<br><br>\*Ssh ssh ssh ssh sshing!\*<br><br>A bright purple light filled the stage area. The sword in Cheong Pung's hand left a beautiful trajectory.<br><br>With just one move, I could tell what kind of martial art Cheong Pung was using.<br><br>'36 Plum Blossom Sword(매화삼십육검/梅花三十六劍).'<br><br>It was incredibly fast and smooth.<br><br>Suddenly, I caught a whiff of the scent of plum blossoms. The purple Qi of the Violet Mist Divine Art burst the flower buds and bloomed thirty-six plum blossoms.<br><br>And in the next moment, Willow Cloud Divine Dragon's sword stopped in front of Cheong Pung's chest.<br><br>\*Crack.\*<br><br>The Sword Qi that had just poured down like rain disappeared without a trace. Instead, a spiderweb-like crack appeared on the snow-white sword blade.<br><br>A weak voice flowed out from Willow Cloud Divine Dragon's lips as he looked at his beloved sword.<br><br>"Plum Blossom... I see. So you are a disciple of Mount Hua Sect."<br><br>Cheong Pung was startled and stumbled over his words.<br><br>"I, I am not."<br><br>"Well, I guess it doesn't matter."<br><br>Resignation and acceptance.<br><br>Willow Cloud Divine Dragon's arm slowly descended towards the ground. The shattered pine-patterned ancient sword broke into hundreds of pieces and tumbled across the martial contest stage.<br><br>"I have lost."<br><br>Finally, the silence was broken.<br><br>The referee regained his composure and lowered the flag, and the tremendous cheer of the crowd broke out like a burst dam.<br><br>\* \* \*<br><br>"How was I? Did I do well?"<br><br>I was awakened from my reverie by a playful voice. Cheong Pung, with eyes twinkling like a child, had his face right in front of me.<br><br>"Hey, you scared me. Please don't do that again."<br><br>"Benefactor, how was I?"<br><br>I wondered if this young man was the same person as earlier, as I struggled to come up with a response.<br><br>As the Invincible God Sword, he literally overwhelmed Willow Cloud Divine Dragon, who is not only the future of the Wudang Sect but also one of the Ten Dragons and Phoenixes.<br><br>And watching this performance, I once again realized that Cheong Pung had already surpassed the realm of rising star long ago.<br><br>'Is it like this?'<br><br>Standing on a high altitude, more landscapes are visible. The mountain called Cheong Pung was the same. It was a view that I couldn't see a year ago.<br><br>'Amazing. It's hard to believe that it's purely natural talent.'<br><br>His martial prowess is impressive, but it is not as much when compared to his talent.<br><br>Cheong Pung was such a natural-born genius that I suspected him of being a system user.<br><br>"Why aren't you answering, Benefactor?"<br><br>"Just because you are young, do I have to praise you for every little thing?"<br><br>Cheong Pung mumbled with a slightly sulky face.<br><br>"My grandfather always used to tell me..."<br><br>"Well, that's just your circumstances."<br><br>It was at the time I deliberately replied curtly.<br><br>"Hey, you did perform really well. Good job, my friend!"<br><br>Cheong Pung turned around with a bright face at the sudden voice that came out of nowhere.<br><br>"Jongli Chu!"<br><br>Oh, you remember me. My friend!"<br><br>"Well, of course, I remember you. How could I forget you!"<br><br>"......"<br><br>Damn shit.<br><br>I watched Jongli Chu and Cheong Pung, who were hugging each other and laughing, and suddenly opened my mouth with a thought.<br><br>"Hey, you two, hold on a second."<br><br>"Uh? Why?"<br><br>"Why?"<br><br>"Aren't you each other's next opponents?"<br><br>The two of them, who were looking at each other with confusion, gasped in surprise.<br><br>"R-Right!"<br><br>"O-Oh yes. My next match's opponent is you, Gang Pung."<br><br>Their friendship is already fading away.<br><br>I clicked my tongue as I watched the two of them stumbling away from each other.<br><br>'Well, even if you look at it, the results are roughly predetermined anyway.'<br><br>As with everything, luck played a role in the Diverse Stars Grand Festival. In that sense, Jongli Chu was someone born with heavenly luck, having made it to the semi-finals by defeating mediocre opponents one after another.<br><br>In fact, the opponents he has defeated so far have been so mediocre in my eyes, either equal or weaker than Jongli Chu.<br><br>'Plus, I heard he got a bye in yesterday's match.'<br><br>I heard that Jongli Chu's opponent in the quarterfinals withdrew due to injury.<br><br>I don't know about anything else, but he can't be just a lucky guy.<br><br>'Still, making it to the semi-finals is a great achievement.'<br><br>Cheong Pung is not an opponent who can be defeated by luck. They exchange a few words with regretful expressions, as if they themselves know this fact.<br><br>"I'm sorry. I'll be gentle. No, I'll be really gentle."<br><br>"If you do that for me, I'll be grateful. Please, do it gently."<br><br>One guy openly saying he'll be gentle, and the other guy thanking him with no self-esteem.<br><br>Anyway, neither of them are in their right mind.<br><br>Watching the two of them, I shook my head and spoke up.<br><br>"That problem can be resolved by you two. I'm leaving now because I have an appointment."<br><br>"An appointment? You don't have any friends, Benefactor."<br><br>"Where? Did you have a friend other than me?"<br><br>"......"<br><br>It's even more sad when I can't deny it.<br><br>At that moment, when I lost my words, the shout of the referee with the power rang out.<br><br>"Shanxi Sleeping Dragon, Jin Taekyung! Come up to the martial contest stage!"<br><br>"Yes. I'm coming."<br><br>I and Cheongpung both need to climb one more step to face each other in the final stage.<br><br>With light footsteps, I looked at my opponent on the martial contest stage.<br><br>"You're lucky too. I didn't expect you would make it this far."<br><br>The opponent in the semifinals muttered with a gloomy voice.<br><br>"The 18 Dragon Subduing Palm of our groupe are the greatest martial arts under heaven."<br><br>"But you only mastered it up to five stars."<br><br>"That's right."<br><br>“Then you can abstain.”<br><br>“If I do, I will be beaten like a dog by my master.”<br><br>"Then?"<br><br>“There is only one way left.”<br><br>After saying that, Gung Gibang spat out thick phlegm loudly at the ground. He pointed his bamboo staff (죽장/竹杖), stained with dirt, at me and spoke.<br><br>"The Dog Beating Staff Method (타구봉법/打狗棒法) of our groupe is the best in the world. I will beat you up like a back alley dog. Got it?"<br><br>"Uh, yes."<br><br>Exactly after an hour, the swollen-eyed Gang Gibang held onto my calf and shouted.<br><br>"I've only learned the Dog Beating Staff Method up to five stars!"<br><br>"......"<br><br>Everything about this bastard is stopped at five stars.<br><br>At the same time that I threw broken bamboo staff to both sides, the judge dropped his flag.<br><br>"The Shanxi Sleeping Dragon, Jin Taekyung, advances to the finals!"</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-252.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-254.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

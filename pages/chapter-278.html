@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 278 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 278</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 278</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: November 3, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>The once-elegant, two-story home now bore the eerie atmosphere of a haunted mansion.<br><br>Had it not been for the dozens of protective barriers that buffered the wrath of the Flame-Extinguishing Divine Fist, the whole estate might have been naught but cinders.<br><br>I felt a subtle shift in the air, only a whisper of movement. Then, a voice as soft as the rustle of autumn leaves, pierced the silence.<br><br>"Mr. Jin Tae-Kyung."<br><br>From my perch on the half-charred sofa, I slowly pivoted to answer:<br><br>"Yes."<br><br>Mr. Choi, Butler Kim, and Song Song stood in the open doorway.<br><br>Their gazes upon me were full of mixed emotions. Their distress was understandable, given that the living room was littered with corpses. It was a truly grisly sight.<br><br>I was also completely covered in fresh blood, so that probably didn't help the ambiance.<br><br>Song Song cautiously asked.<br><br>"Did you, by any chance, kill all of them?"<br><br>"Yes. But I spared those who surrendered."<br><br>I added gently, but with an undertone of warning,<br><br>"For now."<br><br>That answer was for Song Song, but it was also a message for Mr. Choi and Butler Kim.<br><br>Mr. Choi eyes, clouded with worry, met mine.<br><br>"Are you hurt anywhere?"<br><br>"Nope. I'm fine."<br><br>"What about the survivors?"<br><br>"I've gathered them together."<br><br>"You've left them untouched?"<br><br>"In a manner of speaking. For the foreseeable future, they are nothing but breathing corpses. Don't worry."<br><br>After all, I'm not a monster.<br><br>After tapping on their vital points, I packed the Black Hunters into the only remaining room.<br><br>I did exert overpowering control, but I'm not some bloodthirsty killer who would kill even those who surrender.<br><br>Moreover, they might be useful later on.<br><br>"You did well. But..."<br><br>Mr. Choi’s gaze fell on the man lying at my feet.<br><br>"Who is that?"<br><br>"The owner of this house."<br><br>With a nudge of my foot, I turned the body over to reveal a man in his mid-forties.<br><br>Im Young-Jun: owner of the house, and the formidable leader of the Black Hunters.<br><br>He was so thoroughly soaked in crimson, one could easily mistake him for one of the dead. But his chest rose and fell subtly, revealing he was very much alive, and curiously unmarred.<br><br>Butler Kim leaned closer, his brows furrowing in recognition.<br><br>“He used potions. Repeatedly.”<br><br>“Yes.”<br><br>“Did you torture him?”<br><br>“Yes. You can tell?”<br><br>“During the Great Cataclysm, this was a common occurrence. There were even worse guys than the Black Hunters.”<br><br>At the mention of such brutality, Song Song's face paled. Yet, moments later, she gently placed a hand on my shoulder.<br><br>“You did what was necessary.”<br><br>Feeling repulsion was natural. Even I, familiar with the martial world, wasn't comfortable with what I had done.<br><br>But Im Young-Jun proved more resilient than anticipated, and mere intimidation wouldn't have loosened his tongue.<br><br>“These aren't just ordinary Hunters. Someone had to do it.”<br><br>“If Hunter Jin Tae-Kyung hadn’t, I would have. Do not fret over it.”<br><br>Mr. Choi and Butler Kim each chimed in with their thoughts.<br><br>Right. As they said, someone had to do it. I already had blood on my hands, so there was no reason to hesitate about torture.<br><br>Pushing away the unease, I refocused.<br><br>“There’s no evidence. The moment I broke in and the alarm magic sounded, he deleted everything.”<br><br>“Everything?”<br><br>“Yes. There wasn't a computer in the house. Only Im Young-Jun and another man, had mobile phones, and those were burners.”<br><br>I showed them the remnants of the mobile phone.<br><br>Even with my expertise, piecing this back seemed an impossible task.<br><br>Its components were shattered, and the SD card was burned.<br><br>Observing the damaged device, Mr. Choi made a soft clucking sound.<br><br>"Thorough, isn't he? I assume no documents or records survived either?"<br><br>“Correct.”<br><br>“What about the other Black Hunters?”<br><br>“Ten survived, and none of them knew anything. The guy who was the second-in-command died by my hand. All the ones here were captured and trained by Im Young-Jun.”<br><br>From what I gathered, they operated in a strict cell-like organization.<br><br>From masking identities to monetary transactions, every facet was orchestrated by Im Young-Jun.<br><br>"It's fortunate that Im Young-Jun is still alive at least. What did he say?"<br><br>"He said..."<br><br>Words faltered on my lips.<br><br>That desperate cry he'd unleashed, particularly after enduring the agonizing 'Bonebender's Tendon Twist' technique for the third time, resonated hauntingly in my mind.<br><br>'It's the Myeongdong Guild! I swear it's the Myeongdong Guild!'<br><br>A formidable guild, perhaps not consistently ranked among the nation's top ten, but always amongst the top twenty. And more personally...<br><br>Ji-Hwang.<br><br>The very guild to which an old friend, recently reunited with, belongs.<br><br>Gathering my thoughts, I found my voice once more.<br><br>"Can you give me a moment?"<br><br>"...?"<br><br>"I need to confirm something personal."<br><br>Mr. Choi, who had been observing me thoughtfully, nodded.<br><br>"Take your time. We'll start clearing the scene."<br><br>"Thanks."<br><br>"Let's get to work."<br><br>Heeding Mr. Choi's directive, Butler Kim elegantly wielded the staff he'd been nonchalantly using as a makeshift cane.<br><br>Doors, once sealed tight, flew open, and the remaining ten of the Black Hunters levitated out of the mansion.<br><br>Im Young-Jun was amongst the captives.<br><br>"Everyone step back."<br><br>Butler Kim, with a low voice, began to chant a spell.<br><br>The air trembled with mana as massive flames engulfed the dilapidated manor.<br><br>The blaze swept even the garden, only stopping once everything was incinerated.<br><br>Grumble!<br><br>With a rumbling growl, thick plumes of smoke billowed upwards.<br><br>However, the peace of the secluded countryside village where the mansion was located remained undisturbed.<br><br>The mansion, with all sights and sounds blocked by magic, would only be discovered much later.<br><br>"Is this enough?"<br><br>"This should be sufficient. Even if we hadn’t done it, they would have taken steps to erase the existence of this place."<br><br>People might vanish overnight and houses might burn down, but life goes on.<br><br>The local folk might murmur for a time, but the currents of daily life would soon sweep away such transient concerns.<br><br>Such is the influence of the mighty.<br><br>However, there was now one thing on my mind.<br><br>\[Park Ji-Hwang, middle school classmate from Garam Middle School\]<br><br>Who was he really?<br><br>\*\*\*<br><br>In the dim pre-dawn, Park Ji-Hwang hastily dressed and left his home.<br><br>At the entrance, a chauffeur, impeccably attired, stood at attention beside a gleaming limousine.<br><br>“You've arrived.”<br><br>“What's the matter? Why have I been summoned at this hour?”<br><br>“All I know is the Guild Leader requested your presence.”<br><br>After all, what could a mere driver know?<br><br>With a hint of exasperation, Park Ji-Hwang settled into the plush interior of the limousine. The roads lay serenely silent, surrendered to the stillness of the early hour.<br><br>After some time, the limousine came to a stop in Hannam-dong, an area dense with luxury apartments and villas.<br><br>A grand mansion, embraced by an imposing stone barrier. As the limousine's engine lulled to a stop, a security guard approached, nodding respectfully at Park Ji-Hwang.<br><br>“He's waiting for you inside.”<br><br>Navigating through wrought iron gates, reminiscent of age-old European estates, and traversing gardens as vast as sporting arenas, Park Ji-Hwang finally faced his summoner.<br><br>"Have you had breakfast?"<br><br>The man was in his early fifties.<br><br>Age had not withered his robust frame; beneath his white gown, well-developed muscles were visible.<br><br>With a slight inclination of his head, Park Ji-Hwang replied,<br><br>“I haven't eaten yet.”<br><br>“Then join me. Today's beef soup turned out exceptionally well.”<br><br>The prospect of breakfast, especially at this ungodly hour, was hardly appealing.<br><br>Nevertheless, with gracious acceptance, Park Ji-Hwang commenced his meal.<br><br>“Aren't you eating, Guild Leader?”<br><br>“I’ve already eaten. Continue with your meal without minding me.”<br><br>Casually, the elder spread out the morning newspaper.<br><br>Leaning back, the Guild Leader unfurled the day's newspaper. Dominating the front page was an image of a gravely solemn man, head respectfully lowered.<br><br>'Guild Leader Park Tae-Seop of Myeongdong pays homage at the mourning altar of the late Hunter Jeong Hyeon-Woo.' \[Note: this is the guy from novel chapter 272 who had apparently caught the scent of something pertaining to the Myeongdong Guild.\]<br><br>"Pure sorrow, he extends his heartfelt condolences."<br><br>Seeing this, Park Ji-Hwang began to understand why he'd been summoned.<br><br>'The old man seems furious.'<br><br>The elder, bearing an uncanny resemblance to the man in the photograph, questioned without shifting his gaze from the article,<br><br>“How's the photo? Did it come out well?”<br><br>“Yes, you always look distinguished after all.”<br><br>"The problem with you is that everything you say always sounds insincere."<br><br>"I truly mean it."<br><br>Guild Leader Park Tae-Seop, the mastermind behind Myeongdong's might, arched a brow.<br><br>It was a clear testament to his waning patience.<br><br>"Why did you kill Jeong Hyeon-Woo?"<br><br>Right to the point.<br><br>Pausing only momentarily to place his spoon on the table, Park Ji-Hwang responded,<br><br>"I smelled something off."<br><br>"Then you should've just plugged your nose."<br><br>"Myeongdong's duty might be to tolerate the stench, but mine is to slit the throats of those who reek before others smell it."<br><br>"Without my permission?"<br><br>"Do I need to ask for your permission?"<br><br>Bang!<br><br>Park Tae-Seop's fist slammed down on the dining table. With a cracking sound, the table shattered, scattering glass and food everywhere.<br><br>"Guild Leader!"<br><br>Security personnel rushed over, only to be met with a furious shout.<br><br>"All of you, back off! Do not take a single step until I say so!"<br><br>Acknowledging the order with a bow, the guards receded.<br><br>Unperturbed by the outburst, Park Ji-Hwang deftly dabbed at the splattered soup on his face.<br><br>"What a pity. It was delicious."<br><br>"How dare you, you milk-smelling bastard." \[Note: This is a direct translation. In Korean, the characters 젖비린내 나는 combine to mean something like "giving off the smell of milk", as in toddlers who still need to drink milk daily. This colloquially means that the person gives off an aura of immaturity.\]<br><br>"Well, both of us reek of blood. Adding a milky smell doesn’t make much difference."<br><br>"This is my guild, built on my own blood and sweat. And you kill a guild member without a word?"<br><br>"Really now, Guild Leader."<br><br>Park Ji-Hwang began, his brow furrowing in uncharacteristic annoyance.<br><br>The handkerchief, once held with precision, now lay abandoned amidst the debris.<br><br>"So, what will you do?"<br><br>"Excuse me?"<br><br>"Don't you know the headache that comes when those who smell fishy start talking? One spark from this can burn down everything. If you want to set your own house on fire, I won't complain, but it also affects me, which is why I intervened."<br><br>"But he was one of us..."<br><br>"Also, be precise in your wording. You were a war hero who shed blood and sweat during the Great Cataclysm. I acknowledge that. But insisting that the Myeongdong Guild is solely yours is a bit..."<br><br>Park Ji-Hwang paused mid-thought. A sardonic smile graced his lips as he pushed back his chair and stood.<br><br>"Thank you for the breakfast. Although I didn't even get to eat a few spoonfuls."<br><br>As he turned to leave, Park Tae-Seop's clenched fist bore witness to his smoldering anger.<br><br>"Sit down."<br><br>"If you have anything more to say, please do it over the phone. Continually behaving this way diminishes the respect I once held for you."<br><br>"I said, sit."<br><br>A tangible pressure filled the room.<br><br>The name, Park Tae-Seop, was more than just the Guild Leader of Myeongdong. He was a beacon from the era of the Great Cataclysm, a figure ranked amongst the nation's elite.<br><br>Yet, Park Ji-Hwang knew that the elder wouldn't dare lay a hand on him.<br><br>"I'll take my leave now."<br><br>Park Ji-Hwang bowed deeply to the elder. As he pivoted to turn away, Tae-Seop’s voice stopped him.<br><br>"Because of the sparks you've caused, the entire house might burn down. Didn't you know?"<br><br>"What are you implying? I ensured that the matter concerning Mr. Jeong Hyeon-Woo was handled discreetly."<br><br>"The Black Hunters. Didn't they recently mess with a D-rank Hunter from the Peace Guild?"<br><br>A chill settled over Park Ji-Hwang, his features hardening with realization.<br><br>A moment of gravity ensued.<br><br>"...What? What happened?"<br><br>His coat pocket trembled. The phone inside vibrated urgently.<br><br>As if entranced, he took it out and stared at the name that filled the screen.<br><br>\[Jin Tae-Kyung\]</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-277.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-279.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

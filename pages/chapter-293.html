@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 293 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 293</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 293</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: December 8, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>Ssshh. Hoo hoo.<br><br>In the dimly lit hospital room, only the soft cadence of breaths broke the silence, each exhale whispering secrets of newfound strength. Standing by the doorway, I observed them, immersed in the art of Qi cultivation.<br><br>Initially, their cross-legged postures seemed awkward, rigid like untrained sculptures. But with time, their forms relaxed, bodies molding into the ancient practice.<br><br>'Not bad.'<br><br>Team Leader Choi, Butler Kim, Song Song, and, most notably, Mr. Rough Guy.<br><br>All had surpassed expectations. By twilight, they had not only mastered the One Complete Cycle but had also ventured into the Minor Heavenly Circuit independently. \[Note: The One Complete Cycle refers to a complete circulation of Qi through the body's main meridians.\]<br><br>'This is more than a mere first step; it's a leap.'<br><br>Although none matched Team Leader Choi in raw energy, Butler Kim and Song Song, being mages, displayed a natural aptitude for manipulating mana. Their quick adaptation was no surprise.<br><br>But the most unexpected development came from someone else.<br><br>Mr. Rough Guy.<br><br>'I underestimated him…’<br><br>In the back of my mind, I recalled Mr. Rough Guy's unique journey – the only other person I knew who had experienced a second Awakening. Was it fate or sheer determination that fueled him?<br><br>Regardless, Mr. Rough Guy had already shattered his own limitations once.<br><br>'Was there a reason for his second Awakening?'<br><br>Observing his current prowess, it was clear.<br><br>He held the most promise for exponential growth, despite his D-rank Hunter status.<br><br>'His recovery seems assured.'<br><br>With each Qi cultivation session, muscles and tendons were not just healing; they were evolving.<br><br>If Mr. Rough Guy could conquer his mental scars, his return to the guild was imminent.<br><br>And then…<br><br>'The guild's transformation awaits.'<br><br>The seeds of change were already sown. Lee Jeong-Ryong's concealed strategies were now exposed, and soon, he would have to reconcile with us.<br><br>Our compensation would be the catalyst for the Peace Guild's remarkable evolution, with these individuals leading the charge.<br><br>Someone must steer the guild, while others recruit and groom loyal, talented members.<br><br>And we will give them martial arts.<br><br>'We need a sword too.'<br><br>As this realization dawned, Mr. Choi, having completed his Minor Heavenly Circuit, opened his eyes. In that moment, a fleeting spark of lucidity flickered in his gaze.<br><br>One by one, the others followed suit, their eyes opening to a new world of possibilities.<br><br>Ding.<br><br>\- Thanks to your excellent guidance, several have reached First Level Mastery of the Jin Family's Cultivation Technique.<br><br>\- Title \[Practitioner\] has been changed to \[Training Instructor\]!<br><br>Training instructor, huh.<br><br>Perhaps this is a cosmic nudge to intensify their training.<br><br>Gazing upon my disciples, absorbed in the aftermath of their Qi cultivation, a sense of pride swelled within me.<br><br>\*\*\*<br><br>A week whisked by.<br><br>In that span, Lee Jeong-Ryong and the Peace Guild clandestinely wrapped up their negotiations. Two more incidents involving variation gates arose, stirring the Hunter community. Then, an intriguing post surfaced on the Hunter community forum site: \[Note: a variation gate is a gate that contains monsters of a higher rank than expected. For example, the named Black Wyvern monster that MC fought twice appeared in a much lower level gate, making both of his encounters with this monster variation gate accidents.\]<br><br>\[Peace Guild Final Acceptance Experience\]<br><br>I'm a C-rank Hunter, formerly part of a major guild's security team.<br><br>A duplicitous mentor (literally a traitor) drove me to quit.<br><br>Browsing job sites, I stumbled upon the Peace Guild's recruitment ad and applied on impulse.<br><br>I thought my application vanished into oblivion, given their rigorous selection process.<br><br>Yet, two weeks later, a surprise call – I start tomorrow!<br><br>Who else is joining the Peace Guild tomorrow? Raise your hands!<br><br>(Best Comment) You only submitted an application to the Peace Guild and got the final acceptance? Hahaha, this jobless guy must be writing a web novel.<br><br>ㄴ ??? : Hyung. Is this guy for real?<br><br>ㄴ ??? : Leave him, he's just daydreaming about joining the Peace Guild.<br><br>ㄴ That ending though ...<br><br>ㄴ The author is really stupid, if you're going to write a novel, at least make it believable. Even veterans from major guilds get rejected by the Peace Guild, but a C-rank from security gets accepted? Haha, what a joke.<br><br>ㄴ Is it that tough?<br><br>ㄴ I applied this time; the competition was 47:1; even did a personality and aptitude assessment before the interview;<br><br>ㄴ Damn;; What's with the personality and aptitude test; is this high school?<br><br>ㄴ Proof that the Peace Guild views Hunters as shit.<br><br>ㄴ But their basic allowance and incentives are incomparably higher than others.<br><br>ㄴ Can the Peace Guild please look at me like a piece of shit, too?<br><br>ㄴ Seems like the Peace Guild has solid funding. Enough to attract people from major guilds.<br><br>ㄴ Right. I heard they have exclusive rights to over 20 gates.<br><br>ㄴ (Author) I'm the one who wrote the post, and I just called the HR department. They said they hired me because Jin Tae-Kyung told them to?<br><br>ㄴ Hahaha, how would Jin Tae-Kyung know about some jobless guy like you? Stop writing novels and go to sleep.<br><br>ㄴ Enjoying reading your web novel\~<br><br>ㄴ But are there any good web novels these days?<br><br>ㄴ I recommend 'Murim Login'. If you can get through the early modern chapters, it's worth reading.<br><br>ㄴ Waiting for Zero Big's update. \[Note: for the uninitiated, like me before this chapter, Zero Big is the author of Murim Login.\]<br><br>ㄴ That author has been writing for 10 years and never once did a marathon session.<br><br>Normally, such posts would be brushed off as mere attention-seeking.<br><br>Yet, this one climbed the ranks of recommendations, sparking a flurry of intrigued and humorous responses, securing its place atop the weekly best list.<br><br>The intrigue heightened with a follow-up post the next evening.<br><br>\[Guys, yesterday's web novel villain was for real;\]<br><br>I'm one of the recent Peace Guild inductees. Today, while touring the guild house with my new colleagues, I saw Jin Tae-Kyung.<br><br>He was wandering around in slippers with the soles peeling off. While I was just watching in awe, he suddenly made a U-turn, grabbed someone, and asked if he was from the \*\* guild's security team.<br><br>That same dumb-looking guy confirmed it, and Jin Tae-Kyung burst out laughing and shouted "Welcome!"<br><br>I knew Jin Tae-Kyung was weird, but this was beyond imagination.<br><br>\[Photo Attached\]<br><br>I'm posting proof so you'll believe me.<br><br>(Best Comment) I'm the one who got best comment last time. I offer my apologies and a grand salute.<br><br>ㄴ Seeing the verification photo, this seems legit;;?<br><br>ㄴ What;; Why would a C-rank hunter from a security team go to the Peace Guild.<br><br>ㄴ This is actually happening……….<br><br>ㄴ (Author) The web novel villain wasn't assigned to the raid team but to the security team.<br><br>ㄴ Ah, then it makes sense. If that's the case, it's not favoritism, just a regular job change.<br><br>ㄴ They say Korea is all about connections. It's inevitable, but still a bit disappointed in Jin Tae-Kyung.<br><br>ㄴ Who are you to be disappointed?<br><br>ㄴ Those criticizing Jin Tae-Kyung forget he donated almost his entire fortune to a gate victims' foundation, all while wearing those tattered slippers.<br><br>ㄴ The comment above is the fact. Those cursing Jin Tae-Kyung should be beaten with slippers so they come to their senses.<br><br>ㄴ This is turning into a Dooly-esque drama. \[Note: Dooly is a well-known cartoon caharacter in South Korea. The animated series is known for being light-hearted and full of misadventures.\]<br><br>ㄴ But where did the author go? Tell us more.<br><br>ㄴ (Author) I'm on my way to a dinner party right now.<br><br>ㄴ Newcomer's welcome party?<br><br>ㄴ (Author) Yeah, been in the car for an hour already. Looks like we're going far.<br><br>ㄴ Oh, is Jin Tae-Kyung going too?<br><br>ㄴ (Author) Yeah. But I don't see the guild master or other team leaders.<br><br>ㄴ The Peace Guild seems to have strong camaraderie. Is it because it's still new?<br><br>ㄴ (Author) Not sure about the unity part... The vibe feels a bit strange. A senior member advised me to catch as much sleep as I can on the way there.<br><br>ㄴ Why?<br><br>ㄴ Maybe the dinner party will go long. It's always awkward drinking with people you barely know, isn't it?<br><br>ㄴ (Author) Is that so? Ah, looks like we've arrived.<br><br>ㄴ Drink moderately. Don't forget to bring back some stories later.<br><br>ㄴ Have a good time!<br><br>ㄴ (Author) It seems like a nice restaurant. Excited about what we'll have for dinner, haha. I'll be back soon.<br><br>And that was the last post from the author.<br><br>\*\*\*<br><br>"Dinner will be inside the gate."<br><br>A ripple of confusion swept through the crowd at my announcement.<br><br>"Excuse me?"<br><br>"Huh?"<br><br>"Sorry, did I hear you right just now?"<br><br>"I think he said we're having dinner in the gate. Maybe I heard wrong."<br><br>"Ah, yes."<br><br>The new recruits, still in their first day's glow, were the ones murmuring in disbelief.<br><br>In contrast, those who had been with the guild for just a few weeks wore a different expression.<br><br>"I knew this would happen."<br><br>"Damn it..."<br><br>"Good thing I brought potions."<br><br>"Hyung, do you have any spare arrows?"<br><br>"Yeah. I brought an extra two hundred for emergencies."<br><br>"Can I have a hundred then?"<br><br>Despite only a month's difference in their tenure, their responses contrasted drastically.<br><br>With a mix of sighs and muttered curses, each member began to hurriedly extract armor and gear from their backpacks, a sign of their adaptation to the guild's unpredictable nature.<br><br>Chatter chatter!<br><br>I couldn't help but wonder, is this what it feels like to be a teacher?<br><br>A satisfied smile crept across my face, reflecting on the efficacy of repetitive learning.<br><br>Turning to the bewildered new recruits, I inquired:<br><br>"Did everyone bring all their belongings?"<br><br>The new recruits nodded.<br><br>"Yes, we brought everything since you told us to."<br><br>"Put your bags down and get your gear on."<br><br>"Excuse me? Are we doing some kind of mock battle?"<br><br>"Mock battle? That won't help much in improving skills. Real combat is the best."<br><br>"......?"<br><br>Their eyes widened in disbelief.<br><br>"Then, maybe..."<br><br>"Are we really going to a gate?"<br><br>"Yes. A raid to commemorate joining the Peace Guild! How does that sound?"<br><br>"........"<br><br>"Seems like the new members aren't too thrilled. What do the others think?"<br><br>The veterans, seasoned by weeks of intense training, responded with resolute voices.<br><br>"It's a fantastic idea!"<br><br>"Classic King Tae-Kyung." \[Note: it looks like the world of Murim is about to welcome its 11th king: the Classic King. However, let's not forget his other legendary monikers: Emperor Fuck/Fuck King.\]<br><br>"Brilliant! Absolutely wonderful!"<br><br>Their reactions were as expected.<br><br>This, too, was a product of learning. They undoubtedly recalled the fate of those who had openly challenged my views.<br><br>The principle of 'misery loves company' likely influenced their enthusiasm.<br><br>'Right. Hardships should be shared.'<br><br>If the newcomers were like Pomeranians, the others were already akin to Tibetan Mastiffs.<br><br>With a reluctant but united spirit, they chimed in.<br><br>"But there was no mention of this! The notice said that for the first week after joining the guild, we would only have simple workshops..."<br><br>"Yes. What we are about to do is a workshop."<br><br>"What kind of guild does a workshop in a gate! And for a whole week!"<br><br>"The Peace Guild."<br><br>"That's absurd!"<br><br>"Do the others think the same?"<br><br>I raised an eyebrow, surveying the crowd, and then turned towards the seasoned members, the 'mastiffs' who had already been through the crucible.<br><br>"Why wouldn't it make sense! It does! It absolutely does!"<br><br>"Of course, this is what a workshop is!"<br><br>"Who does workshops at a resort these days! In the gate, we bond by fighting monsters together!"<br><br>"We can't be the only ones to suffer!"<br><br>The last outburst had an air of raw desperation to it. Their words echoed in my mind, prompting a thoughtful pause.<br><br>'I need to push them harder.'<br><br>It was vital they didn't view this merely as a hardship. My goal was to condition them to see such trials as both natural and necessary.<br><br>"Quiet, everyone!"<br><br>Ding.<br><br>\- Title, \[Training Instructor\]'s effect is activated!<br><br>\- Your shout causes the trainees to tense up sharply!<br><br>"Sound off!"<br><br>"One, two!"<br><br>"Your voices are too low. Sound off!"<br><br>"One, two!"<br><br>Their responses came louder this time, though their expressions were a mix of shock and bewilderment.<br><br>A sly grin spread across my face as I observed their dazed looks.<br><br>"Alright, follow me in order. Step with your left foot. Left foot."<br><br>Chak! Chak! Chak!<br><br>The line of trainees, resembling a disciplined military unit, began their march towards the gate, a symbolic entrance to their new reality in the Peace Guild.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-292.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-294.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

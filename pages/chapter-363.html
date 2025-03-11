@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 363 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 363</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 363</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: March 8, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>Boom!<br><br>A deafening explosion and shockwave enveloped me.<br><br>Suddenly, my world turned upside down as the ceiling became the floor, and my hair whipped about in chaos. Uncontrollably, I was hurled across the room, slamming into a corner of the treatment room.<br><br>Crack!<br><br>An electrifying sensation shot through my spine, while a searing heat rose from deep within my lungs.<br><br>“Cough!”<br><br>The floor was soaked with dark red blood, a clear sign of severe internal damage.<br><br>'Damn it. It hasn't been long since I recovered.'<br><br>Luckily, these injuries weren't as critical as those I had endured previously, and by some miracle, the treatment room remained shielded from the Western Heavenly Demon Lord's Sword Aura.<br><br>"Are you okay?"<br><br>Upon my inquiry, the Divine Doctor, huddled in a corner of the treatment room, raised his gaze.<br><br>Jeok Cheon-Gang, covered in white dust, was cradled in his arms. He responded with a small groan.<br><br>"We are safe thanks to Young Master Jin's protection."<br><br>Yet, his statement belied the grievous state of his own body.<br><br>His once snow-white beard was now matted with blood, and the deep red wounds across his abdomen, revealed through his ripped garments, looked troublesome.<br><br>'Is that...'<br><br>Without a doubt, the Divine Doctor's dantian was destroyed. Now devoid of all martial arts, he was no more than an ordinary old man.<br><br>With his dantian destroyed and his limbs broken, his prognosis was bleak.<br><br>'And Grandfather...'<br><br>Conversely, Jeok Cheon-Gang emerged unscathed, a testament to the old healer's sacrifice over his own well-being.<br><br>"Old Man Dong."<br><br>"I am fine, so do not worry about me."<br><br>The Divine Doctor offered a weak smile, his gaze laden with concern.<br><br>"But I am worried about Young Master Jin's condition. Stay still, I will come over there..."<br><br>Silently, I raised my hand, summoning a gentle force from my fingertips to halt the Divine Doctor's advance.<br><br>"Y-young Master Jin?"<br><br>The Divine Doctor's words were cut short as a swift breeze blew in.<br><br>It sliced through the room and embedded itself in the wall where his head had been moments before.<br><br>Whoosh, thud!<br><br>Barely a heartbeat had passed. If he had moved less than a second later, the Divine Doctor would have been lost to us.<br><br>Frozen, I signaled for the Divine Doctor to move aside and faced the threat head-on.<br><br>"Attacking a powerless old man, that's rather low."<br><br>Through the dispersing cloud of dust came the cold utterance of the Western Heavenly Demon Lord.<br><br>"Low? You're the one who squandered the opportunity I gave you."<br><br>Gone was his affable facade and courteous tone. The murderous intent in the Western Heavenly Demon Lord's gaze was palpable as he fixed his eyes on me.<br><br>"You've touched something you shouldn't have."<br><br>"If someone heard us, they'd think the Ring of All Poisons was a fucking errogenous zone. But you're an old bastard who can't even get it up."<br><br>"......!"<br><br>I rose, leaning on White Flames for support.<br><br>Every bone in my body was on the brink of splintering, and I had suffered severe internal injuries.<br><br>'Damn it. As if the monster wasn't bad enough.'<br><br>I momentarily regretted provoking him.<br><br>I had not expected a Transcendent Master like the Western Heavenly Demon Lord to employ such lowly tactics. \[Note: the "lowly tactics" he is referring to is the attack on the Divine Doctor.\]<br><br>But...<br><br>"That must mean this item is important to you, right?"<br><br>I brandished the Ring of All Poisons, stalling the Western Heavenly Demon Lord's approach.<br><br>"Right now..."<br><br>"Hand it over? Hmm...that wouldn't be difficult."<br><br>"You intend to negotiate?"<br><br>"Quick on the uptake, aren't you?"<br><br>To me, the Ring of All Poisons was merely a curious ring, nothing more, nothing less. But the Western Heavenly Demon Lord felt differently.<br><br>He considered this tiny ring more important than the annihilation of the Tang Family, the Qingcheng Sect, and the Emei Sect.<br><br>Like the Blood Lord who desperately grabbed the Green Jade Ruyi even as his arm was being cut off.<br><br>"Take your minions outside and leave immediately. Otherwise, you will never see the Ring of All Poisons again."<br><br>"Never see it again..."<br><br>The Western Heavenly Demon Lord ran a hand through his hair, now clotted with blood.<br><br>After a moment's silence, his reply came softly.<br><br>"Ridiculous."<br><br>"What?"<br><br>"How could it not be ridiculous? All I have to do is kill you and take everything."<br><br>"......"<br><br>"Nothing changes. You, your master, and the Divine Doctor. No one can escape death."<br><br>Explaining the concept of a pocket dimension or inventory seemed futile; the Western Heavenly Demon Lord likely couldn't fathom it.<br><br>It's possible, as he suggested, that my death might cause the items in my inventory to drop.<br><br>Yet, he failed to consider one crucial point.<br><br>"Well, it sounds plausible, but you should have considered that I might destroy the Ring of All Poisons before that."<br><br>My grip strength can easily crush steel as though it were tissue. Demolishing this ring even without exerting my Qi would be trivial.<br><br>"So, stop with the foolish thoughts and back off. If you take even one more step towards me......"<br><br>Thud.<br><br>My warning was cut short as I observed the Western Heavenly Demon Lord step forward, unfazed, his smile broadening as he spoke.<br><br>"Why, are you surprised?"<br><br>He didn't pause for my reaction. Radiating satisfaction, he pressed on.<br><br>"It's truly ridiculous. You call it a divine artifact, yet you don't truly regard it as such."<br><br>"......What do you mean?"<br><br>"Oh. I thought you would understand with just that."<br><br>His smile disappeared, replaced by a gaze laden with disdain and scorn.<br><br>"How could a mere human, made of flesh and blood, destroy a divine artifact imbued with great power?"<br><br>"......!"<br><br>A moment of realization struck me as I gazed at the Ring of All Poisons in my hand.<br><br>A divine artifact, inherited through generations of the Tang Family from Sichuan, revered in Murim as a unique ring that could nullify and absorb any poison.<br><br>And......<br><br>'The Ring of All Poisons cannot be appraised by the system.'<br><br>Divine artifact.<br><br>This revelation reverberated through my thoughts, sending a chill down my spine. Whether it was blood or sweat, I felt something drip down my back.<br><br>Drip, drop.<br><br>Blood seeped from my clenched fist.<br><br>Despite my formidable grip, the Ring of All Poisons remained unscathed, instead embedding itself in my palm like a splinter.<br><br>"......Damn it."<br><br>I whispered, acknowledging there was no room for further negotiation or retreat.<br><br>The Western Heavenly Demon Lord moved closer with an effortless stride.<br><br>"It's regrettable for the Blood Lord, but..."<br><br>Sssss!<br><br>"I have to kill you."<br><br>A dense, black mist enveloped him, quickly filling the room.<br><br>\* \* \*<br><br>Snap!<br><br>In an instant, the Western Heavenly Demon Lord disappeared, covering the distance in a single bound. His dark Sword Aura sliced through the solid rock as effortlessly as slicing through soft tofu.<br><br>I evaded his strike by bending low, then retaliated with a spear thrust, propelling it with the velocity of a fired bullet.<br><br>Bang!<br><br>The spear tore through the air, its passage marked by a burst of compressed air. The Western Heavenly Demon Lord, concentrating energy in his palm, intercepted the spear shaft and tutted in annoyance.<br><br>"Still haven't given up, I see."<br><br>Then, he delivered a precise kick to my wrist, targeting not the bone but a pressure point, creating a sensation akin to a thick needle piercing a vein. This caused the spear to slip from my hand.<br><br>But surrender was not an option.<br><br>'I was prepared for a suicide mission from the start.'<br><br>Defeat was not acceptable. It was either his demise or mine, and if neither, then we would both fall together, even at the cost of my own life.<br><br>Without the help of others, I would have died several times over already. Now was the time to repay my accumulated debt with interest.<br><br>"Urgh!"<br><br>My cry, nearly a war cry, accompanied my grasp on his ankle. The Western Heavenly Demon Lord howled as he executed a forceful blow.<br><br>Boom!<br><br>A minor explosion erupted within me. A malevolent energy ravaged my heart meridian.<br><br>My vision dimmed, and my legs buckled.<br><br>Yet, the grip on the Western Heavenly Demon Lord's ankle, driven by sheer will and instinct, remained firm.<br><br>Crack!<br><br>I witnessed the Western Heavenly Demon Lord's eyes widen with agony.<br><br>Though he could fend off my spear Qi with his protective Qi, he couldn't stop my raw physical strength from breaking his ankle.<br><br>'Damn it, my hand...'<br><br>Of course, I had to pay the price for my reckless action.<br><br>The hand that had grasped his protective Qi was scorched black, as if by a high-voltage shock, exacerbating my internal injuries and physical state.<br><br>My grip weakened involuntarily, and I stumbled.<br><br>"Kaak!"<br><br>The Western Heavenly Demon Lord's scream echoed, delayed by shock.<br><br>His ankle, which had been crushed by immense strength, was a gruesome sight with white bone showing through torn, blood-soaked flesh.<br><br>Even a Transcendent Master has limits.<br><br>Despite the incredible feats demonstrated by the Western Heavenly Demon Lord so far, he was not an owner of infinite martial power and stamina, and he could not recover through leveling up like I could.<br><br>'Now is the only chance.'<br><br>I advanced on the faltering Western Heavenly Demon Lord.<br><br>Ignoring the agony that felt as though my limbs were being ripped from my body, I channeled Qi towards my fists, igniting them with flames.<br><br>Whoosh!<br><br>"Jin Tae-Kyung!"<br><br>The air crackled with intensity.<br><br>The Western Heavenly Demon Lord, calling out my name with bloodshot eyes, was right in front of me.<br><br>His hand, having dropped the sword due to pain, was empty, and it was too late to block my attack.<br><br>A mere extension of my hand, a slight reach, would land a devastating blow on the Western Heavenly Demon Lord.<br><br>'But why...'<br><br>Why this hesitation?<br><br>A peculiar feeling overtook me.<br><br>Time seemed to dilate, with every motion around me moving at a crawl.<br><br>This sensation mirrored what I felt during the duel with the Tai Yi Ruthless Sword, Hwang Bo-Eom.<br><br>Yet now, an alert blared in my mind.<br><br>A cold dread spread up my spine.<br><br>'Ah.'<br><br>This was it.<br><br>A streak of realization.<br><br>I retracted my strike aimed at the Western Heavenly Demon Lord and jerked my head aside.<br><br>Time began to flow normally again.<br><br>Swoosh!<br><br>In an instant, a flurry of actions unfolded.<br><br>The Western Heavenly Demon Lord's sword, charged with dark Sword Aura, skimmed past my neck, and as I pushed forward with both palms, his fist collided with my ribcage.<br><br>Crack!<br><br>My ribs shattered, and blood erupted from my mouth as I was catapulted through the air like a projectile.<br><br>Through my dim, swirling vision, I saw the Western Heavenly Demon Lord, an imposing figure standing resolute.<br><br>Was it the residual peculiar sensation or the sheer agony that clouded my perception?<br><br>Before me, the Western Heavenly Demon Lord's expression bore neither triumph nor pleasure, but shock and fury.<br><br>"Did you dodge the Qi Sword Guidance Technique?" \[Note: direct translation - Controlling the Sword with Qi or Using Qi to Guide the Sword.\]<br><br>The Qi Sword Guidance Technique – so that was the name of the maneuver.<br><br>I coughed up blood, yet managed a defiant grin. The Western Heavenly Demon Lord's gaze wavered, fixated on me.<br><br>"An enlightenment amidst this... You truly are someone who must not be left alive."<br><br>Enlightenment. So that was enlightenment.<br><br>My fingers stirred slightly. Amid the overwhelming pain, I sensed new energy flowing and my awareness sharpening.<br><br>'But it's too late.'<br><br>Thud, thud.<br><br>The sound of the Western Heavenly Demon Lord's advancing footsteps resonated ominously.<br><br>With clouded vision, I watched him approach.<br><br>A silhouette amidst a haze of dust and debris, shrouded in a deeper gloom.<br><br>"You possess phenomenal strength."<br><br>I laughed, revealing my blood-soaked teeth. My voice wobbling as if drunk.<br><br>"Fuck off. You... bastard."<br><br>"Farewell."<br><br>The eyes of the Western Heavenly Demon Lord flashed red in the darkness.<br><br>His arm, cloaked in shadow, rose and descended towards my head with inevitable finality.<br><br>Ssshhh.<br><br>And... that was the moment.<br><br>"Don't you dare move a finger."<br><br>Whoosh!<br><br>A voice, unused for ages, cut through the darkness, accompanied by the surge of flames.<br><br>Behind the Western Heavenly Demon Lord, frozen in his tracks, stood a rising figure.<br><br>"Get your hands off what belongs to this old man."<br><br>He was small in stature. Yet, he possessed the presence of a giant.<br><br>I chuckled, and the Western Heavenly Demon Lord uttered a stifled groan.<br><br>"Fire King...!"</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-362.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-364.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

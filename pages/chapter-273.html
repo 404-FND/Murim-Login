@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 273 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 273</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 273</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: October 27, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>“Hello!”<br><br>"Hello!”<br><br>I felt like the boss of an old crime family; every new guild member I passed dropped into a bow of respect.<br><br>The rookies, fresh from their training, greeted me with the exuberance of new recruits eager to make their mark. Their reverence was understandable, given the gap in our experience.<br><br>'This field certainly places a strong emphasis on seniority.'<br><br>But among these rookies were Hunters, weathered and matured by life, who, despite their age, were new to the craft.<br><br>“It's an honor to meet you!”<br><br>A burly newcomer, with lines of age etching his face, bent deeply at the waist, admiration gleaming in his eyes.<br><br>The sunlight caught the bald spot atop his head, and I found that more distracting than the intensity of his gaze.<br><br>“Yes. Keep up the good work…”<br><br>“Thank you!”<br><br>“Thank you!”<br><br>A chorus of gratitude echoed back, and I couldn't help but smirk.<br><br>I wasn’t talking to all of you. You bastards.<br><br>I internally roll my eyes at the newbies, but my gaze then stops on a young man.<br><br>'He seems promising.'<br><br>He stands out among the newcomers.<br><br>Every gesture of his was measured, reminiscent of a martial artist. He exuded a unique aura.<br><br>As if sensing my scrutiny, he met my gaze, a hint of mischief playing on his lips.<br><br>"Hello, sir."<br><br>His demeanor set him apart; he was relaxed, neither as tense as the rest nor excessively ingratiating.<br><br>In my years, I've come across two such types:<br><br>The arrogant ones with nothing to show for it, and those whose self-assurance was rooted in genuine skill.<br><br>He was unmistakably the latter.<br><br>“May I ask your name?”<br><br>“My name is Kim Jin-Soo. I graduated top of my class in the B-rank training program. I was also the first to destroy the core of the golem during the recent raid.”<br><br>"Is that so?”<br><br>"Yes. It was my first time dealing with an A-rank gate, but it wasn't as difficult as I thought.”<br><br>He's an interesting guy.<br><br>He is proud without being arrogant; the type who will always ensure he gets what's due to him wherever he goes.<br><br>When I looked at him intently, Kim Jin-Soo smiled cheerfully.<br><br>“You can speak informally if you’d like, sir.”<br><br>“I'll consider it when I feel more comfortable. I'd appreciate if everyone would skip the grand greetings though.”<br><br>“Yes sir!”<br><br>“I’ll keep that in mind, sir!”<br><br>They clearly don’t listen.<br><br>Amidst the loud clamor, the office door at the end of the corridor slid open.<br><br>A crisp white shirt with perfectly ironed black slacks. Only one Hunter in our guild dresses like that for work.<br><br>“You’re all lively this morning.”<br><br>“A bit too lively, actually.”<br><br>Team Leader Choi, coffee cup in hand, gestured toward his office.<br><br>“Join me for coffee?”<br><br>His office was both spacious and elegantly adorned. Whether by choice or by design, the luxury furnishings suggested a refined taste. An ornate silver nameplate took pride of place on his desk.<br><br>\[Team Leader Choi Min-Woo\]<br><br>'Even the nameplate looks expensive.'<br><br>Considering the cost of relocating the guild house and recruiting new members, it seems the rumor that Won Myung-Hoon, as the guild leader of the famous Star Guild, had secured an astronomical sum in agreement fees is true.<br><br>As I was admiring the nameplate, a cup filled with black coffee was suddenly offered to me.<br><br>Team Leader Choi, noticing where I was looking, asked,<br><br>“Want me to get one made for you? A nameplate.”<br><br>“It’s alright. I don’t even have a formal position, so why bother?”<br><br>“We can create a position for you. General Manager. Head of Department. Just name it.”<br><br>“Anything?”<br><br>“Yes.”<br><br>“Then, maybe something modest, like Guild Leader...That's just a joke. Honestly, if I were the Guild Leader, we'd be doomed.”<br><br>Besides, if I tried any title, it’d probably end up being something ridiculous like "Face Lady" or "Pants Boss". \[Note: The Korean term for "Face Lady" is slang for a woman who is only recognized for her appearance. Similarly, the term for "Pants Boss" is slang for someone who appears in charge but lacks actual authority or influence.\]<br><br>I took the coffee cup and sat on the sofa. On the glass table, there were more than two dozen newspapers stacked.<br><br>From major domestic daily newspapers to foreign newspapers filled with unrecognizable characters. Just looking at them felt overwhelming.<br><br>“You don’t possibly read all of these, do you?”<br><br>“I scan through them to gauge international trends and gather industry information. It's nothing. Even if you only read five languages, you can make sense of most of them.”<br><br>That’s quite significant. Five languages? What kind of life has this man led? I gawked and glanced at one of the open newspapers.<br><br>My eyes were immediately drawn to a striking photo of a man in his prime, paired with a bold headline:<br><br>\- In Memory of Hunter Jeong Hyeon-Woo (with photo attached) - Recent mishaps remind us that even A-rank Hunters are not immune to the perils of the gates. Myeongdong Guild mourns the sudden loss...<br><br>Another accident must have happened.<br><br>'Myeongdong Guild? That's Ji-Hwang's guild.'<br><br>I was about to delve deeper when Team Leader Choi, taking a measured sip from his coffee, interrupted my thoughts.<br><br>“Peace Guild will continue to grow. We've already recruited twenty B-rank Hunters and thirty C-rank or lower. At this rate, our growth in the saturated domestic market is unprecedented.”<br><br>Indeed, as he said, Peace Guild's growth was meteoric.<br><br>Only about four months have passed since the guild was established. Yet, if this momentum continued, it would soon rival the stature of medium-tier guilds.<br><br>'In terms of sheer numbers, we might still trail behind some mid-tier guilds. However, it's not a matter of inability, but simply choice.'<br><br>Evidence of our burgeoning reputation was clear when the guild's website crashed under a surge of traffic.<br><br>There were hundreds of recruitment inquiries daily.<br><br>"I must admit, my contributions played a substantial part in that success."<br><br>"That's true."<br><br>Team Leader Choi responded smoothly.<br><br>"It might be true, but there won’t be any bonus."<br><br>"…You're quick to catch on."<br><br>I tried to tease him slightly, but it didn’t faze him at all.<br><br>Team Leader Choi paused, his smirk a little more mischievous,<br><br>"However, there might be room for negotiation if you'd grant me a small favor."<br><br>"What is it?"<br><br>"I'd like you to look after the new guild members for a while."<br><br>"…The newbies?"<br><br>"Yes. We've selected them carefully, and while they have talent, they are still very inexperienced."<br><br>"That's expected. They're brand new."<br><br>I nodded in understanding. Field experience held a different weight.<br><br>An elite Hunter straight out of the academy doesn't necessarily overshadow a seasoned, albeit lower-tiered, Hunter.<br><br>"But why me... what about the others?"<br><br>"I already spoke with Butler Kim and Miss Song this morning. I asked them to take turns training."<br><br>"What did they say?"<br><br>"They were eager. Not a hint of reluctance."<br><br>"...What about Hyuk-Jun?"<br><br>“I haven't mentioned it yet, but he missed his reporting time and hasn't called in to explain."<br><br>Team Leader Choi cast a fleeting look at the clock before continuing.<br><br>“His absence is troubling. In any case, the new guild members are hoping to be mentored by you, Jin Tae-Kyung. Most of them applied to our guild largely because of you.”<br><br>"Well, I appreciate the flattery.”<br><br>I scratched the back of my head.<br><br>In the present martial realm, Dark Heaven has made its presence known while Jeok Cheon-Gang lies incapacitated.<br><br>Even if I spend thirty days in the modern world, in the martial realm only about three hours would pass. Although I had some leeway in terms of time, mentoring the rookies wasn’t an especially advantageous choice given the potential A-rank gates to tackle.<br><br>Moments with my family seemed a far better use of time.<br><br>"Please exclude me. From the guild’s perspective, wouldn’t it be more efficient for me to break one more A-rank gate than to teach the newcomers?"<br><br>"Efficient..."<br><br>"Yes, efficient."<br><br>"Well, in that case, there’s nothing I can do."<br><br>His lips twitched, mischief in his eyes.<br><br>"We entrust our new guild members to you.”<br><br>“What?”<br><br>"All A-rank gates are fully booked. There’s no chance for at least the next week.”<br><br>"Don’t lie! You swindler!”<br><br>"If you really don’t believe me, see for yourself.”<br><br>I snatched the paper Team Leader Choi extended. It was densely written with the reservation status of A-rank gates all over the country.<br><br>Damn, it’s true.<br><br>"I'll double your compensation this month – for both raiding and guiding the novices. Or you could simply enjoy a quiet time at home.”<br><br>The corners of Team Leader Choi’s mouth curled up in a teasing manner.<br><br>Before I could blurt out my refusal, a system notification sounded.<br><br>Ding!<br><br>\- Quest \[An Offer You Can't Refuse\] has been generated! \[Note: the direct translation of the quest title is "I will not! It was too much money to say that."\]<br><br>\- Would you like to accept the quest? Y / N<br><br>“What will it be?”<br><br>We stared at each other, not saying a word.<br><br>“I'll take that as a yes and get the newbies prepared. We have a few B-rank gates lined up.”<br><br>Ding!<br><br>\- You have implicitly agreed!<br><br>\- Quest accepted!<br><br>Damn it.<br><br>\*\*\*<br><br>Growl!<br><br>A chorus of guttural growls echoed in the dense woods. The cacophony of monsters' breaths grew deafening, their looming presence encircling a group of twenty anxious Hunters.<br><br>Grips tightened on weapons, knuckles blanching from the pressure.<br><br>From my vantage point on a sturdy tree branch, I observed the pandemonium below, my face a mask of indifference.<br><br>Yet, the storm in my mind brewed a debate of utmost importance.<br><br>'What should I have for dinner?'<br><br>Should I have ribs or perhaps boiled duck, which I haven’t had in a while?<br><br>Both options are too tempting to pass up...<br><br>“Hold them back!”<br><br>"What's the dealer doing? Attack!”<br><br>Screams of terror disrupted my thoughts, and I glanced down to see utter chaos.<br><br>A wave of about ten Lycanthropes lunged, battering the formation.<br><br>The tankers, faces paling, began to falter.<br><br>'Of course, they're getting pushed back. They're trying to face the monsters with sheer strength.'<br><br>But it wasn't solely the tankers' fault. The dealers, overwhelmed, weren't doing their part.<br><br>If the appropriate counter-attacks had been deployed at the right time, this situation could have been avoided.<br><br>I warned them several times before the raid started, but it’s the same every time.<br><br>'That shield wall will be breached soon.'<br><br>My prediction proved true in moments, as the barrier gave way amidst a crescendo of screams.<br><br>The most agile Lycanthrope, marked by its distinctive howl, leaped forward.<br><br>Its predatory gaze fixed on the healers behind the now broken defense.<br><br>ROAR!<br><br>HOWL!<br><br>To me, it just sounded like a dog barking, but the rookie Hunters, who were only on their second raid, were clearly terrified.<br><br>“ARGHHH!”<br><br>“Aaaargh!”<br><br>A shrill scream, a blend of fear and agony from both mage and healer, pierced the dusky silence of the forest.<br><br>The battle was already noisy enough, but that scream will likely attract twenty more.<br><br>I mentally tagged the duo responsible for the outburst.<br><br>From now on, their nicknames will be 'The Whistling Men'.<br><br>“Sunbae! Jin Tae-Kyung sunbae!” \[Note: Sunbae is the Korean term for "senior", analogous to "senpai" in Japanese.\]<br><br>“Help us! Sunbae!”<br><br>Frantic faces turned upward, their eyes wide with terror, seeking me out.<br><br>Their initial defense had been shattered, and now, they huddled against a solitary, towering boulder, their last refuge.<br><br>The Lycanthropes, sensing imminent victory, closed in, almost mockingly coordinated.<br><br>'How come these monsters form better formations than us?'<br><br>Yawning slightly, I called out,<br><br>“I told you, didn't I? If I help, you won't improve.”<br><br>“I don't care about improving!”<br><br>“Well I care. You know what? If you get used to receiving help, you'll even soil yourself during raids out of habit.”<br><br>“We don't want to die like this!”<br><br>“Well... who does?”<br><br>“Please, help us!”<br><br>“Don't give up; keep fighting. Go, team!”<br><br>“Save us!”<br><br>"By the way, for tonight's dinner, should I go for ribs or boiled duck?"<br><br>“Hey, you bastard!”<br><br>It was the bald rookie from earlier, his scalp gleaming in the dim light.<br><br>The reverence that once graced his gaze had morphed into pure wrath.<br><br>“Come down here, you brat!”<br><br>Thud!<br><br>Out of the blue, a tanker catapulted, colliding with the irate rookie, sending him sprawling.<br><br>With the momentum swinging unmistakably towards the monsters, I pondered intervening. But before I could act, an abrupt commotion below caught my attention.<br><br>Slush!<br><br>Growwwwl...<br><br>A guttural growl echoed. In a swift blur, one of the Lycanthropes clutched its slashed throat, crimson spilling forth, before keeling over.<br><br>With a confident stride and a sharp swing of his weapon, the young man landed a devastating blow, immediately calling out,<br><br>"Formation Three!"<br><br>His commanding voice acted like a beacon, pulling the scattered Hunters back to focus.<br><br>In moments, a band of twenty Hunters organized into a formidable formation, inching forward in unity.<br><br>Leading the charge was none other than Kim Jin-Soo.<br><br>"Push forward! Archers, prepare your skills!"<br><br>This guy is pretty useful, huh?<br><br>Without hesitation, I descended from my perch, spear in hand, cleaving through the oncoming horde of Lycanthropes attracted by the clash.<br><br>Shrieeeek!<br><br>"Well done."<br><br>"Thank you, sunbae!"<br><br>Gratitude gleamed in Kim Jin-Soo's eyes as he inclined his head. Behind him, three Hunters lay subdued.<br><br>Among them were the Whistling Men and the balding rookie.<br><br>In a playful show of authority, I had the balding Hunter doing push-ups.<br><br>Might as well preserve what's left of his dignity...<br><br>"Learn from today, and you'll do better next time."<br><br>"Yes. We won't let you down."<br><br>"Then, Jin-Soo, you should rest too. We have another raid in two hours anyway."<br><br>Team Leader Choi really went all out, scheduling three raids in a day.<br><br>As I mulled over the packed day ahead, a vibrating alert interrupted my thoughts.<br><br>\[Luxury Brand-Name Fanatic\] \[Note: the direct translation here is "Brand-Name Fanatic" or "Luxury Goods Addict". This is the name that the MC used for Team Leader Choi's saved contact.\]<br><br>Did he develop telepathy or something?<br><br>Perplexed, I answered swiftly, only to hear the urgency in Team Leader Choi's voice.<br><br>\- Tae-Kyung, come to Ilsan Hospital right now!<br><br>Hospital?</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-272.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-274.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

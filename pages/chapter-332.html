@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 332 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 332</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 332</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: February 16, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>"Who dares to misbehave in the Yangtze!"<br><br>The likelihood of a response seemed slim.<br><br>Disregarding Mu-Song's bellow, I summoned my Qi to enhance my vision.<br><br>Beyond two hundred jang, my keen sight, which now rivaled an eagle's, captured every detail.<br><br>'That is...'<br><br>They were outnumbered. Two large ships, dwarfing our swift vessel, encircled a smaller one. A relentless barrage of arrows and harpoons rained down upon it.<br><br>My attention shifted to Mu-Song, noticing the pirates' flag fluttering.<br><br>"I don't know who these scoundrels are, but they're caught now. Quick! Take down those villains... What's wrong?"<br><br>"Uh, Sunbae. Look closer."<br><br>"What do you mean?"<br><br>"Those scoundrels. They seem to belong to the Yangtze River Water Route Alliance?"<br><br>"…?"<br><br>"…?"<br><br>After a moment of silence, Mu-Song bellowed.<br><br>"That's impossible!"<br><br>"It's not impossible. The flag clearly says 'Yangtze River Water Route Alliance' in a very bold font."<br><br>"Didn't you say you were illiterate just a while ago?"<br><br>Perhaps he was not a pirate but a razor blade. He was unexpectedly sharp.<br><br>Unfazed, I steeled myself and retorted.<br><br>"I learn quickly. And is that really the issue right now? We must swiftly execute those lawless scum disturbing the order of the Yangtze!"<br><br>Though Mu-Song looked like he wanted to execute me first, he fully agreed with my opinion.<br><br>"That's right. What era are we in that they dare commit murder on the Yangtze... I will personally see to their execution!"<br><br>It was lamentable that these words came from the mouth of a pirate leader, but from what I overheard from Goong Gi-Bang, Mu-Song was considered to be more just than most within the Yangtze River Water Route Alliance.<br><br>His philosophy was that it was enough to rob them of their money. There was no need to rob them of their lives.<br><br>"……"<br><br>But he does rob.<br><br>Upon reflection, he's akin to the others, but for a high-ranking pirate in the Alliance, he shows an unusual level of restraint in a world quick to unsheathe swords.<br><br>"Raise the battle flag!"<br><br>With Mu-Song's commanding cry, five ships adorned with crimson banners surged forth.<br><br>Swoosh!<br><br>The sails stretched taut, catching a fortuitous wind. Our swift vessel cleaved through the waters, rapidly diminishing the gap.<br><br>Soon, we halved the distance of two hundred jang. Amid the pirates, now scrambling for close-quarters combat, a cry of urgency rose.<br><br>"Fast! Fast ships!"<br><br>"Mu-Song of the Water Dragon Fortress has appeared! Everyone retreat!"<br><br>Yet, Mu-Song was not one to idly observe.<br><br>In moments, we were merely fifty jang from our foes. His eyes, ablaze with intensity, fixed on the crew hastily regrouping aboard their ship.<br><br>"Let's see who these scoundrels are!"<br><br>With a crisp sound, Mu-Song, gripping a massive harpoon, leaped off the stern.<br><br>Crash!<br><br>Mu-Song, arcing through the air, plunged violently into the Yangtze's embrace.<br><br>'Isn't that dangerous?'<br><br>To underestimate the Yangtze as merely another stream akin to those in Gangwon Province would be folly. \[Note: Gangwon Province is a province in South Korea, not ancient China. Geographically, the place that the MC is from, Gyeonggi Province, is right next to this one, which is probably why he is bringing it up here.\]<br><br>This tributary, though a branch of the main river, boasted the breadth and depth of the sea, with exceptionally turbulent currents.<br><br>Even Hyuk Mu-Jin, visibly queasy, inquired with a pallid complexion.<br><br>"Shouldn't we save him, blergh!"<br><br>"Goong Gi-Bang, give that bastard a pat on the back."<br><br>"I'm not a nanny..."<br><br>Of course you're not. Who would hire a beggar as a nanny?<br><br>Yet, despite his protests, Goong Gi-Bang, patting Hyuk Mu-Jin's back, remarked,<br><br>"And do you think he's reckless? Would a pirate captain dive into the Yangtze without mastering water skills? Especially when he's a disciple of the Sea King who is unrivaled in the water?"<br><br>"Ah, right."<br><br>"Whoever they are, they've made a grave mistake. They're in for a rough day."<br><br>Goong Gi-Bang's foresight proved accurate.<br><br>Moments later, Mu-Song reemerged, already ten jang ahead of the swift ships.<br><br>Whoosh!<br><br>I gaped in awe as the towering pirate sliced through the water like a jet ski.<br><br>"Incredible!"<br><br>He outpaced even the swift ships.<br><br>Observing Mu-Song's aquatic charge, a surge of exhilaration coursed through me.<br><br>"Wait for me! I'm coming too!"<br><br>Goong Gi-Bang shouted after me.<br><br>"Wait? Where are you going!"<br><br>"Uwaaagh!"<br><br>"Savior, me too!"<br><br>"Everyone out of the way! The great Yangtze River is calling me!"<br><br>Shaking off the Bermuda Triangle on the deck, I vaulted myself off off the deck.<br><br>Bang! Crunch!<br><br>The wood splintered under the force of my leap, the wind lashing my face as I soared, buoyed by adrenaline.<br><br>Swoosh!<br><br>"Freedom! Freedom!"<br><br>For a fleeting moment, I soared like an eagle, but gravity soon claimed its due, and I began to plummet.<br><br>"Sunbae!"<br><br>"Gasp!"<br><br>Thud!<br><br>Miraculously, I landed flawlessly atop a passing merman.<br><br>Precision in angle, velocity, distance – every calculation was exact, culminating in this serendipitous landing.<br><br>"Phew. A perfect landing."<br><br>"Oi!"<br><br>Mu-Song, taken aback by my impromptu hitchhiking, could only gape as I commandeered the ride.<br><br>Spotting the pirates, now desperately wheeling their ship about, I bellowed,<br><br>"Forward, to battle!"<br><br>"Damn it! Let's charge that ship!"<br><br>"That's the spirit Sunbae!"<br><br>"Charge!"<br><br>Whoosh!<br><br>Mu-Song, teeth clenched, surged forward with renewed vigor.<br><br>The pirates, scrambling to regain control of their vessels, sought escape in vain.<br><br>Like a relentless harpoon, we zeroed in on their ship's flank.<br><br>"Go, Sunbae! Merman Swimming Technique: Jump against the current with one arm!"<br><br>"Yaaaaaah!"<br><br>Together, Mu-Song and I unleashed our battle cries, arms outstretched in unison.<br><br>In his grasp, a harpoon; in mine, a spear. But we had one thing in common.<br><br>A powerful Qi concentrated at the tips of our weapons.<br><br>Swoosh!<br><br>The two spear Qis, slicing through the wind, plunged into the damp, hard side of the ship in the next moment.<br><br>Boom! Rumble!<br><br>A deafening blast resonated, followed by a massive shockwave.<br><br>\* \* \*<br><br>"Mu-Jin."<br><br>Responding to my serious voice, Hyuk Mu-Jin, finally ceasing his retching, replied with a pale face.<br><br>"Yes?"<br><br>"I think I might have a pirate's nature."<br><br>"What nonsense are you spouting now?"<br><br>"Do you want to hear a pirate song?"<br><br>"I misspoke because I'm not feeling well. Thinking it over, you seem well-suited for it."<br><br>"Right?"<br><br>"Yes. The way you recklessly, no, bravely penetrated that ship is still vivid."<br><br>"It was thrilling."<br><br>Satisfied, I gazed at the ship now slowly sinking.<br><br>Nearby, Mu-Song's crew, formerly aboard our swift ship, were rescuing beleaguered pirates from a small boat they had commandeered. On another vessel, dejected pirates were being bound and transferred to our ship.<br><br>'One ship sunk. The other captured.'<br><br>It was an excellent outcome for my first naval battle.<br><br>Originally, the intent was to sink both ships. However, witnessing their ally's vessel sinking, the remaining pirates lost heart and yielded.<br><br>Their surrender, though, hardly spelled good fortune for them.<br><br>"How dare you sully the name of the Yangtze River Water Route Alliance?"<br><br>Despite Mu-Song's righteous reputation, he remained a formidable martial artist and pirate, tempered by the Yangtze's unforgiving waters.<br><br>Once enraged, Mu-Song was relentless.<br><br>"Feed them to the fish."<br><br>The tightly bound pirates' eyes widened in horror.<br><br>"This can't be happening!"<br><br>"Fortress Master! Please, spare us!"<br><br>Their pleas were met only with Mu-Song's frosty stare.<br><br>"Fortress Master? Are you men of my own fortress, or another? And don't worry. Your own Fortress Master will soon follow, so you won't be lonely."<br><br>"I'm sorry! Please, just this once..."<br><br>"If you dared to encroach upon the territory of the Water Dragon Fortress and commit such acts, you should've been prepared for this. Do you know why I bothered to save you? To personally administer your punishment."<br><br>With a mere gesture from Mu-Song, his men advanced, seizing the pirates.<br><br>Despite their wails at the face of death, bound and helpless, they were submerged with a splash.<br><br>Over fifty pirates met their end in the river, a spectacle that forced Cheong Pung to press his lips tightly, his complexion ashen.<br><br>'It's understandable.'<br><br>Someone averse to bloodshed would find this unbearable.<br><br>With concern, I spoke to him gently.<br><br>"Close your eyes. I'll let you know when it's over."<br><br>"No, Savior. I'm okay."<br><br>"But it's hard to watch people die, even if they deserved it."<br><br>"No."<br><br>"Hmm?"<br><br>Cheong Pung's eyes flickered as he spoke.<br><br>"I'm just... trying to get used to it."<br><br>Getting used to it. I never thought Cheong Pung would say such a thing.<br><br>Inherently compassionate, Cheong Pung was untainted by worldly cynicism, always shunning bloodshed and violence.<br><br>However, now there was a resolve in him.<br><br>'The fight with the Blood Lord at Mount Song. Was that his turning point?'<br><br>The raw terror and ordeal of facing death must have stirred something profound in Cheong Pung.<br><br>Part of me felt pride, yet there was also a tinge of bitterness.<br><br>'It can't be helped. This is Murim.'<br><br>Right. This is Murim, a world steeped in the fortunes of war.<br><br>One cannot forever remain the naive youth of the mountains in such a world.<br><br>'If this is his evolution... perhaps it's for the best.'<br><br>Cheong Pung exhaled a sigh of relief, his eyes, which once seemed ready to shut any moment, now settled. The ordeal with the pirates was finally concluded.<br><br>Yet, the matter was far from resolved.<br><br>"Hwang Tae-Gu. Now it's your turn."<br><br>Mu-Song's grave tone resonated across the deck.<br><br>Before him, distinct from the other pirates, stood a man in his fifties – Hwang Tae-Gu, shackled in chains, kneeling. He was the mastermind of this chaos.<br><br>Goong Gi-Bang, observing this, commented quietly.<br><br>"I wondered why Mu-Song was here, and now it makes sense."<br><br>"What do you mean?"<br><br>"There are factions even within the Nine Great Sects and the Five Great Families, let alone within a group of pirates like the Yangtze River Water Route Alliance."<br><br>"So, this Hwang Tae-Gu was pushed out in a faction struggle?"<br><br>"He was known for being greedy and violent. He used to dominate the Sichuan section of the Yangtze just a few years ago... until he was helplessly pushed out by Mu-Song."<br><br>A loser in the internal power struggle, caught just as he went rogue?<br><br>As I was pondering this, Hwang Tae-Gu spoke.<br><br>"I have nothing to say to an ignorant youngster. Just kill me."<br><br>"Even if you don't say it, your wish will be granted. But why did you do this?"<br><br>"Heh, what a foolish question. I'm a pirate. Since when is killing and looting a problem?"<br><br>"You're beyond reason. I should have killed you long ago."<br><br>Mu-Song's expression turned steely as he raised his harpoon.<br><br>"Please wait a moment, Master Ship Lighter Mu-Song."<br><br>Suddenly, a voice cut through, arresting everyone's attention.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-331.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-333.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

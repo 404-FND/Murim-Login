@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 275 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 275</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 275</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: October 27, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>"You're naive."<br><br>Mr. Choi's words still haunt me.<br><br>Sitting in the caretaker's chair next to the bed, I absentmindedly stare at the humidifier dispersing mist. I spoke my thoughts aloud to the sleeping Mr. Hyuk-Jun:<br><br>"I am not naive."<br><br>The Murim is aptly described as a mountain of swords and a forest of blades.<br><br>Blood and death are daily companions. Power is the only justice, and the last one standing is the victor.<br><br>Whenever I bore witness to Murim's brutality, I found solace in thoughts of the contemporary world.<br><br>A place of welfare and legal order, where people are guided by ethics. Civilization advanced beyond Murim's comprehension.<br><br>But I was wrong.<br><br>"I was not naive. I was just foolish."<br><br>True, martial artists wear their swords with pride, but the modern era hides its weapons more subtly — daggers concealed in fine sleeves.<br><br>Monsters aren't confined to the gates; they roam amidst us.<br><br>Donning pristine suits, radiating virtue, ruling over sprawling metropolises.<br><br>Those who unsheath their concealed weapons are the true beasts beyond the gates.<br><br>Like Won Myung-Hoon.<br><br>I have been too soft-hearted.<br><br>Even knowing that the world is unjust and miserable, I couldn't let go of my optimism.<br><br>This is the modern era. A democratic society of the 21st century. Though there might be fierce competitions to prove one's worth, I thought incidents like today's wouldn't happen.<br><br>'And this is the result.'<br><br>Beside me lay Im Hyuk-Jun, his arms cut beneath the elbows, now restored by masterful healing arts and potent potions.<br><br>He might cope with daily life, but his hunter's future teeters on uncertainty. Potions have their limits.<br><br>'Who did this?'<br><br>Cold thoughts churned within me.<br><br>Who? Why? What drove them to dispatch the Black Hunters?<br><br>Severing Im Hyuk-Jun's arms could serve as a warning, or perhaps a battle cry.<br><br>I will decipher their message.<br><br>And until that moment, I refuse to stand still.<br><br>Nor will Mr. Choi.<br><br>"Rest now, mister."<br><br>Gently, I draped the rumpled blanket over Im Hyuk-Jun.<br><br>Vvvv vvvv<br><br>The stillness of the room was disturbed by the phone's vibrations.<br><br>A brief message from Mr. Choi flashed across the screen.<br><br>\[To the guild house.\]<br><br>Without hesitation, I departed the hospital. As midnight deepened, two figures awaited me at the now-deserted guild house.<br><br>"Good to see you, Mr. Jin Tae-Kyung."<br><br>"Come on in."<br><br>Mr. Choi and Song Song greeted me.<br><br>But Butler Kim, a constant presence like a shadow by Mr. Choi's side, was conspicuously absent.<br><br>Mr. Choi read the query in my eyes.<br><br>"He has stepped out for a moment."<br><br>"Is that so?"<br><br>Though Butler Kim's absence piqued my curiosity, there were more urgent matters to address.<br><br>I got straight to the point.<br><br>"What's this about?"<br><br>"Before I explain, I should probably offer you some coffee... but first, have a look at this."<br><br>Instead of a coffee cup, Mr. Choi handed me his smartphone. The screen showcased the nation's premier news portal.<br><br>A slender finger touched a window, and a cascade of articles divided by categories appeared.<br><br>I quickly scanned the article displayed at the top.<br><br>\[Judiciary Bows to Public Pressure: Is Justice at Stake?\]<br><br>\[A statement from the Unity Party's senior member, Represetnative Yoon Seo-Yoon: "Won Myung-Hoon should have faced the judgment of the law. Instead, he was murdered by an individual's hasty decisions." Backlash ensues...\]<br><br>\[Self-defense or cold-blooded-murder?\]<br><br>These headlines, dripping with political and societal overtones, conspicuously avoided a direct mention, yet it was evident to whom they alluded.<br><br>"When did this go live?"<br><br>"Roughly an hour back. It's garnered over 100,000 views with 5,000-plus comments."<br><br>"All this at four in the morning?"<br><br>"Seems our netizens are rather active, or perhaps those compensated to stir the pot are especially so."<br><br>"How amusing."<br><br>Sipping his cold coffee, Mr. Choi's gaze met mine, his amusement mirroring my own.<br><br>"There's an even more interesting article."<br><br>"More than this?"<br><br>"Scroll down a bit. It'll be more than you're expecting."<br><br>Mr. Choi was right. As I scrolled, my fingers involuntarily stopped.<br><br>Silently, I stared at the bolded article headline.<br><br>\[Exclusive: Former Associate, Mr. K Reveals: "Famous Hunter J is a Truly Reprehensible Man."\]<br><br>Tapping the headline, a 3-minute interview preview began, preceded by a brief cosmetics advertisement.<br><br>Despite the intentional pixelation, the face of the stout man in the suit was unmistakable.<br><br>"Ha."<br><br>The identity of this middle-aged man, or rather 'Former Associate, Mr. K', made me scoff.<br><br>That all-too-familiar face of a person I thought I'd never see again was right there.<br><br>"I never thought I'd see him again."<br><br>Song Song, peeking over my shoulder at the smartphone, asked,<br><br>"Do you really know him?"<br><br>"Know him? How could I not?"<br><br>"If he's giving such a trashy interview, I assume you two weren't on good terms?"<br><br>"No."<br><br>"So, were you close?"<br><br>"It's not that..."<br><br>What word would best describe the relationship between that man and me? After pondering for a moment, I spoke.<br><br>"He treated me like shit."<br><br>"Oh."<br><br>No matter how much I thought about it, that phrase was the most fitting.<br><br>Our relationship was terrible. Considering all of our past, it's almost surprising we never came to blows.<br><br>I stared intently at the face that had gotten chubbier since I last saw it.<br><br>'Mr. Sang-Shik. It's been a while.'<br><br>Kim Sang-Shik, once the esteemed team leader of the Picnic Guild.<br><br>During my days as an F-rank Hunter, he had orchestrated my dismissal by inciting the guild leader against me.<br><br>Our paths last crossed at the Association during my rank reassessment. I never imagined our fates would intertwine again.<br><br>'I heard he got fired from the guild afterward.'<br><br>Kim Sang-Shik is a person full of greed yet lacking in capability. Contrary to his name, which translates to "common sense," he had none. He frequently stumbled into pitfalls of his own making.<br><br>It wasn't surprising that such a petty man would harbor resentment.<br><br>His participation in this interview confirmed as much.<br><br>'Let's hear what bullshit he's spouting.'<br><br>Right at that moment, the reporter in the video began to ask a question.<br><br>"We've heard that you have some comments about the recently famous Hunter J. Firstly, is it true you were former colleagues?"<br><br>With an air of exaggerated importance, Kim Sang-Shik nodded.<br><br>"Without a doubt. I was Jin Tae... I mean, J's direct supervisor."<br><br>"Were you?"<br><br>"He was a member of my team. After the gate incident two years ago, I became the team leader. It was also I who informed J of his termination last summer."<br><br>"Really? What was the reason for termination?"<br><br>"There was more than one reason."<br><br>Kim Sang-Shik then passionately listed the reasons for firing me.<br><br>His hyperbolic narrative reached a crescendo of absurdity when he proclaimed,<br><br>"Though I was unfairly framed for employment corruption and got expelled from the guild I served for over 20 years, my firing of J wasn't for any personal gains."<br><br>"You had a different motive then?"<br><br>"Absolutely."<br><br>In this brief preview, with the fervor of a misplaced martyr, Kim Sang-Shik made known his real reason for agreeing to this interview.<br><br>"Two years ago, during the Sangdong gate incident, J threw his teammates to the monsters as bait and ran away. He wouldn't hesitate to do anything despicable and dirty to survive..."<br><br>I didn't hear the rest of what he said.<br><br>After the preview ended with a caption promising a full version of the interview soon, I remained silent, staring at the screen.<br><br>Almost as if I believed that if I stared long enough, Kim Sang-Shik would jump out of it.<br><br>The palpable tension was punctured by Mr. Choi.<br><br>"How do you feel?"<br><br>How do I feel?<br><br>Betrayed, yet amused. A fire of indignation simmered within me.<br><br>"It's quite interesting, just like you said, Team Leader."<br><br>"I laughed when I first saw it too, knowing what kind of person Mr. K, or rather Kim Sang-Shik, is. The problem is..."<br><br>"The public might not find it as amusing."<br><br>"Exactly."<br><br>The comments section was already on the brink of a meltdown.<br><br>I didn't need to wade through the ever-growing sea of comments, which had already swelled past ten thousand. One top comment caught my eye.<br><br>(Top Comment) I knew something like this would happen. I heard rumors from across the bridge and hoped they weren't true, but I always felt it'd blow up someday.<br><br>What bridge are they talking about, and what's blowing up?<br><br>Luckily, I don't have to face whoever posted that in person.<br><br>If they were here, I would've ensured they got their news from the other side of the River Styx next time.<br><br>"I don't think there's any need to see more."<br><br>With a hollow chuckle, I closed the comments section.<br><br>Mr. Choi, retrieving his phone, folded his arms as he said,<br><br>"It's organized. It's now clear that they targeted you from the start by sending the Black Hunters."<br><br>"This public smear campaign must be their handiwork as well."<br><br>"People are like that. Once they start riding a wave, it's hard to regain balance."<br><br>"And amidst all this, not a single news article about the attack on Mr. Hyuk-Jun."<br><br>"You've done your homework."<br><br>"If I hadn't, I'd be an idiot. Did the investigative team handling the case say anything?"<br><br>Mr. Choi slightly shook his head.<br><br>"You can't possibly mean they're in on it?"<br><br>"It seems they're under external pressure too. They're sitting on the CCTV footage."<br><br>"Didn't you say there were witnesses?"<br><br>"All three of them have vanished."<br><br>Fantastic.<br><br>The muffled crackling of bones betrayed my unconscious clenching of fists.<br><br>"This is a full-scale assault."<br><br>"It's a calculated move, targeting you specifically. The interview with Kim Sang-Shik is a testament to that."<br><br>And it wasn't just tabloid fodder pushing the narrative.<br><br>It was orchestrated by one of the nation's leading media outlets.<br><br>"The most absurd bullshit can be well-packaged and made plausible, and in that process, trust can be added through power and money."<br><br>For instance... testimonies from those who claimed to know me best.<br><br>"I guess I'll see the faces of my old colleagues after a long time. Oh, they'll probably be pixelated, so it might be hard to recognize them, right?"<br><br>I posed this to Mr. Choi, who was looking at me with a contemplative gaze.<br><br>"Why do you say that? I remember you had a good reputation within the Picnic Guild."<br><br>"I got along with everyone. It's a rather close-knit guild after all."<br><br>"But why would you think this way now?"<br><br>"This always works, right?"<br><br>I made a circle with my thumb and index finger. \[Note: while this hand sign means 'OK' in most English-speaking countries, in Korea, this sign is also used to mean 'monkey'\]<br><br>It always circles back to money.<br><br>For hunters, who brave death for their earnings, the siren call of it proves irresistible.<br><br>"After back-to-back betrayals, it's hard to trust those with whom I spent the last seven years in laughter and joy."<br><br>Days prior, I would have willingly trusted my old associates.<br><br>But not now. The idealistic realm of dreams, fellowship, and decency has faded.<br><br>"Considering that articles have appeared in political and social sections, it seems they've buttered up some congressman. What's stopping them from manipulating a few low-ranked hunters struggling to make ends meet?"<br><br>Obviously, I'll be the villain, subject to digital scorn. The reputation I painstakingly built will erode, with our guild collapsing in its wake.<br><br>Throughout this, Mr. Choi wore a puzzling expression, but eventually, a grin formed.<br><br>"You've improved. You seem to think like a worldly adult now."<br><br>"Are you taking back what you said yesterday about me being naive?"<br><br>"I'll decide that based on your actions from here on."<br><br>"What do you mean?"<br><br>"You can't just sit idly by and let them walk all over you."<br><br>As he spoke, he pressed his phone's screen. When it connected, a voice answered.<br><br>"I found it. The tail."<br><br>Through the speaker, Butler Kim's low and soft voice echoed.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-274.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-276.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

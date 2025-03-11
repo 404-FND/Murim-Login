@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 402 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 402</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 402</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: May 4, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>Thud!</p><p>What is this?</p><p>The sensations were both scorching and icy simultaneously.</p><p>Confronted with conflicting feelings, the Black Knight glanced down at the spear blade protruding from his chest.</p><p>Slowly lifting his head, he locked eyes with a young human whose expression was indiscernible.</p><p>“Be at peace now.”</p><p>The voice carried neither the derision of defeat nor the exultation of victory; it was tinged with bitterness and a touch of nostalgia.</p><p>That word overwhelmed the Black Knight's thoughts.</p><p>'Peace.'</p><p>Then, in the following instant.</p><p>Crash!</p><p>The Black Knight listened as all that had confined him shattered.</p><p>His dark armor, already struggling to hold its form, exploded into countless fragments, and his formidable magical power began to falter.</p><p>Yet, the most profound transformation was unfolding within his mind.</p><p>'What...'</p><p>In the slowed world, he saw a small child's shoe through the scattered fragments of his armor.</p><p>At that moment, a flood of memories surged through him.</p><p>'I want to become a Hunter.'</p><p>A young boy declared his dream.</p><p>'I am proud of you. Thank you for growing up so well.'</p><p>'Thank you. Uncle. No... Father.'</p><p>The proud nephew who became a son.</p><p>'Is anybody there?'</p><p>'Welcome!'</p><p>'...Ah.'</p><p>The weather, the temperature, and even the scents riding the breeze. On that day, when everything was pleasant, a man fell in love with a woman.</p><p>'Will you marry me?'</p><p>The boy who dreamed of becoming a Hunter also became a partner.</p><p>'Wah, waah waah!'</p><p>'Is this child...'</p><p>'Congratulations on becoming a father, darling.'</p><p>He had become a father to a child.</p><p>'Dada, mama!'</p><p>'Hahaha! Yes! We are your dad and mom!'</p><p>How could he ever forget those moments, the happiest of his life?</p><p>A single tear rolled down his pale, bloodless cheek.</p><p>Tears that cleansed the shadows clouding his thoughts. Tears of a dead man rediscovering himself.</p><p>'Ah, ahh...'</p><p>Now he knew. Now he understood.</p><p>He reached out, clutching the small shoe.</p><p>Visions of an unknown child weeping in its parents' embrace merged with that of his daughter, who had smiled brightly and bid him farewell on the morning of his demise.</p><p>'Daddy! Come quick!'</p><p>'Be careful. Come back safe.'</p><p>He remembered kissing his wife's forehead and pressing his cheek against his daughter's. He embraced his daughter, who giggled at the feel of his stubbly beard, before he left home.</p><p>He departed with his customary vow.</p><p>'I'll be back.'</p><p>But he never fulfilled that promise.</p><p>Hours later, a disaster unprecedented since the Great Cataclysm unfolded, and he fought valiantly. Eventually, he confronted a new monster.</p><p>'You are noble, human. What is your name?'</p><p>'I am...'</p><p>The fiery intensity in his gaze extinguished as though doused.</p><p>No longer the Black Knight or the Death Knight Lord, his eyes cleared, revealing a soft gray.</p><p>'Lei Fei. That's my name.'</p><p>He raised his head, emerging from the prolonged darkness.</p><p>Sunset light filtered through the clouds, casting a rosy glow on his pale skin.</p><p>\* \* \*</p><p>Just as I was about to put an end to it, a system notification interrupted.</p><p>Ding.</p><p>- Target information has been updated.</p><p>- The updated information is displayed as \[Revised\].</p><p>\[Lv.120 Lei Fei\]</p><p>"......!"</p><p>I stood frozen, startled by the turn of events.</p><p>Looking towards the heavens, the former Death Knight Lord, now Lei Fei, shifted his ashen-gray eyes towards me. His voice was hollow and mournful.</p><p>「It feels like I've been through a terrible nightmare. No, I wish it had been just a nightmare.」</p><p>This was an occurrence beyond anything I'd ever witnessed or imagined. I watched him in silence before finally speaking.</p><p>"Have you regained your senses?"</p><p>「Yes, just now.」</p><p>Lei Fei glanced at his hands, ghastly pale and deteriorating, showing signs of flesh and bone loss from our brutal combat.</p><p>And they were drenched in the blood of humans.</p><p>「What have I done?」</p><p>He had sacrificed his life for humanity, only to become the leader of legion of monsters and slaughter humans.</p><p>I could scarcely fathom the torment he must have been experiencing upon realizing this bleak truth.</p><p>"Lei Fei."</p><p>I wanted to explain. It wasn’t his doing; he had been manipulated by the Arch Lich's magic.</p><p>Yet, Lei Fei dismissed the need for explanations with a shake of his head.</p><p>「There's no need to say it. I already know what you're about to say. But...」</p><p>Lei Fei gestured towards his body as he continued.</p><p>「It seems my time is nearly up.」</p><p>His statement was accurate. His once formidable undead form, resistant to steel and bullets, was gradually deteriorating.</p><p>Ironically, the remnants of power sustaining him were the same forces that had once animated his undead existence.</p><p>「It’s a cruel irony, isn’t it? This power made me kill my fellow humans, yet now, it's all that keeps me whole.」</p><p>With a resigned chuckle, he faced me and requested,</p><p>「May I ask you for one thing?」</p><p>"......Please go ahead."</p><p>I assumed Lei Fei sought oblivion, yearning to be freed from his suffering and to find peace at last.</p><p>But the words Lei Fei uttered next were unexpected.</p><p>「Please help me complete my mission.」</p><p>"......!"</p><p>「I vowed on the day I became a Hunter that I would fight monsters until my very last breath. That vow still holds.」</p><p>Lei Fei had already completed his mission. He had fought valiantly and met a heroic end.</p><p>The entity that had waged war against humanity as the Death Knight Lord had been manipulated by the Arch Lich, not acting on his own.</p><p>Yet now, he was ready to engage in battle once more. Despite his expended life, he stood resolute, reaffirming his commitment.</p><p>Compelled by his resolve, I found myself asking.</p><p>"W-why go to such lengths?"</p><p>At my question, Lei Fei smiled faintly.</p><p>「That's a foolish question.」</p><p>"What?"</p><p>「What's the difference between the reason I keep fighting to the end and the reason you ran here alone despite the numerous monsters and dangers awaiting?」</p><p>"......!"</p><p>「You already know the answer.」</p><p>I knew the answer.</p><p>The realization sent a shiver through me.</p><p>Lei Fei, noting my stunned silence, gestured expansively.</p><p>Reflected in his lifeless gaze was the vast horde of monsters that yet lingered.</p><p>「This will be my final battle.」</p><p>Puff!</p><p>He extracted White Flames from his chest and handed it to me, then hoisted his sword aloft.</p><p>Gone was the brilliant aura typically surrounding an S-rank Hunter's blade, now replaced by a malevolent darkness.</p><p>Yet, the figure wielding this power was no longer a Death Knight Lord but a Hunter ignited by his final mission.</p><p>「I wish to fight together. But will they allow it?」</p><p>To an outsider, his words might have seemed like the delusions of a madman.</p><p>But I understood Lei Fei's intent, and as I tentatively lowered the blade of White Flames, I responded.</p><p>"They would be pleased. If they are the people I know."</p><p>「......Just as I thought.」</p><p>A crimson spark ignited in his ashen-gray eyes.</p><p>Summoning his last reserves of strength, he unleashed a force that swept across the battlefield. A thunderous cry erupted from Lei Fei.</p><p>「Public Security Force-!」</p><p>And the next moment.</p><p>Swish, thud-thud-thud.</p><p>At the summons of the Death Knight Lord, now the commander of the Public Security Force, hundreds of Hunters who had fallen on the battlefield rose. Having conquered death, they seized their weapons and assembled.</p><p>Lei Fei and I stood at the vanguard.</p><p>「Lead the way. This fight must be finished by the living.」</p><p>Compelled as if by an unseen force, I moved forward.</p><p>The horde of monsters, initially stunned by the unforeseen turn of events, finally issued their ferocious roars and charged.</p><p>Towards the commander who had now turned against them.</p><p>And towards me, spearheading the advance.</p><p>Step. Step.</p><p>My movements were deliberate, yet forceful.</p><p>Tap, clack.</p><p>I accelerated gradually.</p><p>Lei Fei and the legion of undead Hunters from the Public Security Force followed closely.</p><p>The tide quickly swept them up.</p><p>At the onset of what would be his final confrontation, Lei Fei bellowed with all his might.</p><p>「Sweep them all away!」</p><p>His command resounded across the battlefield.</p><p>Above the tarnished and battered armor, a symbol of their honor, the five-star red flag caught the light of the setting sun.</p><p>Clutching the searing pain in my chest, I transformed into blur hurtling towards the enemy.</p><p>Screeeeech! Crack-crack-crack!</p><p>\* \* \*</p><p>Crack!</p><p>How many had fallen to my blade?</p><p>Hundreds? Thousands?</p><p>Screech! Thump!</p><p>I couldn't tell. I fought like a man possessed, crushing, slicing, piercing, and tearing through everything before me.</p><p>Whooosh!</p><p>- Aaaaargh!</p><p>- Kuaaaah!</p><p>Blue flames erupted like columns, and the monsters, consumed by the relentless fire, cried out in agony.</p><p>And then, suddenly, all noise ceased, and I found myself halting in place.</p><p>"Huff, hah."</p><p>I was out of breath. My mouth felt dry, as if I had swallowed a handful of sand.</p><p>A wave of exhaustion washed over me as I surveyed the scene.</p><p>Across the expansive plain, no monsters remained standing.</p><p>Neither the ogres and trolls that had issued fearsome roars, nor the wyverns and gargoyles that had once dominated the skies.</p><p>And...</p><p>Thud, thump!</p><p>The undead Hunters of the Public Security Force as well.</p><p>Having fulfilled their ultimate duty, they collapsed one after another, like marionettes severed from their strings.</p><p>Witnessing this with a mix of feelings, I realized it signaled one thing.</p><p>"......Lei Fei!"</p><p>He sat at the serene epicenter of the battlefield. Despite a severed arm and a gaping wound in his side, he awaited me with a calm demeanor.</p><p>「You've come at the right time.」</p><p>For some reason, his simple words stirred something deep within me.</p><p>It wasn't like I had known him for ten years, yet a curse came up of its own volition.</p><p>"Damn it......"</p><p>「Don't swear too much. From watching TV, it seems like a bad habit of speaking. It doesn't make you popular with women, nor is it good for educating children.」</p><p>Lei Fei remarked with a faint chuckle, fully aware of who I was.</p><p>"Is that really the issue right now? Isn’t there some way......"</p><p>- There is no such way, wicked human. \[Note: I have so many questions. Why is the author doing us dirty like this? Is he turning this into Game of Thrones? How much death energy would the Skeleton Warlord have needed to keep Lei Fei going as an undead? Could another Top-grade Potion have saved us readers from this heartache?...\]</p><p>The owner of this deeper, subdued voice was the Skeleton Warlord.</p><p>Lei Fei's eyes widened as he faced the Skeleton Warlord.</p><p>「A monster?」</p><p>- I am a commander, foolish, but also remarkable human.</p><p>「It really is a monster. I don't quite understand what's going on... But, Jin Tae-Kyung, you probably have it under control.」</p><p>Lei Fei nodded and gazed skyward. His slowly blinking ash-gray eyes mirrored a sky stained crimson.</p><p>「Could you deliver a message for me?」</p><p>I didn't ask the foolish question of 'to whom.' I already knew who it was intended for.</p><p>「Tell them I love them. And that I'm sorry I couldn't return.」</p><p>This was the final wish Lei Fei, now a departing spirit, entrusted to me to deliver to his family.</p><p>Feeling a surge within my chest, I replied.</p><p>"......I will."</p><p>「Thank you. You are a good person.」</p><p>Lei Fei offered a weak smile and placed his remaining hand on my shoulder.</p><p>With a brittle sound, his fingers disintegrated into dust. Shortly thereafter, his arm, legs, and torso followed. \[Note: with Thanos, at least he snapped his fingers with the intent to save Life from itself. The author snapped Lei Fei away because he's jealous that he'll never be as good a man and husband as Lei Fei.\]</p><p>In his final breaths, one last directive escaped his lips.</p><p>「Head west. End this war.」</p><p>Whoosh.</p><p>The wind stirred. The hero, now merely a cloud of dust, scattered in the breeze.</p><p>Gazing vacantly at this sight, I noticed dozens of planes soaring in formation.<br></p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-401.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-403.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

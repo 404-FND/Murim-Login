@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 192 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 192</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 192</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: Coldbutteredtoast</span>
+                            <span class="published-date">Published: October 9, 2022</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>"Oh, fuck. This is ridiculous."<br><br>[...What?] Il-Sung thought he must be dreaming. He a master of the Southern Edge Sect, the famed Tiger Swordsman. Nobles and priests would bow their heads to him as he passed.<br><br>[Did I hear it wrong?] The snot nosed brat of the Jin Family of Taiyuan, Jin Tae-Kyung, a mere boy who had barely reached the peak, dared to curse him, the head of one of the great sects and hero of the Great War between the Orthodox and Demon Factions?<br><br>No. This could not be tolerated.<br><br>"...What did you just say?"<br><br>The next moment, his heart was shattered by Tae-Kyung's words.<br><br>"This is shit. Just totally shit. I'm sorry brother, I know that I should just endure it, but it's just so fucking shit, I can't."<br><br>Jin Wi-Kyung nodded and said, "Actually, I think it's shit, too."<br><br>That was the final straw. A roaring light flowed through Il-Sung, a great anger unlike any he had felt for some time.<br><br>"You evidently want to die."<br><br>His sacred blade sprang into his hands. It had slain countless foes and would cut again, regardless of the growing status of the Jin Family. If he had been one to consider the future before battle, Il-Sung would never have been nicknamed the Tiger Swordsman.<br><br>"I'll kill you all!"<br><br>The mighty blade overflowed with Qi as he gathered the Cheonha 36 Swords (天河三⼗六⿂ -- Chinese: 36 Fish of the River of Heaven and Earth), the ultimate technique of the Southern Edge Sect.<br><br>"You die first."<br><br>His eyes burned with righteous anger as his gaze settled on Jin Tae-Kyung, the so-called Sleeping Dragon of Shanxi.<br><br>"If you kill him, you will also die."<br><br>Il-Sung stiffened. The voice seemed to come from everywhere.<br><br>[...Who?]<br><br>Then he realised. Universal Transmission.<br><br>If Sound Transmission is something only Peak Masters can achieve, then Universal Transmission (六合傳聲 -- Chinese: Six Cardinal Directions Transmission) is the hallmark of the truly Transcendent.<br><br>He screamed at the air. "Who are you? I am Gong Il-Sung, the Tiger Swordsman, elder of one of the great sects! Show yourself!"<br><br>"Elder? Ha ha ha!"<br><br>Thunderous laughter rang around the courtyard. The assembled nobles fell down crying for the Jade Emperor, while the warriors trembled in awe.<br><br>Gong Il-Sung had lost his composure in anger and fear. As he looked around, he noticed Tae-Kyung. Unlike the others around them, the young man was smirking broadly.<br><br>Il-Sung raised his blade and challenged the air. "Show yourself or I'll kill this boy!"<br><br>The laughter that rang from the heaven and earth stopped.<br><br>"I will count to three," cried Il-Sung, realising that Tae-Kyung was the weakness of the unknown speaker. "One!"<br><br>"Huh." The words echoed from thin air. "This old man has gotten full of himself since I last saw him."<br><br>For a moment, Il-Sung remembered an ancient master, but that was not possible. "T-two!"<br><br>"OK, as you wish. I'm on my way. You will pay the price if even a hair on his head is hurt."<br><br>Il-Sung relaxed. That meant the voice was far away. "Three."<br><br>Tae-Kyung looked calm. "Have you gone crazy with age? Are you deaf?"<br><br>"Do you want to die?"<br><br>"Kill me, then. If you can. It will be your turn next." Jin Tae-Kyung smiled and spread his arms. "He's coming."<br><br>Il-Sung took an involuntary step backwards. The wind howled in his ears, the hair on his neck stood on end. His warrior instincts screamed at him that it might already be too late.<br><br>"I am Gong Il-Sung," he yelled. "The Tiger Swordsman!"<br><br>His blade exploded with power, arcing in 36 blazing trails towards Jin Tae-Kyung. The world slowed and compressed to the sight of the Sleeping Dragon, desperately blocking and dodging, the blades slicing his clothing and drawing lines of blood on his skin.<br><br>How had he survived? Il-Sung brought his sword around for another strike.<br><br>And his wrist stopped, clutched in burning heat.<br><br>"Didn't I tell you not to touch him?" asked a quiet voice.<br><br>Long ago, a monster had made an indelible mark upon Il-Sung. Now that memory had come to life before him.<br><br>The Tiger Swordsman screamed. "Fire King!"<br><br>The wrinkled mouth of Jeok Cheon-Gang opened in an eerie smile. "Yes. It's me."<br><br>The Fire King stood in the home of the Jin Family. One of the God, Stars and Kings, his name was a legend. While a small man and shabbily dressed, he radiated such power that he seemed to tower over the assembly.<br><br>He turned his head to Tae-Kyung. "Crazy fool. Are you trying to get yourself killed?"<br><br>"Thank you," replied Tae-Kyung, seriously. "I won't forget your grace."<br><br>"Huh. You've forgotten your fear since this morning. Anyway, let's first deal with this ugly punk." The Fire King turned back to the trembling head of the Southern Edge Sect. "Your bones healed properly, then?"<br><br>"Yes, a-all of them. How are you?"<br><br>"Huh. You are talking informally to me." The eyes of the Fire King burned with amusement. "You've grown."<br><br>With every statement, the Tiger Swordsman seemed to diminish, as though the Fire King was squashing an insect underfoot.<br><br>"When I first saw you, you had barely reached the peak." Squash. "The rude, clumsy boy is now a sect elder, eh." Squash. "Do you remember when I spared your life? If not for your teacher, I would have broken your neck instead of your legs." Squash.<br><br>Still holding his wrist in one hand, the Fire King slapped Il-Sung. A light touch, with no Qi behind it.<br><br>Il-Sung flinched, his eyes burning with shame, anger and fear.<br><br>"Idiot," said the Fire King. "You've become an asshole in your old age."<br><br>As the old man berated his foe, Wi-Kyung, Mu-Jin and the others watched, their eyes shining in wonder and adoration.<br><br>Trembling in fear and shame, Gong Il-Sung said, "T-this is between our sect and the Jin Family. There's no need for you to get involved."<br><br>"Aren't I already involved?" The Fire King pointed a wrinkled finger. "Can you see him? I left the treasures of the Fire Clan to that guy."<br><br>Shock. Silence descended on the courtyard, all eyes turning to Jin Tae-Kyung.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-191.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-193.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

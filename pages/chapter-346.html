@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 346 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 346</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 346</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: February 19, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>I scrutinized the small ring closely. It was light and mysterious.<br><br>It was crafted from an unknown metal with a surface etched with indiscernible patterns. The central gem flickered with a somber luminescence, reminiscent of the night sky.<br><br>'This is the Ring of All Poisons.'<br><br>The divine object of the Tang Family of Sichuan, famed for its ability to neutralize any toxin, now lay within my grasp.<br><br>Its legendary prowess was such that it could tame the Thousand-Year Venemous Horned Serpent, notorious for its lethal venom, transforming it into a domesticated serpent named Mimi-chan. While its effectiveness seemed beyond doubt, a measure of skepticism prompted a verification.<br><br>'Item appraisal.'<br><br>Beep.<br><br>\- Item appraisal failed!<br><br>\- Special conditions must be met to appraise this item!<br><br>"Huh?"<br><br>"Is there a problem?"<br><br>My response to Tang Sa-Dok, who wore a look of bewilderment, was evasive.<br><br>"No, just..."<br><br>"Just what?"<br><br>"Just, the gem is pretty. It looks similar to the snake's eye color."<br><br>Tang Sa-Dok's brow creased at my remark.<br><br>In that moment, I recalled. The man before me was not merely an elder but the Patriarch and a seasoned warrior, his life steeped in the martial world.<br><br>Sure enough, Tang Sa-Dok, with widened eyes, scolded loudly.<br><br>"What nonsense!"<br><br>"Patriarch, I apologize..."<br><br>"Our Mimi's eyes are prettier!"<br><br>"Yes...they are...?"<br><br>"Do you think that's all? I wipe her body with fragrance oil every morning and evening, so she smells nice, and her teeth are white and bright!"<br><br>"I see..."<br><br>A veteran martial artist, my ass. He's just a snake enthusiast.<br><br>To think, a Patriarch would show preference for a pet snake over a sacred family relic.<br><br>This led me to ponder if Mimi-chan herself might be the actual divine object of the Tang Family of Sichuan.<br><br>'But why can't it be appraised?'<br><br>Intrigued, I attempted another appraisal, yet the outcome remained unchanged. It appears divine artifacts indeed necessitate unique conditions for their appraisal.<br><br>'I feel uneasy about not being able to confirm it, but the effect should be assured, right?'<br><br>I turned towards the Divine Doctor, who, with a reassuring smile, seemed poised to elucidate.<br><br>"The Thousand-Year Venemous Horned Serpent is not an ordinary viper but a spiritual creature. To have rendered its venom gland useless... It's uncertain to what extent it can detoxify, but indeed, it is worthy of the Ring of All Poisons."<br><br>"In that case."<br><br>"Without the Ring of All Poisons, there would have been a mere sliver of possibility, but now I see it as over seventy percent."<br><br>"Even with the Ring of All Poisons, only seventy percent...?"<br><br>"The remaining thirty percent will be filled by this old man's medical skills."<br><br>"Phew, then you should have started with that."<br><br>The Divine Doctor, amused by my sigh of relief, fondled his beard.<br><br>"Now only one thing remains."<br><br>"And what is that?"<br><br>"The space for treatment."<br><br>Tang Sa-Dok interjected with his characteristic directness.<br><br>"Have you forgotten where you are?"<br><br>"I am well aware that there is a medical center within the Tang Family of Sichuan. However, in the case of Grandmaster Jeok, two conditions are necessary."<br><br>"Speak."<br><br>"First, it must be a place rarely frequented by others, and second, it must be a place not touched by sunlight and filled with a bitter cold."<br><br>"A place that is secluded, dark, and cold..."<br><br>Pondering briefly, Tang Sa-Dok's lips curled into a smirk.<br><br>"There happens to be just the right place. I will guide you there personally."<br><br>"I am grateful for your generosity, Patriarch."<br><br>"I am not being generous. This is merely an exchange of favors. And if the existence of the Ring of All Poisons is disclosed or made known to the outside in any way..."<br><br>A heavy sigh escaped me.<br><br>"I suppose I'll be dragged away for a bath in a poison jar and poked with needles."<br><br>"Your imagination is lacking. Whatever you think, the reality will be worse."<br><br>"I'd have to be mad to let that happen."<br><br>"Let's hope so... And who are you again?"<br><br>I had forgotten he was here.<br><br>Amid our exchange, Cheong Pung had silently drawn near, his hand extended towards Mimi-chan.<br><br>"Wow...so pretty. Can I touch it?"<br><br>"No."<br><br>"Why not?"<br><br>"Hmph. Did you think she would like to be touched by just anyone? If I hadn't called her, she wouldn't have shown herself to you."<br><br>"Mimi, Mimi. Come here." \[Note: Just so we're clear: only the MC refers to the snake as Mimi-chan. Everyone else calls it Mimi.\]<br><br>"Such nonsense..."<br><br>Ssshh.<br><br>Mimi-chan gracefully departed Tang Sa-Dok's shoulder, tenderly caressing the back of Cheong Pung's hand with her tongue.<br><br>"Wow!"<br><br>"Mimi, whirlwind strike!"<br><br>Whirlwind strike, my ass. A snake doesn't know how to whirlwind strike.<br><br>Cheong Pung's mind operates on an enigmatic wavelength.<br><br>Shhrik, shhrik, shhriririk!<br><br>"...What the... seriously?"<br><br>What did I just witness?<br><br>I was dumbfounded by the sight of Mimi-chan spinning frantically.<br><br>"Wow! Good job, Mimi!"<br><br>"How can this be! How did Mimi perform a whirlwind strike for someone she's seeing for the first time?"<br><br>"Is that even a real technique?"<br><br>"That's not the important thing right now!"<br><br>Though, it seemed quite relevant. If this continues, she might well begin emitting bolts of lightning or firing beams of destruction.<br><br>'Can she evolve...?'<br><br>As I contemplated whether Mimi-chan or the Ring of All Poisons was the genuine divine artifact, Cheong Pung, ever jovial, remarked,<br><br>"I get along with animals. When I lie down in the grassy fields of Mount Hua, birds, deer, and even tigers come to play with me. Hehe."<br><br>What is this, the Druid of Mount Hua?<br><br>Tang Sa-Dok, visibly shaken by the betrayal of Mimi-chan, retorted while staring at Cheong Pung with bewilderment.<br><br>"Hold on. Something strange was added at the end there. Why would there be a tiger? How dare you tell such a blatant lie in front of your elder!"<br><br>"It was just when we were about to play and part ways, a tiger tried to attack a deer, so I knocked it down with a Tiger Subduing Fist!" \[Note: this is the same technique that Cheong Pung used against the MC in manhwa chapter 106.\]<br><br>"..."<br><br>"..."<br><br>His tale sounded fantastical, yet it was most probably true.<br><br>In the hush that filled the hall, Mun-Kyung's murmurs resonated with unexpected clarity.<br><br>"Is that Mount Hua Sect not the same Mount Hua Sect that I know...?"<br><br>While I remained uncertain about that, one fact stood undeniably clear.<br><br>Should a transformative event occur, if Cheong Pung is placed at the helm of the Mount Hua Sect, it would indeed morph into the version he portrays.<br><br>"…Let's go. You said you would lead the way."<br><br>"…Indeed."<br><br>\* \* \*<br><br>Our journey led us to a secluded cave at the edge of the Tang Family's domain, a stark contrast to the sanctity of their inner sanctum.<br><br>The entrance of the cave yawned open.<br><br>It was a dark maw flanked by two large braziers, beyond which no one was visible.<br><br>"Where is this? It doesn't seem to be guarded."<br><br>"If no one is around, it must be feeding time."<br><br>"Feeding time?"<br><br>"You'll see once we go inside. Follow me."<br><br>Unlike the linear training caverns of the Jin Family in Taiyuan, this cave spiraled downward, its path carved into the earth itself.<br><br>Descending the stone steps into the bowels of the earth, we navigated a narrow passage, barely accommodating two abreast, permeated by a disturbingly familiar scent.<br><br>'Is this… the smell of blood?'<br><br>A sense of foreboding enveloped me as I observed iron-barred doors sporadically lining the corridor.<br><br>"Could it be?"<br><br>"Correct. This is the underground prison of our family."<br><br>"...Not a torture chamber?"<br><br>"Oh, you'll see plenty of those inside."<br><br>What have I just heard?<br><br>Tang Sa-Dok's nonchalant revelation, amidst the watchful eyes surrounding us, was delivered with a casual certainty.<br><br>"Excluding the main hall and a few other buildings, this is one of the oldest spaces in our family. It's probably over two hundred years old? Anyway, it's a place steeped in history."<br><br>Historical significance aside, I felt like I should leave a will before being dragged here.<br><br>My incredulity grew with each passing moment.<br><br>"So, it's just a prison?"<br><br>"Is there a problem?"<br><br>"Of course, there's a problem. Are you saying to treat Grandfather, no, my Master here?"<br><br>"It won't receive a single ray of sunlight, and a bone-chilling cold seeps in. This place is most suitable."<br><br>"Do you also conduct torture here?"<br><br>"Of course. What kind of question is that?"<br><br>"......"<br><br>Anyone listening would think we were casually discussing adding toppings to a pizza.<br><br>Caught off guard by the turn of the conversation, I noticed an elderly man with a stooped posture shuffling toward us, his approach barely illuminated in the dim corridor.<br><br>"Patriarch, what brings you here?"<br><br>"Ah, Elder Goong. You've been hard at work. How are they doing?"<br><br>"Just the usual, nothing different. Just checked if they're still breathing and came out. But who are these people...?"<br><br>"They are guests of our family. Due to certain circumstances, they will be staying in the dungeon for fifteen days. I hope it won't be too noisy?"<br><br>"Well, the ones that are still alive are practically walking corpses, so it should be quiet."<br><br>"A few months ago, it seemed like the Heavenly Force Demon was still full of energy."<br><br>"Ah, if it's that one, you don't have to worry anymore."<br><br>Elder Goong's smile, which revealed his decaying teeth, was chilling.<br><br>"He was so noisy that I drained his energy completely. While at it, I took care of a few other things, hehe."<br><br>"You always have it tough."<br><br>"Oh, you flatter me, Patriarch. I do it because I enjoy it."<br><br>Listening to their conversation, I resolved never to cross the Tang Family of Sichuan.<br><br>After a few more words with Elder Goong, Tang Sa-Dok cheerfully spoke.<br><br>"Good. It turns out the deepest and largest cell is vacant, so we can go there."<br><br>I felt no need to ask why it was vacant.<br><br>It's not like someone checked out of the dungeon.<br><br>'They've probably checked into the afterlife by now.'<br><br>Despite the suitability of the environment, doubts lingered about the feasibility of treatment in such a setting.<br><br>The Divine Doctor seemed to share these reservations. Mun-Kyung, maintaining his composure, reassured his visibly concerned Master.<br><br>"Master, are we not healers? For the sake of the patient, even if it is against your wishes, you must endure."<br><br>The Divine Doctor, sighing deeply, conceded.<br><br>"......Yes, you are right. Let's proceed."<br><br>"Moreover, those imprisoned here are undoubtedly villains who have committed numerous murders. Do not worry too much about it."<br><br>Tang Sa-Dok, overhearing their exchange, chimed in with his observation.<br><br>"Huh, the young healer is quite dignified. Listen, Divine Doctor. Like that child said, those locked in the dungeon are all wicked villains, so don't look down on our family."<br><br>"I have committed a discourtesy with a heavy heart. Please forgive me with your generous understanding."<br><br>"I will gladly forgive you. Of course, I will forgive those who have not harmed our family. Right, Elder Goong?"<br><br>Elder Goong's response was a sinister chuckle, akin to the sound of metal on stone, as he brandished a torch.<br><br>"Let me guide you then."<br><br>"......"<br><br>Somehow, it feels like following the grim reaper.<br><br>'Just by the atmosphere, this old man seems more dangerous than the beast that killed the Poison King.'<br><br>Yet, I reassured myself it was mere illusion, a trick of the mind.<br><br>Thus, we advanced toward what was purportedly the Tang Family's most opulent dungeon accommodation.<br><br>\* \* \*<br><br>"Hmm?"<br><br>The middle-aged man paused, surveying his surroundings.<br><br>Beyond the chill of winter, clarity filled the sky, and the once barren forest began to whisper of spring's return.<br><br>The tranquility of an unnamed mountain valley was undisturbed. However, a peculiar sense of familiarity nagged at him, its origin elusive.<br><br>"Quite a strange occurrence, indeed. Strange, indeed..."<br><br>He murmured to himself, then turned to address his silent companion.<br><br>"Don't you think so?"<br><br>Gurgle, gurk.<br><br>Blood spurted in violent arcs from a severed throat.<br><br>The dying man's gaze, laden with animosity, fixed upon the middle-aged man.<br><br>"You... Our family will..."<br><br>"A boring last word. Well, that's always been the way of the Tang Family of Sichuan."<br><br>Crunch!<br><br>The middle-aged man, his leather shoes soaked with brain matter and blood, wiped them on the grass and straightened up.<br><br>Surrounding him were four lifeless forms.<br><br>To the sole survivor, he offered a grim smile.<br><br>"Now, will you answer my questions willingly, or do you prefer to die in unimaginable agony?"<br><br>"......!"<br><br>"For your information, the Poison King chose the latter. He lasted four days before he finally died."<br><br>The trembling man quietly closed his eyes.<br><br>A deep smile spread across the middle-aged man's face at the sight of him preparing for death.<br><br>"Good. Let’s find out now how long you can last.”</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-345.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-347.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

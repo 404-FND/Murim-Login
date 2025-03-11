@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 349 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 349</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 349</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: February 19, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>After a pause, the aged figure known as Heavenly Force Demon spoke.<br><br>"…A public urination offender, you say. Do not address me with such a disgraceful title."<br><br>Oh, my bad.<br><br>Clearly, the once-dreaded Demonic Cult big-shot was none too pleased with the label.<br><br>Pondering briefly, I proposed a term less demeaning than public urination offender.<br><br>"Um, how about 'Pee-pee boy'?"<br><br>"You brat…"<br><br>"If you don't like it, how about 'the wet kid of the new country'?"<br><br>"I did not wet myself!"<br><br>"Then, how about 'The Pisser from A Midsummer Night's Pee, featuring the Kunlun Sect.'"<br><br>"…!"<br><br>I clicked my tongue while glaring at the speechless Heavenly Force Demon.<br><br>"I don't know what got into you to suddenly start a conversation, but I don't want to listen or talk, so just eat your meal and do your business. Be it poop, pee, or both together."<br><br>"Now, wait a minute..."<br><br>What a nuisance.<br><br>I was about to leave the prison after finishing distributing the food, but turned around with an annoyed face.<br><br>"Why? What do you want?"<br><br>"I have a question."<br><br>"Does it look like I have an answer?"<br><br>Yet, driven by some deep-seated desperation, the Heavenly Force Demon persisted. Clad in remnants of what were once clothes, he fixed me with a gaze, eyes alight.<br><br>"The Enlightened Church, what has become of it now?" \[Note: the more literal translation of this is "Holy Sect", but I am borrowing my translation from Peerless Dad. It's always nice to see connections between different series that depict Murim.\]<br><br>"Enlightened Church?"<br><br>"Yes, the Church of the Heavenly Demon!"<br><br>"Ah, the Demonic Cult."<br><br>The names used by each side were different, so I was momentarily confused.<br><br>To most of Murim, including myself, it was simply the Demonic Cult, but through their eyes, it was the Enlightened Church.<br><br>And wasn't Heavenly Force Demon a former Demon Head of the notorious Demonic Cult?<br><br>"Why, feeling homesick after being locked up for so long?"<br><br>"Tell me."<br><br>"That's not difficult."<br><br>I replied with a casual shrug.<br><br>"Frankly, I'm as clueless as you are."<br><br>"…What?"<br><br>"How would I know what the Demonic Cult is up to? Maybe ask the next Demonic Cult member who gets put in the cell next to you."<br><br>Heavenly Force Demon looked utterly baffled.<br><br>"Aren't you the successor to the Fire King? And you're saying you know nothing about our Church?"<br><br>"…How did you know that?"<br><br>"Though my dantian may be broken, I still have ears to hear."<br><br>"You're quite perceptive for someone of your age. How much do you know?"<br><br>"That the Fire King is here being treated for injuries, for one."<br><br>"Hmm."<br><br>He's quite a quick-witted old man.<br><br>Even though Cheong Pung mentioned Jeok Cheon-Gang's name a few times, it wasn't loud enough for other prisoners to hear, and even if they did, it was a conversation difficult to deduce the context from.<br><br>'Speak sparingly and keep your ears open, is that it?'<br><br>He's different from other prisoners who try to wheedle at the slightest opportunity.<br><br>My interest in the elderly man grew slightly.<br><br>"But why are you so curious about the Demonic Cult's news? It's been a long time since you were captured."<br><br>"It's been nearly forty years."<br><br>"By that timeframe, the Great Faction War had already ended. Shouldn't you already have a rough idea of what happened?"<br><br>"A rough idea?"<br><br>His laugh was tinged with bitterness.<br><br>"There are few who know more about our Church than I do."<br><br>"Ah, you must have done some peeing over there too."<br><br>"I was once an elder of the great Church of the Heavenly Demon. It was I who obeyed the solemn command of our lord to subjugate Qinghai City and opened the gates to the Holy War."<br><br>"Holy War my foot."<br><br>Despite my curt response, I was inwardly surprised.<br><br>'This is bigger than I thought.'<br><br>The bits and pieces I'd pieced together hinted at the Demonic Cult's hierarchy, possibly comprising Ten... or was it Seven Elders?<br><br>The notion that this disheveled old man, awaiting death in a dungeon, was once a Demonic Cult Elder, had not crossed my mind.<br><br>"It seems you didn't know about me."<br><br>"Of course I knew about you. When was it that I first heard about you? Oh right, that was today."<br><br>"…Haha. Has it been so long already?"<br><br>I settled back against the cold prison walls, observing the Heavenly Force Demon as he offered a rueful laugh.<br><br>"So, what does an elder of the Demonic Cult from forty years ago want to ask me?"<br><br>"Tell me everything you know about our Church's recent endeavors, without holding back."<br><br>"Well, that feels a bit awkward."<br><br>"I have already surpassed ninety years of age, and my body and spirit are exhausted. It's the last request of an old man who has accepted his coming death."<br><br>"A request from a Demon Head who committed all sorts of evil deeds."<br><br>"Evil deeds… I am willing to accept the punishment for the lives I've taken. But what truly is 'demonic'? Our Church and yours have opposed each other based on our own beliefs for a long time, and we've only lost in a battle that rewrote our fate. That's all there is to it."<br><br>The Heavenly Force Demon's voice was tinged with sorrow as he continued.<br><br>"Can you really say who is right and who is wrong just by that? The world at that time was like an explosive, ready to blow at any moment. If you had reached our Church first by crossing Gansu and Qinghai, you would have massacred our people under the pitiful excuse of pursuing justice and eradicating the evil roots."<br><br>"But I've heard that…"<br><br>"My child."<br><br>His gentle interruption silenced me. His gaze, more intense than ever, captured mine.<br><br>It was not the gaze of an old man waiting for death after his dantian was destroyed, but that of a general who once led an army and swept through the world as a Transcendent Master.<br><br>"I have seen and experienced firsthand how cruel humans can become in a war of killing and being killed. The disciples of our Church calling for a Holy War and the leaders of the Nine Great Sects screaming for the extermination of demons were no exceptions. Even…"<br><br>His fervent spark dimmed, leaving only his weary voice to dissipate into the silence.<br><br>"Our Church's leader also became corrupted, losing the initial conviction. Yes, maybe as your orthodox factions say, our Church was indeed the Demonic Cult."<br><br>The confession from the Heavenly Force Demon left me reeling.<br><br>His narrative struck a chord with all of my recent discoveries.<br><br>'Both good and evil exist everywhere.'<br><br>The long-standing antagonism and the explosives ready to blow at any moment, with the Demonic Cult and the orthodox Murim watching each other, waiting to strike the match.<br><br>What if the orthodox factions had been the ones to strike the match first?<br><br>Would martial artists like the Tiger Swordsman and the Tai Yi Ruthless Sword have left the unarmed commoners of the Demonic Cult in peace?<br><br>'Not a chance.'<br><br>Suddenly, I saw overlaps between those two figures and the Heavenly Force Demon. Who is white and who is black? Is there something in the history that has not been told?<br><br>Damn, I don't know.<br><br>I bit my lip tightly and stepped away from the cold wall.<br><br>"Talking about such things to me is useless."<br><br>The Heavenly Force Demon's reaction was one of resigned acknowledgment.<br><br>"…I know. There's nothing more fleeting than a story that has already passed."<br><br>"I'm not as well-versed in the affairs of the Demonic Cult as you think. Perhaps if a knowledgeable beggar had been here in my place, he might have been able to tell you the news you wanted to hear."<br><br>"Has our Church been destroyed?"<br><br>"Well, it doesn't seem to be the case. From what I've heard, it somehow maintains its reputation."<br><br>Lately, the name Dark Heaven has been too prominent, but the eternal rival position in the world of orthodox martial arts fundamentally belongs to the Demonic Cult.<br><br>Moreover, with the suspected association between Dark Heaven and the Demonic Cult, the Murim Alliance based in Hanam would be in the midst of investigating both the Demonic Cult and Dark Heaven by now.<br><br>"I've heard it took a huge hit during the Great Faction War and has significantly diminished."<br><br>The Central Plains isn't called the center of the world for nothing.<br><br>Unlike the orthodox martial world, which absorbed a wealth of resources and population like a sponge to recover a substantial part of the damage, the Demonic Cult had to bear the brunt of the immense damage and was driven out to Mount Tian.<br><br>"…I'm not surprised. It was a war that mobilized all of our Church's strength."<br><br>He murmured softly, a self-mocking smile on his lips.<br><br>"Haha. Once having swallowed half of the world, now we're nothing but pitiful. The leader should have resisted at all costs when accepting heinous figures like the Monstrous Trio of Qilian or the Yin-Yang Twin Demons. But then again, it was from that time that our leader began to change."<br><br>"Yin-Yang Twin Demons?"<br><br>"You might not know, but there were such people a long time ago…"<br><br>"Oh, I know them."<br><br>"Really? You know of the Yin-Yang Twin Demons?"<br><br>I responded with an affirming nod.<br><br>"I'm not sure about the Monstrous Trio of Qilian, but I do know about the Yin-Yang Twin Demons."<br><br>"How could someone who hasn't even heard of my nickname know about the Yin-Yang Twin Demons?"<br><br>"Well, you see."<br><br>I scratched the back of my head as I continued.<br><br>"I tend to remember the nicknames of the opponents I've fought. Especially those of a certain caliber."<br><br>"…What? You fought with the Yin-Yang Twin Demons?"<br><br>"Exactly, just one of them, the Yang Demon. My Grandfather, no, my Master killed the Yang Demon. The Yin Demon was killed by some madman and followed his friend to the afterlife. But really, what are these guys thinking, turning Hanam into Gotham City…"<br><br>"…!"<br><br>At my casual mention, Heavenly Force Demon, momentarily struck dumb, quickly regained his composure to interject.<br><br>"Yin-Yang Twin Demons! How did those guys survive and appear in the martial world? And in Hanam, no less? Did our Church raid Shaolin?"<br><br>"What happened at Shaolin was a mess, but it wasn't the doing of the Demonic Cult."<br><br>"Then, whose doing was it?"<br><br>The Heavenly Force Demon's disconnection from the current martial world's dynamics wasn't surprising, given his limited interaction with the outside world.<br><br>The only outsider he talked to was just Old Man Goong.<br><br>'Well, that elder isn't exactly the type to kindly inform anyone.'<br><br>Unless kindly cutting tendons counts.<br><br>After pondering for a moment, I decided to be forthright with him.<br><br>After all, the Heavenly Force Demon was in a situation where he couldn't escape the underground prison until his death.<br><br>Now that the existence of Dark Heaven is gradually spreading through various influential martial arts factions, there shouldn't be a problem with telling him the truth.<br><br>"I'm not sure how to put this."<br><br>"Tell me, quickly!"<br><br>"Wait a moment."<br><br>Ah, that's right.<br><br>Having finally found the right words, I opened my mouth in admiration of my own wit.<br><br>"They, well, they've rebranded."<br><br>"…?"<br><br>"Whether it's a rebrand or a complete overhaul, I'm not sure, but now it's called Dark Heaven, not the Demonic Cult..."<br><br>My explanation was abruptly interrupted by the arrival of a familiar figure, rushing in with urgent news.<br><br>"Ugh!"<br><br>"…Swallow what's in your mouth before you talk."<br><br>"Ugh! Ugh! Look at this! It's delicious!"<br><br>"What are you 'ugh-ing' about? Looking for the police chief from Namcheon-dong?" \[Note: this is a reference to the 2012 movie "Nameless Gangster: Rules of the Time". There is a line in this movie that says "Your chief lives in Namcheon-dong, right? I've eaten with your chief, gone to the sauna, and done everything else together." It seems like the chief's name is Nug, according to a Naver Blog post, but this is unconfirmed from the plot summary of the movie.\]<br><br>"Ugh!"<br><br>"Right. You must've had a sauna, a meal, and done everything together."<br><br>"It's fucking delicious!" \[Note: Cheong Pung is not intentionally cursing here. His words are jumbled because of the food in his mouth. He's trying to say "It's truly delicious!"\]<br><br>Even though his cheeks were stuffed full of snacks, it seemed it wasn't enough, as his arms were full of food wrapped in paper.<br><br>I extracted a perfectly roasted duck leg from the bounty and offered it to the prisoner, who I had momentarily forgotten.<br><br>"Want one?"<br><br>And finally, I turned to look at him.<br><br>The figure of the Heavenly Force Demon was frozen as if he were made of stone.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-348.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-350.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 334 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 334</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 334</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: February 16, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>Time flows like a river.<br><br>Although it's a common and worn metaphor, to me, the three days spent on the fast ship felt just like that.<br><br>"Thanks to this, we've saved a lot of time."<br><br>As members of the Yangtze River Water Route Alliance, Mu-Song and his cohort, the Water Dragon Fortress water bandits, were unsurpassed in their nautical prowess. They navigated the Yangtze's complex lower reaches in Sichuan with an intimacy only achievable by true experts.<br><br>"We'll be arriving soon, Grandfather."<br><br>I murmured, looking at Jeok Cheon-Gang's wrinkled face.<br><br>Just a handful of weeks had elapsed, yet his already delicate, slender frame was succumbing further to frailty.<br><br>Each time I infused him with vitality through True Qi Guidance, the grim reality became more apparent.<br><br>'Recovery is impossible. Delaying is the best we can do for now.'<br><br>His endurance owes itself to his stature as a Transcendent Master, a being of profound Qi.<br><br>And now, our sole beacon of hope is one of the most elusive figures in the land.<br><br>'Divine Doctor.'<br><br>A mysterious figure whose face, name, age, and even gender are uncertain.<br><br>But considering that the name first came to light about forty years ago, they must be at least over sixty.<br><br>'I will definitely find them and wake you up.'<br><br>So, endure a bit longer.<br><br>I silently added this plea when the muted echo of footsteps and whispered voices penetrated the cabin door.<br><br>"Stop, stop, stop. Move and you get cut."<br><br>"Ah, don't cut me! You know me."<br><br>"I know. But I won't let even a mouse sneak behind me. Let alone a young brat who I don't know where he's rolled in from. You could be an assassin."<br><br>"A doctor assassin, how absurd!"<br><br>"Then what brings you here?"<br><br>"M-Master Mu-Song sent me with a message for Master Tae-Kyung."<br><br>"Impossible. No one can get past Hyuk Mu-Jin, the vice leader of Jin Family of Taiyuan's Jin Dragon Squad..."<br><br>Bang! Thud!<br><br>Mun-Kyung's jaw dropped at the sight of Hyuk Mu-Jin, of the Jin Family's Jin Dragon Squad, crumpling to the floor, his head striking the door's edge.<br><br>"He's- he's dead."<br><br>"He's not dead."<br><br>"But- but such a blow to the head..."<br><br>"Enough of that. What did Sunbae Mu-Song ask you to convey?"<br><br>The fellow, visibly pale and shaken, gazed between Hyuk Mu-Jin and myself before speaking.<br><br>"He said to get ready since we're almost there."<br><br>"Ah, is that so? Got it. You should also pack your things."<br><br>"I've already finished preparing."<br><br>Mun-Kyung's possessions were few.<br><br>He carefully extracted acupuncture tools from his small bundle, examining Hyuk Mu-Jin's condition before exhaling a sigh of relief.<br><br>"Thankfully, there are no serious tears."<br><br>"He's got a thick skull."<br><br>"Typical of martial artists..."<br><br>"Hey, are you mocking me?"<br><br>"No. I misspoke!"<br><br>I feigned a threatening gesture, and Mun-Kyung flinched, which made me chuckle.<br><br>"Just kidding, man."<br><br>"You scared me there."<br><br>Our journey on the swift ship, traversing day and night, proved arduous.<br><br>I frequently strolled the deck for fresh air, interspersing these walks with periods of Qi circulation and martial arts meditation. Mun-Kyung often caught my attention during these moments.<br><br>'He was always caring for others' well-being.'<br><br>He was a kind soul. And apparently he was skilled too, as even the initially skeptical bandits began to seek his aid discreetly.<br><br>'From the few conversations we've had, he seems to have a bright personality.'<br><br>Contrary to his mature demeanor, Mun-Kyung exhibited the vivacity of youth.<br><br>His interest in our martial circle grew upon learning our identities, his curiosity sparking numerous questions.<br><br>'Master Jeok Cheon-Gang, the Fire King, is Master Jin's Master? Wow!'<br><br>'I've also heard about the great reputation of Sword Saint Mae Jong-Hak. Master Cheong is also an amazing person.'<br><br>'Wow! The Beggar Sect! Hugae!'<br><br>'The vice leader of the Jin Dragon Squad? Ah, yes...'<br><br>In just three days, Mun-Kyung seamlessly integrated into our group.<br><br>'After all, today will probably be the last day we talk face to face like this.'<br><br>Upon reaching Chengdu, our paths would inevitably diverge.<br><br>As Mun-Kyung tried to peer around me, I placed a hand on his shoulder.<br><br>"Ouch, that hurts!"<br><br>"What's got you so curious that you're peeking around like that?"<br><br>"Oh, nothing. I just thought I saw someone's foot through the gap in the door."<br><br>Mun-Kyung's observation was keen. Despite my quick effort to cover Grandfather with leather, he had noticed the small exposed area.<br><br>Nonetheless, I maintained my composure, dismissing his suspicion.<br><br>"You're mistaken."<br><br>"I don't think so..."<br><br>"Mun-Kyung."<br><br>"Yes?"<br><br>"Do you really want to see what's inside?"<br><br>His eyes widened, recoiling from my foreboding tone.<br><br>"Why, why are you acting like this?"<br><br>"I asked you a question. Do you want to see?"<br><br>"No. No! I don't want to see."<br><br>"Why not. Come in and take a look. It'll be interesting."<br><br>"Eek!"<br><br>Thud, bang!<br><br>Retreating hastily, Mun-Kyung tripped over Hyuk Mu-Jin, tumbling down. He quickly scrambled to his feet and hurried off.<br><br>Hyuk Mu-Jin, unexpectedly trodden upon, sluggishly opened his eyes.<br><br>"Oh, what? I was definitely just talking to Mun-Kyung."<br><br>His confusion turned to alarm as he scanned the area.<br><br>"I didn't even see the attack coming. It must be an assassin in the Peak Realm!"<br><br>Smack!<br><br>"Ouch! Why did you hit me!"<br><br>"Stop talking nonsense and pack your things. We're almost there."<br><br>After smacking Hyuk Mu-Jin on the back of his head, I reentered the cabin, transferred Jeok Cheon-Gang onto a stretcher, and proceeded to the deck.<br><br>The sturdy figure at the stern of the rapidly moving ship glanced my way and greeted.<br><br>"Hey, Hubae."<br><br>"Hi, Sunbae."<br><br>"...You seem to be talking less. Is that just my imagination?"<br><br>"It's entirely your imagination. I just have a soft voice."<br><br>Mu-Song, the burly man, looked at me with a dubious expression, then called over one of his subordinates and gave an order.<br><br>"Lower the blue flag and raise the white one."<br><br>"Yes, Captain."<br><br>This switch from blue to white flags might seem trivial, but it's a strategic signal of the Water Dragon Fortress, indicating our intent to avoid conflict.<br><br>"I know it might be an impolite question, but is it really possible for pirates to approach so close to a bustling downtown area?"<br><br>"It's an impolite question indeed, but I'll answer. Yes, it's possible."<br><br>"How so?"<br><br>"See for yourself."<br><br>Mu-Song gestured towards the approaching dock.<br><br>The dense cluster of tall wooden structures and the locals, some glancing curiously at our swift vessel, others indifferent, was a sight to behold.<br><br>Despite being on the outskirts, Chengdu's status as Sichuan's capital was evident. The thriving capital city certainly understood the danger that pirates pose, yet the public's reaction was remarkably nonchalant.<br><br>"How about that? Doesn't everyone seem used to it?"<br><br>"That's true. They seem unusually unconcerned."<br><br>"It wasn't like this at first. Hwang Tae-Gu, that damn bastard, did a lot of nasty things before I came."<br><br>He spoke, teeth clenched in anger.<br><br>"I went through a lot of trouble to change the public's perception of us. Now even the government turns a blind eye... to some extent."<br><br>"Government? You mean high-ranking officials of the court?"<br><br>"That's right. In fact, they also found dealing with us to be awkward. It was a burden to officially request a fleet from the court, and it's tiresome for both sides if they're always on edge. So, we reached a compromise."<br><br>"A compromise?"<br><br>"I'm different from Hwang Tae-Gu. Killing powerless commoners is something only a fool would do. It's like killing our own customers."<br><br>"..."<br><br>"Ah, of course, it's because I'm reluctant to kill. It's not for the money."<br><br>His assertion was less than convincing.<br><br>It seemed Mu-Song's aversion to violence was more financially motivated than moral.<br><br>'A pirate driven by profit.'<br><br>It's undeniable that Mu-Song has a certain talent for extortion.<br><br>Unlike Hwang Tae-Gu, who plundered and murdered wherever he could, Mu-Song chose to negotiate with the officials, demonstrating a shrewd business acumen.<br><br>"Our radius of activities has widened a bit, and since the reports of death by pirates to the officials have decreased, it's a win-win, isn't it?"<br><br>"Still, they allow you to come here, to the capital?"<br><br>"Of course, we're not officially allowed in. Look, they're coming over."<br><br>He pointed towards a formidable warship armed with cannons.<br><br>As it neared, a middle-aged man clad in armor leaned out from the stern.<br><br>"Who's there?"<br><br>"General, it's me! I've come to drop off a few passengers."<br><br>"Passengers? Who are they?"<br><br>"My Hubaes. I personally vouch for their identities."<br><br>The guarantee of a pirate leader. Sure, that will work.<br><br>Then, the officer bellowed.<br><br>"Very well!"<br><br>...Damn, it actually worked.<br><br>In that moment, Mu-Song deftly extracted something from his pocket and hurled it.<br><br>"Catch!"<br><br>The officer skillfully caught the soaring bundle, his grin wide.<br><br>"You don't need to do this every time, but thank you. I'll treat you to a drink next time."<br><br>"Well, that sounds good. How's the City Lord doing?" \[Note: this term translates to something that is similar to the position of a modern Mayor.\]<br><br>"He had a son seven days ago."<br><br>"Oh, what a happy occasion. I'll definitely come to the Doljabi." \[Note: a Doljabi is an event during a Korean child's first birthday celebration where the child is presented with various items to choose from, which is believed to foretell the child's future.\]<br><br>"Of course, the City Lord will be delighted."<br><br>"Then, take care."<br><br>"I wish you luck, Fortress Master!"<br><br>...Geez. The state of this country.<br><br>Following their cordial exchange, the warship veered away, and our swift vessel glided smoothly towards the dock.<br><br>"We won't need to drop anchor, right?"<br><br>"Eh? Oh, yeah no need to."<br><br>"What, are you shocked? That's how the world works. But now you seem more mature than the young Hubae I met before."<br><br>After all, in reality, far worse things happen than a righteous pirate being allowed into a bustling city.<br><br>I bowed respectfully to the hearty laughter of Mu-Song.<br><br>"Thank you for your help. Thanks to you, Sunbae, we had a comfortable journey."<br><br>"What help? It was nothing. Just call on me in the future. Call on Ship Lighter Mu-Song!"<br><br>"Ah, as expected from the best Sunbae! You are truly the commander of the Yangtze River!"<br><br>"Hahaha!"<br><br>I joined Mu-Song in hearty laughter.<br><br>"Then, I'll ask for your help again when I return."<br><br>"......"<br><br>"Sunbae?"<br><br>Mu-Song, his gaze flickering uncertainly, finally responded.<br><br>"... My subordinates and I are at your service."<br><br>"Thank you!"<br><br>Yangtze River taxi, sweet.<br><br>\* \* \*<br><br>Is it my imagination, or did the ship slice through the waters with greater speed than usual?<br><br>I observed the vessel cleaving through the waves, as though fleeing a sea monster.<br><br>There stood the young doctor with a pure smile on his face. The Bermuda Triangle stood with him in stark contrast.<br><br>"Thanks to you, we arrived quickly, young Master. Thank you."<br><br>"I didn't row or steer, so there's no need to thank me. I don't know where you're headed, but stay healthy."<br><br>Despite the brevity of our acquaintance, it felt like a meaningful bond.<br><br>A young man of apparent innocence, yet profound introspection. Admirable resilience, having faced the loss of his parents so young.<br><br>I harbored genuine hopes for his future as a physician.<br><br>"I have nothing but this to give you as we part. Take this as boat fare."<br><br>I handed over a few silver nyang, and Mun-Kyung looked at me in surprise.<br><br>"Oh, young Master. This is..."<br><br>"Think of it as pocket money from your Hyung."<br><br>"But this is too much."<br><br>"Then pay me back later. Become a doctor rivaling Hua Tuo, or rather, the Divine Doctor, and come to the Jin Family of Taiyuan." \[Note: Hua Tuo was an ancient Chinese physician. He is reportedly the first person in China to use anasthesia during surgery.\]<br><br>"The Divine Doctor...?"<br><br>"Yes, you should aim to be the best."<br><br>Mun-Kyung alternated his gaze between the silver in his hand and myself, a gentle smile dawning on his face.<br><br>"I shall strive for that."<br><br>"Good. I'm off now. Take care."<br><br>We exchanged farewells, and the Bermuda Triangle and I pivoted to leave.<br><br>Hyuk Mu-Jin, not quite relieved from his seasickness, approached me uneasily.<br><br>"Squad Leader. I'm so tired. Can't we rest for half a day before going?"<br><br>"No, we can't. We have half a day's journey and then we can rest upon arrival."<br><br>"But it'll take half a day with the use of Qinggong, and I'm already tired. And I heard the Tang Family of Sichuan are quite intimidating... We'll have to be careful even when breathing."<br><br>"Then don't breathe."<br><br>"What? Is that what you say to your right-hand man?"<br><br>"What's that? I can't hear you well, since you're whispering from the pinky finger of my left hand."<br><br>Hyuk Mu-Jin stood agape in disbelief.<br><br>"Um, did you just say you were visiting the Tang Family of Sichuan?"<br><br>"......"<br><br>"......"<br><br>As I slowly looked around, Mun-Kyung stood there, his eyes twinkling like stars.<br><br>"It's not that I want to impose, but I was actually on my way to the Tang Family of Sichuan too. If I could accompany you, this favor, this life, even in death, through ten thousand rebirths, until my soul is no more, I will not forget..."<br><br>"Hey."<br><br>"Yes?"<br><br>"I understand, so just shut up and follow me."<br><br>Damn it, it's the Bermuda Quadrangle.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-333.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-335.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 398 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 398</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 398</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: April 27, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>Before attempting to teleport, a thought struck me.</p><p>'If I calculated the likelihood of events from the past two years as a percentage, what would it be?'</p><p>The probability that an F-rank Hunter, fired from the guild, would trudge up a hill and find an old capsule discarded at a recycling center.</p><p>The probability that this old capsule served as a portal to another realm.</p><p>The probability of starting a second life not as a Namgoong Family scion or a Mount Hua Sect disciple, but as the third son in a lesser-known martial family.</p><p>The probability of surviving one war and two blood histories...</p><p>After weighing all factors, one conclusion stood clear.</p><p>"Yep. 10% is high."</p><p>I whispered, extending my hand.</p><p>Psychokinesis.</p><p>Channeling three gapja of Qi, I pulled Mr. Choi and Shao Shen toward me. The Death Knights and other creatures started to approach but halted at their leader's gesture.</p><p>I overlooked them and tended to the two men; their breaths were weak, and their energy seemed so fragile that it could snap at any moment.</p><p>Had I opted for a jet instead of teleporting, I might have arrived too late.</p><p>"Even at 1%, I would have tried. I'm not the type to die from something like this."</p><p>Of course, I had an insurance policy in place just in case. I never expected to use it so soon, nor under these circumstances.</p><p>'Open inventory. Summon.'</p><p>I ignored the monsters' stares.</p><p>The leader, noticing me retrieve an item from my inventory, inquired emotionlessly.</p><p>- A subspace. Have you mastered magic?</p><p>Shut the fuck up.</p><p>I swallowed the words that lingered on the tip of my tongue. Normally, it would have been difficult, but not so much for me now.</p><p>I refuse to be interrupted at this moment.</p><p>Pop.</p><p>Unsealing the bottle released a delicate scent. Inside the clear glass, a milky substance shimmered.</p><p>The Top-grade Potion.</p><p>This miracle brew can mend any wound as long as life lingers.</p><p>For now, the potion's scarcity and value held no allure for me.</p><p>I administered the potion to the near-lifeless patients, grateful for the vast riches and naivety of its previous owner, Wu Hei-Xing.</p><p>'Hang in there a bit longer, Shen.'</p><p>First, I attended to Mr. Choi. It wasn't just because of our shared history, but even without such ties, his relatively more critical condition would have compelled me to prioritize him.</p><p>'This is...'</p><p>His left arm had been violently severed at the shoulder, his right ankle was mangled as if mauled, and his left leg was cleanly cut off. Additionally, seven ribs were shattered, and his spine fractured.</p><p>And yet, his grotesquely contorted right hand still firmly gripped his sword's hilt.</p><p>The leather strap, designed to never slip, was now drenched in blood.</p><p>"......"</p><p>Without a word, I unfastened the strap, gently removed the sword from his mangled hand, and placed it beside him.</p><p>I couldn't help but mentally chastise him.</p><p>'Why did you do this? It's a miracle you're still alive.'</p><p>Then the real miracle commenced.</p><p>As I meticulously poured half the potion from the bottle, a sizzling sound heralded the start of his extensive wounds healing.</p><p>Creak, creak—</p><p>Bones regenerated, severed muscles fused, and damaged organs and tissues restored.</p><p>His recovery was so swift, it was almost like time was reversing. Life soon returned to Mr. Choi’s pallid face.</p><p>'His energy has stabilized. This should be enough.'</p><p>For me, the result was deeply gratifying, though it might not be so for the onlookers.</p><p>- Fearless human.</p><p>- Stop immediately.</p><p>- They belong to our mighty Lord.</p><p>- They are destined to be subjugated.</p><p>I watched in silence as two Death Knights, representing their leader, stepped forward.</p><p>Clad in pitch-black armor, they appeared nearly identical at first glance, their stature and even their voices indistinguishable.</p><p>Yet, one significant difference lay in their choice of weapons.</p><p>'One carries a mace. The other, a sword.'</p><p>With that observation, I knew how I would defeat them. The problem was solved, but the answer could wait. Now was the time to address the remaining issues.</p><p>"You've also suffered a lot, Shen."</p><p>It was just as I was about to administer the remaining potion to Shao Shen, who had also suffered considerable injuries.</p><p>- Worthless human.</p><p>- This is your last warning.</p><p>- Lay down those two humans, retreat, and beg for mercy.</p><p>- Then, our Lord will take you in as a servant.</p><p>"Servant?"</p><p>- Yes.</p><p>One of the Death Knights, his voice void of any emotion, took a step toward me. With each step, the scabbard at his waist rattled.</p><p>Clank, clank, clank.</p><p>One step. Two steps. Three steps.</p><p>The figure advancing towards me did so without any hint of hesitation.</p><p>Surrounded by potentially thousands of monsters and under the watchful eyes of their leader.</p><p>Though undead entities are usually devoid of emotion, the Death Knight spoke with a tone brimming with certainty.</p><p>- You possess a truly grand and shining soul. Become one of us.</p><p>A grand and shining soul...</p><p>I kept my gaze lowered, continuing to administer the potion.</p><p>Once I had dispensed the last droplets into Shao Shen's mouth, I sealed the bottle and tucked it away in my inventory.</p><p>Creak, creak.</p><p>Signs of recovery.</p><p>At this encouraging sound, I stood straight. Facing the Death Knight, I was ready to express my initial intent.</p><p>"Left leg."</p><p>- Hmm?</p><p>"Mr. Choi's left leg. It was cleanly severed from the knee down. And Shao Shen's right arm."</p><p>- Human. What are you trying to say?</p><p>"What am I trying to say?"</p><p>I offered the creature a slight smile.</p><p>"If you're going to sever limbs that were perfectly attached, you should be prepared for the consequences."</p><p>And the next moment.</p><p>He appeared right before my face.</p><p>No, it was the reverse.</p><p>It wasn't that the creature approached me, but rather, I had moved towards him.</p><p>"Let’s see what you've got."</p><p>- ...!</p><p>All transpired in a heartbeat. The Death Knight attempted to unsheathe his sword, but I swiftly extended my left hand and pressed down firmly on the back of his hand.</p><p>And so, it was both the beginning and the end.</p><p>Swoosh, thunk!</p><p>Before the dark blade could fully clear its sheath, my fist had already pierced the Death Knight's chest.</p><p>Crack!</p><p>The Flame-Extinguishing Divine Fist, charged with three gapja of Qi, not only obliterated the remaining traces of blood in the undead but also set the long-dormant flesh ablaze.</p><p>Roar, kaboom!</p><p>Engulfed in relentless flames, the Death Knight flailed his arms, turning toward his allies.</p><p>Reeling along the path he had confidently traversed earlier, he quickly disintegrated into ashes.</p><p>- ...!</p><p>- ...!</p><p>Amidst the thousands of onlookers, an eerie silence prevailed, as if a mute button had been activated.</p><p>I retrieved White Flames from my inventory and began to walk slowly.</p><p>Squelch, squelch.</p><p>Everywhere I looked, with every step I took, there lay corpses and bloodied pools.</p><p>Scattered rifles and a soldier with a contorted bulletproof helmet stared blankly into the void, his life extinguished.</p><p>At least his body remained intact.</p><p>In what seemed to be the heart of the battlefield, figures who were likely Public Security Force Hunters lay still, their bodies not whole.</p><p>It had been a week since I had led the 1st Regiment with Shao Shen. Among the fallen, I recognized several faces.</p><p>'Too many have fallen. Far too many.'</p><p>Today, in this place alone, roughly three thousand humans had perished.</p><p>Including all five battlefronts and the civilians caught in this onslaught of monsters, the total fatalities must be staggering.</p><p>Thud!</p><p>I picked up a spear dropped by an anonymous hunter and drove it deep into the earth. The leather strap at the spear's end fluttered in the breeze.</p><p>Beyond it, an army of thousands of monsters gathered, along with 'that bastard.'</p><p>\[Lv.135 Death Knight Lord\]</p><p>The Death Knight Lord — a name as formidable as the monstrous power it wielded.</p><p>'The situation is different, but there was another like him.'</p><p>I called upon the one who had been silent the longest.</p><p>"I have a favor to ask."</p><p>I expected him to ignore me, but after a brief pause, the Skeleton Warlord responded.</p><p>- ...A favor? You're not asking me to fight alongside you, are you?</p><p>"Of course not."</p><p>I never expected him to fight; I sought his protection for others instead.</p><p>"Watch over those two, by any means necessary."</p><p>The Skeleton Warlord, having been allowed to sporadically absorb death energy under my direction, had grown stronger.</p><p>As a Named Monster, he was more than capable of contending with several A-rank adversaries alone.</p><p>"After the battle, I'll grant whatever wish you have."</p><p>- If that's the case, there's nothing I can't do. But how long must I protect them?</p><p>"That's obvious..."</p><p>I raised White Flames, directing it towards the Death Knight Lord.</p><p>"Until all those bastards are dead."</p><p>- This is madness...!</p><p>"It's too late to refuse."</p><p>I retrieved the skull of the Skeleton Warlord from my inventory and tossed it behind me.</p><p>Crunch, crack.</p><p>As he hastily regenerated his body, I ran my fingers over the leather strap fluttering from the spear shaft.</p><p>What did they feel?</p><p>What thoughts possessed them as they faced their end? It's impossible to guess.</p><p>But, I am certain of one thing.</p><p>"Anyone who crosses this spear will die."</p><p>The fire dragon coiled in my dantian raised its head.</p><p>\* \* \*</p><p>Crunch, crack, crunch!</p><p>Flesh and bone splintered, casting debris in every direction.</p><p>An ogre's limbs were severed, and a troll was consumed by unquenchable flames, denied any chance of regeneration.</p><p>Boom! Screech!</p><p>The skull of a charging lycanthrope exploded.</p><p>A Dullahan, soaked in the reek of brain matter, was cleaved in two with a single swing. I then hurled its halberd with immense force, slicing through a wyvern's wings.</p><p>Shiiing!</p><p>- Kyaaaah!</p><p>Thud-thud-thud!</p><p>Blood sprayed through the air.</p><p>In its midst, a streak of blue flames sliced through the carnage.</p><p>Whoosh! Screech!</p><p>A blood mist exploded. With each sweep of White Flames, scores of monsters fell, and hundreds recoiled.</p><p>And then thousands of monsters... began to falter.</p><p>They feared the line of death drawn by a single human wielding a single spear.</p><p>- L-Lord.</p><p>The voice of the Death Knight, previously steadfast, now quivered and broke.</p><p>His lieutenant’s urgent plea carried an unmistakable urgency, and the Black Knight was fully aware of its significance.</p><p>- Clear the way.</p><p>A sinister red glow shimmered beneath his helmet.</p><p>Pushing forward, radiating potent magic, he endeavored to dismiss the odd phrases and visions that incessantly intruded upon his thoughts.</p><p>Because nothing can take precedence over the Creator and Eternal Monarch.</p><p>- Are you listening, my servant?</p><p>As the spectral voice of the Monarch of the Undead resonated like an apparition, the Black Knight murmured a response.</p><p>- Yes, my Lord.</p><p>He did not realize until the end.</p><p>That his hand was aimlessly searching within a gap in his armor.<br></p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-397.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-399.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

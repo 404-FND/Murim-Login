@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 331 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 331</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 331</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: February 9, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>Ship Lighter, a moniker from his youth when he ignited the fires aboard ships.<br><br>As an adult, his childhood nickname lingered, yet he had earned a more formidable title.<br><br>"Fortress Master."<br><br>Beckoned by a subordinate, the man, seated cross-legged at the cabin's heart, opened his eyes.<br><br>They sparkled intensely. His sun-kissed skin and robust build were the marks of a seasoned mariner. Prominent Taiyang Points near his temples signified his status as a Peak Master of considerable skill. \[Note: the Taiyang point is located near the temples and is one of the six primary yang meridians. I'm not sure where the author is going with this, but the literal translation is "The bulging Taiyang point showed that he was a peak expert who had reached a considerable level.\]<br><br>"What is it?"<br><br>His voice, deep and gravelly, broke the silence. The subordinate responded with due deference.<br><br>"There is a ship fifty jang away." \[Note: 50 jang = 151.5 meters or 497 feet\]<br><br>"A ship? Are they our brothers?"<br><br>"No."<br><br>Then there was only one answer.<br><br>In the mighty Yangtze River that cuts across the world, there are only those who take and those who are taken.<br><br>"What’s the size?"<br><br>"About fifty. It doesn’t seem like a merchant ship."<br><br>"I see."<br><br>"What shall we do?"<br><br>"Deal with it quietly without causing any disturbance."<br><br>He closed his eyes once more, thoughts drifting.<br><br>Perhaps a government warship? Such trifles didn't warrant his direct attention.<br><br>His men would make do.<br><br>'To disturb my meditation over such a trivial matter.'<br><br>He dismissed his irritation, refocusing on deeper contemplations.<br><br>A decade had passed since he reached the Peak Realm. Yet, an unseen barrier thwarted further progress.<br><br>Despite experimenting with rare elixirs and even opium for new revelations, he found no breakthrough. \[Note: Interesting...so getting high does not help one achieve enlightnment to a higher martial arts realm.\]<br><br>'I will never break through at this rate.'<br><br>His stronghold, the Water Dragon Fortress, ranked among the top ten in the Yangtze River Water Route Alliance.<br><br>Nestled in Sichuan, a bustling trade nexus, it stood as a strategic asset.<br><br>Now at forty, he aspired for more.<br><br>'Alliance Master.'<br><br>The Yangtze River Water Route Alliance's Master, the lord of the river, was his ambition.<br><br>To outsiders, this ambition might appear overambitious, but he had the prowess and lineage to make it plausible.<br><br>He ascended to lead the Water Dragon Fortress just past his twentieth year, a clear testament to his remarkable talents.<br><br>"Sigh..."<br><br>Inhaling deeply, he absorbed the ambient Qi, his senses acutely tuned to his environment.<br><br>The moist river aroma, the deceleration of their swift vessel, the raucous joy of his crew.<br><br>\- Hahaha! You're really unlucky to cross us in these waters. Who's the captain here?<br><br>\- I am.<br><br>\- You dared to sail without our permission. You must be prepared to pay the price, right?<br><br>\- Please, I didn't recognize the heroes of the Yangtze. I've committed a grave sin. This isn't much, but please accept this as a token of my sincerity...<br><br>Thud, bang, crash!<br><br>A cacophony of crashes and thuds ensued, punctuated by a cry of agony. The man's brow furrowed.<br><br>'I told them not to cause a commotion.'<br><br>No warrior likes their training to be disturbed. Though his men were unrefined, such blatant disregard for his command was unexpected.<br><br>As he prepared to rise, infuriated,<br><br>Thump! Crack! Thump! Thud-thud-thud!<br><br>With the sound of a tremendous uproar, silence swiftly engulfed the ship.<br><br>'It seems to be over now.'<br><br>He relaxed slightly, eyes nearly closing.<br><br>Then, a nagging suspicion arose.<br><br>'Why is it so quiet?'<br><br>Step. Step. Step.<br><br>Footsteps, steady and resonant, approached the cabin.<br><br>A pause outside the door, then a yawning voice inquired.<br><br>"What's going on? Aren't you coming out?"<br><br>"...!"<br><br>It was an unfamiliar voice he had never heard before.<br><br>An alarm rang in the man's mind.<br><br>'An enemy!'<br><br>In a flash, everything changed.<br><br>Bursting forth like lightning, he sprang towards the door.<br><br>His fist, charged with formidable power capable of splintering a warship, obliterated the stout wooden door, hurtling towards the adversary beyond.<br><br>And then, in the next moment.<br><br>Boom!<br><br>A deafening explosion shook the fast-moving ship.<br><br>The man glared at his enemy with eyes wide open.<br><br>Specifically, he glared at the palm that had blocked his fist.<br><br>A seething voice escaped through his clenched teeth.<br><br>"Who are you?"<br><br>"Me?"<br><br>The young man replied with a sly smile.<br><br>"The owner of this boat."<br><br>From the eyes of Ship Lighter Mu-Song, flames seemed to pour forth.<br><br>"A mere pup dares to challenge me? ... I'll show you the sky." \[Note: He's saying "I'll knock you on your ass."\]<br><br>\* \* \*<br><br>I nudged the legs of the middle-aged man sprawled across the deck.<br><br>"How long do you plan to stare at the sky? Get up quickly."<br><br>Clarity returned to his bewildered gaze. Sitting up dizzily, he stared at me, utterly perplexed.<br><br>"How... How did you so easily counter the Ship-Destroying Fist?"<br><br>"Wait, the Ship-Destroying Fist?"<br><br>A flicker of recognition.<br><br>I had seen this martial art somewhere before, but it was just at the edge of my memory, leaving me curious.<br><br>With newfound interest, I scrutinized the middle-aged man.<br><br>"What’s your relation to Iron Water?" \[Note: Just in case people have forgotten, Iron Water Divine Dragon is the blonde Westerner-looking guy that taunted the MC during the preliminaries of the Grand Celestial Banquet in manhwa chapter 162.\]<br><br>"Iron Water? Who are you talking about?"<br><br>"You know, Iron Water, Iron Water..."<br><br>Goong Gi-Bang, who had been quietly listening, chimed in.<br><br>"Iron Water Divine Dragon."<br><br>"Yeah, that's right. Iron Water Divine Dragon. I met him at the Grand Cellestial Banquet. He also mentioned something about the Ship-Destroying Fist."<br><br>If I remember correctly, it was during the first preliminary round.<br><br>After he demonstrated the Ship-Destroying Fist, I showed him the Flame-Extinguishing Divine Fist and shattered a cliff.<br><br>'I heard he forfeited the match right after that.'<br><br>In the whirlwind of the martial world, a month felt like ages ago, considering the myriad of events I'd encountered.<br><br>Presently, the middle-aged man before me had mastered the same martial art as Iron Water Divine Dragon, evidently a Peak expert, surpassing even the Iron Water Divine Dragon in skill.<br><br>His gaze fluttered erratically, his voice trembling.<br><br>"Do you know my younger martial brother?"<br><br>"Younger martial brother?"<br><br>"The Iron Water Divine Dragon you mentioned is the youngest of us three brothers. He's the third, and I am the second."<br><br>This sounded familiar.<br><br>Discussions about Iron Water Divine Dragon's master were rife after the preliminary rounds.<br><br>"Then, perhaps...?"<br><br>The middle-aged man nodded.<br><br>"Yes. My master is the one known as the Sea King."<br><br>"Jang Bogo!" \[Note: Jang Bogo was a prominent figure in Korean history, best known for his influence in the maritime world as a merchant.\]<br><br>"...?"<br><br>"Oh, nothing. Just talking to myself."<br><br>"But why are you suddenly speaking formally...?"<br><br>"Of course, I should use formal language. You're a senior in the Jianghu and a hero of the Yangtze River Water Route Alliance. Sunbae, please feel free to speak casually to me." \[Note: Jianghu is the underground world of martial arts. This section typically consists of martial artists, gangsters, thieves, beggars, prostitutes, merchants, etc. Murim, meanwhile refers to only the community of martial artists.\]<br><br>In my eyes, the Yangtze River Water Route Alliance and the Green Forest Alliance were simply conglomerates of societal outliers.<br><br>But...<br><br>'If he's a disciple of the Sea King, that changes things.'<br><br>The Sea King would not take kindly to learning I had roughed up his disciple while commandeering this vessel.<br><br>While I could justify my fight with the Green Forest Alliance's Thousand Strength Axe, diplomacy was needed in this case.<br><br>I assisted the dazed man to his feet, brushing off his attire.<br><br>"Look how dirty your clothes have gotten. Oh my god. You'll need dry cleaning."<br><br>"Why are you doing this all of a sudden?"<br><br>"Just speak comfortably. There was a minor misunderstanding, and unfortunately, an unpleasant incident occurred, but if I had known you were from the great Yangtze River Water Route Alliance, I would have resolved it amicably. You know that, right?"<br><br>"Really?"<br><br>"Of course. Do I look like a rotten guy who would lie to my Sunbae?"<br><br>He looked at me, his gaze drifting upward thoughtfully.<br><br>Lifting my gaze, I observed the towering flag above our swift vessel. The inscription was bold enough to be visible from a hundred meters.<br><br>Yangtze River Water Route Alliance.<br><br>"......"<br><br>"......"<br><br>I broke the silence.<br><br>"I am illiterate and cannot read."<br><br>"......"<br><br>Yeah, I knew that wouldn't work.<br><br>I clenched my fist, turning to the middle-aged man.<br><br>"Can we just let this slide?"<br><br>"......Alright."<br><br>\* \* \*<br><br>Whoosh!<br><br>The ship sliced through the waters with vigor. Cheong Pung, seated at the bow, basking in the breeze, approached me with evident excitement.<br><br>"Savior! It's so refreshing!"<br><br>"Of course, it's refreshing, it's still early spring."<br><br>"There are so many fish too!"<br><br>"Of course, it's a river."<br><br>"People on the other side of the boat are getting beaten up!"<br><br>"Of course, they're getting beat up, wait, what?"<br><br>What did he say?<br><br>As I questioned my own hearing, Cheong Pung cheerfully elaborated.<br><br>"When the captain swings the large oar, flesh tears and blood flies!"<br><br>"......"<br><br>Mu-Song, the middle-aged man, was presumably disciplining his crew with a rod.<br><br>After their blunder with a passenger ship, his frustration was understandable.<br><br>"Pretend you didn't see it. You haven't seen anything."<br><br>"Can I go and hit them once too?"<br><br>"No, please don't."<br><br>As I pretended not to notice the gazes of the surrounding sailors, who looked at us as if we were insane, I spoke to Goong Gi-Bang.<br><br>"Man, you should have told me earlier if you knew."<br><br>"I'm not a fortune-teller. How can I know who's on which water fortress all the time?"<br><br>Goong Gi-Bang, with a tone of incredulity, murmured to himself.<br><br>"Anyone who charges at the Yangtze River Water Route Alliance flag is insane to begin with. Now what's the use of complaining?"<br><br>"Hey, I can hear you."<br><br>"That's the point. Even when I tell you, you don't listen, so what can I do!"<br><br>"Ha, this kid has grown up a lot. What do you think about this messy situation, Hyuk Mu-Jin?"<br><br>Hyuk Mu-Jin answered.<br><br>"Uweeeek!"<br><br>"......You're really seasick. Take a rest."<br><br>To think a first-rate martial artist can still be sea-sick.<br><br>Cheong Pung, observing Hyuk Mu-Jin grappling with nausea, wrinkled his nose in curiosity.<br><br>"I want to get seasick too. I've never experienced it before."<br><br>"......"<br><br>You don't know how fortunate you are, longing for experiences you've never had.<br><br>Maybe it's because we're on a boat, but today I feel the power of the Bermuda Triangle more than ever.<br><br>'I wonder if we’ll end up drifting in the Yangtze.'<br><br>Lost in thought, I noticed Mu-Song, a behemoth of a man, land on the deck with surprising nimbleness.<br><br>After discarding a bloodied oar to a crew member, he approached and inquired.<br><br>"Are you uncomfortable?"<br><br>"Oh, no. I'm fine, Sunbae."<br><br>Mu-Song's gaze briefly passed over Hyuk Mu-Jin, who was still retching.<br><br>"That friend doesn't look too comfortable."<br><br>"He's fine. Don't worry about him."<br><br>"......"<br><br>"Is there a problem?"<br><br>"No, no problem. Anyway, you're going to Chengdu?"<br><br>"Yes. How long will it take?"<br><br>"Considering our current location is near the entrance of Sichuan in Guang'an... with this pace, three days. If we catch the wind well, two days will be enough."<br><br>That's about the same or slightly faster than traveling with Qinggong. \[Note: Traditionally, Qinggong is a training technique for jumping off vertical surfaces, but has been exaggerated in Wuxia fiction, allowing martial artists to move swiftly and lightly at superhuman speed or allowing the martial artists to perform similar gravity-defying moves.\]<br><br>On a regular vessel, such a journey would have demanded considerably more time, but our swift progress was due to this remarkable ship, a jewel in the crown of the Yangtze River Water Route Alliance.<br><br>I offered a deep, heartfelt bow.<br><br>"Thank you."<br><br>"What are you talking about? It's not a difficult task."<br><br>Mu-Song's amiable demeanor stemmed from his awareness of our identities.<br><br>Me, a disciple of Fire King Jeok Cheon-Gang, Cheong Pung, a disciple of Sword Saint Mae Jong-Hak, Goong Gi-Bang, the Second Beggar of the Beggar Sect, and the last one hailing from the Great Jin Family of Taiyuan... though, perhaps it's best to omit that one.<br><br>"Anyway, it won't take long to reach Chengdu, so relax and wait. I, Mu-Song, have a tight grip on the rivers flowing through Sichuan."<br><br>"Wow, that's impressive, Sunbae."<br><br>"No one dares to make a commotion in the Yangtze without my permission. Hahaha!"<br><br>It was then, amidst his boisterous laughter, that it occurred.<br><br>\- Kyaaaak!<br><br>\- Kill them all and plunder!<br><br>Distant cries of terror carried over the water, prompting me to mutter.<br><br>"It seems someone's keen on stirring trouble…"<br><br>Mu-Song's face flushed with anger as he bellowed.<br><br>"Who dares to misbehave in the Yangtze!"</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-330.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-332.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

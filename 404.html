@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Not Found</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .error-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            height: 80vh;
+            padding: 0 2rem;
+        }
+
+        .error-code {
+            font-size: 8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+        }
+
+        .error-message {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .return-link {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+        }
+
+        .return-link:hover {
+            background-color: var(--accent-hover);
+        }
+    </style>
+</head>
+
+<body class="dark-mode">
+    <div class="container">
+        <header>
+            <h1>Murim Login</h1>
+        </header>
+
+        <main>
+            <div class="error-container">
+                <div class="error-code">404</div>
+                <div class="error-message">The chapter you're looking for has vanished into the Murim.</div>
+                <a href="/" class="return-link">Return to Main Page</a>
+            </div>
+        </main>
+
+        <footer>
+            <p>Murim Login Novel Reader &copy; 2023</p>
+        </footer>
+    </div>
+</body>
+
+</html>

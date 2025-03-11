@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 290 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 290</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 290</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: December 1, 2023</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>\[Scroll Crafting\]<br><br>\- Rank: None<br><br>\- Realm: 1st Mastery<br><br>\- Description: You are able to procure your own martial scrolls based on the martial arts you have mastered. The deeper the understanding of the martial art, the better the quality of the manual that will be created.<br><br>\- Special Note: Materials are needed to create the secret manual.<br><br>As I scrutinized the skill information window, I tried to remember.<br><br>When did I receive this?<br><br>'Was it when I had mastered the Jin Family's Foot Technique? Or was it the Jin Family's Spear Technique?'<br><br>Time had woven its mist over memories more than a year old.<br><br>The skill was mine, yet I found no cause to use it.<br><br>'No, that's not right. It’s not that there was no cause to use it; I simply chose not to use it.'<br><br>Every time I faced the Peace Guild members since returning to the modern world, the temptation flickered, albeit briefly. But the ultimate conclusion was always not to use it.<br><br>'Why would I want to go through the trouble of leaking martial arts secrets?'<br><br>Imagine someone fighting with bronze weapons, and then someone comes along with a steel sword and starts slicing everything in sight.<br><br>Envy would stir, and a frenzied scramble would ensue to claim such power.<br><br>I didn't distrust the Peace Guild members, but at that time, I believed it was the right decision.<br><br>'But now, there's no reason to hesitate.'<br><br>This epiphany dawned on me during the confrontations with Lee Jeong-Ryong and his cohorts, Park Ji-Hwang, and Seok Go-Jun. Even in the modern era, there were secrets unknown to me.<br><br>Their prowess and mana manipulation mirrored those of Murim's venerated martial artists. If the enemy is armed with steel swords, we too must equip ourselves with them.<br><br>Sigh...<br><br>With a breath drawn deeply, the pungent smell invaded my senses.<br><br>I’m crouching in a restroom stall.<br><br>It's not a great place to be, but it's ideal for creating a martial scroll without being noticed.<br><br>'Let's start, shall we.'<br><br>I rustled out the A4 papers and a pen I bought from the hospital convenience store.<br><br>Internally, I invoke the mantra.<br><br>'Activate Scroll Crafting.'<br><br>Ding!<br><br>\- All materials have been prepared.<br><br>\- \[Scroll Crafting\] skill is activated. You can create a martial scroll from a martial art that you have reached complete mastery in.<br><br>\- Current list of craftable items: Jin Family's Cultivation Technique, Jin Family's Footwork Technique, Jin Family's Spear Technique.<br><br>\- Please select the martial scroll you wish to create.<br><br>The Scorching Clan's techniques that I had learned were still shy of complete mastery.<br><br>But the Jin Family's martial arts were solid and reasonably powerful.<br><br>From among them, I chose the cornerstone, the one to underpin them all.<br><br>'Select: Jin Family's Cultivation Technique.’<br><br>Ding!<br><br>\- Do you want to create a martial scroll for \[Jin Family's Cultivation Technique\]?<br><br>Y/N<br><br>'Yes.'<br><br>Ding! Ding!<br><br>\- Intelligence is insufficient! You lack the wisdom!<br><br>\- Teaching is several times harder than learning!<br><br>\- To create a martial scroll of \[Peak\] grade, a minimum of 100 intelligence points are required!<br><br>"………Ah, these bastards. Really."<br><br>Frustration swelled as I opened my status window.<br><br>With a grudging sense of sacrifice, I allocated the precious points to intelligence. Immediately, my hand, clutching the pen, danced across the A4 sheet, strokes swift as a storm.<br><br>Scratch! Scratch! Scratch! Scratch!<br><br>“Gasp!”<br><br>Surprise struck in a double blow.<br><br>First, from the sheer velocity of my writing, and second, from the realization that the script flowing from my pen was Chinese.<br><br>"..."<br><br>Damn it, this is impossible.<br><br>I began to desperately search for the language settings.<br><br>\* \* \*<br><br>Grumble.<br><br>The door to the ward where the Peace Guild members were slid open. The guild members, who were huddled together sharing stories, turned their heads towards me.<br><br>"Where have you been that you're so late..... Did you go to the bathroom?"<br><br>Song Song's inquiry, her nose wrinkled, met my gloomy countenance.<br><br>"How did you know?"<br><br>"It reeks of shit around here."<br><br>"That bad?"<br><br>"Yeah. I thought a giant turd was walking this way."<br><br>"Thanks for the kind words. I feel energized now."<br><br>Having spent over an hour in a stinking bathroom stall, my sense of smell was gone.<br><br>With a voice devoid of energy, I replied and proffered the sheaf of A4 papers.<br><br>"Here."<br><br>"What's this?"<br><br>"A love letter for you. I wrote it while having diarrhea."<br><br>"Blegh, blech!"<br><br>"What an overreaction."<br><br>"Blech!"<br><br>"..."<br><br>Her gagging wasn't for show – it was viscerally genuine.<br><br>I thought I had seen it all, but the ache in the corner of my heart was unavoidable.<br><br>"I loved you……"<br><br>"Bleeeeech!"<br><br>"Miss Song, are you alright?"<br><br>Butler Kim, ever the sentinel, swooped to her aid, his hands rhythmic on her back.<br><br>In the meantime, the papers that Song Song was waving like a national flag traded hands.<br><br>Mr. Choi, having glimpsed the title page, granted me an amused look.<br><br>"Jin Family's Cultivation Technique? That's a peculiar title for a love letter."<br><br>"The contents inside are even more peculiar."<br><br>"......Pardon?"<br><br>"Just keep reading."<br><br>Mr. Choi didn’t miss a beat. He stiffened in attention and turned the page with deliberation.<br><br>His gaze swept over the impeccable script, a testament to a hand that belied human capability.<br><br>Flick. Flick. Flick…………<br><br>With each page, Mr. Choi's breath grew warmer, his intrigue kindled by the words.<br><br>He scarcely took a breath, flipping through a dozen pages like a tempest, before his head shot up, his eyes wide as saucers.<br><br>"This is……!"<br><br>Even I found myself surprised by the intensity of his reaction.<br><br>'Does he understand what this is?'<br><br>To the uninitiated, the newly crafted scroll, brimming with the Jin Family's Cultivation Technique, could be misconstrued as a mere tome on traditional healing practices.<br><br>It delineated the myriad acupoints mapped across the human form and detailed the meridians for Qi circulation.<br><br>Had it been Song Song perusing its contents, she might've skimmed it casually before snapping it shut. Yet, Mr. Choi's astonishment eclipsed mere curiosity.<br><br>"Do you know what this is?"<br><br>"Yes, of course."<br><br>Then, from between his lips, a term I had never heard before slipped out.<br><br>"This is…… a Mana Cultivation Technique."<br><br>"Mana, what?"<br><br>"A Mana Cultivation Technique!"<br><br>Mana Cultivation Technique?<br><br>Someone sure came up with a bizarre name. \[Note: the direct translation of the characters for "Mana Cultivation Technique" is "mana practice", but, as the MC says, it sounds really strange to call it that so I have stuck with Mana Cultivation Technique so that it parallels the Qi version, as it is supposed to.\]<br><br>Just then, roused by Team Leader Choi's booming declaration, Butler Kim hastened towards us.<br><br>"Did you just say Mana Cultivation Technique?"<br><br>"Yes, here."<br><br>Butler Kim received the scroll with the gravity of a sacred relic, his eyes darting eagerly across the inscriptions.<br><br>Before long, he too mirrored the gasp that had escaped Mr. Choi.<br><br>"Gasp."<br><br>"What do you think, Butler Kim?"<br><br>"It's certain. It’s definitely a Mana Cultivation Technique. But where in the world did you get this?"<br><br>I got it from the restroom.<br><br>Mr. Choi pointed a finger at me.<br><br>"Jin Tae-Kyung brought……"<br><br>"Hunter Jin Tae-Kyung?"<br><br>Snap! Crack!<br><br>The air seemed to crystallize as Butler Kim’s head turned towards me with a swift pivot, the sound slicing through the tension.<br><br>"How do you have the Mana Cultivation Technique, Hunter Jin Tae-Kyung?"<br><br>I maintained a placid demeanor as I responded.<br><br>"First of all, I don't know what a Mana Cultivation Technique is. And of course, it's the first time I've heard that this is a Mana Cultivation Technique. By the way, is your neck okay? I thought I heard the sound of bones breaking just now..."<br><br>"Is that important? My neck can break for all I care."<br><br>"…………it seems pretty important though."<br><br>What's done is done. This old man seems to be getting tougher with each passing day.<br><br>Evidently, this discovery was of paramount importance.<br><br>'So, Mana Cultivation Technique, huh. Lee Jeong-Ryong must have learned it.'<br><br>It sounded bizarre at first, since it was different from what I had learned to call it, but after mumbling it a few times, it rolled off the tongue quite nicely.<br><br>It wasn't too difficult to infer that it was the equivalent to the "Qi Cultivation Technique" that I knew.<br><br>And it was this exact 'Mana Cultivation Technique' that Lee Jeong-Ryong and his acolytes had evidently been practicing.<br><br>"May I please have an answer to my question?"<br><br>"Tae-Kyung, this is a very serious matter."<br><br>The stares I received from Butler Kim and Mr. Choi bore a weight of severity I'd seldom witnessed.<br><br>I orchestrated an expression of astonishment as my eyes widened, then delivered the response I had rehearsed.<br><br>"Well, my father taught me when I was young..."<br><br>"Excuse me for asking, but are you referring to your deceased parent?"<br><br>"Yes."<br><br>Mr. Choi furrowed his brows.<br><br>"As far as I know, your father was an ordinary man."<br><br>"That's correct."<br><br>"But how did he come to know about a Mana Cultivation Technique……?"<br><br>"Perhaps he didn't know himself. When he taught me, he just mentioned it was a health practice passed down through our family."<br><br>"A health practice?”<br><br>"A Mana Cultivation Technique that has been passed down through generations."<br><br>Their skepticism was palpable as they processed my words. I gestured towards the title page.<br><br>There, the four words stood, inscribed with the precision of a typeface you'd find in a professional report.<br><br>\[Jin Family's Cultivation Technique\]<br><br>The name couldn't be more perfect.<br><br>If there's a Taiyuan Jin Family in Shanxi province, then in Gyeonggi province, there's a Goyang Jin Family, so to speak.<br><br>Presented as an heirloom of my family, it was unlikely they'd have any grounds for further debate.<br><br>As expected, the two were momentarily speechless at my answer, and I continued.<br><br>"It's a kind of breathing technique that I was taught to improve my health when I was young. My father even made me memorize the oral incantations."<br><br>"It does resemble a Mana Cultivation Technique but......"<br><br>"Can we see the original, the source of your teaching?"<br><br>"After my father passed away, things were so hectic... I tried to find it after we moved, but it was gone."<br><br>"Ah......"<br><br>"That's unfortunate."<br><br>"It's a pity, really. It's fortunate, though, that I've memorized it down to the last syllable."<br><br>The part about a missing item was factual. It's just that I slipped in the non-existent martial scroll of Jin Family's Cultivation Technique.<br><br>It was a perfect destruction of evidence. Their drooping shoulders attested to their disappointment.<br><br>'If only they knew this was the original, their expressions would be priceless.'<br><br>There's a romanticized notion of what a martial scroll should be.<br><br>Half-rotted bamboo slats. Ancient books with a smell of mouse droppings.<br><br>They can keep thinking that way. My creation bears no resemblance to such antiquities.<br><br>With precision, I assembled the pristine A4 sheets and secured them with a firm press of the stapler. The people of Murim would surely be astounded at such a sight, but for a martial scroll in the 21st century, it's apt to have a modern style.<br><br>"Anyway, that's quite impressive. A 'Qi Cultivation Technique,' I never imagined such a thing existed."<br><br>"I've seen it mentioned a few times in novels and movies. They called something like this martial arts, I believe."<br><br>"You're correct. A Mana Cultivation Technique is, in a way, a kind of martial arts too. If you look here, it talks about circulating and accumulating 'Qi' through breathing, doesn't it? This is the same as a Mana Cultivation Technique……"<br><br>Indeed, it was martial arts.<br><br>I bit back my urge to interject as Mr. Choi posed his question,<br><br>"So, Mr. Jin Tae-Kyung, have you been practicing this 'Jin Family's Cultivation Technique' since you were young?"<br><br>"Yes."<br><br>"I'm sorry to say this, but it seems that the effects over the years have been......"<br><br>He means 'Why did such a person live as an F-rank hunter for 7 years?'. A sharp question. And one that I had anticipated.<br><br>With measured calm, I addressed his implication.<br><br>"As you know, I was quite skilled for an F-rank hunter. I even received a commendation as valedictorian at the training center."<br><br>"Ah, I am aware of that part. And also that you served as a deputy team leader in the guild you were previously with."<br><br>That position, even in a modest guild where F-rank hunters were a dime a dozen and regarded as little more than street sweepers, was noteworthy.<br><br>For someone without familial ties to guild leadership, ascending to deputy team leader was an anomaly — a frequent subject of guild gossip.<br><br>"There was a lot of talk about it. Issues about seniority, the hunters with higher ranks and more experience complained about the pecking order...... In the end, I proved my worth with my skills. And the reason I could do that was the Jin Family's Cultivation Technique."<br><br>"Hmm."<br><br>"Looking at that, it certainly seems to be effective."<br><br>Awareness flickered within me; these tidbits alone wouldn't be sufficient to dissolve their doubts about my history or the efficacy of the Jin Family's Cultivation Technique.<br><br>I mustered a wry smile and let my gaze drift across the assembly. Unbeknownst to me, Song Song had ceased her gagging, and even Mr. Rough Guy was now eyeing me with a gaze ignited by curiosity.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-289.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-291.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

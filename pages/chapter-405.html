@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 405 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 405</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 405</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: kenUdigitt</span>
+                            <span class="published-date">Published: May 4, 2024</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>- Then, we will commence the operation at 06:30 tomorrow. Please carry out the orders for your front meticulously.</p><p>Pop.</p><p>Minister of National Defense Wei Feng-Hu's final words marked the end of the meeting.</p><p>Lee Jeong-Ryong, Vice Guild Master of the Ares Guild, watched as the five monitors flickered off before leaning back in his chair.</p><p>'The pace is quick. Much quicker than I thought.'</p><p>This conflict wouldn't be easily resolved, nor should it be.</p><p>China is a powerful country with plenty of Hunters, but it is also a closed country. It's one of the rare places where the Ares Guild, despite its global mercenary outreach, has struggled to gain a firm foothold.</p><p>Thus, Lee Jeong-Ryong harbored no desires for stability in China. The greater the devastation, the more opportunities would arise.</p><p>Millions dead? Hundreds of trillions in damages?</p><p>Why should that matter to him? For Lee Jeong-Ryong, this catastrophe was merely an opportunity.</p><p>However...</p><p>'Once again, Jin Tae-Kyung is the problem.'</p><p>His fingers drummed a slow rhythm on the table.</p><p>Plans often go awry, and recently, Jin Tae-Kyung's interference had become a recurring obstacle.</p><p>'He's dangerous.'</p><p>The initial curiosity Lee Jeong-Ryong had felt about Jin Tae-Kyung had completely dissipated.</p><p>If a child who barely reached your waist grew up within a few months to meet your gaze, any adult would be startled.</p><p>Especially if the child's growth hadn't stopped yet.</p><p>'He will become even more dangerous.'</p><p>While the resurgence of the Arch Lich presented Lee Jeong-Ryong with an opportunity, it had given Jin Tae-Kyung wings.</p><p>He had not only performed remarkable feats but had also captured the world’s attention.</p><p>This war was forging a new hero, reminiscent of the legends born from the chaos of the Great Cataclysm.</p><p>'People fear the strong but also admire them, and heroes are to be revered.'</p><p>Lee Jeong-Ryong understood this well. And if this war concluded with Jin Tae-Kyung hailed as a hero...</p><p>Crunch.</p><p>His aura-charged fingertips shattered part of the solid wooden table into fragments.</p><p>Lee Jeong-Ryong gazed silently at the now gaping hole in the table.</p><p>Though small now, if left unchecked, it would spiral out of control. It was imperative to fill this gap before everything collapsed.</p><p>"Call in the head of the security team."</p><p>Lee Jeong-Ryong's voice, soft and deliberate, floated through the room, prompting someone who had been waiting outside to enter.</p><p>Soon, the familiar rustle of movement heralded the opening of the door.</p><p>"Did you call for me?"</p><p>Jin Tae-Kyung wasn't the only one who had undergone a transformation in such a brief span.</p><p>Seok Go-Jun, the Vice Guild Master's right-hand man and head of security, had also changed significantly.</p><p>His deep, dark eyes and the increasingly grave tone of his voice made even those in the know whisper about his intensifying severity following his defeat by Jin Tae-Kyung. However, Lee Jeong-Ryong saw it differently.</p><p>"You look good."</p><p>"There has been some progress."</p><p>"Too much modesty isn't appealing either. You’ve earned considerable merits on the battlefield today; you deserve praise for that."</p><p>"…Thank you."</p><p>Earlier that day, a legion of monsters launched a surprise attack on five fronts, resulting in heavy losses. However, the front under Lee Jeong-Ryong's command stood firm.</p><p>The Ares Guild's elite, strategically managing their combat power, decimated the monster legion. Seok Go-Jun himself eliminated two commanding Death Knights.</p><p>"What were the damages?"</p><p>"Eleven seriously injured, forty-six lightly injured. No deaths. It might take a bit longer for the severely injured to recover, but the lightly injured have all been treated."</p><p>The other 4,000 casualties, including Hunters and soldiers, were not mentioned.</p><p>Lee Jeong-Ryong questioned, and Seok Go-Jun responded. For them, the Ares Guild was the only priority.</p><p>"It's unfortunate, though. Who would have thought the front commander would fall so disgracefully? He was quite a strong-willed person…"</p><p>Lee Jeong-Ryong's voice faded, and Seok Go-Jun's expression grew grim.</p><p>"I'm sorry. I tried my best to stop it, but there were just too many monsters."</p><p>"It can't be helped. Did you manage to recover the bodies?"</p><p>"They were too damaged, we had no choice but to cremate them. The same was done for the staff who died with the commander."</p><p>"Well done. Ah, you know that Major General Wang Oh-Chun has become the new commander?"</p><p>"Yes, I was just exchanging greetings with him on my way here."</p><p>Only a select few, including Lee Jeong-Ryong, knew that Major General Wang Oh-Chun and Seok Go-Jun were more than mere acquaintances.</p><p>For years, they had discreetly met for dinner at a safe house, and each meeting saw the trunk of Major General Wang’s car growing increasingly laden.</p><p>"What did he say?"</p><p>"He said he looks forward to working well together in the future."</p><p>A slight smile crept onto Lee Jeong-Ryong's face.</p><p>"Right. After all, we’re comrades-in-arms."</p><p>He must be happy now, thinking he has taken on an important role, but he has no idea that these series of events were not merely fortunate circumstances.</p><p>Now reduced to mere ash, the previous commander who had been steadfast was in the process of drafting a report about the Ares Guild's passive combat.</p><p>"I will make sure to keep a close eye. We can't afford to lose another commander."</p><p>"Understood."</p><p>Anything can happen on the battlefield.</p><p>A disliked commander could be overwhelmed by monsters, or a corrupt general with a penchant for bribery could ascend to command.</p><p>Revived by the conversation, Lee Jeong-Ryong added.</p><p>"Tomorrow will be tough, so rest up well tonight."</p><p>"What do you mean?"</p><p>"Advance as swiftly as possible. Sweep away the remaining monsters."</p><p>"Is it a maneuver operation? Has the order been given to all fronts?"</p><p>Lee Jeong-Ryong confirmed with a nod.</p><p>Beginning tomorrow, a sweeping maneuver will target the northern front among others. Within days, they aim to encircle tightly, cutting off any retreat for the monster legions.</p><p>"They must have lost considerable forces... but their numbers are still not to be underestimated."</p><p>"What do you think this country can boast of the most? Even now, hundreds of aircraft are transporting Hunters across China. Even the lower-rank Hunters will be useful as cannon fodder."</p><p>Lee Jeong-Ryong explained in a calm tone.</p><p>"Focus on minimizing the guild's losses. Just in case..."</p><p>He cast a thoughtful look at the table.</p><p>"There might be a need to fill a hole."</p><p>"…I will keep that in mind."</p><p>Seok Go-Jun, viewing Lee Jeong-Ryong as both a mentor and an almost divine figure, accepted the cryptic message without question, nodding silently.</p><p>Suddenly, he realized he had forgotten to ask something crucial.</p><p>"What is the final destination?"</p><p>Lee Jeong-Ryong simply raised his hand and pointed towards a map of Sichuan on the wall.</p><p>Whoosh! A gust from his fingertip struck the map, leaving a hole. Seok Go-Jun focused on the name beside the tear.</p><p>Suining City. \[Note: the small city where the MC was just at is on the outskirts of this city.\]</p><p>The epicenter of the crisis. The dwelling of the Arch Lich.</p><p>\* \* \*</p><p>The next morning, as people awoke, they found themselves split into two groups.</p><p>Those departing and those staying behind.</p><p>Naturally, I was among those leaving, while Mr. Choi and Shao Shen were to remain.</p><p>As departure time neared, the two who had only just regained consciousness began to resist the idea of being left behind.</p><p>"Mr. Jin Tae-Kyung, I'm perfectly fine."</p><p>「I'm perfectly fine, Hyung!」</p><p>"I can fight."</p><p>「I'm confident I can fight harder than anyone!」</p><p>...Is this an echo?</p><p>Observing Mr. Choi and Shao Shen's adamant expressions, I felt compelled to make an offer.</p><p>"Um, if you can last 10 minutes against me, I'll take you with me."</p><p>"..."</p><p>「...」</p><p>- Are you really saying that? You wicked human without a conscience.</p><p>What conscience?</p><p>Speaking of conscience, these two are the ones lacking it. They're barely able to walk yet they want to go to the battlefield.</p><p>Bravery is admirable, but in their condition, it's a death wish.</p><p>'And what's this about conscience from an undead anyway.'</p><p>Damn it. Just damn it.</p><p>I reprimanded myself internally before addressing the two disheartened individuals again.</p><p>"First, focus on recovery. Once your senses and strength are restored over the next few days, you might be ready to join the frontline. This applies to you, Mr. Choi, and you too, Shao Shen."</p><p>"Um."</p><p>「Umm.」</p><p>Their reluctance was palpable, but they seemed to be coming to terms with it.</p><p>They were aware of their physical limitations, so pushing the matter further was futile.</p><p>"I guess I should be going now... Oh."</p><p>I had forgotten something.</p><p>Pretending to rummage through a pouch enchanted with spatial expansion, I retrieved an item from my inventory.</p><p>"Here."</p><p>Shao Shen blinked.</p><p>「...Hyung?」</p><p>"What are you doing, not taking it? My arm might fall off."</p><p>Caught off guard, Shao Shen accepted the item and looked at me, puzzled.</p><p>「What is this?」</p><p>"A gift. Someone I know entrusted it to me, but I think it's better if you have it."</p><p>「This famous sword?」</p><p>"Why, don't you like it?"</p><p>「No, it's not that. I'm just not sure if I should accept it...」</p><p>Shao Shen, his eyes filled with awe, gripped the hilt of the \[Hero's Soul\].</p><p>The balance and weight were nearly perfect, and from its crystalline blade, a palpable aura emanated.</p><p>Swallowing hard, he asked,</p><p>「Can I really accept this?」</p><p>"It’s not just a giveaway; you’re receiving it because you’re worthy."</p><p>「Worthy, you say?」</p><p>"Yes, worthy."</p><p>Your courage in the last battle, your sacrifices for others — these justify it.</p><p>As a spear-wielder, if I held onto it, it would merely gather dust in my inventory.</p><p>I deemed that Shao Shen, a fellow Chinese and a member of the Public Security Forces, deserved it more.</p><p>'Given that nothing happened when he grasped the hilt, it seems the sword has accepted him too.'</p><p>The Skeleton Warlord muttered under his breath.</p><p>- I could use a sword well too... I like swords...</p><p>Huh? What?</p><p>I couldn't quite hear the whining of a loser who screamed in the middle of the night after attempting to grab \[Hero's Soul\] from my inventory.</p><p>- ...Pfft, forget it. Such a cheap sword is not fitting for a true commander!</p><p>"..."</p><p>What are you talking about? There was someone else who would have valued it more.</p><p>I glanced slyly towards Mr. Choi.</p><p>I debated for while about whether to give \[Hero's Soul\] to Shao Shen or Mr. Choi.</p><p>I was worried Mr. Choi might feel overlooked.</p><p>But it seems my concerns were unnecessary.</p><p>"Congratulations, Senior Colonel Shao. You've acquired a truly fine sword."</p><p>Upon hearing Mr. Choi’s heartfelt congratulations, Shao Shen snapped back to reality, his eyes flicking between the sword and Mr. Choi.</p><p>A conflict flickered in his eyes, but soon it was replaced by a bright, grateful smile.</p><p>「I don't think I'm the rightful owner of this sword.」</p><p>"…?"</p><p>「Mr. Choi, would you accept this sword instead of me?」</p><p>This unexpected gesture caught me off guard. But whatever.</p><p>'I'm glad to see it.'</p><p>Initially taken aback, Mr. Choi politely refused, but Shao Shen, resolute in his decision, insisted.</p><p>As the two persisted in passing the sword back and forth, I quietly exited the ward and continued on my way.</p><p>Just as I was closing the door behind me, Mr. Choi's voice drifted faintly to my ears.</p><p>"Of all the swords I've encountered, this one is my favorite."</p><p>Well, then that settles it.</p><p>I walked briskly among the assembled troops.</p><p>Surrounded by their reverent stares, I moved through the parting sea of soldiers.<br></p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-404.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="#" class="nav-button disabled">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

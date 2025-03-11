@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 223 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 223</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 223</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: Coldbutteredtoast</span>
+                            <span class="published-date">Published: November 20, 2022</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>Awed. Thrilled. Amazed.<br><br>There was no way that anyone watching the battle could feel anything less.<br><br>Choi Min-Woo swallowed, his throat dry. From their first run together, he'd known that Jin Tae-Kyung had excellent skills. He'd also suspected that the young hunter had yet to show his full power. But this was too much. He'd watched Tae-Kyung closely for months, tested him in gates, gathered information using trusted experts. But all his judgements had been wrong.<br><br>[Who the hell is he?]<br><br>How could it all have just been the tip of the iceberg? Only a few months before, they'd met in the Hunter Recruitment Centre. Now, the man who'd worked as a porter for a few hundred bucks a day had slain a Named monster. Alone. Easily.<br><br>Before his eyes, an aura-infused spear pierced the skill of the Great Black Wyvern and, in that moment, a legend was born.<br><br>"Young master..." murmured Butler Kim.<br><br>Choi blinked and looked around. The Peace Guild were also staring in astonishment. Awakening, then, they ran together across the scorched sand to where their guildmate stood, victorious.<br><br>"Jin Tae-Kyung!"<br><br>"Tae-Kyung!"<br><br>Turning at the sounds of their voices, the young man grinned and then laughed. He looked like an enormous weight had lifted from his shoulders.<br><br>As the Peace Guild surrounded him, shouting congratulations, Choi Min-Woo smiled and asked, "Why are you laughing?"<br><br>"I don't know what else to do!"<br><br>"Do whatever you like. Laugh. Yell. We're the only ones here!"<br><br>Tae-Kyung scratched the back of his head, embarrassed. "I killed a Named monster. But how?"<br><br>"I don't know. If I hadn't seen it with my own eyes, I wouldn't have believed it." Abruptly, Choi held out his hand. "Things have been tough for you, but you've worked hard. You've done so well."<br><br>Tae-Kyung's dark eyes twinkled. Emotions flashed across his face as he gripped Choi's hand tightly. "Thank you," he said. "Thank you all."<br><br>***<br><br>For a while, the group stood together, celebrating Tae-Kyung with effusive congratulations and good-natured questions.<br><br>"That was thirty years ago, during the Cataclysm," Butler Kim was saying. The old man, normally the model of dignity and reserve, was chattering in the excited tones of a schoolboy.<br><br>"Is this a dream?" said Song-i, looking between Tae-Kyung and the vast carcass. "It can't be real life?"<br><br>"Tae-Kyung! My boy! I'm so proud of you!"<br><br>"Mister," said Tae-Kyung. "Why are you crying again?"<br><br>"Because you're unique, dude! It's wonderful!" Im Hyuk-Jun burst into tears, as though his own son had returned alive.<br><br>In the hubbub, there was no time to check the system messages.<br><br>Choi came to the rescue. "Alright, everyone calm down. Let's take a moment and clean things up first."<br><br>Song-i nodded. "Oh, good idea... But how?"<br><br>Team Leader Choi paused, pink cheeked. Standard procedure was to treat casualties, check equipment and harvest monster by-products. But this was a challenge of a different magnitude. The body of the wyvern alone was over fifty metres long and several metres wide. Transport would be a logistical nightmare, without even considering the tail and wings. Just thinking about how to handle the issue hurt his head.<br><br>"We can't let this go to waste," said Tae-Kyung. Post-raid processing was an intensive procedure that involved the precise separation of skin, flesh and bone. Since Karus was a Named monster, the rarity and value of its constituent parts would be beyond his imagination. "But fuck, how do we even harvest its scales?"<br><br>They couldn't be scraped off with a fish knife. It would be beyond most guild butchers. In fact, it would be difficult for anyone except Choi, Butler Kim or himself.<br><br>However, there was another way. One that was easier, but came with its own risks.<br><br>The inventory.<br><br>As far as he he'd seen, its capacity was functionally infinite. While he didn't think it could hold living creatures, a monster corpse seemed feasible.<br><br>But the problems would come after that. How would people react to learning about dimensional storage? Even if he confessed to his guildmates and they were somehow able to accept the incredible truth, transporting the corpse would still raise suspicions. Reporters were always camping around the entrances to high-tier gates and they'd immediately start asking how gate materials were smuggled out unseen.<br><br>Soon enough, everyone would know his secret. He could see the headlines now:<br><br>[Breaking News: Jin Tae-Kyung revealed as a system user.]<br><br>[An Interview with Jin Tae-Kyung: "I know kung fu"; into a real life Matrix.]<br><br>[Hunter Association: Revoke Jin Tae-Kyung's licence!]<br><br>[NASA: Korean hunter using alien technology must be captured for the good of all mankind.]<br><br>"Jin Tae-Kyung, everything OK?"<br><br>"Thinking about it makes my head spin!"<br><br>"Really?" said Choi. "Considering the options, the most logical solution is to bring in external specialists."<br><br>Gates weren't unchanging spaces, like evergreen forests. After a certain amount of time, varying with gate level, any damage to the environments or inhabitants of portal worlds was undone. This was known as 'regen'.<br><br>"A-class gates normally regen in about a week. As this is Day One, we have ample time to contract personnel and complete processing. However, there is one problem." Choi was solemn as a judge. "The gate isn't open."<br><br>Defeating the Named monster should have opened the exit. But after several minutes, there was no sign of a portal.<br><br>Tae-Kyung looked around anxiously. "Yeah, why hasn't it opened? Is the gate broken?"<br><br>"No," said Butler Kim. "The boss is still alive."<br><br>"Huh?" Tae-Kyung looked across at Karus. The huge corpse was sprawled in a growing lake of blood.<br><br>"No." Kim shook his head. "Boss monsters and Named monsters are not the same thing. If the former is the landlord, the latter is an uninvited guest."<br><br>"Landlord?"<br><br>"Yes... Hmm... Think, what would you do if an armed robber broke into your house?"<br><br>"Beat him until he begged for death?"<br><br>"Oho, I forgot, let's say if you were an ordinary man, then?"<br><br>Tae-Kyung shrugged. "Maybe run, I guess? If he's armed, fighting could get me killed."<br><br>"Precisely. It's the same for the boss monster. When an apex predator settled here, everything else will have kept its head down."<br><br>In the end, the strong always rule over the weak. Whether a tyrannical orc chieftain or a powerful wyvern, it would have been wise for the boss to lose territory rather than be eaten by Karus.<br><br>[What a pain in the ass.] That meant that the boss monster wouldn't be living nearby, casually trimming its toenails. No, it'd have a distant, well-hidden lair that would be very hard for five people to locate in the vast wasteland.<br><br>"So that means..."<br><br>"We'll need to return to where we first entered. Someone can go and hire the specialists, then lead them here. The carcass is too precious to be left unattended."<br><br>It was the natural conclusion. They all knew who was the right choice.<br><br>"I'll go back," said Tae-Kyung.<br><br>Choi glanced across, a worried look in his eyes. "You're thinking of going alone?"<br><br>"Yeah. I mean, I'm the fastest, right?"<br><br>"Well, yes, but you must be exhausted."<br><br>[I just levelled up, man. Never felt better!] Instead, Tae-Kyung said, "I feel alright, actually. If you're worried, I'll have some recovery magic before I go."<br><br>"It's a considerable distance to the gate."<br><br>"Yeah, but I'm pretty fast."<br><br>It had taken a long time to reach their current location, but it'd be a different story alone. With no need to watch for monsters and no group setting the pace, he could probably get there in an hour or two.<br><br>"Still, please take Butler Kim with you."<br><br>"Butler Kim?"<br><br>Kim smoothed his handsome moustache. "If you wouldn't mind. We need to bring in external consultants. And good ones. At least B-rank to process a Named beast. I know some people. Hopefully, I'll be able to get a quick response, hoho."<br><br>That sounded plausible. Tae-Kyung recalled the unbelievable sight of the Sangdong Guild Leader doing exercises in the street. Kim was a man with serious clout. He'd be invaluable in arranging the required manpower.<br><br>"OK," said Tae-Kyung. "Butler Kim and myself."<br><br>Choi nodded. "Yes, please."<br><br>"Splendid," said Kim, moving to stand behind him. "Would you mind helping me get on?"<br><br>"You're kidding?"<br><br>"Oho, not with my knees. It's a long way to go."<br><br>"Huh. Fine."<br><br>***<br><br>They made good time, with Tae-Kyung running across the bleak wastes and Butler Kim riding piggyback.<br><br>At one point, they encountered a band of orcs wandering the wasteland, but they proved no threat.<br><br>"Fire storm!"<br><br>This was the magic of an A-rank wizard. A third of the orcs were vaporised instantly and the remainder fled for their lives. It felt like being a moving turret! As he was daydreaming about more efficient raiding, they spotted scattered trees and lush thorny undergrowth in the distance.<br><br>"You're incredibly fast," Kim shouted in his ear. "We've already reached the jungle!"<br><br>"From here, I'll slow down. We don't want to get lost."<br><br>"Good idea. I'll defer to your judgement."<br><br>Like a deadly maze, the otherworldly jungle was dense, with thick bushes, creeping vines and strange, bulbous fungi. Tae-Kyung moved carefully through the lush forest, down streams and animal trails, along the edges of bramble-filled ravines. Suddenly, he stopped, a humourless smile on his lips.<br><br>"What is it?" asked Kim.<br><br>"Nothing much, just..." What was the right word? Ah, yes. "Hyenas."<br><br>"Oh, I see..."<br><br>These were tenacious beasts. Scavengers and opportunists. Show them mercy and they'd take it as weakness.<br><br>Tae-Kyung snapped his fingers at a nearby bush.<br><br>"Hey! Come out from there, motherfucker!"<br><br>With a rustle, figures rose from concealment. But his gaze was fixed on their boss.<br><br>[Lvl. 80 Won Myung-Hoon]<br><br>"Have you ever seen such a foolish bastard?"<br><br>The leader had bared his teeth.</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-222.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-224.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>

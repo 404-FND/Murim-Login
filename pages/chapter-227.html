@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 227 - Murim Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables */
+        :root {
+            /* Light mode colors */
+            --light-bg: #f5f5f5;
+            --light-text: #1a1a1a;
+            --light-accent: #6c5ce7;
+            --light-accent-hover: #5649c0;
+            --light-card: #ffffff;
+            --light-card-border: #e0e0e0;
+            --light-scrollbar: #ccc;
+            --light-scrollbar-hover: #999;
+
+            /* Dark mode colors */
+            --dark-bg: #121212;
+            --dark-text: #e4e4e4;
+            --dark-accent: #8c7df7;
+            --dark-accent-hover: #a193f8;
+            --dark-card: #1e1e1e;
+            --dark-card-border: #333333;
+            --dark-scrollbar: #444;
+            --dark-scrollbar-hover: #666;
+            
+            /* Default to dark mode */
+            --bg-color: var(--dark-bg);
+            --text-color: var(--dark-text);
+            --accent-color: var(--dark-accent);
+            --accent-hover: var(--dark-accent-hover);
+            --card-bg: var(--dark-card);
+            --card-border: var(--dark-card-border);
+            --scrollbar-color: var(--dark-scrollbar);
+            --scrollbar-hover: var(--dark-scrollbar-hover);
+            
+            /* Other variables */
+            --font-size: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light mode */
+        body.light-mode {
+            --bg-color: var(--light-bg);
+            --text-color: var(--light-text);
+            --accent-color: var(--light-accent);
+            --accent-hover: var(--light-accent-hover);
+            --card-bg: var(--light-card);
+            --card-border: var(--light-card-border);
+            --scrollbar-color: var(--light-scrollbar);
+            --scrollbar-hover: var(--light-scrollbar-hover);
+        }
+
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed);
+        }
+
+        .back-button:hover {
+            color: var(--accent-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fa-sun {
+            color: #f1c40f;
+        }
+
+        .fa-moon {
+            color: #74b9ff;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-border);
+            transition: var(--transition-speed);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--card-bg);
+            transition: var(--transition-speed);
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Font size control */
+        .font-size-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #font-size-slider {
+            width: 100px;
+            height: 5px;
+            background: var(--card-border);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            -webkit-appearance: none;
+            border-radius: 5px;
+        }
+
+        #font-size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        #font-size-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        #font-size-value {
+            min-width: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* Content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .chapter-header {
+            margin-bottom: 2rem;
+        }
+
+        .chapter-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-info {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .chapter-content {
+            font-size: var(--font-size);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            transition: font-size var(--transition-speed);
+        }
+
+        .chapter-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Navigation buttons */
+        .chapter-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .nav-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed);
+            text-decoration: none;
+        }
+
+        .nav-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .nav-button.disabled {
+            background-color: var(--card-border);
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .home-button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+        }
+
+        .home-button:hover {
+            background-color: var(--card-border);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-hover);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 900px) {
+            .content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .header-left {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .theme-toggle, .font-size-control {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .chapter-navigation {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container chapter-container">
+        <header>
+            <div class="header-left">
+                <a href="../index.html" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Chapters
+                </a>
+                <h1>Chapter 227</h1>
+            </div>
+            <div class="controls">
+                <div class="font-size-control">
+                    <i class="fas fa-text-height"></i>
+                    <input type="range" id="font-size-slider" min="14" max="24" value="18">
+                    <span id="font-size-value">18px</span>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="content">
+                <div id="chapter-container">
+                    <div class="chapter-header">
+                        <h2 class="chapter-title">Chapter 227</h2>
+                        <div class="chapter-info">
+                            <span class="translator">Translator: Coldbutteredtoast</span>
+                            <span class="published-date">Published: November 29, 2022</span>
+                        </div>
+                    </div>
+                    <div class="chapter-content">
+                        <p>"Thank you for your hard work."<br><br>The lead investigator reached out his hand. Wearing a shabby suit, dark bags under his eyes, he looked like he hadn't been home in over a week.<br><br>"You're the one who's worked hard, not me," said Tae-Kyung, returning the handshake. They were in a spacious hotel room, with luxurious bed, sofa and a large smart TV. When first summoned by the association officials, he'd expected a cold interrogation room. "I didn't expect I'd be treated like this."<br><br>"Well, my superiors are very interested in this case. Hey, would you mind if I sat for a moment?"<br><br>"Oh, yeah, of course."<br><br>"Appreciate it," said the official, collapsing onto the sofa. "In fact, it's been quite a complex case. There's been a lot of debate about whether your actions exceeded the definition of reasonable force."<br><br>Actually, that had been on his mind, too. The killing of Won Myung-Hoon probably exceeded what was allowed by self-defence. But murder or not, if he went back a week, he'd do it again. "I suppose you've come to a conclusion, though?"<br><br>"Oh, of course. If there was a problem, do you think I'd have come alone? I'd have brought as many hunters from the Ministry of Justice as they'd have let me have." The man's eyes twinkled with mirth. He gave a wry glance at the coffee table, a striking shot of the Black Wyvern on the front page of the morning paper. "Not that I'm sure they'd have been much help."<br><br>"What do you mean? I'm a law-abiding citizen!"<br><br>"I remember a movie with that title. Didn't the main character kill the prosecutor and even the judge?" His phone buzzed, then. The tired man sighed. "Hell, I've got to go. I'm so behind in my work. It's like a weed, you know. You think you've pulled it all up, but more keeps coming."<br><br>Tae-Kyung had guessed that Myung-Hoon was someone who'd have skeletons in his closet, but so many terrible secrets had been unearthed that it was hard to believe that he wasn't some kind of pulp villain. His numerous offences included several crimes like the one he'd tried to orchestrate against the Peace Guild. His legacy of betrayals led back eight years, to that notorious incident at Myeong-Dong Station and the death of Minsu-Do.<br><br>Won Myung-Hoon was a monster created by the media. As his popularity faded, the spotlight shifting towards newer stars, he had tried to manufacture issues and garner renewed public attention. However, the death of the most popular hunter of the time instead led to an official inquest and public suspicion, and ultimately Myung-Hoon being quietly forgotten.<br><br>"They silenced a lot of people," said the man, pacing towards the door. "Bribes. Threats. Sometimes murder disguised as gate accidents. Not to mention lobbying."<br><br>Recently, politicians and business leaders had stood in front of the cameras and bowed their heads, mouthing the usual platitudes, promising that thorough investigations would be carried out. Tae-Kyung wasn't sure whether those reviews would be conducted properly or faithfully, but he was certain that judgement was coming.<br><br>"At least half of them are going down. Heads are going to roll."<br><br>Wildfires were already raging out of control. It was going to take more than a few weeds to quench the flames.<br><br>"I really hope so," said Tae-Kyung.<br><br>"Count on it." The tired-looking man grabbed the doorknob, then hesitated and turned back again. "I couldn't tell you this before," he said, then bowed deeply. "Thank you, Jin Tae-Kyung. This is all thanks to you."<br><br>Tae-Kyung was a simple man. He had hunted the Named Wyvern to settle a grudge; he had killed Won Myung-Hoon because his idol had become his enemy. The world now called him a hero for preventing catastrophe and bringing justice to a serial killer. It was embarrassing, but...<br><br>[I suppose it isn't that bad, either.]<br><br>He nodded and smiled, and the man in the crumpled suit responded in kind.<br><br>***<br><br>A week later, Tae-Kyung followed the investigator to the underground garage. Association security had been thorough and so, instead of hungry paparazzi and flashing cameras, only familiar faces were waiting.<br><br>"Son!"<br><br>"Oppa!"<br><br>His family hugged him fiercely. More correctly, his mother hugged him tightly and Ha-Yeon shoved him in the chest.<br><br>"Son! Are you okay? Are you hurt?"<br><br>"Ha, yeah, I'm alright! Just a few scrapes, that's all."<br><br>His mother gasped. "Scrapes? You've been hurt? Show me!"<br><br>"Ah, no, sorry mum, it was a slip of the tongue. I meant to say I fancy a few grapes." He paused. "I mean, I want your homemade crêpes."<br><br>"Don't lie to me, Tae-Kyung. I've seen the pictures. You couldn't fight a monster like that without getting hurt!"<br><br>"He was big, true, but he was gentle."<br><br>"Stop fooling around; I'm your mother! This is serious! Hurry up and take off your clothes so I can check."<br><br>"Here? Are you crazy?"<br><br>"Come here!"<br><br>His reflexes were fast enough to dodge bullets, but somehow Tae-Kyung wasn't able to avoid his mother's touch. He jumped aside and the girl who called herself his flatmate staggered, a shocked look on her face.<br><br>"Why are you pushing me?" she cried.<br><br>"Are you asking because you don't know?"<br><br>"I'm asking because I don't know!"<br><br>"If you don't know, you deserve to get hit!"<br><br>"Ouch! Mum! Oppa hit me!"<br><br>"Both of you stay still!"<br><br>Ha-Yeon was holding her forehead, with Tae-Kyung on one side and his shouting mother on the other. In the midst of that chaos, Tae-Kyung spotted another person, watching them, smiling.<br><br>"Don't just laugh," Tae-Kyung shouted. "Help me out!"<br><br>"What a harmonious family," said the man, leaning against the wall like a catalogue model. "I'm rather jealous."<br><br>Strolled over to the group, he placed a firm hand on Tae-Kyung's shoulder. "Thank you for your hard work," said Choi.<br><br>"Thank you, too..." Tae-Kyung looked around.<br><br>Noticing his gaze, Choi smiled. "Everyone wanted to come, but I stopped them. There are too many eyes watching, so I'll take you to your house first. We can talk on the way."<br><br>The group boarded a luxury sedan, looking out through heavily tinted windows as they drove between towering skyscrapers.<br><br>"A lot of things have happened. I believe that most of it you know."<br><br>"Sure, I've seen a lot of TV. My phone's been going crazy."<br><br>Television, radio, online. No matter where he looked, he heard his name and the tangled web woven by Won Myung-Hoon. The whole of Korea was buzzing about economics, politics and the hunter industry. He was already sick of it.<br><br>Glancing across from the driver's seat, Choi smiled. "Still, I have to tell you the most important thing."<br><br>"The dinner menu tonight?"<br><br>"In a manner of speaking."<br><br>"Chief, please."<br><br>"It relates to the disposal of monster by-products."<br><br>"What! Tell me, please!"<br><br>Behind them, his mother and sister perked up. "What's that? Is it that important?"<br><br>"What era have you been living in, mum?"<br><br>"Of course I know it's important! What I mean is, how important is it?"<br><br>Even though many wondrous products had been created and commercialised using monster by-products, their exorbitant costs kept them the exclusive province of wealthy people. Such luxuries were a fantasy for their family, after so many years on the breadline.<br><br>"It depends on the specific creature," explained Choi, softly. "In the case of the entity that your son killed, the value its body represents is astronomical."<br><br>"Really? I've only seen pictures, but it looked terrifying."<br><br>Choi smiled slightly. "It was indeed. An exceptionally strong and exceptionally rare creature. That's the reason why it was priced at two hundred and fifty million dollars."<br><br>"Oh, I see."<br><br>After his mother's answer, there was a short silence. Except the quiet vibration of the engine, nothing could be heard, not even breathing.<br><br>Tae-Kyung's voice came out as a whisper. "How much?"<br><br>"Two hundred and fifty million," said Choi, calmly. "Although I should clarify that this is only the starting bid for the auction. Christie's finished the processing three days ago..."<br><br>"Wait, who is Christie?"<br><br>Ha-Yeon blinked in disbelief. "Did you just say you don't know Christie's?" Her expression clearly said: [My brother's an idiot.]<br><br>His pride as an older brother was at stake, but the only thing that came to mind was a supermodel. "You mean the American business dynasty? No, Hong Kong? Or European royalty? Or Hollywood actors...?"<br><br>Choi came to his rescue. "It's an auction house. Along with Sotheby's, it's probably the best in the industry. They offered us a lower fee than the other major players, so we left it to them. Their appraisers set the value and therefore the starting price, but the final decision is awaiting your consent."<br><br>[Is this really happening? Am I going to be rich?] "Calm down," said Tae-Kyung over his shoulder. "It's not all mine."<br><br>Regardless of the final bid, raids were based on cooperation and therefore each member received an agreed proportion of the earnings.<br><br>"No," said Choi. "It's all yours. We've all agreed, so there's no need to say anything more on this matter."<br><br>"Everyone agreed?"<br><br>They were discussing an enormous amount of money. Even a small share would be millions of dollars. Who could pass up that temptation?<br><br>"How brazen do you think we are?" said Choi, firmly, glancing across as they drove. "None of us will accept getting paid for watching. So all you need to worry about is where you're going to spend the money."<br><br>Tae-Kyung didn't know what to say. His mother and Ha-Yeon were sitting like statues in the back seat. He wiped his face with the palm of his hand. How should he use such a huge sum? His mind whirled with possibilities. A private plane and luxury yacht? A mountain of cash? A pet leopard?<br><br>It was then that the fog seemed to lift. He knew what he should do.<br><br>"Team Leader Choi?"<br><br>"Yes?"<br><br>"Can I ask you a favour?"<br><br>The corner of Choi's mouth rose in a faint smile. "Of course. Anything."</p>
+                    </div>
+                    <div class="chapter-navigation">
+                        <a href="chapter-226.html" class="nav-button ">
+                            <i class="fas fa-arrow-left"></i> Previous Chapter
+                        </a>
+                        <a href="../index.html" class="nav-button home-button">
+                            <i class="fas fa-home"></i> Chapter List
+                        </a>
+                        <a href="chapter-228.html" class="nav-button ">
+                            Next Chapter <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Read Murim Login thanks to awesome people on reddit, easily</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            themeToggle.checked = false;
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+        }
+
+        // Font size adjustment
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+        
+        fontSizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            document.documentElement.style.setProperty('--font-size', `${size}px`);
+            fontSizeValue.textContent = `${size}px`;
+            localStorage.setItem('fontSize', size);
+        });
+
+        // Load saved font size
+        const savedFontSize = localStorage.getItem('fontSize');
+        if (savedFontSize) {
+            fontSizeSlider.value = savedFontSize;
+            document.documentElement.style.setProperty('--font-size', `${savedFontSize}px`);
+            fontSizeValue.textContent = `${savedFontSize}px`;
+        }
+    </script>
+</body>
+</html>
